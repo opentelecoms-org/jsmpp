@@ -12,6 +12,7 @@ import org.jsmpp.bean.Command;
  * 
  * @author uudashr
  * @version 1.0
+ * @since 1.0
  *
  */
 public interface PDUReader {

@@ -3,8 +3,11 @@ package org.jsmpp.util;
 import java.util.Arrays;
 
 /**
+ * The Hex utility.
+ * 
  * @author uudashr
- * @version 1.00, 11/04/05
+ * @version 1.0
+ * @since 1.0
  * 
  */
 public class HexUtil {
@@ -13,18 +16,34 @@ public class HexUtil {
             '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
     /**
+     * Convert the string to hex string value.
+     * 
      * @param data is case sensitive.
-     * @return
+     * @return the hex string representation of string.
      */
     public static String convertStringToHexString(String data) {
         return conventBytesToHexString(data.getBytes());
     }
 
+    /**
+     * Convert bytes to hex string.
+     * 
+     * @param data is the bytes.
+     * @return the hex string representation of bytes.
+     */
     public static String conventBytesToHexString(byte[] data) {
         return convertBytesToHexString(data, 0, data.length);
     }
 
-    // Big-Endian
+    // 
+    /**
+     * Convert bytes to hex string value (using Big-Endian rule).
+     * 
+     * @param data is the bytes.
+     * @param offset is the offset.
+     * @param length is the length.
+     * @return the hex string representation of bytes.
+     */
     public static String convertBytesToHexString(byte[] data, int offset,
             int length) {
         StringBuffer sBuf = new StringBuffer();
@@ -46,6 +65,12 @@ public class HexUtil {
         return sBuf.toString();
     }
 
+    /**
+     * Convert the hex string to string.
+     * 
+     * @param hexString is the hex string.
+     * @return the string value that converted from hex string.
+     */
     public static String convertHexStringToString(String hexString) {
         String uHexString = hexString.toLowerCase();
         StringBuffer sBuf = new StringBuffer();
@@ -56,10 +81,24 @@ public class HexUtil {
         return sBuf.toString();
     }
 
+    /**
+     * Convert the hex string to bytes.
+     * 
+     * @param hexString is the hex string.
+     * @return the bytes value that converted from the hex string.
+     */
     public static byte[] convertHexStringToBytes(String hexString) {
         return convertHexStringToBytes(hexString, 0, hexString.length());
     }
 
+    /**
+     * Convert the hex string to bytes.
+     * 
+     * @param hexString is the hex string.
+     * @param offset is the offset.
+     * @param endIndex is the end index.
+     * @return the bytes value that converted from the hex string.
+     */
     public static byte[] convertHexStringToBytes(String hexString, int offset,
             int endIndex) {
         byte[] data;

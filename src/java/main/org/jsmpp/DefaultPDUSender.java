@@ -7,6 +7,7 @@ import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.util.DefaultComposer;
 import org.jsmpp.util.PDUComposer;
 
 
@@ -15,16 +16,24 @@ import org.jsmpp.util.PDUComposer;
  * The SMPP PDU reader class.
  * 
  * @author uudashr
- * @version 1.0
+ * @version 1.1
+ * @since 1.0
  * 
  */
 public class DefaultPDUSender implements PDUSender {
-    private PDUComposer pduComposer;
-
+    private final PDUComposer pduComposer;
+    
     /**
-     * Construct with specified pduComposer.
+     * Default constructor.
+     */
+    public DefaultPDUSender() {
+        this(new DefaultComposer());
+    }
+    
+    /**
+     * Construct with specified pdu composer.
      * 
-     * @param pduComposer is the {@link PDUComposer}
+     * @param pduComposer is the pdu composer.
      */
     public DefaultPDUSender(PDUComposer pduComposer) {
         this.pduComposer = pduComposer;

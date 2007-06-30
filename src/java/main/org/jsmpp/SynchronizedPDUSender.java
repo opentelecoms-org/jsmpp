@@ -10,13 +10,27 @@ import org.jsmpp.bean.RegisteredDelivery;
 
 
 /**
+ * PDU sender with synchronized the {@link OutputStream}.
+ * 
  * @author uudashr
- * @version 1.0
+ * @version 1.1
+ * @since 1.0
  *
  */
 public class SynchronizedPDUSender implements PDUSender {
     private final PDUSender pduSender;
     
+    /**
+     * Default constructor.
+     */
+    public SynchronizedPDUSender() {
+        this (new DefaultPDUSender());
+    }
+    
+    /**
+     * Construct with specified {@link PDUSender}.
+     * @param pduSender
+     */
     public SynchronizedPDUSender(PDUSender pduSender) {
         this.pduSender = pduSender;
     }

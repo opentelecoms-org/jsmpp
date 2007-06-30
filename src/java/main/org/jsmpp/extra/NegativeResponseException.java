@@ -7,6 +7,7 @@ import org.jsmpp.util.IntUtil;
  * 
  * @author uudashr
  * @version 1.0
+ * @since 1.0
  * 
  */
 public class NegativeResponseException extends Exception {

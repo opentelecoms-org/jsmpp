@@ -24,6 +24,7 @@ import org.jsmpp.bean.UnbindResp;
  * 
  * @author uudashr
  * @version 1.0
+ * @since 1.0
  * 
  */
 public interface Decomposer {

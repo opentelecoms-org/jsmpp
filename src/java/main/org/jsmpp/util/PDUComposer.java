@@ -7,6 +7,7 @@ import org.jsmpp.PDUStringException;
  * 
  * @author uudashr
  * @version 1.0
+ * @since 1.0
  * 
  */
 public interface PDUComposer {
@@ -115,7 +116,7 @@ public interface PDUComposer {
      */
     public byte[] enquireLinkResp(int sequenceNumber);
 
-    // GENEICK_NACK OPERATION
+    // GENERIC_NACK OPERATION
     /**
      * Compose the generic nack command.
      * 

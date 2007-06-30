@@ -1,8 +1,11 @@
 package org.jsmpp.util;
 
 /**
+ * The int util.
+ * 
  * @author uudashr
- * @version 1.00, 11/04/05
+ * @version 1.0
+ * @since 1.0
  * 
  */
 public class IntUtil {

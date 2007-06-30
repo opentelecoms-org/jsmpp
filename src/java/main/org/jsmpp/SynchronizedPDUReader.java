@@ -13,14 +13,22 @@ import org.jsmpp.bean.Command;
  * read the PDU.
  * 
  * @author uudashr
- * @version 1.0
+ * @version 1.1
+ * @since 1.0
  * 
  */
 public class SynchronizedPDUReader implements PDUReader {
     private final PDUReader pduReader;
-
+    
     /**
-     * Default constructor with specified pdu reader.
+     * Default constructor.
+     */
+    public SynchronizedPDUReader() {
+        this(new DefaultPDUReader());
+    }
+    
+    /**
+     * Construct with specified pdu reader.
      * 
      * @param pduReader is the pdu reader.
      */

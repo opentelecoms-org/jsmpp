@@ -9,6 +9,15 @@ import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.RegisteredDelivery;
 
 
+/**
+ * This class provide way to send SMPP Command over an {@link OutputStream}.
+ * PDU will be created and returned as bytes.
+ * 
+ * @author uudashr
+ * @version 1.0
+ * @since 1.0
+ *
+ */
 public interface PDUSender {
 
     /**
@@ -19,7 +28,7 @@ public interface PDUSender {
      * @param commandStatus is the SMPP command_status.
      * @param sequenceNumber is the SMPP sequence_number.
      * @return the composed bytes.
-     * @throws IOException is an I/O error occur.
+     * @throws IOException if an I/O error occur.
      */
     public byte[] sendHeader(OutputStream os, int commandId, int commandStatus,
             int sequenceNumber) throws IOException;
@@ -48,35 +57,103 @@ public interface PDUSender {
             String addressRange) throws PDUStringException, IOException;
 
     /**
-     * Send bind response.
+     * Send bind response command.
      * 
      * @param os is the {@link OutputStream}.
      * @param commandId is the command_id.
      * @param sequenceNumber is the sequence_number.
      * @param systemId is the system_id.
-     * @return
+     * @return the composed bytes.
      * @throws PDUStringException
-     * @throws IOException
+     * @throws IOException if an IO error occur.
      */
     public byte[] sendBindResp(OutputStream os, int commandId,
             int sequenceNumber, String systemId) throws PDUStringException,
             IOException;
 
+    /**
+     * Send unbind command.
+     * 
+     * @param os is the {@link OutputStream} .
+     * @param sequenceNumber is the sequence_number.
+     * @return the composed bytes.
+     * @throws IOException if an IO error occur.
+     */
     public byte[] sendUnbind(OutputStream os, int sequenceNumber)
             throws IOException;
 
+    /**
+     * Send generick non-acknowledge command.
+     * 
+     * @param os is the {@link OutputStream}
+     * @param commandStatus is the command_status.
+     * @param sequenceNumber is the sequence_number.
+     * @return the composed bytes.
+     * @throws IOException if an IO error occur.
+     */
     public byte[] sendGenericNack(OutputStream os, int commandStatus,
             int sequenceNumber) throws IOException;
 
+    /**
+     * Send unbind response command.
+     * 
+     * @param os is the {@link OutputStream}.
+     * @param commandStatus is the command_status.
+     * @param sequenceNumber is the sequence_number.
+     * @return the composed bytes.
+     * @throws IOException if an IO error occur.
+     */
     public byte[] sendUnbindResp(OutputStream os, int commandStatus,
             int sequenceNumber) throws IOException;
 
+    /**
+     * Send enquire link command.
+     * 
+     * @param out is the {@link OutputStream}.
+     * @param sequenceNumber is the sequence_number.
+     * @return the composed bytes.
+     * @throws IOException if an IO error occur.
+     */
     public byte[] sendEnquireLink(OutputStream out, int sequenceNumber)
             throws IOException;
 
+    /**
+     * Send enquire link response command.
+     * 
+     * @param os is the {@link OutputStream}.
+     * @param sequenceNumber is the sequenceNumber.
+     * @return the composed bytes.
+     * @throws IOException if an IO error occur.
+     */
     public byte[] sendEnquireLinkResp(OutputStream os, int sequenceNumber)
             throws IOException;
 
+    /**
+     * Send submit short messsage command.
+     * 
+     * @param os is the {@link OutputStream}.
+     * @param sequenceNumber is the sequence_number.
+     * @param serviceType is the service_type.
+     * @param sourceAddrTon is the source_addr_ton.
+     * @param sourceAddrNpi is the source_addr_npi.
+     * @param sourceAddr is the source_addr.
+     * @param destAddrTon is the dest_addr_ton.
+     * @param destAddrNpi is the dest_addr_npi.
+     * @param destinationAddr is the destination_addr.
+     * @param esmClass is the esm_class.
+     * @param protocoId is the protocol_id.
+     * @param priorityFlag is the priority_flag.
+     * @param scheduleDeliveryTime is the schedule_delivery_time
+     * @param validityPeriod is the validity_period.
+     * @param registeredDelivery is the registered_delivery.
+     * @param replaceIfPresent is the replace_if_present_flag.
+     * @param dataCoding is the data_coding.
+     * @param smDefaultMsgId is the sm_default_msg_id.
+     * @param shortMessage is the short_message.
+     * @return the composed bytes.
+     * @throws PDUStringException if there is an invalid string constraint found.
+     * @throws IOException if there is an IO error occur.
+     */
     public byte[] sendSubmitSm(OutputStream os, int sequenceNumber,
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
@@ -87,18 +164,76 @@ public interface PDUSender {
             byte replaceIfPresent, DataCoding dataCoding, byte smDefaultMsgId,
             byte[] shortMessage) throws PDUStringException, IOException;
 
+    /**
+     * Send submit short message response command.
+     * 
+     * @param os is the {@link OutputStream}.
+     * @param sequenceNumber is the sequence_number.
+     * @param messageId is the message_id.
+     * @return the composed bytes.
+     * @throws PDUStringException if there is an invalid string constraint found.
+     * @throws IOException if there is an IO error occur.
+     */
     public byte[] sendSubmitSmResp(OutputStream os, int sequenceNumber,
             String messageId) throws PDUStringException, IOException;
 
+    /**
+     * Send query short message command.
+     * 
+     * @param os is the {@link OutputStream}.
+     * @param sequenceNumber is the sequence_number.
+     * @param messageId is the message_id.
+     * @param sourceAddrTon is the source_addr_ton.
+     * @param sourceAddrNpi is the source_addr_npi.
+     * @param sourceAddr is the source_addr.
+     * @return the composed bytes.
+     * @throws PDUStringException if there is an invalid constraint found.
+     * @throws IOException if there is an IO error occur.
+     */
     public byte[] sendQuerySm(OutputStream os, int sequenceNumber,
             String messageId, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr)
             throws PDUStringException, IOException;
 
+    /**
+     * Send query short message response command.
+     * 
+     * @param os is the {@link OutputStream}.
+     * @param sequenceNumber is the sequence_number.
+     * @param messageId is the message_id.
+     * @param finalDate is the final_date.
+     * @param messageState is the message_state.
+     * @param errorCode is the error_code.
+     * @return the composed bytes.
+     * @throws PDUStringException if there is an invalid constraint found.
+     * @throws IOException if there is an IO error occur.
+     */
     public byte[] sendQuerySmResp(OutputStream os, int sequenceNumber,
             String messageId, String finalDate, MessageState messageState,
             byte errorCode) throws PDUStringException, IOException;
 
+    /**
+     * Send the deliver short message command.
+     * 
+     * @param os is the {@link OutputStream}.
+     * @param sequenceNumber the sequence_number.
+     * @param serviceType the service_type.
+     * @param sourceAddrTon is the source_addr_ton.
+     * @param sourceAddrNpi is the source_addr_npi.
+     * @param sourceAddr is the source_addr.
+     * @param destAddrTon is the dest_addr_ton.
+     * @param destAddrNpi is the dest_addr_npi.
+     * @param destinationAddr is the destination_addr.
+     * @param esmClass is the esm_class.
+     * @param protocoId is the protocol_id.
+     * @param priorityFlag is the priority_flag.
+     * @param registeredDelivery is the registered_delivery.
+     * @param dataCoding is the data_coding.
+     * @param shortMessage is the short_message.
+     * @return the composed byets.
+     * @throws PDUStringException if there is an invalid string constraint found.
+     * @throws IOException if there is an IO error occur.
+     */
     public byte[] sendDeliverSm(OutputStream os, int sequenceNumber,
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
@@ -108,6 +243,15 @@ public interface PDUSender {
             DataCoding dataCoding, byte[] shortMessage)
             throws PDUStringException, IOException;
 
+    /**
+     * Send the deliver short message response.
+     * 
+     * @param os is the {@link OutputStream}.
+     * @param sequenceNumber is the sequence_number.
+     * @return the composed bytes.
+     * @throws PDUStringException if there is an invalid string constraint found.
+     * @throws IOException if there is an IO error occur.
+     */
     public byte[] sendDeliverSmResp(OutputStream os, int sequenceNumber)
             throws PDUStringException, IOException;
 

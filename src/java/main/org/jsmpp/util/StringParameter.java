@@ -4,16 +4,31 @@ import org.jsmpp.SMPPConstant;
 
 /**
  * @author uudashr
+ * @version 1.0
+ * @since 1.0
  *
  */
 public enum StringParameter {
-	SYSTEM_ID(StringType.C_OCTEC_STRING, 0, 16, true, SMPPConstant.STAT_ESME_RINVSYSID),
-	PASSWORD(StringType.C_OCTEC_STRING, 0, 9, true, SMPPConstant.STAT_ESME_RINVPASWD), 
-	SYSTEM_TYPE(StringType.C_OCTEC_STRING, 0, 13, true, SMPPConstant.STAT_ESME_RINVSYSTYP), 
 	/**
-	 * Error code is 0, means all value are acccepted.
+	 * system_id string parameter.
 	 */
-	ADDRESS_RANGE(StringType.C_OCTEC_STRING, 0, 41, true, 0), 
+	SYSTEM_ID(StringType.C_OCTEC_STRING, 0, 16, true, SMPPConstant.STAT_ESME_RINVSYSID),
+    
+	/**
+	 * password string parameter.
+	 */
+	PASSWORD(StringType.C_OCTEC_STRING, 0, 9, true, SMPPConstant.STAT_ESME_RINVPASWD),
+    
+	/**
+	 * system_type string parameter.
+	 */
+	SYSTEM_TYPE(StringType.C_OCTEC_STRING, 0, 13, true, SMPPConstant.STAT_ESME_RINVSYSTYP),
+    
+	/**
+	 * Invalid address range assume should return the error of invalid source address.
+	 */
+	ADDRESS_RANGE(StringType.C_OCTEC_STRING, 0, 41, true, SMPPConstant.STAT_ESME_RINVSRCADR), 
+    
 	SERVICE_TYPE(StringType.C_OCTEC_STRING, 0, 6, true, SMPPConstant.STAT_ESME_RINVSERTYP),
 	SOURCE_ADDR(StringType.C_OCTEC_STRING, 0, 21, true, SMPPConstant.STAT_ESME_RINVSRCADR), 
 	DESTINATION_ADDR(StringType.C_OCTEC_STRING, 0, 21, true, SMPPConstant.STAT_ESME_RINVSRCADR), 

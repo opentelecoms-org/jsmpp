@@ -1,11 +1,11 @@
 package org.jsmpp.util;
 
 /**
- * TODO uud: create tools for comparing 2 bytes (because the ordinary value
- * compare the signed value of numeric)
+ * The octet util.
  * 
  * @author uudashr
- * @version 1.00, 11/04/05
+ * @version 1.0
+ * @version 1.0
  * 
  */
 public class OctetUtil {
