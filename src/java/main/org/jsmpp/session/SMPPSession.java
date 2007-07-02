@@ -85,10 +85,9 @@ public class SMPPSession {
 	}
 	
 	public void connectAndBind(String host, int port, BindType bindType,
-			String systemId, String password, String systemType,
-			InterfaceVersion interfaceVersion, TypeOfNumber addrTon,
-			NumberingPlanIndicator addrNpi, String addressRange)
-			throws IOException {
+            String systemId, String password, String systemType,
+            TypeOfNumber addrTon, NumberingPlanIndicator addrNpi,
+            String addressRange) throws IOException {
 		if (sequence.currentValue() != 0)
 			throw new IOException("Failed connecting");
 		
@@ -108,7 +107,8 @@ public class SMPPSession {
 		try {
 			in = new DataInputStream(socket.getInputStream());
 			out = socket.getOutputStream();
-			sendBind(bindType, systemId, password, systemType, interfaceVersion, addrTon, addrNpi, addressRange);
+			sendBind(bindType, systemId, password, systemType,
+                    InterfaceVersion.IF_34, addrTon, addrNpi, addressRange);
 			changeToBoundState(bindType);
 			socket.setSoTimeout(sessionTimer);
 			
