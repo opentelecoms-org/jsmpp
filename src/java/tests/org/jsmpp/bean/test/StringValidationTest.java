@@ -13,7 +13,7 @@ import junit.framework.TestCase;
  * @version 1.0
  *
  */
-public class StringValidation extends TestCase {
+public class StringValidationTest extends TestCase {
     public void testValidation() {
         try {
             StringValidator.validateString("", StringParameter.SYSTEM_ID);
