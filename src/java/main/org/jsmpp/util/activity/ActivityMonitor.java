@@ -1,7 +1,10 @@
 package org.jsmpp.util.activity;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 
 /**
  * Activity monitor will monitor an inactivity on each period. The activity will
@@ -14,13 +17,14 @@ import java.util.TimerTask;
  * 
  */
 public class ActivityMonitor {
+    private final Lock lock = new ReentrantLock();
+    private final Condition cond = lock.newCondition();
     private final long checkDelay;
-    private final long checkPeriod;
-    private final long inactiveThreshold;
+    private long checkPeriod;
+    private long inactiveThreshold;
     private long lastActivity;
     private ActivityListener activityListener;
-    private TimerTask monitorTask;
-    private Timer timer = new Timer();
+    private ActivityChecker activityChecker;
     
     /**
      * Construct with specified checkDelay, checkPeriod, and inactiveThreshold.
@@ -45,12 +49,72 @@ public class ActivityMonitor {
     public ActivityMonitor(long checkPeriod, long inactiveThreshold) {
         this(checkPeriod, checkPeriod, inactiveThreshold);
     }
-
+    
+    /**
+     * Get the checkPeriod.
+     * 
+     * @return is the checkPeriod.
+     */
+    public long getCheckPeriod() {
+        return checkPeriod;
+    }
+    
+    /**
+     * Set the checkPeriod.
+     * 
+     * @param checkPeriod is the new checkPeriod.
+     */
+    public void setCheckPeriod(long checkPeriod) {
+        this.checkPeriod = checkPeriod;
+    }
+    
+    /**
+     * Get the inactiveThreshold.
+     * 
+     * @return is the inactiveThreashold.
+     */
+    public long getInactiveThreshold() {
+        return inactiveThreshold;
+    }
+    
+    /**
+     * Set the inactiveThreshold.
+     * 
+     * @param inactiveThreshold is the new inactiveThreshold.
+     */
+    public void setInactiveThreshold(long inactiveThreshold) {
+        this.inactiveThreshold = inactiveThreshold;
+    }
+    
     /**
      * Notify an activity.
      */
     public void notifyActivity() {
-        lastActivity = System.currentTimeMillis();
+        lock.lock();
+        try {
+            lastActivity = System.currentTimeMillis();
+            cond.signal();
+            // FIXME uud: DELETE THIS
+            System.out.println("Signalling");
+        } finally {
+            lock.unlock();
+        }
+    }
+    
+    /**
+     * Notify activity and change the checkPeriod.
+     * 
+     * @param newCheckPeriod is the new checkPeriod value.
+     */
+    public void notifyActivity(long newCheckPeriod) {
+        lock.lock();
+        try {
+            lastActivity = System.currentTimeMillis();
+            checkPeriod = newCheckPeriod;
+            cond.signal();
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -67,15 +131,15 @@ public class ActivityMonitor {
      * it won't give any effect.
      */
     public void start() {
-        if (monitorTask == null) {
-            lastActivity = System.currentTimeMillis();
-            monitorTask = new TimerTask() {
-                @Override
-                public void run() {
-                    checkActivity();
-                }
-            };
-            timer.scheduleAtFixedRate(monitorTask, checkDelay, checkPeriod);
+        lock.lock();
+        try {
+            if (activityChecker == null) {
+                notifyActivity();
+                activityChecker = new ActivityChecker();
+                activityChecker.start();
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -84,9 +148,14 @@ public class ActivityMonitor {
      * then it won't give any effect.
      */
     public void stop() {
-        if (monitorTask != null) {
-            timer.cancel();
-            monitorTask = null;
+        lock.lock();
+        try {
+            if (activityChecker != null) {
+                activityChecker.shutdown();
+                cond.signal();
+            }
+        } finally {
+            lock.unlock();
         }
     }
     
@@ -96,10 +165,35 @@ public class ActivityMonitor {
      * {@link ActivityListener}
      */
     public void checkActivity() {
-        final long delay = System.currentTimeMillis() - lastActivity;
-        if (delay > inactiveThreshold) {
-            fireInactivity();
+        lock.lock();
+        try {
+            boolean foundActivity = isFoundActivity();
+            System.out.println("Found Activiry " + foundActivity);
+            if (!foundActivity) {
+                System.out.println("Entering block");
+                fireInactivity();
+            }
+        } finally {
+            lock.unlock();
         }
+    }
+    
+    /**
+     * Get the activity status.
+     * 
+     * @return <tt>true</tt> if there is an activity found, otherwise <tt>false</tt>.
+     */
+    public boolean isFoundActivity() {
+        lock.lock();
+        try {
+            final long delay = System.currentTimeMillis() - lastActivity;
+            // FIXME uud: DELETE THIS OUT
+            System.out.println("Delay " + delay + " inactiveThreshold " + inactiveThreshold + " result " + (delay < inactiveThreshold));
+            return delay < inactiveThreshold;
+        } finally {
+            lock.unlock();
+        }
+        
     }
     
     /**
@@ -108,6 +202,37 @@ public class ActivityMonitor {
     private void fireInactivity() {
         if (activityListener != null) {
             activityListener.onInactive();
+        }
+    }
+    
+    private class ActivityChecker extends Thread {
+        private boolean exit;
+        
+        public void run() {
+            try { Thread.sleep(checkDelay); } catch (InterruptedException e) { }
+            while (!isExit()) {
+                lock.lock();
+                try {
+                    // FIXME uud: DELETE THIS
+                    System.out.println("Awaiting for " + checkPeriod);
+                    cond.await(checkPeriod, TimeUnit.MILLISECONDS);
+                    // FIXME uud: DELETE THIS
+                    System.out.println("Signalled");
+                    checkActivity();
+                } catch (InterruptedException e) {
+                    checkActivity();
+                } finally {
+                    lock.unlock();
+                }
+            }
+        }
+        
+        public synchronized boolean isExit() {
+            return exit;
+        }
+        
+        public synchronized void shutdown() {
+            exit = true;
         }
     }
 }

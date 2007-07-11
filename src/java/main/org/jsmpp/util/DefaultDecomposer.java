@@ -304,22 +304,20 @@ public class DefaultDecomposer implements Decomposer {
         req.setEsmClass(reader.readByte());
         req.setProtocolId(reader.readByte());
         req.setPriorityFlag(reader.readByte());
-        req.setScheduleDeliveryTime(reader.readCString()); // FIXME uud: it
-        // should be null of
-        // c-octet string
+        // FIXME uud: it should be null of c-octet string
+        req.setScheduleDeliveryTime(reader.readCString()); 
         StringValidator.validateString(req.getScheduleDeliveryTime(),
                 StringParameter.SCHEDULE_DELIVERY_TIME);
-        req.setValidityPeriod(reader.readCString()); // FIXME uud: it should
-        // be null of c-octet
-        // string
+        // FIXME uud: it should be null of c-octet string
+        req.setValidityPeriod(reader.readCString()); 
         StringValidator.validateString(req.getValidityPeriod(),
                 StringParameter.VALIDITY_PERIOD);
         req.setRegisteredDelivery(reader.readByte());
-        req.setReplaceIfPresent(reader.readByte());// FIXME uud: it should be
-        // set to null
+        // FIXME uud: it should be set to null
+        req.setReplaceIfPresent(reader.readByte());
         req.setDataCoding(reader.readByte());
-        req.setSmDefaultMsgId(reader.readByte()); // FIXME uud: it should be
-        // set to null
+        // FIXME uud: it should be set to null
+        req.setSmDefaultMsgId(reader.readByte());
         req.setSmLength(reader.readByte());
         // req.setShortMessage(reader.readString(req.getSmLength()));
         req.setShortMessage(reader.readBytes(req.getSmLength()));

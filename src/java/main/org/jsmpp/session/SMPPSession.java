@@ -72,7 +72,6 @@ public class SMPPSession {
 	private SessionStateListener sessionStateListener;
     
 	private IdleActivityChecker idleActivityChecker;
-	//private PDUReaderWorker _pduReaderWorker;
 	private EnquireLinkSender enquireLinkSender;
 	private int sessionId = sessionIdSequence.incrementAndGet();
 	

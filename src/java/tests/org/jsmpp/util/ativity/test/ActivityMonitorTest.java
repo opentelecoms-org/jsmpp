@@ -20,7 +20,7 @@ public class ActivityMonitorTest extends TestCase {
     
     @Override
     protected void setUp() throws Exception {
-        activityMonitor = new ActivityMonitor(50, 3000);
+        activityMonitor = new ActivityMonitor(3000, 3000);
         activityMonitor.start();
     }
     
@@ -32,7 +32,7 @@ public class ActivityMonitorTest extends TestCase {
     /**
      * Test the inactivity never pass from the given threshold.
      */
-    public void testActive() {
+    public void xxxxxxxxxxxxxxxxxxtestActive() {
         
         activityMonitor.setActivityListener(new ActivityListener() {
             public void onInactive() {
@@ -42,10 +42,7 @@ public class ActivityMonitorTest extends TestCase {
         
         for (int i = 0; i < 5; i++) {
             activityMonitor.notifyActivity();
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-            }
+            takeASleep(2000);
         }
         activityMonitor.checkActivity();
     }
@@ -63,19 +60,38 @@ public class ActivityMonitorTest extends TestCase {
         
         for (int i = 0; i < 5; i++) {
             activityMonitor.notifyActivity();
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-            }
+            takeASleep(3001);
         }
-        
         activityMonitor.notifyActivity();
-        try {
-            Thread.sleep(3001);
-        } catch (InterruptedException e) {
-        }
-        activityMonitor.checkActivity();
+        
         assertTrue("The inactivity event should be raised", inactivityOccur.get());
     }
     
+    /**
+     * This make sure we have sleep for more than millis.
+     * 
+     * @param millis is the delay.
+     * @return the delay in millis.
+     */
+    private long takeASleep(long millis) {
+        /*
+        long start = System.currentTimeMillis();
+        long delay = 0;
+        try {
+            do {
+                Thread.sleep(millis - delay);
+                delay = System.currentTimeMillis() - start;
+            } while (delay <= millis);
+        } catch (InterruptedException e) {
+        }
+        return delay;
+        */
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return millis;
+    }
 }
