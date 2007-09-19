@@ -98,13 +98,12 @@ public class SMPPSession {
 		}
 		logger.info("Connected");
 		
-		new PDUReaderWorker().start();
-		new PDUReaderWorker().start();
-		new PDUReaderWorker().start();
-		
 		changeState(SessionState.OPEN);
 		try {
 			in = new DataInputStream(socket.getInputStream());
+			new PDUReaderWorker().start();
+	        new PDUReaderWorker().start();
+	        new PDUReaderWorker().start();
 			out = socket.getOutputStream();
 			sendBind(bindType, systemId, password, systemType,
                     InterfaceVersion.IF_34, addrTon, addrNpi, addressRange);
