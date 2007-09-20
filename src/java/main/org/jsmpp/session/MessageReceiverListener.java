@@ -4,7 +4,7 @@ import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.extra.ProcessMessageException;
 
 /**
- * This listener will listen to every incomming short message, recognized by
+ * This listener will listen to every incoming short message, recognized by
  * deliver_sm command. The logic on this listener should be accomplish in a
  * short time, because the deliver_sm_resp will be processed after the logic
  * executed. Normal logic will be return the deliver_sm_resp with zero valued
