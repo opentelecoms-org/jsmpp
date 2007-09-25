@@ -609,6 +609,7 @@ public class SMPPSession {
 			logger.info("Starting PDUReaderWorker");
 			while (isReadPdu()) {
 				readPDU();
+				try { Thread.sleep(10); } catch (InterruptedException e) { }
 			}
 			logger.info("PDUReaderWorker stop");
 		}
