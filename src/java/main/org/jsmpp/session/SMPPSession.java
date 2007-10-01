@@ -538,7 +538,7 @@ public class SMPPSession {
 			// FIXME uud: response to this error, generick nack or close socket
 		} catch (SocketTimeoutException e) {
 			addEnquireLinkJob();
-			try { Thread.sleep(1); } catch (InterruptedException ee) {}
+			//try { Thread.sleep(1); } catch (InterruptedException ee) {}
 		} catch (IOException e) {
 			closeSocket();
 		}
@@ -609,7 +609,6 @@ public class SMPPSession {
 			logger.info("Starting PDUReaderWorker");
 			while (isReadPdu()) {
 				readPDU();
-				try { Thread.sleep(10); } catch (InterruptedException e) { }
 			}
 			logger.info("PDUReaderWorker stop");
 		}
