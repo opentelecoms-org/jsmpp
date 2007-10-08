@@ -5,7 +5,7 @@ package org.jsmpp;
  * <ul>
  * <li>receiver (BIND_RX) - receive only</li>
  * <li>transmitter (BIND_TX) - transmit only</li>
- * <li>tranceiver (BIND_TRX) - receive and transmit</li>
+ * <li>transceiver (BIND_TRX) - receive and transmit</li>
  * </ul>
  * 
  * @author uudashr
