@@ -2,7 +2,6 @@ package org.jsmpp.session.state;
 
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
@@ -10,6 +9,8 @@ import org.jsmpp.bean.QuerySmResp;
 import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.session.SMPPSessionHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is unbound state implementation of {@link SMPPSessionState}. This
@@ -22,8 +23,7 @@ import org.jsmpp.session.SMPPSessionHandler;
  * 
  */
 class SMPPSessionBoundTX extends SMPPSessionBound {
-    private static final Logger logger = Logger
-            .getLogger(SMPPSessionBoundTX.class);
+    private static final Logger logger = LoggerFactory.getLogger(SMPPSessionBoundTX.class);
 
     public void processSubmitSmResp(Command pduHeader, byte[] pdu,
             SMPPSessionHandler smppClientProxy) throws IOException {

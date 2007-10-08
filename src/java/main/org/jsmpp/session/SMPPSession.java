@@ -10,7 +10,6 @@ import java.net.SocketTimeoutException;
 import java.util.Hashtable;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.log4j.Logger;
 import org.jsmpp.BindType;
 import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
@@ -43,6 +42,8 @@ import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.state.SMPPSessionState;
 import org.jsmpp.util.DefaultComposer;
 import org.jsmpp.util.Sequence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -51,7 +52,7 @@ import org.jsmpp.util.Sequence;
  *
  */
 public class SMPPSession {
-	private static final Logger logger = Logger.getLogger(SMPPSession.class);
+	private static final Logger logger = LoggerFactory.getLogger(SMPPSession.class);
 	private static final PDUSender pduSender = new SynchronizedPDUSender(new DefaultPDUSender(new DefaultComposer()));
 	private static final PDUReader pduReader = new SynchronizedPDUReader(new DefaultPDUReader());
 	private static final AtomicInteger sessionIdSequence = new AtomicInteger();
@@ -92,9 +93,9 @@ public class SMPPSession {
 		
 		socket.connect(new InetSocketAddress(host, port));
 		if (socket.getInputStream() == null) {
-			logger.fatal("InputStream is null");
+			logger.error("InputStream is null");
 		} else if (socket.isInputShutdown()) {
-			logger.fatal("Input shutdown");
+			logger.error("Input shutdown");
 		}
 		logger.info("Connected");
 		
@@ -580,7 +581,7 @@ public class SMPPSession {
 				// FIXME uud: delete this log
 				logger.debug("deliver_sm_resp with seq_number " + sequenceNumber + " has been sent");
 			} catch (PDUStringException e) {
-				logger.fatal("Failed sending deliver_sm_resp", e);
+				logger.error("Failed sending deliver_sm_resp", e);
 			}
 		}
 		

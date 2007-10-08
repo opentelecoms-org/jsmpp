@@ -7,7 +7,7 @@
 	<property name="dist.jar.filename" value="jsmpp-${project.version}.jar" />
 
 	<path id="compile.path">
-		<pathelement path="${lib.dir}/log4j-1.2.14.jar" />
+		<pathelement path="${lib.dir}/slf4j-api-1.4.3.jar" />
 	</path>
 
 	<target name="clean">

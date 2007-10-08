@@ -3,7 +3,6 @@ package org.jsmpp.util;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
 import org.jsmpp.NumberingPlanIndicator;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.TypeOfNumber;
@@ -24,6 +23,8 @@ import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.bean.Unbind;
 import org.jsmpp.bean.UnbindResp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -36,9 +37,8 @@ import org.jsmpp.bean.UnbindResp;
  * 
  */
 public class DefaultDecomposer implements Decomposer {
-    private static final Logger logger = Logger
-            .getLogger(DefaultComposer.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(DefaultDecomposer.class);
+    
     /**
      * Default constructor.
      */
@@ -449,7 +449,7 @@ public class DefaultDecomposer implements Decomposer {
             SequentialBytesReader seqBytesReader) {
         int commandLength = seqBytesReader.readInt();
         if (seqBytesReader.getBytes().length != commandLength)
-            logger.fatal("SYSTEM BUGS, the command_length (" + commandLength
+            logger.error("SYSTEM BUGS, the command_length (" + commandLength
                     + ") not equals with the byte array length ("
                     + seqBytesReader.getBytes().length + ")");
         pdu.setCommandLength(commandLength);

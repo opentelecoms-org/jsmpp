@@ -2,7 +2,6 @@ package org.jsmpp.session.state;
 
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
@@ -13,6 +12,8 @@ import org.jsmpp.session.SMPPSessionHandler;
 import org.jsmpp.util.Decomposer;
 import org.jsmpp.util.DefaultDecomposer;
 import org.jsmpp.util.IntUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is open state implementation of {@link SMPPSessionState}. When
@@ -24,8 +25,7 @@ import org.jsmpp.util.IntUtil;
  * 
  */
 class SMPPSessionOpen implements SMPPSessionState {
-    private static final Logger logger = Logger
-            .getLogger(SMPPSessionOpen.class);
+    private static final Logger logger = LoggerFactory.getLogger(SMPPSessionOpen.class);
     private static final Decomposer pduDecomposer = new DefaultDecomposer();
 
     public void processBindResp(Command pduHeader, byte[] pdu,

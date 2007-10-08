@@ -2,7 +2,6 @@ package org.jsmpp.session.state;
 
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
@@ -11,6 +10,8 @@ import org.jsmpp.extra.ProcessMessageException;
 import org.jsmpp.session.SMPPSessionHandler;
 import org.jsmpp.util.Decomposer;
 import org.jsmpp.util.DefaultDecomposer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is bound_tx state implementation of {@link SMPPSessionState}.
@@ -22,8 +23,7 @@ import org.jsmpp.util.DefaultDecomposer;
  * 
  */
 class SMPPSessionBoundRX extends SMPPSessionBound {
-    private static final Logger logger = Logger
-            .getLogger(SMPPSessionBoundRX.class);
+    private static final Logger logger = LoggerFactory.getLogger(SMPPSessionBoundRX.class);
     private static final Decomposer pduDecomposer = new DefaultDecomposer();
 
     public void processDeliverSm(Command pduHeader, byte[] pdu,
