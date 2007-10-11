@@ -40,7 +40,7 @@ import org.jsmpp.extra.ProcessMessageException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.state.SMPPSessionState;
-import org.jsmpp.util.PDUComposer;
+import org.jsmpp.util.DefaultComposer;
 import org.jsmpp.util.Sequence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SMPPSession {
 	private static final Logger logger = LoggerFactory.getLogger(SMPPSession.class);
-	private static final PDUSender pduSender = new SynchronizedPDUSender(new DefaultPDUSender(new PDUComposer()));
+	private static final PDUSender pduSender = new SynchronizedPDUSender(new DefaultPDUSender(new DefaultComposer()));
 	private static final PDUReader pduReader = new SynchronizedPDUReader(new DefaultPDUReader());
 	private static final AtomicInteger sessionIdSequence = new AtomicInteger();
 	
