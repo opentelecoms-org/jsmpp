@@ -9,8 +9,7 @@ import org.jsmpp.bean.EnquireLinkResp;
 import org.jsmpp.bean.UnbindResp;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.session.SMPPSessionHandler;
-import org.jsmpp.util.Decomposer;
-import org.jsmpp.util.DefaultDecomposer;
+import org.jsmpp.util.PDUDecomposer;
 import org.jsmpp.util.IntUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,7 @@ import org.slf4j.LoggerFactory;
  */
 abstract class SMPPSessionBound implements SMPPSessionState {
     private static final Logger logger = LoggerFactory.getLogger(SMPPSessionBound.class);
-    protected static final Decomposer pduDecomposer = new DefaultDecomposer();
+    protected static final PDUDecomposer pduDecomposer = new PDUDecomposer();
 
     public void processEnquireLink(Command pduHeader, byte[] pdu,
             SMPPSessionHandler smppClientProxy) throws IOException {

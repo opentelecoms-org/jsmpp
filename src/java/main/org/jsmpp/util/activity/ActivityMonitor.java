@@ -187,8 +187,6 @@ public class ActivityMonitor {
         lock.lock();
         try {
             final long delay = System.currentTimeMillis() - lastActivity;
-            // FIXME uud: DELETE THIS OUT
-            System.out.println("Delay " + delay + " inactiveThreshold " + inactiveThreshold + " result " + (delay < inactiveThreshold));
             return delay < inactiveThreshold;
         } finally {
             lock.unlock();
@@ -215,9 +213,11 @@ public class ActivityMonitor {
                 try {
                     // FIXME uud: DELETE THIS
                     System.out.println("Awaiting for " + checkPeriod);
+                    long start = System.currentTimeMillis();
                     cond.await(checkPeriod, TimeUnit.MILLISECONDS);
+                    long delay = System.currentTimeMillis() - start;
                     // FIXME uud: DELETE THIS
-                    System.out.println("Signalled");
+                    System.out.println("Check " + delay);;
                     checkActivity();
                 } catch (InterruptedException e) {
                     checkActivity();

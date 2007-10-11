@@ -8,8 +8,7 @@ import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.extra.ProcessMessageException;
 import org.jsmpp.session.SMPPSessionHandler;
-import org.jsmpp.util.Decomposer;
-import org.jsmpp.util.DefaultDecomposer;
+import org.jsmpp.util.PDUDecomposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 class SMPPSessionBoundRX extends SMPPSessionBound {
     private static final Logger logger = LoggerFactory.getLogger(SMPPSessionBoundRX.class);
-    private static final Decomposer pduDecomposer = new DefaultDecomposer();
+    private static final PDUDecomposer pduDecomposer = new PDUDecomposer();
 
     public void processDeliverSm(Command pduHeader, byte[] pdu,
             SMPPSessionHandler smppClientProxy) throws IOException {

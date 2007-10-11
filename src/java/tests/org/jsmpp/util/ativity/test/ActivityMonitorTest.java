@@ -20,7 +20,7 @@ public class ActivityMonitorTest extends TestCase {
     
     @Override
     protected void setUp() throws Exception {
-        activityMonitor = new ActivityMonitor(3000, 3000);
+        activityMonitor = new ActivityMonitor(0, 3000, 3000);
         activityMonitor.start();
     }
     
@@ -54,14 +54,20 @@ public class ActivityMonitorTest extends TestCase {
         final AtomicBoolean inactivityOccur = new AtomicBoolean();
         activityMonitor.setActivityListener(new ActivityListener() {
             public void onInactive() {
+                // FIXME uud: DELETE THIS OUT
+                System.out.println("INACTIVE");
                 inactivityOccur.set(true);
             }
         });
         
         for (int i = 0; i < 5; i++) {
+            takeASleep(2000);
+            System.out.println("Notifying");
             activityMonitor.notifyActivity();
-            takeASleep(3001);
         }
+        System.out.println("Before");
+        takeASleep(3000);
+        System.out.println("After");
         activityMonitor.notifyActivity();
         
         assertTrue("The inactivity event should be raised", inactivityOccur.get());
@@ -74,7 +80,6 @@ public class ActivityMonitorTest extends TestCase {
      * @return the delay in millis.
      */
     private long takeASleep(long millis) {
-        /*
         long start = System.currentTimeMillis();
         long delay = 0;
         try {
@@ -85,7 +90,7 @@ public class ActivityMonitorTest extends TestCase {
         } catch (InterruptedException e) {
         }
         return delay;
-        */
+        /*
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
@@ -93,5 +98,6 @@ public class ActivityMonitorTest extends TestCase {
             e.printStackTrace();
         }
         return millis;
+        */
     }
 }

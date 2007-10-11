@@ -15,7 +15,7 @@ import org.jsmpp.bean.GeneralDataCoding;
 import org.jsmpp.bean.MessageClass;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
-import org.jsmpp.util.DefaultComposer;
+import org.jsmpp.util.PDUComposer;
 
 
 /**
@@ -39,7 +39,7 @@ public class SubmitMessageExample {
      */
     public void submitMessage(OutputStream out, InputStream in, String sourceAddr, String destinationAddr, String message) {
         // we need DefaultPDUSender to send SMPP Commands.
-        PDUSender pduSender = new DefaultPDUSender(new DefaultComposer());
+        PDUSender pduSender = new DefaultPDUSender(new PDUComposer());
         try {
             pduSender.sendSubmitSm(out, ++sequenceNumber, null, TypeOfNumber.UNKNOWN, 
                     NumberingPlanIndicator.UNKNOWN, sourceAddr, TypeOfNumber.UNKNOWN, 
