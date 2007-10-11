@@ -16,7 +16,6 @@ import org.jsmpp.bean.MessageClass;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.util.DefaultComposer;
-import org.jsmpp.util.PDUComposer;
 
 
 /**

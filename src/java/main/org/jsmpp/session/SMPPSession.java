@@ -534,10 +534,14 @@ public class SMPPSession {
 			}
 		} catch (InvalidCommandLengthException e) {
 			logger.warn("Receive invalid command length", e);
-			// FIXME uud: response to this error, generick nack or close socket
+			try {
+                pduSender.sendGenericNack(out, SMPPConstant.STAT_ESME_RINVCMDLEN, 0);
+            } catch (IOException ee) {
+                logger.warn("Failed sending generic nack", ee);
+            }
+            unbindAndClose();
 		} catch (SocketTimeoutException e) {
 			addEnquireLinkJob();
-			//try { Thread.sleep(1); } catch (InterruptedException ee) {}
 		} catch (IOException e) {
 			closeSocket();
 		}
@@ -578,7 +582,6 @@ public class SMPPSession {
 		public void sendDeliverSmResp(int sequenceNumber) throws IOException {
 			try {
 				pduSender.sendDeliverSmResp(out, sequenceNumber);
-				// FIXME uud: delete this log
 				logger.debug("deliver_sm_resp with seq_number " + sequenceNumber + " has been sent");
 			} catch (PDUStringException e) {
 				logger.error("Failed sending deliver_sm_resp", e);

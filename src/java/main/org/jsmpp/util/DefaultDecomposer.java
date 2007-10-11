@@ -28,8 +28,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * Default implementation of SMPP PDU PDUDecomposer. FIXME uud: implement the
- * validation for string (PDUStringException)
+ * Default implementation of SMPP PDU PDUDecomposer.
  * 
  * @author uudashr
  * @version 1.0
