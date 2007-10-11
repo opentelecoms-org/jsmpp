@@ -36,13 +36,13 @@ import org.slf4j.LoggerFactory;
  * @since 1.0
  * 
  */
-public class DefaultDecomposer implements Decomposer {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultDecomposer.class);
+public class PDUDecomposer {
+    private static final Logger logger = LoggerFactory.getLogger(PDUDecomposer.class);
     
     /**
      * Default constructor.
      */
-    public DefaultDecomposer() {
+    public PDUDecomposer() {
     }
 
     /*
