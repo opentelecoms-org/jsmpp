@@ -7,6 +7,7 @@ import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.util.DefaultComposer;
 import org.jsmpp.util.PDUComposer;
 import org.jsmpp.util.PDUComposer;
 
@@ -27,7 +28,7 @@ public class DefaultPDUSender implements PDUSender {
      * Default constructor.
      */
     public DefaultPDUSender() {
-        this(new PDUComposer());
+        this(new DefaultComposer());
     }
     
     /**

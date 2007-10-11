@@ -27,7 +27,7 @@ import org.jsmpp.bean.UnbindResp;
  * @since 1.0
  * 
  */
-public interface Decomposer {
+public interface PDUDecomposer {
 
     /**
      * Decompose the header only SMPP PDU command.
