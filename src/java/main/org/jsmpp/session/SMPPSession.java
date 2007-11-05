@@ -211,7 +211,7 @@ public class SMPPSession {
 		
 		try {
 			pendingResp.waitDone();
-			logger.info("Enquire link response received");
+			logger.debug("Enquire link response received");
 		} catch (ResponseTimeoutException e) {
 			pendingResponse.remove(seqNum);
 			throw e;
