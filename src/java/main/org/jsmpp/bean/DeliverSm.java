@@ -17,7 +17,7 @@ public class DeliverSm extends MessageRequest {
 	 * @return
 	 */
 	public boolean isSmscDeliveryReceipt() {
-		return isSmscDeliveryReceipt(_esmClass);
+		return isSmscDeliveryReceipt(esmClass);
 	}
 	
 	/**
@@ -25,7 +25,7 @@ public class DeliverSm extends MessageRequest {
 	 * @param value
 	 */
 	public void setSmscDeliveryReceipt() {
-		_esmClass = composeSmscDeliveryReceipt(_esmClass);
+		esmClass = composeSmscDeliveryReceipt(esmClass);
 	}
 	
 	/**
@@ -33,14 +33,14 @@ public class DeliverSm extends MessageRequest {
 	 * @return
 	 */
 	public boolean isSmeManualAcknowledgment() {
-		return isSmeManualAcknowledgment(_esmClass);
+		return isSmeManualAcknowledgment(esmClass);
 	}
 	
 	/**
 	 * Message Type.
 	 */
 	public void setSmeManualAcknowledgment() {
-		_esmClass = composeSmeManualAcknowledment(_esmClass);
+		esmClass = composeSmeManualAcknowledment(esmClass);
 	}
 	
 	/**
@@ -48,14 +48,14 @@ public class DeliverSm extends MessageRequest {
 	 * @return
 	 */
 	public boolean isConversationAbort() {
-		return isConversationAbort(_esmClass);
+		return isConversationAbort(esmClass);
 	}
 	
 	/**
 	 * Message Type.
 	 */
 	public void setConversationAbort() {
-		_esmClass = composeConversationAbort(_esmClass);
+		esmClass = composeConversationAbort(esmClass);
 	}
 	
 	/**
@@ -63,14 +63,14 @@ public class DeliverSm extends MessageRequest {
 	 * @return
 	 */
 	public boolean isIntermedietDeliveryNotification() {
-		return isIntermedietDeliveryNotification(_esmClass);
+		return isIntermedietDeliveryNotification(esmClass);
 	}
 	
 	/**
 	 * Message Type.
 	 */
 	public void setIntermedietDeliveryNotification() {
-		_esmClass = composeIntermedietDeliveryNotification(_esmClass);
+		esmClass = composeIntermedietDeliveryNotification(esmClass);
 	}
 	
 	/**
@@ -78,14 +78,14 @@ public class DeliverSm extends MessageRequest {
 	 * @return
 	 */
 	public boolean isSmeAckNotRequested() {
-		return isSmeAckNotRequested(_registeredDelivery);
+		return isSmeAckNotRequested(registeredDelivery);
 	}
 	
 	/**
 	 * SME originated Acknowledgement.
 	 */
 	public void setSmeAckNotRequested() {
-		_registeredDelivery = composeSmeAckNotRequested(_registeredDelivery);
+		registeredDelivery = composeSmeAckNotRequested(registeredDelivery);
 	}
 	
 	/**
@@ -93,14 +93,14 @@ public class DeliverSm extends MessageRequest {
 	 * @return
 	 */
 	public boolean isSmeDeliveryAckRequested() {
-		return isSmeDeliveryAckRequested(_registeredDelivery);
+		return isSmeDeliveryAckRequested(registeredDelivery);
 	}
 	
 	/**
 	 * SME originated Acknowledgement.
 	 */
 	public void setSmeDeliveryAckRequested() {
-		_registeredDelivery = composeSmeDeliveryAckRequested(_registeredDelivery);
+		registeredDelivery = composeSmeDeliveryAckRequested(registeredDelivery);
 	}
 	
 	/**
@@ -108,7 +108,7 @@ public class DeliverSm extends MessageRequest {
 	 * @return
 	 */
 	public boolean isSmeManualAckRequested() {
-		return isSmeManualAckRequested(_registeredDelivery);
+		return isSmeManualAckRequested(registeredDelivery);
 	}
 	
 	/**
@@ -116,7 +116,7 @@ public class DeliverSm extends MessageRequest {
 	 * SME originated Acknowledgement.
 	 */
 	public void setSmeManualAckRequested() {
-		_registeredDelivery = composeSmeManualAckRequested(_registeredDelivery);
+		registeredDelivery = composeSmeManualAckRequested(registeredDelivery);
 	}
 	
 	/**
@@ -124,14 +124,14 @@ public class DeliverSm extends MessageRequest {
 	 * @return
 	 */
 	public boolean isSmeDeliveryAndManualAckRequested() {
-		return isSmeDeliveryAndManualAckRequested(_registeredDelivery);
+		return isSmeDeliveryAndManualAckRequested(registeredDelivery);
 	}
 	
 	/**
 	 * SME originated Acknowledgement.
 	 */
 	public void setSmeDeliveryAndManualAckRequested() {
-		_registeredDelivery = composeSmeDeliveryAndManualAckRequested(_registeredDelivery);
+		registeredDelivery = composeSmeDeliveryAndManualAckRequested(registeredDelivery);
 	}
 	
 	/**

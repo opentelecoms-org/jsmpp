@@ -6,6 +6,7 @@ import java.util.Date;
 import org.jsmpp.NumberingPlanIndicator;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.TypeOfNumber;
+import org.jsmpp.bean.Address;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.Command;
@@ -188,16 +189,23 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setServiceType(reader.readCString());
         StringValidator.validateString(req.getServiceType(),
                 StringParameter.SERVICE_TYPE);
-        req.setSourceAddrTon(reader.readByte());
-        req.setSourceAddrNpi(reader.readByte());
-        req.setSourceAddr(reader.readCString());
-        StringValidator.validateString(req.getSourceAddr(),
+        
+        Address source = new Address();
+        source.setTypeOfNumber(reader.readByte());
+        source.setNumberingPlanIndicator(reader.readByte());
+        source.setValue(reader.readCString());
+        StringValidator.validateString(source.getValue(),
                 StringParameter.SOURCE_ADDR);
-        req.setDestAddrTon(reader.readByte());
-        req.setDestAddrNpi(reader.readByte());
-        req.setDestinationAddr(reader.readCString());
-        StringValidator.validateString(req.getDestinationAddr(),
+        req.setSource(source);
+        
+        Address destination = new Address();
+        destination.setTypeOfNumber(reader.readByte());
+        destination.setNumberingPlanIndicator(reader.readByte());
+        destination.setValue(reader.readCString());
+        StringValidator.validateString(destination.getValue(),
                 StringParameter.DESTINATION_ADDR);
+        req.setDestination(destination);
+        
         req.setEsmClass(reader.readByte());
         req.setProtocolId(reader.readByte());
         req.setPriorityFlag(reader.readByte());
@@ -278,9 +286,7 @@ public class DefaultDecomposer implements PDUDecomposer {
     }
 
     // DELIVER_SM OPERATION
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.jsmpp.util.PDUDecomposer#deliverSm(byte[])
      */
     public DeliverSm deliverSm(byte[] b) throws PDUStringException {
@@ -290,16 +296,23 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setServiceType(reader.readCString());
         StringValidator.validateString(req.getServiceType(),
                 StringParameter.SERVICE_TYPE);
-        req.setSourceAddrTon(reader.readByte());
-        req.setSourceAddrNpi(reader.readByte());
-        req.setSourceAddr(reader.readCString());
-        StringValidator.validateString(req.getSourceAddr(),
+        
+        Address source = new Address();
+        source.setTypeOfNumber(reader.readByte());
+        source.setNumberingPlanIndicator(reader.readByte());
+        source.setValue(reader.readCString());
+        StringValidator.validateString(source.getValue(),
                 StringParameter.SOURCE_ADDR);
-        req.setDestAddrTon(reader.readByte());
-        req.setDestAddrNpi(reader.readByte());
-        req.setDestinationAddr(reader.readCString());
-        StringValidator.validateString(req.getDestinationAddr(),
+        req.setSource(source);
+        
+        Address destination = new Address();
+        destination.setTypeOfNumber(reader.readByte());
+        destination.setNumberingPlanIndicator(reader.readByte());
+        destination.setValue(reader.readCString());
+        StringValidator.validateString(destination.getValue(),
                 StringParameter.DESTINATION_ADDR);
+        req.setDestination(destination);
+        
         req.setEsmClass(reader.readByte());
         req.setProtocolId(reader.readByte());
         req.setPriorityFlag(reader.readByte());

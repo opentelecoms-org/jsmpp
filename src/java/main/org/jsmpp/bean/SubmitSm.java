@@ -18,14 +18,14 @@ public class SubmitSm extends MessageRequest {
      * @return
      */
     public boolean isDefaultMode() {
-        return isDefaultMode(_esmClass);
+        return isDefaultMode(esmClass);
     }
 
     /**
      * Messaging Mode.
      */
     public void setDefaultMode() {
-        _esmClass = composeDefaultMode(_esmClass);
+        esmClass = composeDefaultMode(esmClass);
     }
 
     /**
@@ -34,14 +34,14 @@ public class SubmitSm extends MessageRequest {
      * @return
      */
     public boolean isDatagramMode() {
-        return isDatagramMode(_esmClass);
+        return isDatagramMode(esmClass);
     }
 
     /**
      * Messaging Mode.
      */
     public void setDatagramMode() {
-        _esmClass = composeDatagramMode(_esmClass);
+        esmClass = composeDatagramMode(esmClass);
     }
 
     /**
@@ -50,14 +50,14 @@ public class SubmitSm extends MessageRequest {
      * @return
      */
     public boolean isForwardMode() {
-        return isForwardMode(_esmClass);
+        return isForwardMode(esmClass);
     }
 
     /**
      * Messaging Mode.
      */
     public void setForwardMode() {
-        _esmClass = composeForwardMode(_esmClass);
+        esmClass = composeForwardMode(esmClass);
     }
 
     /**
@@ -66,14 +66,14 @@ public class SubmitSm extends MessageRequest {
      * @return
      */
     public boolean isStoreAndForwardMode() {
-        return isStoreAndForwardMode(_esmClass);
+        return isStoreAndForwardMode(esmClass);
     }
 
     /**
      * Messaging Mode.
      */
     public void setStoreAndForwardMode() {
-        composeStoreAndForwardMode(_esmClass);
+        composeStoreAndForwardMode(esmClass);
     }
 
     /**
@@ -82,14 +82,14 @@ public class SubmitSm extends MessageRequest {
      * @return
      */
     public boolean isEsmeDeliveryAcknowledgement() {
-        return isEsmeDeliveryAcknowledgement(_esmClass);
+        return isEsmeDeliveryAcknowledgement(esmClass);
     }
 
     /**
      * Message Type.
      */
     public void setEsmeDelivertAcknowledgement() {
-        _esmClass = composeEsmeDeliveryAcknowledgement(_esmClass);
+        esmClass = composeEsmeDeliveryAcknowledgement(esmClass);
     }
 
     /**
@@ -98,14 +98,14 @@ public class SubmitSm extends MessageRequest {
      * @return
      */
     public boolean isEsmeManualAcknowledgement() {
-        return isEsmeManualAcknowledgement(_esmClass);
+        return isEsmeManualAcknowledgement(esmClass);
     }
 
     /**
      * Message Type.
      */
     public void setEsmeManualAcknowledgement() {
-        _esmClass = composeEsmeManualAcknowledgement(_esmClass);
+        esmClass = composeEsmeManualAcknowledgement(esmClass);
     }
 
     /**
@@ -114,14 +114,14 @@ public class SubmitSm extends MessageRequest {
      * @return
      */
     public boolean isSmscDelReceiptNotRequested() {
-        return isSmscDelNotRequested(_registeredDelivery);
+        return isSmscDelNotRequested(registeredDelivery);
     }
 
     /**
      * SMSC Delivery Receipt.
      */
     public void setSmscDelReceiptNotRequested() {
-        _registeredDelivery = composeSmscDelReceiptNotRequested(_registeredDelivery);
+        registeredDelivery = composeSmscDelReceiptNotRequested(registeredDelivery);
     }
 
     /**
@@ -130,14 +130,14 @@ public class SubmitSm extends MessageRequest {
      * @return
      */
     public boolean isSmscDelReceiptSuccessAndFailureRequested() {
-        return isSmscDelReceiptSuccessAndFailureRequested(_registeredDelivery);
+        return isSmscDelReceiptSuccessAndFailureRequested(registeredDelivery);
     }
 
     /**
      * SMSC Delivery Receipt.
      */
     public void setSmscDelReceiptSuccessAndFailureRequested() {
-        _registeredDelivery = composeSmscDelReceiptSuccessAndFailureRequested(_registeredDelivery);
+        registeredDelivery = composeSmscDelReceiptSuccessAndFailureRequested(registeredDelivery);
     }
 
     /**
@@ -146,14 +146,14 @@ public class SubmitSm extends MessageRequest {
      * @return
      */
     public boolean isSmscDelReceiptFailureRequested() {
-        return isSmscDelReceiptFailureRequested(_registeredDelivery);
+        return isSmscDelReceiptFailureRequested(registeredDelivery);
     }
 
     /**
      * SMSC Delivery Receipt.
      */
     public void setSmscDelReceiptFailureRequested() {
-        _registeredDelivery = composeSmscDelReceiptFailureRequested(_registeredDelivery);
+        registeredDelivery = composeSmscDelReceiptFailureRequested(registeredDelivery);
     }
 
     /**

@@ -7,26 +7,22 @@ import org.jsmpp.SMPPConstant;
  * 
  */
 public class MessageRequest extends Command {
-    protected String _serviceType;
-    protected byte _sourceAddrTon;
-    protected byte _sourceAddrNpi;
-    protected String _sourceAddr;
-    protected byte _destAddrTon;
-    protected byte _destAddrNpi;
-    protected String _destinationAddr;
-    protected byte _esmClass;
-    protected byte _protocolId;
-    protected byte _priorityFlag;
+    protected String serviceType;
+    protected Address source;
+    protected Address destination;
+    protected byte esmClass;
+    protected byte protocolId;
+    protected byte priorityFlag;
     // FIXME uud: change using Date instead of String.
-    protected String _scheduleDeliveryTime;
+    protected String scheduleDeliveryTime;
     // FIXME uud: change using Date instead of String.
-    protected String _validityPeriod;
-    protected byte _registeredDelivery;
-    protected byte _replaceIfPresent;
-    protected byte _dataCoding;
-    protected byte _smDefaultMsgId;
-    protected byte _smLength;
-    protected byte[] _shortMessage;
+    protected String validityPeriod;
+    protected byte registeredDelivery;
+    protected byte replaceIfPresent;
+    protected byte dataCoding;
+    protected byte smDefaultMsgId;
+    protected byte smLength;
+    protected byte[] shortMessage;
 
     public MessageRequest() {
         super();
@@ -38,14 +34,14 @@ public class MessageRequest extends Command {
      * @return
      */
     public boolean isDefaultMessageType() {
-        return isDefaultMessageType(_esmClass);
+        return isDefaultMessageType(esmClass);
     }
 
     /**
      * Message Type.
      */
     public void setDefaultMessageType() {
-        _esmClass = composeDefaultMessageType(_esmClass);
+        esmClass = composeDefaultMessageType(esmClass);
     }
 
     /**
@@ -54,14 +50,14 @@ public class MessageRequest extends Command {
      * @return
      */
     public boolean isUdhi() {
-        return isUdhi(_esmClass);
+        return isUdhi(esmClass);
     }
 
     /**
      * Specific Features.
      */
     public void setUdhi() {
-        _esmClass = composeUdhi(_esmClass);
+        esmClass = composeUdhi(esmClass);
     }
 
     /**
@@ -70,14 +66,14 @@ public class MessageRequest extends Command {
      * @return
      */
     public boolean isReplyPath() {
-        return isReplyPath(_esmClass);
+        return isReplyPath(esmClass);
     }
 
     /**
      * Specific Features.
      */
     public void setReplyPath() {
-        _esmClass = composeReplyPath(_esmClass);
+        esmClass = composeReplyPath(esmClass);
     }
 
     /**
@@ -86,266 +82,199 @@ public class MessageRequest extends Command {
      * @return
      */
     public boolean isUdhiAndReplyPath() {
-        return isUdhiAndReplyPath(_esmClass);
+        return isUdhiAndReplyPath(esmClass);
     }
 
     /**
      * Specific Features.
      */
     public void setUdhiAndReplyPath() {
-        _esmClass = composeUdhiAndReplyPath(_esmClass);
+        esmClass = composeUdhiAndReplyPath(esmClass);
     }
 
     /**
      * @return the dataCoding
      */
     public byte getDataCoding() {
-        return _dataCoding;
+        return dataCoding;
     }
 
     /**
      * @param dataCoding the dataCoding to set
      */
     public void setDataCoding(byte dataCoding) {
-        _dataCoding = dataCoding;
+        this.dataCoding = dataCoding;
     }
 
-    /**
-     * @return the destAddrNpi
-     */
-    public byte getDestAddrNpi() {
-        return _destAddrNpi;
+    public Address getDestination() {
+        return destination;
+    }
+    
+    public void setDestination(Address destination) {
+        this.destination = destination;
     }
 
-    /**
-     * @param destAddrNpi the destAddrNpi to set
-     */
-    public void setDestAddrNpi(byte destAddrNpi) {
-        _destAddrNpi = destAddrNpi;
-    }
-
-    /**
-     * @return the destAddrTon
-     */
-    public byte getDestAddrTon() {
-        return _destAddrTon;
-    }
-
-    /**
-     * @param destAddrTon the destAddrTon to set
-     */
-    public void setDestAddrTon(byte destAddrTon) {
-        _destAddrTon = destAddrTon;
-    }
-
-    /**
-     * @return the destinationAddr
-     */
-    public String getDestinationAddr() {
-        return _destinationAddr;
-    }
-
-    /**
-     * @param destinationAddr the destinationAddr to set
-     */
-    public void setDestinationAddr(String destinationAddr) {
-        _destinationAddr = destinationAddr;
-    }
 
     /**
      * @return the esmClass
      */
     public byte getEsmClass() {
-        return _esmClass;
+        return esmClass;
     }
 
     /**
      * @param esmClass the esmClass to set
      */
     public void setEsmClass(byte esmClass) {
-        _esmClass = esmClass;
+        this.esmClass = esmClass;
     }
 
     /**
      * @return the priorityFlag
      */
     public byte getPriorityFlag() {
-        return _priorityFlag;
+        return priorityFlag;
     }
 
     /**
      * @param priorityFlag the priorityFlag to set
      */
     public void setPriorityFlag(byte priorityFlag) {
-        _priorityFlag = priorityFlag;
+        this.priorityFlag = priorityFlag;
     }
 
     /**
      * @return the protocolId
      */
     public byte getProtocolId() {
-        return _protocolId;
+        return protocolId;
     }
 
     /**
      * @param protocolId the protocolId to set
      */
     public void setProtocolId(byte protocolId) {
-        _protocolId = protocolId;
+        this.protocolId = protocolId;
     }
 
     /**
      * @return the registeredDelivery
      */
     public byte getRegisteredDelivery() {
-        return _registeredDelivery;
+        return registeredDelivery;
     }
 
     /**
      * @param registeredDelivery the registeredDelivery to set
      */
     public void setRegisteredDelivery(byte registeredDelivery) {
-        _registeredDelivery = registeredDelivery;
+        this.registeredDelivery = registeredDelivery;
     }
 
     /**
      * @return the replaceIfPresent
      */
     public byte getReplaceIfPresent() {
-        return _replaceIfPresent;
+        return replaceIfPresent;
     }
 
     /**
      * @param replaceIfPresent the replaceIfPresent to set
      */
     public void setReplaceIfPresent(byte replaceIfPresent) {
-        _replaceIfPresent = replaceIfPresent;
+        this.replaceIfPresent = replaceIfPresent;
     }
 
     /**
      * @return the scheduleDeliveryTime
      */
     public String getScheduleDeliveryTime() {
-        return _scheduleDeliveryTime;
+        return scheduleDeliveryTime;
     }
 
     /**
      * @param scheduleDeliveryTime the scheduleDeliveryTime to set
      */
     public void setScheduleDeliveryTime(String scheduleDeliveryTime) {
-        _scheduleDeliveryTime = scheduleDeliveryTime;
+        this.scheduleDeliveryTime = scheduleDeliveryTime;
     }
 
     /**
      * @return the serviceType
      */
     public String getServiceType() {
-        return _serviceType;
+        return serviceType;
     }
 
     /**
      * @param serviceType the serviceType to set
      */
     public void setServiceType(String serviceType) {
-        _serviceType = serviceType;
+        this.serviceType = serviceType;
     }
 
     /**
      * @return the shortMessage
      */
     public byte[] getShortMessage() {
-        return _shortMessage;
+        return shortMessage;
     }
 
     /**
      * @param shortMessage the shortMessage to set
      */
     public void setShortMessage(byte[] shortMessage) {
-        _shortMessage = shortMessage;
+        this.shortMessage = shortMessage;
     }
 
     /**
      * @return the smDefaultMsgId
      */
     public byte getSmDefaultMsgId() {
-        return _smDefaultMsgId;
+        return smDefaultMsgId;
     }
 
     /**
      * @param smDefaultMsgId the smDefaultMsgId to set
      */
     public void setSmDefaultMsgId(byte smDefaultMsgId) {
-        _smDefaultMsgId = smDefaultMsgId;
+        this.smDefaultMsgId = smDefaultMsgId;
     }
 
     /**
      * @return the smLength
      */
     public byte getSmLength() {
-        return _smLength;
+        return smLength;
     }
 
     /**
      * @param smLength the smLength to set
      */
     public void setSmLength(byte smLength) {
-        _smLength = smLength;
+        this.smLength = smLength;
     }
 
-    /**
-     * @return the sourceAddr
-     */
-    public String getSourceAddr() {
-        return _sourceAddr;
+    public Address getSource() {
+        return source;
     }
-
-    /**
-     * @param sourceAddr the sourceAddr to set
-     */
-    public void setSourceAddr(String sourceAddr) {
-        _sourceAddr = sourceAddr;
+    
+    public void setSource(Address source) {
+        this.source = source;
     }
-
-    /**
-     * @return the sourceAddrNpi
-     */
-    public byte getSourceAddrNpi() {
-        return _sourceAddrNpi;
-    }
-
-    /**
-     * @param sourceAddrNpi the sourceAddrNpi to set
-     */
-    public void setSourceAddrNpi(byte sourceAddrNpi) {
-        _sourceAddrNpi = sourceAddrNpi;
-    }
-
-    /**
-     * @return the sourceAddrTon
-     */
-    public byte getSourceAddrTon() {
-        return _sourceAddrTon;
-    }
-
-    /**
-     * @param sourceAddrTon the sourceAddrTon to set
-     */
-    public void setSourceAddrTon(byte sourceAddrTon) {
-        _sourceAddrTon = sourceAddrTon;
-    }
-
+    
     /**
      * @return the validityPeriod
      */
     public String getValidityPeriod() {
-        return _validityPeriod;
+        return validityPeriod;
     }
 
     /**
      * @param validityPeriod the validityPeriod to set
      */
     public void setValidityPeriod(String validityPeriod) {
-        _validityPeriod = validityPeriod;
+        this.validityPeriod = validityPeriod;
     }
 
     /**
