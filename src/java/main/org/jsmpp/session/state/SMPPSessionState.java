@@ -3,6 +3,7 @@ package org.jsmpp.session.state;
 import java.io.IOException;
 
 import org.jsmpp.bean.Command;
+import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.SMPPSessionHandler;
 
 /**
@@ -22,6 +23,8 @@ public interface SMPPSessionState {
     public static final SMPPSessionState UNBOUND = new SMPPSessionUnbound();
     public static final SMPPSessionState CLOSED = new SMPPSessionClosed();
 
+    SessionState getSessionState();
+    
     /**
      * Process the bind response command.
      * 
@@ -30,7 +33,7 @@ public interface SMPPSessionState {
      * @param sessionHandler is the session handler.
      * @throws IOException throw if there is an IO error occur.
      */
-    public void processBindResp(Command pduHeader, byte[] pdu,
+    void processBindResp(Command pduHeader, byte[] pdu,
             SMPPSessionHandler sessionHandler) throws IOException;
 
     /**
@@ -41,7 +44,7 @@ public interface SMPPSessionState {
      * @param sessionHandler is the session handler.
      * @throws IOException throw if there is an IO error occur.
      */
-    public void processGenericNack(Command pduHeader, byte[] pdu,
+    void processGenericNack(Command pduHeader, byte[] pdu,
             SMPPSessionHandler sessionHandler) throws IOException;
 
     /**
@@ -52,7 +55,7 @@ public interface SMPPSessionState {
      * @param sessionHandler is the session handler.
      * @throws IOException throw if there is an IO error occur.
      */
-    public void processEnquireLink(Command pduHeader, byte[] pdu,
+    void processEnquireLink(Command pduHeader, byte[] pdu,
             SMPPSessionHandler sessionHandler) throws IOException;;
 
     /**
@@ -63,7 +66,7 @@ public interface SMPPSessionState {
      * @param sessionHandler is the session handler.
      * @throws IOException throw if there is an IO error occur.
      */
-    public void processEnquireLinkResp(Command pduHeader, byte[] pdu,
+    void processEnquireLinkResp(Command pduHeader, byte[] pdu,
             SMPPSessionHandler sessionHandler) throws IOException;
 
     /**
@@ -74,7 +77,7 @@ public interface SMPPSessionState {
      * @param sessionHandler is the session handler.
      * @throws IOException throw if there is an IO error occur.
      */
-    public void processSubmitSmResp(Command pduHeader, byte[] pdu,
+    void processSubmitSmResp(Command pduHeader, byte[] pdu,
             SMPPSessionHandler sessionHandler) throws IOException;
 
     /**
@@ -85,7 +88,7 @@ public interface SMPPSessionState {
      * @param sessionHandler is the session handler.
      * @throws IOException throw if there is an IO error occur.
      */
-    public void processQuerySmResp(Command pduHeader, byte[] pdu,
+    void processQuerySmResp(Command pduHeader, byte[] pdu,
             SMPPSessionHandler sessionHandler) throws IOException;
 
     /**
@@ -96,7 +99,7 @@ public interface SMPPSessionState {
      * @param sessionHandler is the session handler.
      * @throws IOException throw if there is an IO error occur.
      */
-    public void processDeliverSm(Command pduHeader, byte[] pdu,
+    void processDeliverSm(Command pduHeader, byte[] pdu,
             SMPPSessionHandler sessionHandler) throws IOException;
 
     /**
@@ -107,7 +110,7 @@ public interface SMPPSessionState {
      * @param sessionHandler is the session handler.
      * @throws IOException throw if there is an IO error occur.
      */
-    public void processUnbind(Command pduHeader, byte[] pdu,
+    void processUnbind(Command pduHeader, byte[] pdu,
             SMPPSessionHandler sessionHandler) throws IOException;
 
     /**
@@ -118,7 +121,7 @@ public interface SMPPSessionState {
      * @param sessionHandler is the session handler.
      * @throws IOException throw if there is an IO error occur.
      */
-    public void processUnbindResp(Command pduHeader, byte[] pdu,
+    void processUnbindResp(Command pduHeader, byte[] pdu,
             SMPPSessionHandler sessionHandler) throws IOException;
 
     /**
@@ -129,6 +132,6 @@ public interface SMPPSessionState {
      * @param sessionHandler is the session handler.
      * @throws IOException throw if there is an IO error occur.
      */
-    public void processUnknownCid(Command pduHeader, byte[] pdu,
+    void processUnknownCid(Command pduHeader, byte[] pdu,
             SMPPSessionHandler sessionHandler) throws IOException;
 }

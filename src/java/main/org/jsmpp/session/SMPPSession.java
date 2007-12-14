@@ -57,12 +57,12 @@ public class SMPPSession {
 	private static final PDUReader pduReader = new SynchronizedPDUReader(new DefaultPDUReader());
 	private static final AtomicInteger sessionIdSequence = new AtomicInteger();
 	
-	private Socket socket = new Socket();
+	private final Socket socket;
 	private DataInputStream in;
 	private OutputStream out;
 	private SessionState sessionState = SessionState.CLOSED;
 	private SMPPSessionState stateProcessor = SMPPSessionState.CLOSED;
-	private final Sequence sequence = new Sequence();
+	private final Sequence sequence = new Sequence(1);
 	private final SMPPSessionHandler sessionHandler = new SMPPSessionHandlerImpl();
 	private final Hashtable<Integer, PendingResponse<? extends Command>> pendingResponse = new Hashtable<Integer, PendingResponse<? extends Command>>();
 	private int sessionTimer = 5000;
@@ -77,8 +77,8 @@ public class SMPPSession {
 	private int sessionId = sessionIdSequence.incrementAndGet();
 	
 	public SMPPSession() {
-		
-	}
+	    socket = new Socket();
+    }
 	
 	public int getSessionId() {
 		return sessionId;
@@ -133,7 +133,7 @@ public class SMPPSession {
 			closeSocket();
 			throw new IOException(message + ": " + e.getMessage());
 		} catch (IOException e) {
-			logger.error("IO Error occure", e);
+			logger.error("IO Error occur", e);
 			closeSocket();
 			throw e;
 		}

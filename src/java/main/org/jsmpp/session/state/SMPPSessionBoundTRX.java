@@ -3,6 +3,7 @@ package org.jsmpp.session.state;
 import java.io.IOException;
 
 import org.jsmpp.bean.Command;
+import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.SMPPSessionHandler;
 
 /**
@@ -15,7 +16,12 @@ import org.jsmpp.session.SMPPSessionHandler;
  * 
  */
 class SMPPSessionBoundTRX extends SMPPSessionBoundTX {
-
+    
+    @Override
+    public SessionState getSessionState() {
+        return SessionState.BOUND_TRX;
+    }
+    
     public void processDeliverSm(Command pduHeader, byte[] pdu,
             SMPPSessionHandler smppClientProxy) throws IOException {
         SMPPSessionBoundRX.processDeliverSm0(pduHeader, pdu, smppClientProxy);

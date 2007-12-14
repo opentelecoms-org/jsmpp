@@ -3,6 +3,7 @@ package org.jsmpp.session.state;
 import java.io.IOException;
 
 import org.jsmpp.bean.Command;
+import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.SMPPSessionHandler;
 
 /**
@@ -16,7 +17,12 @@ import org.jsmpp.session.SMPPSessionHandler;
  * 
  */
 class SMPPSessionUnbound implements SMPPSessionState {
-
+    
+    @Override
+    public SessionState getSessionState() {
+        return SessionState.UNBOUND;
+    }
+    
     public void processBindResp(Command pduHeader, byte[] pdu,
             SMPPSessionHandler smppClientProxy) throws IOException {
         throw new IOException("Invalid process for unbound session state");

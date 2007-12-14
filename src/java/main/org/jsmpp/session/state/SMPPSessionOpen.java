@@ -8,6 +8,7 @@ import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.Command;
 import org.jsmpp.extra.PendingResponse;
+import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.SMPPSessionHandler;
 import org.jsmpp.util.DefaultDecomposer;
 import org.jsmpp.util.IntUtil;
@@ -27,7 +28,12 @@ import org.slf4j.LoggerFactory;
 class SMPPSessionOpen implements SMPPSessionState {
     private static final Logger logger = LoggerFactory.getLogger(SMPPSessionOpen.class);
     private static final PDUDecomposer pduDecomposer = new DefaultDecomposer();
-
+    
+    @Override
+    public SessionState getSessionState() {
+        return SessionState.OPEN;
+    }
+    
     public void processBindResp(Command pduHeader, byte[] pdu,
             SMPPSessionHandler smppClientProxy) throws IOException {
         PendingResponse<Command> pendingResp = smppClientProxy

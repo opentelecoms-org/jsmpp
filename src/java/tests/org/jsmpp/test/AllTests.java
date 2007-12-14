@@ -2,6 +2,7 @@ package org.jsmpp.test;
 
 import org.jsmpp.bean.test.AllBeanTests;
 import org.jsmpp.util.ativity.test.AllActivityTests;
+import org.jsmpp.util.test.AllUtilTests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -20,6 +21,7 @@ public class AllTests {
         TestSuite suite = new TestSuite("Test for org.jsmpp.test");
         //$JUnit-BEGIN$
         suite.addTest(AllBeanTests.suite());
+        suite.addTest(AllUtilTests.suite());
         suite.addTest(AllActivityTests.suite());
         //$JUnit-END$
         return suite;

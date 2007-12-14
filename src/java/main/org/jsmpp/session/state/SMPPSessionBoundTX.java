@@ -8,6 +8,7 @@ import org.jsmpp.bean.Command;
 import org.jsmpp.bean.QuerySmResp;
 import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.extra.PendingResponse;
+import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.SMPPSessionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,12 @@ import org.slf4j.LoggerFactory;
  */
 class SMPPSessionBoundTX extends SMPPSessionBound {
     private static final Logger logger = LoggerFactory.getLogger(SMPPSessionBoundTX.class);
-
+    
+    @Override
+    public SessionState getSessionState() {
+        return SessionState.BOUND_TX;
+    }
+    
     public void processSubmitSmResp(Command pduHeader, byte[] pdu,
             SMPPSessionHandler smppClientProxy) throws IOException {
 

@@ -1,4 +1,4 @@
-package org.jsmpp.util.ativity.test;
+package org.jsmpp.util.test;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -7,12 +7,12 @@ import junit.framework.TestSuite;
  * @author uudashr
  *
  */
-public class AllActivityTests {
+public class AllUtilTests {
 
     public static Test suite() {
-        TestSuite suite = new TestSuite("Test for org.jsmpp.util.ativity.test");
+        TestSuite suite = new TestSuite("Test for org.jsmpp.util");
         //$JUnit-BEGIN$
-        suite.addTestSuite(ActivityMonitorTest.class);
+        suite.addTestSuite(SequenceTest.class);
         //$JUnit-END$
         return suite;
     }
