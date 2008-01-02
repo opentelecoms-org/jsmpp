@@ -9,7 +9,6 @@ import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.util.DefaultComposer;
 import org.jsmpp.util.PDUComposer;
-import org.jsmpp.util.PDUComposer;
 
 
 
@@ -133,6 +132,7 @@ public class DefaultPDUSender implements PDUSender {
      */
     public byte[] sendEnquireLink(OutputStream out, int sequenceNumber)
             throws IOException {
+        
         byte[] b = pduComposer.enquireLink(sequenceNumber);
         synchronized (out) {
             out.write(b);

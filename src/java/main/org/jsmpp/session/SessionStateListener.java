@@ -17,8 +17,8 @@ public interface SessionStateListener {
      * 
      * @param newState is the new state.
      * @param oldState is the old state.
-     * @param source is the {@link SMPPSession} that has a changed on state.
+     * @param source is source of changed state.
      */
     public void onStateChange(SessionState newState, SessionState oldState,
-            SMPPSession source);
+            Object source);
 }

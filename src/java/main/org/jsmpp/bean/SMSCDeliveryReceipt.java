@@ -1,32 +1,54 @@
 package org.jsmpp.bean;
 
 /**
+ * Used to request an SMSC delivery receipt and/or SME originated
+ * acknowledgments.
+ * 
  * @author uudashr
  * 
  */
 public enum SMSCDeliveryReceipt {
-    DEFAULT((byte)0x00), SUCCESS_FAILURE((byte)0x01), SUCCESS((byte)0x02);
+    /**
+     * No SMSC Delivery Receipt requested (default).
+     */
+    DEFAULT((byte)0x00), 
+    /**
+     * SMSC Delivery Receipt requested where final delivery outcome is delivery
+     * success or failure.
+     */
+    SUCCESS_FAILURE((byte)0x01), 
+    /**
+     * SMSC Delivery Receipt requested where the final delivery outcome is
+     * delivery failure.
+     */
+    SUCCESS((byte)0x02);
 
-    public static final byte CLEAR_BYTE = (byte)0xfc;
-    public static final byte MASK_BYTE = 0x03;
+    public static final byte CLEAR_BYTE = (byte)0xfc; // 11111100
+    public static final byte MASK_BYTE = 0x03; // 00000011
 
-    private final byte _value;
+    private final byte value;
 
     private SMSCDeliveryReceipt(byte value) {
-        _value = value;
+        this.value = value;
     }
 
     public byte value() {
-        return _value;
+        return value;
     }
 
-    public static SMSCDeliveryReceipt valueOf(byte value) {
-        for (SMSCDeliveryReceipt val : values()) {
-            if (val._value == value)
-                return val;
-        }
-
-        throw new IllegalArgumentException(
-                "No enum const SMSCDeliveryReceipt with value " + value);
+    public boolean containedIn(RegisteredDelivery registeredDelivery) {
+        return containedIn(registeredDelivery.value());
+    }
+    
+    public boolean containedIn(byte registeredDelivery) {
+        return this.value == (byte)(registeredDelivery & MASK_BYTE);
+    }
+    
+    public static byte compose(byte registeredDelivery, SMSCDeliveryReceipt smscDeliveryReceipt) {
+        return (byte)(clean(registeredDelivery) | smscDeliveryReceipt.value());
+    }
+    
+    public static byte clean(byte registeredDelivery) {
+        return (byte) (registeredDelivery & CLEAR_BYTE);
     }
 }

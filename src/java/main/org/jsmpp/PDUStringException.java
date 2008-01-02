@@ -18,7 +18,7 @@ public class PDUStringException extends PDUException {
      * Construct with specified message and parameter.
      * 
      * @param message is the detail message.
-     * @param parameter is the constaint parameter.
+     * @param parameter is the constraint parameter.
      */
     public PDUStringException(String message, StringParameter parameter) {
         super(message);

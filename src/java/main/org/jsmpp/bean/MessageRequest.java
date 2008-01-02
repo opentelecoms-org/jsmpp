@@ -8,14 +8,16 @@ import org.jsmpp.SMPPConstant;
  */
 public class MessageRequest extends Command {
     protected String serviceType;
-    protected Address source;
-    protected Address destination;
+    protected byte sourceAddrTon;
+    protected byte sourceAddrNpi;
+    protected String sourceAddr;
+    protected byte destAddrTon;
+    protected byte destAddrNpi;
+    protected String destAddress;
     protected byte esmClass;
     protected byte protocolId;
     protected byte priorityFlag;
-    // FIXME uud: change using Date instead of String.
     protected String scheduleDeliveryTime;
-    // FIXME uud: change using Date instead of String.
     protected String validityPeriod;
     protected byte registeredDelivery;
     protected byte replaceIfPresent;
@@ -106,14 +108,29 @@ public class MessageRequest extends Command {
         this.dataCoding = dataCoding;
     }
 
-    public Address getDestination() {
-        return destination;
+    public byte getDestAddrTon() {
+        return destAddrTon;
     }
     
-    public void setDestination(Address destination) {
-        this.destination = destination;
+    public void setDestAddrTon(byte destAddrTon) {
+        this.destAddrTon = destAddrTon;
     }
-
+    
+    public byte getDestAddrNpi() {
+        return destAddrNpi;
+    }
+    
+    public void setDestAddrNpi(byte destAddrNpi) {
+        this.destAddrNpi = destAddrNpi;
+    }
+    
+    public String getDestAddress() {
+        return destAddress;
+    }
+    
+    public void setDestAddress(String destAddress) {
+        this.destAddress = destAddress;
+    }
 
     /**
      * @return the esmClass
@@ -255,12 +272,28 @@ public class MessageRequest extends Command {
         this.smLength = smLength;
     }
 
-    public Address getSource() {
-        return source;
+    public byte getSourceAddrTon() {
+        return sourceAddrTon;
     }
     
-    public void setSource(Address source) {
-        this.source = source;
+    public void setSourceAddrTon(byte sourceAddrTon) {
+        this.sourceAddrTon = sourceAddrTon;
+    }
+    
+    public byte getSourceAddrNpi() {
+        return sourceAddrNpi;
+    }
+    
+    public void setSourceAddrNpi(byte sourceAddrNpi) {
+        this.sourceAddrNpi = sourceAddrNpi;
+    }
+    
+    public String getSourceAddr() {
+        return sourceAddr;
+    }
+    
+    public void setSourceAddr(String sourceAddr) {
+        this.sourceAddr = sourceAddr;
     }
     
     /**

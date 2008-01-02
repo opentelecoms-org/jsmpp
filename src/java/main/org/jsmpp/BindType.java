@@ -65,9 +65,9 @@ public enum BindType {
     }
 
     /**
-     * Inform whether the bind type is receiveable.
+     * Inform whether the bind type is receivable.
      * 
-     * @return <tt>true</tt> if the bind type is receiveable, otherwise
+     * @return <tt>true</tt> if the bind type is receivable, otherwise
      *         <tt>false</tt>.
      */
     public boolean isReceiveable() {

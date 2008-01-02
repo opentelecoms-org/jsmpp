@@ -6,28 +6,45 @@ package org.jsmpp.bean;
  */
 public enum MessageType {
     DEFAULT((byte) 0x00), 
-    SMSC_DEL_RECEIPT((byte) 0x04);
+    
+    // ESME -> SMSC
+    ESME_DEL_ACK((byte)0x08), 
+    ESME_MAN_ACK((byte)0x10),
+    
+    // SMSC -> ESME
+    SMSC_DEL_RECEIPT((byte) 0x04), 
+    SME_DEL_ACK((byte) 0x08),
+    SME_MAN_ACK((byte) 0x10),
+    CONV_ABORT((byte) 0x18),
+    INTER_DEL_NOTIF((byte) 0x20);
 
-    public static final byte CLEAR_BYTE = (byte) 0xc3;
-    public static final byte MASK_BYTE = 0x3c;
+    public static final byte CLEAR_BYTE = (byte) 0xc3; // 11000011
+    public static final byte MASK_BYTE = 0x3c; // 00111100
 
-    private final byte _value;
+    private final byte value;
 
     private MessageType(byte value) {
-        _value = value;
+        this.value = value;
     }
 
     public byte value() {
-        return _value;
+        return value;
     }
-
-    public static MessageType valueOf(byte value) {
-        for (MessageType val : values()) {
-            if (val.value() == value)
-                return val;
-        }
-
-        throw new IllegalArgumentException(
-                "No enum const MessageType with value " + value);
+    
+    public boolean containedIn(ESMClass esmClass) {
+        return containedIn(esmClass.value());
     }
+    
+    public boolean containedIn(byte esmClass) {
+        return this.value == (byte)(esmClass & MASK_BYTE);
+    }
+    
+    public static byte compose(byte esmClass, MessageType messageType) {
+        return (byte)(clean(esmClass) | messageType.value());
+    }
+    
+    public static byte clean(byte esmClass) {
+        return (byte) (esmClass & CLEAR_BYTE);
+    }
+    
 }

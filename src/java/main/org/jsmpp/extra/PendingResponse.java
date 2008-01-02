@@ -1,6 +1,11 @@
 package org.jsmpp.extra;
 
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.bean.Command;
 
@@ -13,6 +18,9 @@ import org.jsmpp.bean.Command;
  * 
  */
 public class PendingResponse<T extends Command> {
+    private final Lock lock = new ReentrantLock();
+    private final Condition condition = lock.newCondition();
+    
     private long timeout;
     private T response;
     private InvalidResponseException illegalResponseException;
@@ -20,7 +28,7 @@ public class PendingResponse<T extends Command> {
     /**
      * Construct with specified timeout.
      * 
-     * @param timeout is the timeout in millis.
+     * @param timeout is the timeout in millisecond.
      */
     public PendingResponse(long timeout) {
         this.timeout = timeout;
@@ -31,7 +39,7 @@ public class PendingResponse<T extends Command> {
      * 
      * @return <tt>true</tt> if response already receive.
      */
-    public boolean isDoneResponse() {
+    private boolean isDoneResponse() {
         return response != null;
     }
 
@@ -41,12 +49,17 @@ public class PendingResponse<T extends Command> {
      * @param response is the response.
      * @throws IllegalArgumentException thrown if response is null.
      */
-    public synchronized void done(T response) throws IllegalArgumentException {
-        if (response != null) {
-            this.response = response;
-            notify();
-        } else {
-            throw new IllegalArgumentException("response cannot be null");
+    public void done(T response) throws IllegalArgumentException {
+        lock.lock();
+        try {
+            if (response != null) {
+                this.response = response;
+                condition.signal();
+            } else {
+                throw new IllegalArgumentException("response cannot be null");
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -55,9 +68,14 @@ public class PendingResponse<T extends Command> {
      *  
      * @param e is the {@link InvalidResponseException}.
      */
-    public synchronized void doneWithInvalidResponse(InvalidResponseException e) {
-        illegalResponseException = e;
-        notify();
+    public void doneWithInvalidResponse(InvalidResponseException e) {
+        lock.lock();
+        try {
+            illegalResponseException = e;
+            condition.signal();
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -66,7 +84,12 @@ public class PendingResponse<T extends Command> {
      * @return the response.
      */
     public T getResponse() {
-        return response;
+        lock.lock();
+        try {
+            return response;
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -75,18 +98,27 @@ public class PendingResponse<T extends Command> {
      * @throws ResponseTimeoutException if timeout reach.
      * @throws InvalidResponseException if receive invalid response.
      */
-    public synchronized void waitDone() throws ResponseTimeoutException,
+    public void waitDone() throws ResponseTimeoutException,
             InvalidResponseException {
+        lock.lock();
         try {
-            wait(timeout);
-        } catch (InterruptedException e) {
+            if (!isDoneResponse()) {
+                try {
+                    condition.await(timeout, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                }
+            }
+            
+            if (illegalResponseException != null) {
+                throw illegalResponseException;
+            }
+            
+            if (!isDoneResponse()) {
+                throw new ResponseTimeoutException("No response after " + timeout
+                        + " millis");
+            }
+        } finally {
+            lock.unlock();
         }
-
-        if (illegalResponseException != null)
-            throw illegalResponseException;
-
-        if (!isDoneResponse())
-            throw new ResponseTimeoutException("No response after " + timeout
-                    + " millis");
     }
 }

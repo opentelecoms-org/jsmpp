@@ -111,7 +111,12 @@ public class Command {
     public void setSequenceNumber(int sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
     }
-
+    
+    @Override
+    public String toString() {
+        return "PDUHeader(" + commandLength + ", " + getCommandIdAsHex() + ", " + getCommandStatusAsHex() + ", " + sequenceNumber + ")";
+    }
+    
     /*
      * (non-Javadoc)
      * 

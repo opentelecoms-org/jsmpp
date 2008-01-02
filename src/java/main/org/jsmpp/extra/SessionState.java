@@ -1,7 +1,7 @@
 package org.jsmpp.extra;
 
 /**
- * Enum const represent session state.
+ * Enum constant represent session state.
  * 
  * @author uudashr
  * @version 1.0
@@ -26,7 +26,7 @@ public enum SessionState {
     BOUND_RX(true, false, true),
 
     /**
-     * Bound transceiver, means bound tranceive has been initiated.
+     * Bound transceiver, means bound transceive has been initiated.
      */
     BOUND_TRX(true, true, true),
 
@@ -34,7 +34,7 @@ public enum SessionState {
      * Unbound, means unbound has been initiated but the connection hasn't been
      * closed.
      */
-    UNBOUND(true),
+    UNBOUND(false),
 
     /**
      * There is no connection at all.
@@ -72,20 +72,20 @@ public enum SessionState {
     }
 
     /**
-     * Check whether the session state is transmitable.
+     * Check whether the session state is transmittable.
      * 
-     * @return <tt>true</tt> if session is transmitable.
+     * @return <tt>true</tt> if session is transmittable.
      */
-    public boolean isTransmitable() {
+    public boolean isTransmittable() {
         return transmitable;
     }
 
     /**
-     * Check whether the session state is receiveable.
+     * Check whether the session state is receivable.
      * 
-     * @return <tt>true</tt> if session is receiveable.
+     * @return <tt>true</tt> if session is receivable.
      */
-    public boolean isReceiveable() {
+    public boolean isReceivable() {
         return receiveable;
     }
 }

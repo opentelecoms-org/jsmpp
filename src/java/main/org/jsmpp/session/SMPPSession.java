@@ -3,12 +3,10 @@ package org.jsmpp.session;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.Hashtable;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jsmpp.BindType;
 import org.jsmpp.DefaultPDUReader;
@@ -21,7 +19,6 @@ import org.jsmpp.PDUReader;
 import org.jsmpp.PDUSender;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
-import org.jsmpp.SynchronizedPDUReader;
 import org.jsmpp.SynchronizedPDUSender;
 import org.jsmpp.TypeOfNumber;
 import org.jsmpp.bean.BindResp;
@@ -36,11 +33,15 @@ import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.bean.UnbindResp;
 import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.PendingResponse;
-import org.jsmpp.extra.ProcessMessageException;
+import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.extra.SessionState;
+import org.jsmpp.session.connection.Connection;
+import org.jsmpp.session.connection.ConnectionFactory;
+import org.jsmpp.session.connection.socket.SocketConnectionFactory;
 import org.jsmpp.session.state.SMPPSessionState;
 import org.jsmpp.util.DefaultComposer;
+import org.jsmpp.util.IntUtil;
 import org.jsmpp.util.Sequence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,116 +54,180 @@ import org.slf4j.LoggerFactory;
  */
 public class SMPPSession {
 	private static final Logger logger = LoggerFactory.getLogger(SMPPSession.class);
-	private static final PDUSender pduSender = new SynchronizedPDUSender(new DefaultPDUSender(new DefaultComposer()));
-	private static final PDUReader pduReader = new SynchronizedPDUReader(new DefaultPDUReader());
-	private static final AtomicInteger sessionIdSequence = new AtomicInteger();
+	private static final Random random = new Random();
+	/* Utility */
+	private final PDUSender pduSender;
+    private final PDUReader pduReader;
 	
-	private final Socket socket;
+    /* Connection */
+	private final ConnectionFactory connFactory;
+	private Connection conn;
 	private DataInputStream in;
 	private OutputStream out;
-	private SessionState sessionState = SessionState.CLOSED;
+	
 	private SMPPSessionState stateProcessor = SMPPSessionState.CLOSED;
 	private final Sequence sequence = new Sequence(1);
-	private final SMPPSessionHandler sessionHandler = new SMPPSessionHandlerImpl();
+	private final ResponseHandler responseHandler = new ResponseHandlerImpl();
 	private final Hashtable<Integer, PendingResponse<? extends Command>> pendingResponse = new Hashtable<Integer, PendingResponse<? extends Command>>();
 	private int sessionTimer = 5000;
 	private long transactionTimer = 2000;
-	private int enquireLinkToSend;
 	private long lastActivityTimestamp;
 	private MessageReceiverListener messageReceiverListener;
 	private SessionStateListener sessionStateListener;
     
-	private IdleActivityChecker idleActivityChecker;
 	private EnquireLinkSender enquireLinkSender;
-	private int sessionId = sessionIdSequence.incrementAndGet();
+	private String sessionId = generateSessionId();
 	
 	public SMPPSession() {
-	    socket = new Socket();
+        this(new SynchronizedPDUSender(new DefaultPDUSender(new DefaultComposer())), new DefaultPDUReader(), SocketConnectionFactory.getInstance());
     }
 	
-	public int getSessionId() {
-		return sessionId;
+	public SMPPSession(PDUSender pduSender, PDUReader pduReader, ConnectionFactory connFactory) {
+	    this.pduSender = pduSender;
+	    this.pduReader = pduReader;
+	    this.connFactory = connFactory;
+	    
+    }
+	
+	public SMPPSession(String host, int port, BindParameter bindParam,
+            PDUSender pduSender, PDUReader pduReader,
+            ConnectionFactory connFactory) throws IOException {
+	    this(pduSender, pduReader, connFactory);
+	    connectAndBind(host, port, bindParam);
 	}
 	
+	/**
+	 * Open connection and bind immediately.
+	 * 
+	 * @param host is the SMSC host address.
+	 * @param port is the SMSC listen port.
+	 * @param bindType is the bind type.
+	 * @param systemId is the system id.
+	 * @param password is the password.
+	 * @param systemType is the system type.
+	 * @param addrTon is the address TON.
+	 * @param addrNpi is the address NPI.
+	 * @param addressRange is the address range.
+	 * @throws IOException if there is an IO error found.
+	 */
 	public void connectAndBind(String host, int port, BindType bindType,
             String systemId, String password, String systemType,
             TypeOfNumber addrTon, NumberingPlanIndicator addrNpi,
             String addressRange) throws IOException {
-		if (sequence.currentValue() != 0)
+	    connectAndBind(host, port, new BindParameter(bindType, systemId,
+                password, systemType, addrTon, addrNpi, addressRange));
+	}
+	
+	/**
+	 * Open connection and bind immediately.
+	 * 
+	 * @param host is the SMSC host address.
+	 * @param port is the SMSC listen port.
+	 * @param bindParam is the bind parameters.
+	 * @return the SMSC system id.
+	 * @throws IOException if there is an IO error found.
+	 */
+	public String connectAndBind(String host, int port, BindParameter bindParam) throws IOException {
+	    logger.debug("Connect and bind to " + host + " port " + port);
+		if (sequence.currentValue() != 1) {
 			throw new IOException("Failed connecting");
-		
-		socket.connect(new InetSocketAddress(host, port));
-		if (socket.getInputStream() == null) {
-			logger.error("InputStream is null");
-		} else if (socket.isInputShutdown()) {
-			logger.error("Input shutdown");
 		}
+		
+		conn = connFactory.createConnection(host, port);
 		logger.info("Connected");
 		
 		changeState(SessionState.OPEN);
 		try {
-			in = new DataInputStream(socket.getInputStream());
+			in = new DataInputStream(conn.getInputStream());
+			out = conn.getOutputStream();
+			
 			new PDUReaderWorker().start();
-			out = socket.getOutputStream();
-			sendBind(bindType, systemId, password, systemType,
-                    InterfaceVersion.IF_34, addrTon, addrNpi, addressRange);
-			changeToBoundState(bindType);
-			socket.setSoTimeout(sessionTimer);
+			String smscSystemId = sendBind(bindParam.getBindType(), bindParam.getSystemId(), bindParam.getPassword(), bindParam.getSystemType(),
+                    InterfaceVersion.IF_34, bindParam.getAddrTon(), bindParam.getAddrNpi(), bindParam.getAddressRange());
+			changeToBoundState(bindParam.getBindType());
 			
 			enquireLinkSender = new EnquireLinkSender();
 			enquireLinkSender.start();
-			
-			idleActivityChecker = new IdleActivityChecker();
-			idleActivityChecker.start();
-			
+			return smscSystemId;
 		} catch (PDUStringException e) {
-			logger.error("Failed sending bind command", e);
+		    logger.error("Failed sending bind command", e);
+		    throw new IOException("Failed sending bind since some string parameter area invalid : " + e.getMessage());
 		} catch (NegativeResponseException e) {
 			String message = "Receive negative bind response";
 			logger.error(message, e);
-			closeSocket();
+			close();
 			throw new IOException(message + ": " + e.getMessage());
 		} catch (InvalidResponseException e) {
 			String message = "Receive invalid response of bind";
 			logger.error(message, e);
-			closeSocket();
+			close();
 			throw new IOException(message + ": " + e.getMessage());
 		} catch (ResponseTimeoutException e) {
 			String message = "Waiting bind response take time to long";
 			logger.error(message, e);
-			closeSocket();
+			close();
 			throw new IOException(message + ": " + e.getMessage());
 		} catch (IOException e) {
 			logger.error("IO Error occur", e);
-			closeSocket();
+			close();
 			throw e;
 		}
 	}
 	
 	/**
-	 * @param bindType
-	 * @param systemId
-	 * @param password
-	 * @param systemType
-	 * @param interfaceVersion
-	 * @param addrTon
-	 * @param addrNpi
-	 * @param addressRange
+	 * Sending bind with 1 minutes timeout.
+	 *  
+	 * @param bindType is the bind type.
+     * @param systemId is the system id.
+     * @param password is the password.
+     * @param systemTypeis the system type.
+     * @param interfaceVersion is the interface version.
+     * @param addrTon is the address TON.
+     * @param addrNpi is the address NPI.
+     * @param addressRange is the address range.
+     * @return SMSC system id.
+     * @throws PDUStringException if we enter invalid bind parameter(s).
+     * @throws ResponseTimeoutException if there is no valid response after defined millisecond.
+     * @throws InvalidResponseException if there is invalid response found.
+     * @throws NegativeResponseException if we receive negative response.
+     * @throws IOException if there is an IO error occur.
+	 */
+	private String sendBind(BindType bindType, String systemId,
+            String password, String systemType,
+            InterfaceVersion interfaceVersion, TypeOfNumber addrTon,
+            NumberingPlanIndicator addrNpi, String addressRange)
+            throws PDUStringException, ResponseTimeoutException,
+            InvalidResponseException, NegativeResponseException, IOException {
+	    return sendBind(bindType, systemId, password, systemType, interfaceVersion, addrTon, addrNpi, addressRange, 60000);
+	}
+	
+	/**
+	 * Sending bind.
+	 * 
+	 * @param bindType is the bind type.
+	 * @param systemId is the system id.
+	 * @param password is the password.
+	 * @param systemTypeis the system type.
+	 * @param interfaceVersion is the interface version.
+	 * @param addrTon is the address TON.
+	 * @param addrNpi is the address NPI.
+	 * @param addressRange is the address range.
+	 * @param timeout is the max time waiting for bind response. 
 	 * @return SMSC system id.
 	 * @throws PDUStringException if we enter invalid bind parameter(s).
-	 * @throws ResponseTimeoutException if there is no valid response after defined millis.
+	 * @throws ResponseTimeoutException if there is no valid response after defined millisecond.
 	 * @throws InvalidResponseException if there is invalid response found.
 	 * @throws NegativeResponseException if we receive negative response.
-	 * @throws IOException
+	 * @throws IOException if there is an IO error occur.
 	 */
 	private String sendBind(BindType bindType, String systemId,
 			String password, String systemType,
 			InterfaceVersion interfaceVersion, TypeOfNumber addrTon,
-			NumberingPlanIndicator addrNpi, String addressRange)
+			NumberingPlanIndicator addrNpi, String addressRange, long timeout)
 			throws PDUStringException, ResponseTimeoutException,
 			InvalidResponseException, NegativeResponseException, IOException {
 		int seqNum = sequence.nextValue();
-		PendingResponse<BindResp> pendingResp = new PendingResponse<BindResp>(transactionTimer);
+		PendingResponse<BindResp> pendingResp = new PendingResponse<BindResp>(timeout);
 		pendingResponse.put(seqNum, pendingResp);
 		
 		try {
@@ -184,62 +249,132 @@ public class SMPPSession {
 			throw e;
 		}
 		
-		if (pendingResp.getResponse().getCommandStatus() != SMPPConstant.STAT_ESME_ROK)
+		if (pendingResp.getResponse().getCommandStatus() != SMPPConstant.STAT_ESME_ROK) {
 			throw new NegativeResponseException(pendingResp.getResponse().getCommandStatus());
+		}
 		
 		return pendingResp.getResponse().getSystemId();
 	}
 
 	/**
-	 * Ensure we have proper link.
-	 * @throws ResponseTimeoutException if there is no valid response after defined millis.
-	 * @throws InvalidResponseException if there is invalid response found.
-	 * @throws IOException
-	 */
-	private void enquireLink() throws ResponseTimeoutException, InvalidResponseException, IOException {
-		int seqNum = sequence.nextValue();
-		PendingResponse<EnquireLinkResp> pendingResp = new PendingResponse<EnquireLinkResp>(transactionTimer);
-		pendingResponse.put(seqNum, pendingResp);
-		
-		try {
-			pduSender.sendEnquireLink(out, seqNum);
-		} catch (IOException e) {
-			logger.error("Failed sending enquire link", e);
-			pendingResponse.remove(seqNum);
-			throw e;
-		}
-		
-		try {
-			pendingResp.waitDone();
-			logger.debug("Enquire link response received");
-		} catch (ResponseTimeoutException e) {
-			pendingResponse.remove(seqNum);
-			throw e;
-		} catch (InvalidResponseException e) {
-			pendingResponse.remove(seqNum);
-			throw e;
-		}
-		
-		if (pendingResp.getResponse().getCommandStatus() != SMPPConstant.STAT_ESME_ROK) {
-			// this is ok
-			logger.warn("Receive NON-OK response of enquire link");
-		}
-	}
+	 * Submit short message with specified parameter.
+	 * 
+     * @param serviceType is the service_type parameter.
+     * @param sourceAddrTon is the source_addr_ton parameter.
+     * @param sourceAddrNpi is the source_addr_npi parameter.
+     * @param sourceAddr is the source_addr parameter.
+     * @param destAddrTon is the dest_addr_ton parameter.
+     * @param destAddrNpi is the dest_addr_npi parameter.
+     * @param destinationAddr is the destination_addr parameter.
+     * @param esmClass is the esm_class parameter.
+     * @param protocoId is the protocol_id parameter.
+     * @param priorityFlag is the priority_flag parameter.
+     * @param scheduleDeliveryTime is the schedule_delivery_time parameter. (It is time in string format).
+     * @param validityPeriod is the validity_period parameter (It is time in string format).
+     * @param registeredDelivery is the registered_delivery parameter.
+     * @param replaceIfPresentFlag is the replace_if_present_flag parameter
+     * @param dataCoding is the data_coding parameter.
+     * @param smDefaultMsgId is the sm_default_message_id parameter.
+     * @param shortMessage is the short message.
+     * @return the message id from SMSC.
+     * @throws PDUStringException if we enter invalid bind parameter(s).
+     * @throws ResponseTimeoutException if there is no valid response after defined millisecond.
+     * @throws InvalidResponseException if there is invalid response found.
+     * @throws NegativeResponseException if we receive negative response.
+     * @throws IOException if there is an IO error found.
+     */
+    public String submitShortMessage(String serviceType,
+    		TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
+    		String sourceAddr, TypeOfNumber destAddrTon,
+    		NumberingPlanIndicator destAddrNpi, String destinationAddr,
+    		ESMClass esmClass, byte protocoId, byte priorityFlag,
+    		String scheduleDeliveryTime, String validityPeriod,
+    		RegisteredDelivery registeredDelivery, byte replaceIfPresentFlag,
+    		DataCoding dataCoding, byte smDefaultMsgId, byte[] shortMessage)
+    		throws PDUStringException, ResponseTimeoutException,
+    		InvalidResponseException, NegativeResponseException, IOException {
+    	
+    	int seqNum = sequence.nextValue();
+    	PendingResponse<SubmitSmResp> pendingResp = new PendingResponse<SubmitSmResp>(transactionTimer);
+    	pendingResponse.put(seqNum, pendingResp);
+    	try {
+    		pduSender.sendSubmitSm(out, seqNum, serviceType, sourceAddrTon,
+    				sourceAddrNpi, sourceAddr, destAddrTon, destAddrNpi,
+    				destinationAddr, esmClass, protocoId, priorityFlag,
+    				scheduleDeliveryTime, validityPeriod, registeredDelivery,
+    				replaceIfPresentFlag, dataCoding, smDefaultMsgId, shortMessage);
+    		
+    	} catch (IOException e) {
+    		logger.error("Failed submit short message", e);
+    		pendingResponse.remove(seqNum);
+    		close();
+    		throw e;
+    	}
+    	
+    	try {
+    		pendingResp.waitDone();
+    		logger.debug("Submit sm response received");
+    	} catch (ResponseTimeoutException e) {
+    		pendingResponse.remove(seqNum);
+    		logger.debug("Response timeout for submit_sm with sessionIdSequence number " + seqNum);
+    		throw e;
+    	} catch (InvalidResponseException e) {
+    		pendingResponse.remove(seqNum);
+    		throw e;
+    	}
+    	
+    	if (pendingResp.getResponse().getCommandStatus() != SMPPConstant.STAT_ESME_ROK)
+    		throw new NegativeResponseException(pendingResp.getResponse().getCommandStatus());
+    	
+    	return pendingResp.getResponse().getMessageId();
+    }
 
-	public void unbindAndClose() {
-		try {
-			unbind();
-		} catch (ResponseTimeoutException e) {
-			logger.error("Timeout waiting unbind response", e);
-		} catch (InvalidResponseException e) {
-			logger.error("Receive invalid unbind response", e);
-		} catch (IOException e) {
-			logger.error("IO error found ", e);
-		}
-		closeSocket();
-	}
+    public QuerySmResult queryShortMessage(String messageId, TypeOfNumber sourceAddrTon,
+    		NumberingPlanIndicator sourceAddrNpi, String sourceAddr)
+    		throws PDUStringException, ResponseTimeoutException,
+    		InvalidResponseException, NegativeResponseException, IOException {
+    	
+    	int seqNum = sequence.nextValue();
+    	PendingResponse<QuerySmResp> pendingResp = new PendingResponse<QuerySmResp>(transactionTimer);
+    	pendingResponse.put(seqNum, pendingResp);
+    	try {
+    		pduSender.sendQuerySm(out, seqNum, messageId, sourceAddrTon, sourceAddrNpi, sourceAddr);
+    		
+    	} catch (IOException e) {
+    		logger.error("Failed submit short message", e);
+    		pendingResponse.remove(seqNum);
+    		close();
+    		throw e;
+    	}
+    	
+    	try {
+    		pendingResp.waitDone();
+    		logger.info("Query sm response received");
+    	} catch (ResponseTimeoutException e) {
+    		pendingResponse.remove(seqNum);
+    		throw e;
+    	} catch (InvalidResponseException e) {
+    		pendingResponse.remove(seqNum);
+    		throw e;
+    	}
+    	
+    	QuerySmResp resp = pendingResp.getResponse();
+    	if (resp.getCommandStatus() != SMPPConstant.STAT_ESME_ROK)
+    		throw new NegativeResponseException(resp.getCommandStatus());
+    	
+    	if (resp.getMessageId().equals(messageId)) {
+    		return new QuerySmResult(resp.getFinalDate(), resp.getMessageState(), resp.getErrorCode());
+    	} else {
+    		// message id requested not same as the returned
+    		throw new InvalidResponseException("Requested message_id doesn't match with the result");
+    	}
+    }
 
-	private void unbind() throws ResponseTimeoutException, InvalidResponseException, IOException {
+    public String getSessionId() {
+    	return sessionId;
+    }
+
+    private void unbind() throws ResponseTimeoutException, InvalidResponseException, IOException {
 		int seqNum = sequence.nextValue();
 		PendingResponse<UnbindResp> pendingResp = new PendingResponse<UnbindResp>(transactionTimer);
 		pendingResponse.put(seqNum, pendingResp);
@@ -268,165 +403,44 @@ public class SMPPSession {
 			logger.warn("Receive NON-OK response of unbind");
 	}
 
-	/**
-	 * @param serviceType
-	 * @param sourceAddrTon
-	 * @param sourceAddrNpi
-	 * @param sourceAddr
-	 * @param destAddrTon
-	 * @param destAddrNpi
-	 * @param destinationAddr
-	 * @param esmClass
-	 * @param protocoId
-	 * @param priorityFlag
-	 * @param scheduleDeliveryTime
-	 * @param validityPeriod
-	 * @param registeredDelivery
-	 * @param replaceIfPresent
-	 * @param dataCoding
-	 * @param smDefaultMsgId
-	 * @param shortMessage
-	 * @return message id.
-	 * @throws PDUStringException if we enter invalid bind parameter(s).
-	 * @throws ResponseTimeoutException if there is no valid response after defined millis.
-	 * @throws InvalidResponseException if there is invalid response found.
-	 * @throws NegativeResponseException if we receive negative response.
-	 * @throws IOException
-	 */
-	public String submitShortMessage(String serviceType,
-			TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
-			String sourceAddr, TypeOfNumber destAddrTon,
-			NumberingPlanIndicator destAddrNpi, String destinationAddr,
-			ESMClass esmClass, byte protocoId, byte priorityFlag,
-			String scheduleDeliveryTime, String validityPeriod,
-			RegisteredDelivery registeredDelivery, byte replaceIfPresent,
-			DataCoding dataCoding, byte smDefaultMsgId, byte[] shortMessage)
-			throws PDUStringException, ResponseTimeoutException,
-			InvalidResponseException, NegativeResponseException, IOException {
-		
-		int seqNum = sequence.nextValue();
-		PendingResponse<SubmitSmResp> pendingResp = new PendingResponse<SubmitSmResp>(transactionTimer);
-		pendingResponse.put(seqNum, pendingResp);
-		try {
-			pduSender.sendSubmitSm(out, seqNum, serviceType, sourceAddrTon,
-					sourceAddrNpi, sourceAddr, destAddrTon, destAddrNpi,
-					destinationAddr, esmClass, protocoId, priorityFlag,
-					scheduleDeliveryTime, validityPeriod, registeredDelivery,
-					replaceIfPresent, dataCoding, smDefaultMsgId, shortMessage);
-			
-		} catch (IOException e) {
-			logger.error("Failed submit short message", e);
-			pendingResponse.remove(seqNum);
-			closeSocket();
-			throw e;
-		}
-		
-		try {
-			pendingResp.waitDone();
-			logger.debug("Submit sm response received");
-		} catch (ResponseTimeoutException e) {
-			pendingResponse.remove(seqNum);
-			logger.debug("Response timeout for submit_sm with sessionIdSequence number " + seqNum);
-			throw e;
-		} catch (InvalidResponseException e) {
-			pendingResponse.remove(seqNum);
-			throw e;
-		}
-		
-		if (pendingResp.getResponse().getCommandStatus() != SMPPConstant.STAT_ESME_ROK)
-			throw new NegativeResponseException(pendingResp.getResponse().getCommandStatus());
-		
-		return pendingResp.getResponse().getMessageId();
-	}
-	
-	public QuerySmResult queryShortMessage(String messageId, TypeOfNumber sourceAddrTon,
-			NumberingPlanIndicator sourceAddrNpi, String sourceAddr)
-			throws PDUStringException, ResponseTimeoutException,
-			InvalidResponseException, NegativeResponseException, IOException {
-		
-		int seqNum = sequence.nextValue();
-		PendingResponse<QuerySmResp> pendingResp = new PendingResponse<QuerySmResp>(transactionTimer);
-		pendingResponse.put(seqNum, pendingResp);
-		try {
-			pduSender.sendQuerySm(out, seqNum, messageId, sourceAddrTon, sourceAddrNpi, sourceAddr);
-			
-		} catch (IOException e) {
-			logger.error("Failed submit short message", e);
-			pendingResponse.remove(seqNum);
-			closeSocket();
-			throw e;
-		}
-		
-		try {
-			pendingResp.waitDone();
-			logger.info("Query sm response received");
-		} catch (ResponseTimeoutException e) {
-			pendingResponse.remove(seqNum);
-			throw e;
-		} catch (InvalidResponseException e) {
-			pendingResponse.remove(seqNum);
-			throw e;
-		}
-		
-		QuerySmResp resp = pendingResp.getResponse();
-		if (resp.getCommandStatus() != SMPPConstant.STAT_ESME_ROK)
-			throw new NegativeResponseException(resp.getCommandStatus());
-		
-		if (resp.getMessageId().equals(messageId)) {
-			return new QuerySmResult(resp.getFinalDate(), resp.getMessageState(), resp.getErrorCode());
-		} else {
-			// message id requested not same as the returned
-			throw new InvalidResponseException("Requested message_id doesn't match with the result");
-		}
-	}
-	
 	private void changeToBoundState(BindType bindType) {
 		if (bindType.equals(BindType.BIND_TX)) {
 			changeState(SessionState.BOUND_TX);
 		} else if (bindType.equals(BindType.BIND_RX)) {
 			changeState(SessionState.BOUND_RX);
-		} else if (bindType.equals(BindType.BIND_TRX)){
+		} else if (bindType.equals(BindType.BIND_TRX)) {
 			changeState(SessionState.BOUND_TRX);
 		} else {
 			throw new IllegalArgumentException("Bind type " + bindType + " not supported");
 		}
 		
 		try {
-			socket.setSoTimeout(sessionTimer);
-		} catch (SocketException e) {
+			conn.setSoTimeout(sessionTimer);
+		} catch (IOException e) {
 			logger.error("Failed setting so_timeout for session timer", e);
 		}
 	}
 
 	private synchronized void changeState(SessionState newState) {
-        if (sessionState != newState) {
-            final SessionState oldState = sessionState;
-    		sessionState = newState;
+        if (!stateProcessor.getSessionState().equals(newState)) {
+            final SessionState oldState = stateProcessor.getSessionState();
     		
     		// change the session state processor
-    		if (sessionState == SessionState.OPEN) {
+    		if (newState == SessionState.OPEN) {
     			stateProcessor = SMPPSessionState.OPEN;
-    		} else if (sessionState == SessionState.BOUND_RX) {
+    		} else if (newState == SessionState.BOUND_RX) {
     			stateProcessor = SMPPSessionState.BOUND_RX;
-    		} else if (sessionState == SessionState.BOUND_TX) {
+    		} else if (newState == SessionState.BOUND_TX) {
     			stateProcessor = SMPPSessionState.BOUND_TX;
-    		} else if (sessionState == SessionState.BOUND_TRX) {
+    		} else if (newState == SessionState.BOUND_TRX) {
     			stateProcessor = SMPPSessionState.BOUND_TRX;
-    		} else if (sessionState == SessionState.UNBOUND) {
+    		} else if (newState == SessionState.UNBOUND) {
     			stateProcessor = SMPPSessionState.UNBOUND;
-    		} else if (sessionState == SessionState.CLOSED) {
+    		} else if (newState == SessionState.CLOSED) {
     			stateProcessor = SMPPSessionState.CLOSED;
     		}
             fireChangeState(newState, oldState);
         }
-	}
-
-	private void updateActivityTimestamp() {
-		lastActivityTimestamp = System.currentTimeMillis();
-	}
-
-	private void addEnquireLinkJob() {
-		enquireLinkToSend++;
 	}
 	
 	public int getSessionTimer() {
@@ -435,10 +449,10 @@ public class SMPPSession {
 	
 	public void setSessionTimer(int sessionTimer) {
 		this.sessionTimer = sessionTimer;
-		if (sessionState.isBound()) {
+		if (stateProcessor.getSessionState().isBound()) {
 			try {
-				socket.setSoTimeout(sessionTimer);
-			} catch (SocketException e) {
+				conn.setSoTimeout(sessionTimer);
+			} catch (IOException e) {
 				logger.error("Failed setting so_timeout for session timer", e);
 			}
 		}
@@ -453,12 +467,20 @@ public class SMPPSession {
 	}
 	
 	public synchronized SessionState getSessionState() {
-		return sessionState;
+		return stateProcessor.getSessionState();
 	}
+	
+	public SessionStateListener getSessionStateListener() {
+        return sessionStateListener;
+    }
 	
     public void setSessionStateListener(
             SessionStateListener sessionStateListener) {
         this.sessionStateListener = sessionStateListener;
+    }
+    
+    public MessageReceiverListener getMessageReceiverListener() {
+        return messageReceiverListener;
     }
     
 	public void setMessageReceiverListener(
@@ -466,93 +488,46 @@ public class SMPPSession {
 		this.messageReceiverListener = messageReceiverListener;
 	}
 	
-	private void closeSocket() {
+    /**
+     * This method provided for monitoring need.
+     * 
+     * @return the last activity timestamp.
+     */
+    public long getLastActivityTimestamp() {
+        return lastActivityTimestamp;
+    }
+
+    public void unbindAndClose() {
+    	try {
+    		unbind();
+    	} catch (ResponseTimeoutException e) {
+    		logger.error("Timeout waiting unbind response", e);
+    	} catch (InvalidResponseException e) {
+    		logger.error("Receive invalid unbind response", e);
+    	} catch (IOException e) {
+    		logger.error("IO error found ", e);
+    	}
+    	close();
+    }
+
+    public void close() {
 		changeState(SessionState.CLOSED);
-		if (!socket.isClosed()) {
-			try { 
-				socket.close(); 
-			} catch (IOException e) {
-				logger.warn("Failed closing socket", e);
-			}
-		}
+		try {
+            conn.close();
+        } catch (IOException e) {
+        }
 	}
 	
 	private synchronized boolean isReadPdu() {
-		return sessionState.isBound() || sessionState.equals(SessionState.OPEN);
-	}
-	
-	private void readPDU() {
-		try {
-			Command pduHeader = null;
-			byte[] pdu = null;
-			synchronized (in) {
-				pduHeader = pduReader.readPDUHeader(in);
-				pdu = pduReader.readPDU(in, pduHeader);
-			}
-			switch (pduHeader.getCommandId()) {
-			case SMPPConstant.CID_BIND_RECEIVER_RESP:
-			case SMPPConstant.CID_BIND_TRANSMITTER_RESP:
-			case SMPPConstant.CID_BIND_TRANSCEIVER_RESP:
-				updateActivityTimestamp();
-				stateProcessor.processBindResp(pduHeader, pdu, sessionHandler);
-				break;
-			case SMPPConstant.CID_GENERIC_NACK:
-				updateActivityTimestamp();
-				stateProcessor.processGenericNack(pduHeader, pdu, sessionHandler);
-				break;
-			case SMPPConstant.CID_ENQUIRE_LINK:
-				updateActivityTimestamp();
-				stateProcessor.processEnquireLink(pduHeader, pdu, sessionHandler);
-				break;
-			case SMPPConstant.CID_ENQUIRE_LINK_RESP:
-				updateActivityTimestamp();
-				stateProcessor.processEnquireLinkResp(pduHeader, pdu, sessionHandler);
-				break;
-			case SMPPConstant.CID_SUBMIT_SM_RESP:
-				updateActivityTimestamp();
-				stateProcessor.processSubmitSmResp(pduHeader, pdu, sessionHandler);
-				break;
-			case SMPPConstant.CID_QUERY_SM_RESP:
-				updateActivityTimestamp();
-				stateProcessor.processQuerySmResp(pduHeader, pdu, sessionHandler);
-				break;
-			case SMPPConstant.CID_DELIVER_SM:
-				updateActivityTimestamp();
-				stateProcessor.processDeliverSm(pduHeader, pdu, sessionHandler);
-				break;
-			case SMPPConstant.CID_UNBIND:
-				updateActivityTimestamp();
-				stateProcessor.processUnbind(pduHeader, pdu, sessionHandler);
-				changeState(SessionState.UNBOUND);
-				break;
-			case SMPPConstant.CID_UNBIND_RESP:
-				updateActivityTimestamp();
-				stateProcessor.processUnbindResp(pduHeader, pdu, sessionHandler);
-				break;
-			default:
-				stateProcessor.processUnknownCid(pduHeader, pdu, sessionHandler);
-			}
-		} catch (InvalidCommandLengthException e) {
-			logger.warn("Receive invalid command length", e);
-			try {
-                pduSender.sendGenericNack(out, SMPPConstant.STAT_ESME_RINVCMDLEN, 0);
-            } catch (IOException ee) {
-                logger.warn("Failed sending generic nack", ee);
-            }
-            unbindAndClose();
-		} catch (SocketTimeoutException e) {
-			addEnquireLinkJob();
-		} catch (IOException e) {
-			closeSocket();
-		}
+		return stateProcessor.getSessionState().isBound() || stateProcessor.getSessionState().equals(SessionState.OPEN);
 	}
 	
 	@Override
 	protected void finalize() throws Throwable {
-		closeSocket();
+		close();
 	}
 	
-	private void fireAcceptDeliverSm(DeliverSm deliverSm) throws ProcessMessageException {
+	private void fireAcceptDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
 		if (messageReceiverListener != null) {
 			messageReceiverListener.onAcceptDeliverSm(deliverSm);
         } else { 
@@ -568,15 +543,23 @@ public class SMPPSession {
         }
     }
     
-	private class SMPPSessionHandlerImpl implements SMPPSessionHandler {
+    private synchronized static final String generateSessionId() {
+        return IntUtil.toHexString(random.nextInt());
+    }
+    
+	private class ResponseHandlerImpl implements ResponseHandler {
 		
-		public void processDeliverSm(DeliverSm deliverSm) throws ProcessMessageException {
+		public void processDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
 			fireAcceptDeliverSm(deliverSm);
 		}
 		
 		@SuppressWarnings("unchecked")
 		public PendingResponse<Command> removeSentItem(int sequenceNumber) {
 			return (PendingResponse<Command>)pendingResponse.remove(sequenceNumber);
+		}
+		
+		public void notifyUnbonded() {
+		    changeState(SessionState.UNBOUND);
 		}
 		
 		public void sendDeliverSmResp(int sequenceNumber) throws IOException {
@@ -589,6 +572,7 @@ public class SMPPSession {
 		}
 		
 		public void sendEnquireLinkResp(int sequenceNumber) throws IOException {
+		    logger.debug("Sending enquire_link_resp");
 			pduSender.sendEnquireLinkResp(out, sequenceNumber);
 		}
 		
@@ -612,65 +596,181 @@ public class SMPPSession {
 			while (isReadPdu()) {
 				readPDU();
 			}
+			close();
 			logger.info("PDUReaderWorker stop");
 		}
+		
+		private void readPDU() {
+	        try {
+	            Command pduHeader = null;
+	            byte[] pdu = null;
+	            synchronized (in) {
+	                pduHeader = pduReader.readPDUHeader(in);
+	                pdu = pduReader.readPDU(in, pduHeader);
+	            }
+	            switch (pduHeader.getCommandId()) {
+	            case SMPPConstant.CID_BIND_RECEIVER_RESP:
+	            case SMPPConstant.CID_BIND_TRANSMITTER_RESP:
+	            case SMPPConstant.CID_BIND_TRANSCEIVER_RESP:
+	                notifyActivity();
+	                stateProcessor.processBindResp(pduHeader, pdu, responseHandler);
+	                break;
+	            case SMPPConstant.CID_GENERIC_NACK:
+	                notifyActivity();
+	                stateProcessor.processGenericNack(pduHeader, pdu, responseHandler);
+	                break;
+	            case SMPPConstant.CID_ENQUIRE_LINK:
+	                notifyActivity();
+	                stateProcessor.processEnquireLink(pduHeader, pdu, responseHandler);
+	                break;
+	            case SMPPConstant.CID_ENQUIRE_LINK_RESP:
+	                notifyActivity();
+	                stateProcessor.processEnquireLinkResp(pduHeader, pdu, responseHandler);
+	                break;
+	            case SMPPConstant.CID_SUBMIT_SM_RESP:
+	                notifyActivity();
+	                stateProcessor.processSubmitSmResp(pduHeader, pdu, responseHandler);
+	                break;
+	            case SMPPConstant.CID_QUERY_SM_RESP:
+	                notifyActivity();
+	                stateProcessor.processQuerySmResp(pduHeader, pdu, responseHandler);
+	                break;
+	            case SMPPConstant.CID_DELIVER_SM:
+	                notifyActivity();
+	                stateProcessor.processDeliverSm(pduHeader, pdu, responseHandler);
+	                break;
+	            case SMPPConstant.CID_UNBIND:
+	                notifyActivity();
+	                stateProcessor.processUnbind(pduHeader, pdu, responseHandler);
+	                changeState(SessionState.UNBOUND);
+	                break;
+	            case SMPPConstant.CID_UNBIND_RESP:
+	                notifyActivity();
+	                stateProcessor.processUnbindResp(pduHeader, pdu, responseHandler);
+	                break;
+	            default:
+	                stateProcessor.processUnknownCid(pduHeader, pdu, responseHandler);
+	            }
+	        } catch (InvalidCommandLengthException e) {
+	            logger.warn("Receive invalid command length", e);
+	            try {
+	                pduSender.sendGenericNack(out, SMPPConstant.STAT_ESME_RINVCMDLEN, 0);
+	            } catch (IOException ee) {
+	                logger.warn("Failed sending generic nack", ee);
+	            }
+	            unbindAndClose();
+	        } catch (SocketTimeoutException e) {
+	            notifyNoActivity();
+	        } catch (IOException e) {
+	            close();
+	        }
+	    }
+		
+		/**
+	     * This method provided for monitoring need.
+	     */
+	    private void notifyActivity() {
+	        logger.debug("Activity notified");
+	        lastActivityTimestamp = System.currentTimeMillis();
+	    }
+	    
+	    /**
+	     * Notify for no activity.
+	     */
+	    private void notifyNoActivity() {
+	        logger.debug("No activity notified");
+	        enquireLinkSender.enquireLink();
+	    }
 	}
 	
+	
+	/**
+	 * FIXME uud: we can create general class for SMPPServerSession and SMPPSession
+	 * @author uudashr
+	 *
+	 */
 	private class EnquireLinkSender extends Thread {
-		@Override
-		public void run() {
-			logger.info("Starting EnquireLinkSender");
-			while (isReadPdu()) {
-				long sleepTime = 1000;
-				
-				if (enquireLinkToSend > 0) {
-					enquireLinkToSend--;
-					try {
-						enquireLink();
-					} catch (ResponseTimeoutException e) {
-						closeSocket();
-					} catch (InvalidResponseException e) {
-						// lets unbind gracefully
-						unbindAndClose();
-					} catch (IOException e) {
-						closeSocket();
-					}
-				}
-				
-				try {
-					Thread.sleep(sleepTime);
-				} catch (InterruptedException e) {
-				}
-			}
-			logger.info("EnquireLinkSender stop");
-		}
-	}
-	
-	private class IdleActivityChecker extends Thread {
-		@Override
-		public void run() {
-			logger.info("Starting IdleActivityChecker");
-			while (isReadPdu()) {
-				long timeLeftToEnquire = lastActivityTimestamp + sessionTimer - System.currentTimeMillis();
-				if (timeLeftToEnquire <= 0) {
-					try {
-						enquireLink();
-					} catch (ResponseTimeoutException e) {
-						closeSocket();
-					} catch (InvalidResponseException e) {
-						// lets unbind gracefully
-						unbindAndClose();
-					} catch (IOException e) {
-						closeSocket();
-					}
-				} else {
-					try {
-						Thread.sleep(timeLeftToEnquire);
-					} catch (InterruptedException e) {
-					}
-				}
-			}
-			logger.info("IdleActivityChecker stop");
-		}
-	}
+        private final AtomicBoolean sendingEnquireLink = new AtomicBoolean(false);
+        
+        @Override
+        public void run() {
+            logger.info("Starting EnquireLinkSender");
+            while (isReadPdu()) {
+                while (!sendingEnquireLink.compareAndSet(true, false) && isReadPdu()) {
+                    synchronized (sendingEnquireLink) {
+                        try {
+                            sendingEnquireLink.wait(500);
+                        } catch (InterruptedException e) {
+                        }
+                    }
+                }
+                if (!isReadPdu()) {
+                    break;
+                }
+                try {
+                    sendEnquireLink();
+                } catch (ResponseTimeoutException e) {
+                    close();
+                } catch (InvalidResponseException e) {
+                    // lets unbind gracefully
+                    unbindAndClose();
+                } catch (IOException e) {
+                    close();
+                }
+            }
+            logger.info("EnquireLinkSender stop");
+        }
+        
+        /**
+         * This method will send enquire link asynchronously.
+         */
+        public void enquireLink() {
+            if (sendingEnquireLink.compareAndSet(false, true)) {
+                logger.debug("Sending enquire link notify");
+                synchronized (sendingEnquireLink) {
+                    sendingEnquireLink.notify();
+                }
+            } else {
+                logger.debug("Not sending enquire link notify");
+            }
+        }
+        
+        /**
+         * Ensure we have proper link.
+         * 
+         * @throws ResponseTimeoutException if there is no valid response after defined millisecond.
+         * @throws InvalidResponseException if there is invalid response found.
+         * @throws IOException if there is an IO error found.
+         */
+        private void sendEnquireLink() throws ResponseTimeoutException, InvalidResponseException, IOException {
+            int seqNum = sequence.nextValue();
+            PendingResponse<EnquireLinkResp> pendingResp = new PendingResponse<EnquireLinkResp>(transactionTimer);
+            pendingResponse.put(seqNum, pendingResp);
+            
+            try {
+                logger.debug("Sending enquire_link");
+                pduSender.sendEnquireLink(out, seqNum);
+            } catch (IOException e) {
+                logger.error("Failed sending enquire link", e);
+                pendingResponse.remove(seqNum);
+                throw e;
+            }
+            
+            try {
+                pendingResp.waitDone();
+                logger.debug("Enquire link response received");
+            } catch (ResponseTimeoutException e) {
+                pendingResponse.remove(seqNum);
+                throw e;
+            } catch (InvalidResponseException e) {
+                pendingResponse.remove(seqNum);
+                throw e;
+            }
+            
+            if (pendingResp.getResponse().getCommandStatus() != SMPPConstant.STAT_ESME_ROK) {
+                // this is ok, we just want to enquire we have proper link.
+                logger.warn("Receive NON-OK response of enquire link: " + pendingResp.getResponse().getCommandIdAsHex());
+            }
+        }
+    }
 }

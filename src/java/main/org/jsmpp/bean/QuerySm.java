@@ -1,18 +1,16 @@
 package org.jsmpp.bean;
 
-import org.jsmpp.NumberingPlanIndicator;
-import org.jsmpp.TypeOfNumber;
 
 /**
  * @author uudashr
  * 
  */
 public class QuerySm extends Command {
-    private String _messageId;
-    private TypeOfNumber _sourceAddrTon;
-    private NumberingPlanIndicator _sourceAddrNpi;
-    private String _sourceAddr;
-
+    private String messageId;
+    private byte sourceAddrTon;
+    private byte sourceAddrNpi;
+    private String sourceAddr;
+    
     public QuerySm() {
         super();
     }
@@ -21,56 +19,38 @@ public class QuerySm extends Command {
      * @return the messageId
      */
     public String getMessageId() {
-        return _messageId;
+        return messageId;
     }
 
     /**
      * @param messageId the messageId to set
      */
     public void setMessageId(String messageId) {
-        _messageId = messageId;
+        this.messageId = messageId;
     }
 
-    /**
-     * @return the sourceAddr
-     */
+    public byte getSourceAddrTon() {
+        return sourceAddrTon;
+    }
+
+    public void setSourceAddrTon(byte sourceAddrTon) {
+        this.sourceAddrTon = sourceAddrTon;
+    }
+
+    public byte getSourceAddrNpi() {
+        return sourceAddrNpi;
+    }
+
+    public void setSourceAddrNpi(byte sourceAddrNpi) {
+        this.sourceAddrNpi = sourceAddrNpi;
+    }
+
     public String getSourceAddr() {
-        return _sourceAddr;
+        return sourceAddr;
     }
 
-    /**
-     * @param sourceAddr the sourceAddr to set
-     */
     public void setSourceAddr(String sourceAddr) {
-        _sourceAddr = sourceAddr;
+        this.sourceAddr = sourceAddr;
     }
-
-    /**
-     * @return the sourceAddrNpi
-     */
-    public NumberingPlanIndicator getSourceAddrNpi() {
-        return _sourceAddrNpi;
-    }
-
-    /**
-     * @param sourceAddrNpi the sourceAddrNpi to set
-     */
-    public void setSourceAddrNpi(NumberingPlanIndicator sourceAddrNpi) {
-        _sourceAddrNpi = sourceAddrNpi;
-    }
-
-    /**
-     * @return the sourceAddrTon
-     */
-    public TypeOfNumber getSourceAddrTon() {
-        return _sourceAddrTon;
-    }
-
-    /**
-     * @param sourceAddrTon the sourceAddrTon to set
-     */
-    public void setSourceAddrTon(TypeOfNumber sourceAddrTon) {
-        _sourceAddrTon = sourceAddrTon;
-    }
-
+    
 }

@@ -11,18 +11,18 @@ public class ReplaceIfPresentFlag {
     public static final ReplaceIfPresentFlag REPLACE = new ReplaceIfPresentFlag(
             1);
 
-    private byte _value;
+    private byte value;
 
     public ReplaceIfPresentFlag(int value) {
-        _value = (byte)value;
+        this.value = (byte)value;
     }
 
     public ReplaceIfPresentFlag(byte value) {
-        _value = value;
+        this.value = value;
     }
 
     public byte value() {
-        return _value;
+        return value;
     }
 
     @Override
@@ -30,6 +30,6 @@ public class ReplaceIfPresentFlag {
         if (!(obj instanceof ReplaceIfPresentFlag))
             return false;
         ReplaceIfPresentFlag other = (ReplaceIfPresentFlag)obj;
-        return _value == other._value;
+        return value == other.value;
     }
 }

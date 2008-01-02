@@ -42,7 +42,7 @@ public abstract class DataCoding {
         }
     }
 
-    protected final byte value;
+    protected byte value;
 
     /**
      * Default constructor.
@@ -52,7 +52,7 @@ public abstract class DataCoding {
     }
 
     /**
-     * Constrct with specified value.
+     * Construct with specified value.
      * 
      * @param value is the data coding value.
      */
@@ -61,7 +61,7 @@ public abstract class DataCoding {
     }
 
     /**
-     * Constrct with specified value.
+     * Construct with specified value.
      * 
      * @param value is the data coding value.
      */

@@ -16,23 +16,29 @@ public enum GSMSpecificFeature {
     public static final byte CLEAR_BYTE = 0x3f;
     public static final byte MASK_BYTE = (byte) 0xc0;
 
-    private final byte _value;
+    private final byte value;
 
     private GSMSpecificFeature(byte value) {
-        _value = value;
+        this.value = value;
     }
 
     public byte value() {
-        return _value;
+        return value;
     }
-
-    public static GSMSpecificFeature valueOf(byte value) {
-        for (GSMSpecificFeature val : values()) {
-            if (val._value == value)
-                return val;
-        }
-
-        throw new IllegalArgumentException(
-                "No enum const GSMSpecificFeature with value " + value);
+    
+    public boolean containedIn(ESMClass esmClass) {
+        return containedIn(esmClass.value());
+    }
+    
+    public boolean containedIn(byte esmClass) {
+        return this.value == (byte)(esmClass & MASK_BYTE);
+    }
+    
+    public static byte compose(byte esmClass, GSMSpecificFeature specificFeature) {
+        return (byte)(clean(esmClass) | specificFeature.value());
+    }
+    
+    public static byte clean(byte esmClass) {
+        return (byte) (esmClass & CLEAR_BYTE);
     }
 }

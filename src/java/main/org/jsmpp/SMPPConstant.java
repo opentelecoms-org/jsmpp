@@ -183,7 +183,7 @@ public interface SMPPConstant {
 
     /**
      * Encoded esm_class parameter for deliver_sm or data_sm (SMSC -> ESME)<br/>
-     * xx0001xx Short Message contains SME Deivery Acknoledgment.
+     * xx0001xx Short Message contains SME Delivery Acknowledgment.
      */
     public static final byte ESMCLS_SME_DELIV_ACK = 0x08;
 
@@ -245,26 +245,26 @@ public interface SMPPConstant {
     public static final byte REGDEL_SMSC_FAILURE_REQUESTED = 0x02;
 
     /*
-     * SME originated Acknowldgement of registered delivery. bits 3 and 2
+     * SME originated Acknowledgment of registered delivery. bits 3 and 2
      */
 
     /**
-     * No recipient SME Acknowledgement requested. xxxx00xx
+     * No recipient SME Acknowledgment requested. xxxx00xx
      */
     public static final byte REGDEL_SME_ACK_NO = 0x00;
 
     /**
-     * SME Delivery Acknowldgement requested. xxxx01xx
+     * SME Delivery Acknowledgment requested. xxxx01xx
      */
     public static final byte REGDEL_SME_DELIVERY_ACK_REQUESTED = 0x04;
 
     /**
-     * SME Manual/User Acknowledgement requested. xxxx10xx
+     * SME Manual/User Acknowledgment requested. xxxx10xx
      */
     public static final byte REGDEL_SME_MANUAL_ACK_REQUESTED = 0x08;
 
     /**
-     * Both Delivery and Manual/User Acknowledgement requested.
+     * Both Delivery and Manual/User Acknowledgment requested.
      */
     public static final byte REGDEL_SME_DELIVERY_MANUAL_ACK_REQUESTED = 0x0c;
 

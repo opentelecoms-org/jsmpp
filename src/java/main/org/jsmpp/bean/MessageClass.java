@@ -12,19 +12,19 @@ public enum MessageClass {
 
     public static final byte MASK_MESSAGE_CLASS = 0x03; // bin: 00000011
 
-    private final byte _value;
+    private final byte value;
 
     private MessageClass(byte value) {
-        _value = value;
+        this.value = value;
     }
 
     public byte value() {
-        return _value;
+        return value;
     }
 
     public static MessageClass valueOf(byte value) {
         for (MessageClass val : values()) {
-            if (val._value == value)
+            if (val.value == value)
                 return val;
         }
         throw new IllegalArgumentException(

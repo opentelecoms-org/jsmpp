@@ -129,7 +129,7 @@ public interface PDUSender {
             throws IOException;
 
     /**
-     * Send submit short messsage command.
+     * Send submit short message command.
      * 
      * @param os is the {@link OutputStream}.
      * @param sequenceNumber is the sequence_number.
@@ -146,7 +146,7 @@ public interface PDUSender {
      * @param scheduleDeliveryTime is the schedule_delivery_time
      * @param validityPeriod is the validity_period.
      * @param registeredDelivery is the registered_delivery.
-     * @param replaceIfPresent is the replace_if_present_flag.
+     * @param replaceIfPresentFlag is the replace_if_present_flag.
      * @param dataCoding is the data_coding.
      * @param smDefaultMsgId is the sm_default_msg_id.
      * @param shortMessage is the short_message.
@@ -161,7 +161,7 @@ public interface PDUSender {
             String destinationAddr, ESMClass esmClass, byte protocoId,
             byte priorityFlag, String scheduleDeliveryTime,
             String validityPeriod, RegisteredDelivery registeredDelivery,
-            byte replaceIfPresent, DataCoding dataCoding, byte smDefaultMsgId,
+            byte replaceIfPresentFlag, DataCoding dataCoding, byte smDefaultMsgId,
             byte[] shortMessage) throws PDUStringException, IOException;
 
     /**

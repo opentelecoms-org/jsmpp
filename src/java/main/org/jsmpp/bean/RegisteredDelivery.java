@@ -5,44 +5,55 @@ package org.jsmpp.bean;
  * 
  */
 public class RegisteredDelivery {
-    private final byte _value;
+    private byte value;
 
     public RegisteredDelivery() {
-        _value = 0;
+        value = 0;
     }
 
     public RegisteredDelivery(int value) {
-        _value = (byte)value;
+        this.value = (byte)value;
     }
 
     public RegisteredDelivery(byte value) {
-        _value = value;
+        this.value = value;
     }
-
+    
+    public RegisteredDelivery(SMSCDeliveryReceipt smscDeliveryReceipt) {
+        this();
+        setSMSCDeliveryReceipt(smscDeliveryReceipt);
+    }
+    
+    public RegisteredDelivery(SMEOriginatedAcknowledgement smeOriginatedAcknowledgement) {
+        this();
+        setSMEOriginatedAcknowledgement(smeOriginatedAcknowledgement);
+    }
+    
     public byte value() {
-        return _value;
+        return value;
     }
 
-    public SMSCDeliveryReceipt getSMSCDeliveryReceipt() {
-        return SMSCDeliveryReceipt
-                .valueOf((byte)(_value & SMSCDeliveryReceipt.MASK_BYTE));
-    }
-
-    public RegisteredDelivery composeSMSCDelReceipt(
+    public RegisteredDelivery setSMSCDeliveryReceipt(
             SMSCDeliveryReceipt smscDeliveryReceipt) {
-        return new RegisteredDelivery(cleanSMSCDeliveryReceipt(_value)
-                | smscDeliveryReceipt.value());
+        value = SMSCDeliveryReceipt.compose(value, smscDeliveryReceipt);
+        return this;
     }
-
-    private static byte cleanSMSCDeliveryReceipt(byte value) {
-        return (byte)(value & SMSCDeliveryReceipt.CLEAR_BYTE);
+    
+    public RegisteredDelivery setSMEOriginatedAcknowledgement(SMEOriginatedAcknowledgement smeOriginatedAcknowledgement) {
+        value = SMEOriginatedAcknowledgement.compose(value, smeOriginatedAcknowledgement);
+        return this;
     }
-
+    
+    public RegisteredDelivery setIntermediateNotification(IntermediateNotification intermediateNotification) {
+        value = IntermediateNotification.compose(value, intermediateNotification);
+        return this;
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof RegisteredDelivery))
             return false;
         RegisteredDelivery other = (RegisteredDelivery)obj;
-        return _value == other._value;
+        return value == other.value;
     }
 }

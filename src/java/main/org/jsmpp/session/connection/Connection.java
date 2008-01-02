@@ -1,5 +1,6 @@
 package org.jsmpp.session.connection;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -13,5 +14,6 @@ public interface Connection {
     boolean isOpen();
     InputStream getInputStream();
     OutputStream getOutputStream();
-    void close();
+    void setSoTimeout(int timeout) throws IOException;
+    void close() throws IOException;
 }

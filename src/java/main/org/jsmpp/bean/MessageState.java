@@ -40,14 +40,14 @@ public enum MessageState {
      */
     REJECTED((byte) 0x08);
 
-    private final byte _value;
+    private final byte value;
 
-    private MessageState(final byte value) {
-        _value = value;
+    private MessageState(byte value) {
+        this.value = value;
     }
 
     public byte value() {
-        return _value;
+        return value;
     }
 
     public static MessageState valueOf(byte value) {

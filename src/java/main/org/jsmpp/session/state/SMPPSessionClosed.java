@@ -4,7 +4,8 @@ import java.io.IOException;
 
 import org.jsmpp.bean.Command;
 import org.jsmpp.extra.SessionState;
-import org.jsmpp.session.SMPPSessionHandler;
+import org.jsmpp.session.BaseResponseHandler;
+import org.jsmpp.session.ResponseHandler;
 
 /**
  * This class is closed state implementation of {@link SMPPSessionState}. This
@@ -18,58 +19,57 @@ import org.jsmpp.session.SMPPSessionHandler;
  */
 class SMPPSessionClosed implements SMPPSessionState {
     
-    @Override
     public SessionState getSessionState() {
         return SessionState.CLOSED;
     }
     
     public void processBindResp(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
+            ResponseHandler responseHandler) throws IOException {
         throw new IOException("Invalid process for closed session state");
     }
 
     public void processDeliverSm(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
+            ResponseHandler responseHandler) throws IOException {
         throw new IOException("Invalid process for closed session state");
     }
 
     public void processEnquireLink(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
+            BaseResponseHandler responseHandler) throws IOException {
         throw new IOException("Invalid process for closed session state");
     }
 
     public void processEnquireLinkResp(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
+            BaseResponseHandler responseHandler) throws IOException {
         throw new IOException("Invalid process for closed session state");
     }
 
     public void processGenericNack(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
+            BaseResponseHandler responseHandler) throws IOException {
         throw new IOException("Invalid process for closed session state");
     }
 
     public void processQuerySmResp(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
+            ResponseHandler responseHandler) throws IOException {
         throw new IOException("Invalid process for closed session state");
     }
 
     public void processSubmitSmResp(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
+            ResponseHandler responseHandler) throws IOException {
         throw new IOException("Invalid process for closed session state");
     }
 
     public void processUnbind(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
+            BaseResponseHandler responseHandler) throws IOException {
         throw new IOException("Invalid process for closed session state");
     }
 
     public void processUnbindResp(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
+            BaseResponseHandler responseHandler) throws IOException {
         throw new IOException("Invalid process for closed session state");
     }
 
     public void processUnknownCid(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
+            BaseResponseHandler responseHandler) throws IOException {
         throw new IOException("Invalid process for closed session state");
     }
 }

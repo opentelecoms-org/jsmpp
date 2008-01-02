@@ -9,7 +9,8 @@ import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.Command;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.SessionState;
-import org.jsmpp.session.SMPPSessionHandler;
+import org.jsmpp.session.BaseResponseHandler;
+import org.jsmpp.session.ResponseHandler;
 import org.jsmpp.util.DefaultDecomposer;
 import org.jsmpp.util.IntUtil;
 import org.jsmpp.util.PDUDecomposer;
@@ -29,14 +30,13 @@ class SMPPSessionOpen implements SMPPSessionState {
     private static final Logger logger = LoggerFactory.getLogger(SMPPSessionOpen.class);
     private static final PDUDecomposer pduDecomposer = new DefaultDecomposer();
     
-    @Override
     public SessionState getSessionState() {
         return SessionState.OPEN;
     }
     
     public void processBindResp(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
-        PendingResponse<Command> pendingResp = smppClientProxy
+            ResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
                 .removeSentItem(pduHeader.getSequenceNumber());
         if (pendingResp != null) {
             try {
@@ -50,91 +50,109 @@ class SMPPSessionOpen implements SMPPSessionState {
             } catch (PDUStringException e) {
                 String message = "Failed decomposing submit_sm_resp";
                 logger.error(message, e);
-                smppClientProxy.sendGenerickNack(e.getErrorCode(), pduHeader
+                responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
                         .getSequenceNumber());
                 pendingResp
                         .doneWithInvalidResponse(new InvalidResponseException(
                                 message, e));
             }
         } else {
-            logger.error("No request find for sequence number "
-                    + pduHeader.getSequenceNumber());
-            smppClientProxy.sendGenerickNack(
+            logger.error("No request with sequence number "
+                    + pduHeader.getSequenceNumber() + " found");
+            responseHandler.sendGenerickNack(
                     SMPPConstant.STAT_ESME_RINVDFTMSGID, pduHeader
                             .getSequenceNumber());
         }
     }
 
     public void processDeliverSm(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
-        PendingResponse<Command> pendingResp = smppClientProxy
+            ResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
                 .removeSentItem(1);
-        pendingResp.doneWithInvalidResponse(new InvalidResponseException(
-                "Receive unexpected deliver_sm"));
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                    "Receive unexpected deliver_sm"));
+        }
     }
 
     public void processEnquireLink(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
-        PendingResponse<Command> pendingResp = smppClientProxy
+            BaseResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
                 .removeSentItem(1);
-        pendingResp.doneWithInvalidResponse(new InvalidResponseException(
-                "Receive unexpected enquire_link"));
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                    "Receive unexpected enquire_link"));
+        }
     }
 
     public void processEnquireLinkResp(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
-        PendingResponse<Command> pendingResp = smppClientProxy
+            BaseResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
                 .removeSentItem(1);
-        pendingResp.doneWithInvalidResponse(new InvalidResponseException(
-                "Receive unexpected enquire_link_resp"));
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                    "Receive unexpected enquire_link_resp"));
+        }
     }
 
     public void processGenericNack(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) {
-        PendingResponse<Command> pendingResp = smppClientProxy
+            BaseResponseHandler responseHandler) {
+        PendingResponse<Command> pendingResp = responseHandler
                 .removeSentItem(1);
-        pendingResp.doneWithInvalidResponse(new InvalidResponseException(
-                "Receive unexpected generic_nack"));
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                    "Receive unexpected generic_nack"));
+        }
     }
 
     public void processSubmitSmResp(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
-        PendingResponse<Command> pendingResp = smppClientProxy
+            ResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
                 .removeSentItem(1);
-        pendingResp.doneWithInvalidResponse(new InvalidResponseException(
-                "Receive unexpected submit_sm_resp"));
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                    "Receive unexpected submit_sm_resp"));
+        }
     }
 
     public void processUnbind(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
-        PendingResponse<Command> pendingResp = smppClientProxy
+            BaseResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
                 .removeSentItem(1);
-        pendingResp.doneWithInvalidResponse(new InvalidResponseException(
-                "Receive unexpected unbind"));
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                    "Receive unexpected unbind"));
+        }
     }
 
     public void processUnbindResp(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
-        PendingResponse<Command> pendingResp = smppClientProxy
+            BaseResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
                 .removeSentItem(1);
-        pendingResp.doneWithInvalidResponse(new InvalidResponseException(
-                "Receive unexpected unbind_resp"));
-
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                    "Receive unexpected unbind_resp"));
+        }
     }
 
     public void processUnknownCid(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
-        PendingResponse<Command> pendingResp = smppClientProxy
+            BaseResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
                 .removeSentItem(1);
-        pendingResp.doneWithInvalidResponse(new InvalidResponseException(
-                "Receive unknown cid " + pduHeader.getCommandIdAsHex()));
+        // FIXME uud: pending response might be null
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                    "Receive unknown command_id"));
+        }
     }
 
     public void processQuerySmResp(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
-        PendingResponse<Command> pendingResp = smppClientProxy
+            ResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
                 .removeSentItem(1);
-        pendingResp.doneWithInvalidResponse(new InvalidResponseException(
-                "Receive unexpected generic_nack"));
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                    "Receive unexpected query_sm"));
+        }
     }
 }

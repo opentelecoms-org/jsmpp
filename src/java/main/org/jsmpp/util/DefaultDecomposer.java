@@ -3,10 +3,7 @@ package org.jsmpp.util;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.jsmpp.NumberingPlanIndicator;
 import org.jsmpp.PDUStringException;
-import org.jsmpp.TypeOfNumber;
-import org.jsmpp.bean.Address;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.Command;
@@ -38,6 +35,11 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultDecomposer implements PDUDecomposer {
     private static final Logger logger = LoggerFactory.getLogger(DefaultDecomposer.class);
+    private static final PDUDecomposer instance = new DefaultDecomposer();
+    
+    public static final PDUDecomposer getInstance() {
+        return instance;
+    }
     
     /**
      * Default constructor.
@@ -190,21 +192,17 @@ public class DefaultDecomposer implements PDUDecomposer {
         StringValidator.validateString(req.getServiceType(),
                 StringParameter.SERVICE_TYPE);
         
-        Address source = new Address();
-        source.setTypeOfNumber(reader.readByte());
-        source.setNumberingPlanIndicator(reader.readByte());
-        source.setValue(reader.readCString());
-        StringValidator.validateString(source.getValue(),
+        req.setSourceAddrTon(reader.readByte());
+        req.setSourceAddrNpi(reader.readByte());
+        req.setSourceAddr(reader.readCString());
+        StringValidator.validateString(req.getSourceAddr(),
                 StringParameter.SOURCE_ADDR);
-        req.setSource(source);
         
-        Address destination = new Address();
-        destination.setTypeOfNumber(reader.readByte());
-        destination.setNumberingPlanIndicator(reader.readByte());
-        destination.setValue(reader.readCString());
-        StringValidator.validateString(destination.getValue(),
+        req.setDestAddrTon(reader.readByte());
+        req.setDestAddrNpi(reader.readByte());
+        req.setDestAddress(reader.readCString());
+        StringValidator.validateString(req.getDestAddress(),
                 StringParameter.DESTINATION_ADDR);
-        req.setDestination(destination);
         
         req.setEsmClass(reader.readByte());
         req.setProtocolId(reader.readByte());
@@ -257,11 +255,12 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setMessageId(reader.readCString());
         StringValidator.validateString(req.getMessageId(),
                 StringParameter.MESSAGE_ID);
-        req.setSourceAddrTon(TypeOfNumber.valueOf(reader.readByte()));
-        req.setSourceAddrNpi(NumberingPlanIndicator.valueOf(reader.readByte()));
+        req.setSourceAddrTon(reader.readByte());
+        req.setSourceAddrNpi(reader.readByte());
         req.setSourceAddr(reader.readCString());
         StringValidator.validateString(req.getSourceAddr(),
                 StringParameter.SOURCE_ADDR);
+        
         return req;
     }
 
@@ -297,21 +296,17 @@ public class DefaultDecomposer implements PDUDecomposer {
         StringValidator.validateString(req.getServiceType(),
                 StringParameter.SERVICE_TYPE);
         
-        Address source = new Address();
-        source.setTypeOfNumber(reader.readByte());
-        source.setNumberingPlanIndicator(reader.readByte());
-        source.setValue(reader.readCString());
-        StringValidator.validateString(source.getValue(),
+        req.setSourceAddrTon(reader.readByte());
+        req.setSourceAddrNpi(reader.readByte());
+        req.setSourceAddr(reader.readCString());
+        StringValidator.validateString(req.getSourceAddr(),
                 StringParameter.SOURCE_ADDR);
-        req.setSource(source);
         
-        Address destination = new Address();
-        destination.setTypeOfNumber(reader.readByte());
-        destination.setNumberingPlanIndicator(reader.readByte());
-        destination.setValue(reader.readCString());
-        StringValidator.validateString(destination.getValue(),
+        req.setDestAddrTon(reader.readByte());
+        req.setDestAddrNpi(reader.readByte());
+        req.setDestAddress(reader.readCString());
+        StringValidator.validateString(req.getDestAddress(),
                 StringParameter.DESTINATION_ADDR);
-        req.setDestination(destination);
         
         req.setEsmClass(reader.readByte());
         req.setProtocolId(reader.readByte());
@@ -363,24 +358,21 @@ public class DefaultDecomposer implements PDUDecomposer {
          */
         try {
             DeliveryReceipt delRec = new DeliveryReceipt();
-            delRec
-                    .setId(getDeliveryReceiptVal(DeliveryReceipt.DELREC_ID,
-                            data));
-            delRec.setSubmitted(Integer.parseInt(getDeliveryReceiptVal(
+            delRec.setId(getDeliveryReceiptValue(DeliveryReceipt.DELREC_ID,data));
+            delRec.setSubmitted(Integer.parseInt(getDeliveryReceiptValue(
                     DeliveryReceipt.DELREC_SUB, data)));
-            delRec.setDelivered(Integer.parseInt(getDeliveryReceiptVal(
+            delRec.setDelivered(Integer.parseInt(getDeliveryReceiptValue(
                     DeliveryReceipt.DELREC_DLVRD, data)));
-            delRec.setSubmitDate(string2Date(getDeliveryReceiptVal(
+            delRec.setSubmitDate(string2Date(getDeliveryReceiptValue(
                     DeliveryReceipt.DELREC_SUBMIT_DATE, data)));
-            delRec.setDoneDate(string2Date(getDeliveryReceiptVal(
+            delRec.setDoneDate(string2Date(getDeliveryReceiptValue(
                     DeliveryReceipt.DELREC_DONE_DATE, data)));
             delRec.setFinalStatus(DeliveryReceiptState
-                    .getByName(getDeliveryReceiptVal(
+                    .getByName(getDeliveryReceiptValue(
                             DeliveryReceipt.DELREC_STAT, data)));
-            delRec.setError(getDeliveryReceiptVal(DeliveryReceipt.DELREC_ERR,
+            delRec.setError(getDeliveryReceiptValue(DeliveryReceipt.DELREC_ERR,
                     data));
-            delRec.setText(getDeliveryReceiptVal(DeliveryReceipt.DELREC_TEXT,
-                    data));
+            delRec.setText(getDeliveryReceiptTextValue( data));
             return delRec;
         } catch (Exception e) {
             throw new InvalidDeliveryReceiptException(
@@ -429,11 +421,6 @@ public class DefaultDecomposer implements PDUDecomposer {
         return cal.getTime();
     }
 
-    /*
-     * public static void main(String[] args) {
-     * System.out.println(string2Date("0604230103")); }
-     */
-
     /**
      * Get the delivery receipt attribute value.
      * 
@@ -444,7 +431,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      * @return the value of specified attribute.
      * @throws IndexOutOfBoundsException
      */
-    private static String getDeliveryReceiptVal(String attrName, String source)
+    private static String getDeliveryReceiptValue(String attrName, String source)
             throws IndexOutOfBoundsException {
         String tmpAttr = attrName + ":";
         int startIndex = source.indexOf(tmpAttr);
@@ -454,6 +441,20 @@ public class DefaultDecomposer implements PDUDecomposer {
         int endIndex = source.indexOf(" ", startIndex);
         if (endIndex > 0)
             return source.substring(startIndex, endIndex);
+        return source.substring(startIndex);
+    }
+    
+    /**
+     * @param source
+     * @return
+     * @throws IndexOutOfBoundsException
+     */
+    private static String getDeliveryReceiptTextValue(String source) {
+        String tmpAttr = DeliveryReceipt.DELREC_TEXT + ":";
+        int startIndex = source.indexOf(tmpAttr);
+        if (startIndex < 0)
+            return null;
+        startIndex = startIndex + tmpAttr.length();
         return source.substring(startIndex);
     }
 

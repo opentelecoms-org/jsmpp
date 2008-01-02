@@ -1,6 +1,7 @@
 package org.jsmpp.util;
 
 
+
 /**
  * Is the message_id generator.
  * 
@@ -15,5 +16,5 @@ public interface MessageIDGenerator {
 	 * Generate message-id, max 65 C-Octet String.
 	 * @return
 	 */
-	public String newMessageId();
+	public MessageId newMessageId();
 }

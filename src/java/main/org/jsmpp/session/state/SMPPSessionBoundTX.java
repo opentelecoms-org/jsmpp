@@ -9,13 +9,13 @@ import org.jsmpp.bean.QuerySmResp;
 import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.SessionState;
-import org.jsmpp.session.SMPPSessionHandler;
+import org.jsmpp.session.ResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * This class is unbound state implementation of {@link SMPPSessionState}. This
- * class give spesific response to a transmit related transaction, otherwise
+ * class give specific response to a transmit related transaction, otherwise
  * it always give negative response.
  * 
  * @author uudashr
@@ -23,18 +23,17 @@ import org.slf4j.LoggerFactory;
  * @since 2.0
  * 
  */
-class SMPPSessionBoundTX extends SMPPSessionBound {
+class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
     private static final Logger logger = LoggerFactory.getLogger(SMPPSessionBoundTX.class);
     
-    @Override
     public SessionState getSessionState() {
         return SessionState.BOUND_TX;
     }
     
     public void processSubmitSmResp(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
+            ResponseHandler responseHandler) throws IOException {
 
-        PendingResponse<Command> pendingResp = smppClientProxy
+        PendingResponse<Command> pendingResp = responseHandler
                 .removeSentItem(pduHeader.getSequenceNumber());
         if (pendingResp != null) {
             try {
@@ -42,22 +41,19 @@ class SMPPSessionBoundTX extends SMPPSessionBound {
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
                 logger.error("Failed decomposing submit_sm_resp", e);
-                smppClientProxy.sendGenerickNack(e.getErrorCode(), pduHeader
+                responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
                         .getSequenceNumber());
             }
         } else {
-            logger.error("No request find for sequence number "
-                    + pduHeader.getSequenceNumber());
-            smppClientProxy.sendGenerickNack(
-                    SMPPConstant.STAT_ESME_RINVDFTMSGID, pduHeader
-                            .getSequenceNumber());
+            logger.warn("No request with sequence number "
+                    + pduHeader.getSequenceNumber() + " found");
         }
     }
 
     public void processQuerySmResp(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
+            ResponseHandler responseHandler) throws IOException {
 
-        PendingResponse<Command> pendingResp = smppClientProxy
+        PendingResponse<Command> pendingResp = responseHandler
                 .removeSentItem(pduHeader.getSequenceNumber());
         if (pendingResp != null) {
             try {
@@ -65,21 +61,21 @@ class SMPPSessionBoundTX extends SMPPSessionBound {
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
                 logger.error("Failed decomposing submit_sm_resp", e);
-                smppClientProxy.sendGenerickNack(e.getErrorCode(), pduHeader
+                responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
                         .getSequenceNumber());
             }
         } else {
             logger.error("No request find for sequence number "
                     + pduHeader.getSequenceNumber());
-            smppClientProxy.sendGenerickNack(
+            responseHandler.sendGenerickNack(
                     SMPPConstant.STAT_ESME_RINVDFTMSGID, pduHeader
                             .getSequenceNumber());
         }
     }
 
     public void processDeliverSm(Command pduHeader, byte[] pdu,
-            SMPPSessionHandler smppClientProxy) throws IOException {
-        smppClientProxy.sendNegativeResponse(pduHeader.getCommandId(),
+            ResponseHandler responseHandler) throws IOException {
+        responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
                 SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
                         .getSequenceNumber());
     }

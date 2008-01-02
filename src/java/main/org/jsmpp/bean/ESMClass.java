@@ -1,52 +1,49 @@
 package org.jsmpp.bean;
 
 /**
+ * FIXME uud: create ESMClass support for Server module. 
  * @author uudashr
  * 
  */
 public class ESMClass {
-    private final byte _value;
+    private byte value;
 
     public ESMClass() {
-        _value = 0;
+        value = 0;
     }
 
     public ESMClass(int value) {
-        _value = (byte) value;
+        this.value = (byte) value;
     }
 
     public ESMClass(byte value) {
-        _value = value;
+        this.value = value;
     }
-
+    
+    public ESMClass(MessageMode messageMode, MessageType messageType, GSMSpecificFeature specificFeature) {
+        this(0);
+        setMessageMode(messageMode);
+        setMessageType(messageType);
+        setSpecificFeature(specificFeature);
+    }
+    
     public byte value() {
-        return _value;
+        return value;
+    }
+    
+    public ESMClass setMessageMode(MessageMode messageMode) {
+        value = MessageMode.compose(value, messageMode);
+        return this;
     }
 
-    public GSMSpecificFeature getSpecificFeature() {
-        return GSMSpecificFeature
-                .valueOf((byte) (_value & GSMSpecificFeature.MASK_BYTE));
+    public ESMClass setSpecificFeature(GSMSpecificFeature specificFeature) {
+        value = GSMSpecificFeature.compose(value, specificFeature);
+        return this;
     }
 
-    public ESMClass composeSpecificFeature(GSMSpecificFeature specificFeature) {
-        return new ESMClass(cleanSpecificFeature(_value)
-                | specificFeature.value());
-    }
-
-    private static byte cleanSpecificFeature(byte value) {
-        return (byte) (value & GSMSpecificFeature.CLEAR_BYTE);
-    }
-
-    public MessageType getMessageType() {
-        return MessageType.valueOf((byte) (_value & MessageType.MASK_BYTE));
-    }
-
-    public ESMClass composeMessageType(MessageType messageType) {
-        return new ESMClass(cleanMessageType(_value) | messageType.value());
-    }
-
-    private static byte cleanMessageType(byte value) {
-        return (byte) (value & MessageType.CLEAR_BYTE);
+    public ESMClass setMessageType(MessageType messageType) {
+        value = MessageType.compose(value, messageType);
+        return this;
     }
 
     @Override
@@ -54,6 +51,6 @@ public class ESMClass {
         if (!(obj instanceof ESMClass))
             return false;
         ESMClass other = (ESMClass) obj;
-        return _value == other._value;
+        return value == other.value;
     }
 }

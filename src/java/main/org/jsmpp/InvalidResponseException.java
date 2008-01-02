@@ -1,12 +1,13 @@
 package org.jsmpp;
 
 /**
- * This exception thrown if we receive unexpected response.
+ * This exception thrown if we receive unexpected response (such as invalid PDU
+ * parameter).
  * 
  * @author uudashr
  * @version 1.0
  * @since 1.0
- *
+ * 
  */
 public class InvalidResponseException extends Exception {
 	private static final long serialVersionUID = -1143300950975646034L;

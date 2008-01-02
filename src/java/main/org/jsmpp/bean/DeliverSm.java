@@ -1,15 +1,36 @@
 package org.jsmpp.bean;
 
 import org.jsmpp.SMPPConstant;
+import org.jsmpp.util.DefaultDecomposer;
+import org.jsmpp.util.InvalidDeliveryReceiptException;
 
 /**
  * @author uudashr
  *
  */
 public class DeliverSm extends MessageRequest {
-	
+    
 	public DeliverSm() {
 		super();
+	}
+	
+	/**
+     * Get the short message as {@link DeliveryReceipt}. This method will be
+     * valid if the parsed short message valid and Message Type (esm_class)
+     * contains SMSC Delivery Receipt.
+     * 
+     * @return the {@link DeliveryReceipt}.
+     * @throws InvalidDeliveryReceiptException
+     */
+	public DeliveryReceipt getShortMessageAsDeliveryReceipt()
+            throws InvalidDeliveryReceiptException {
+	    if (MessageType.SMSC_DEL_RECEIPT.containedIn(getEsmClass())) {
+	        return DefaultDecomposer.getInstance().
+                    deliveryReceipt(getShortMessage());
+	    } else {
+	        throw new InvalidDeliveryReceiptException("deliver_sm is not a Delivery Receipt since ems_class value = " + getEsmClass());
+	    }
+	    
 	}
 	
 	/**
@@ -74,7 +95,7 @@ public class DeliverSm extends MessageRequest {
 	}
 	
 	/**
-	 * SME originated Acknowledgement.
+	 * SME originated Acknowledgment.
 	 * @return
 	 */
 	public boolean isSmeAckNotRequested() {
@@ -82,14 +103,14 @@ public class DeliverSm extends MessageRequest {
 	}
 	
 	/**
-	 * SME originated Acknowledgement.
+	 * SME originated Acknowledgment.
 	 */
 	public void setSmeAckNotRequested() {
 		registeredDelivery = composeSmeAckNotRequested(registeredDelivery);
 	}
 	
 	/**
-	 * SME originated Acknowledgement.
+	 * SME originated Acknowledgment.
 	 * @return
 	 */
 	public boolean isSmeDeliveryAckRequested() {
@@ -97,7 +118,7 @@ public class DeliverSm extends MessageRequest {
 	}
 	
 	/**
-	 * SME originated Acknowledgement.
+	 * SME originated Acknowledgment.
 	 */
 	public void setSmeDeliveryAckRequested() {
 		registeredDelivery = composeSmeDeliveryAckRequested(registeredDelivery);
@@ -240,7 +261,7 @@ public class DeliverSm extends MessageRequest {
 	}
 	
 	/**
-	 * SME originated Acknowledgement.
+	 * SME originated Acknowledgment.
 	 * @param registeredDelivery
 	 * @return
 	 */
@@ -249,7 +270,7 @@ public class DeliverSm extends MessageRequest {
 	}
 	
 	/**
-	 * SME originated Acknowledgement.
+	 * SME originated Acknowledgment.
 	 * @param registeredDeliery
 	 * @return
 	 */
@@ -258,7 +279,7 @@ public class DeliverSm extends MessageRequest {
 	}
 	
 	/**
-	 * SME originated Acknowledgement.
+	 * SME originated Acknowledgment.
 	 * @param registeredDelivery
 	 * @return
 	 */
@@ -267,7 +288,7 @@ public class DeliverSm extends MessageRequest {
 	}
 	
 	/**
-	 * SME originated Acknowledgement.
+	 * SME originated Acknowledgment.
 	 * @param registeredDelivery
 	 * @return
 	 */
@@ -276,7 +297,7 @@ public class DeliverSm extends MessageRequest {
 	}
 	
 	/**
-	 * SME originated Acknowledgement.
+	 * SME originated Acknowledgment.
 	 * @param registeredDelivery
 	 * @return
 	 */
@@ -285,7 +306,7 @@ public class DeliverSm extends MessageRequest {
 	}
 	
 	/**
-	 * SME originated Acknowledgement.
+	 * SME originated Acknowledgment.
 	 * @param registeredDelivery
 	 * @return
 	 */
@@ -294,7 +315,7 @@ public class DeliverSm extends MessageRequest {
 	}
 	
 	/**
-	 * SME originated Acknowledgement.
+	 * SME originated Acknowledgment.
 	 * @param registeredDelivery
 	 * @return
 	 */

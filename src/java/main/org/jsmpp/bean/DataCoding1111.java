@@ -27,7 +27,13 @@ public class DataCoding1111 extends DataCoding {
     public DataCoding1111(byte value) {
         super(value);
     }
-
+    
+    public DataCoding1111(Alphabet alphabet, MessageClass messageClass) {
+        super();
+        setAlphabet(alphabet);
+        setMessageClass(messageClass);
+    }
+    
     /**
      * Construct with specified value.
      * 
@@ -50,11 +56,10 @@ public class DataCoding1111 extends DataCoding {
      * Compose data coding with specified message class.
      * 
      * @param messageClass is the message class.
-     * @return the <tt>GeneralDataCoding</tt>.
      */
-    public GeneralDataCoding composeMessageClass(MessageClass messageClass) {
+    public void setMessageClass(MessageClass messageClass) {
         byte tmp = cleanMessageClass(value);
-        return new GeneralDataCoding(tmp | messageClass.value());
+        value = (byte)(tmp | messageClass.value());
     }
 
     /**
@@ -68,7 +73,7 @@ public class DataCoding1111 extends DataCoding {
     }
 
     /**
-     * Get the alphanet value.
+     * Get the alphabet value.
      * 
      * @return the alphabet value.
      */
@@ -79,13 +84,11 @@ public class DataCoding1111 extends DataCoding {
     /**
      * Compose data coding with specified alphabet.
      * 
-     * @param alpha is the {@link Alphabet}
-     * @return the {@link GeneralDataCoding} that contains specified
-     *         {@link Alphabet}
+     * @param alphabet is the {@link Alphabet}
      */
-    public GeneralDataCoding composeAlphabet(Alphabet alpha) {
+    public void setAlphabet(Alphabet alphabet) {
         byte tmp = cleanAlphabet(value);
-        return new GeneralDataCoding(tmp | alpha.value());
+        value = (byte)(tmp | alphabet.value());
     }
 
     /**

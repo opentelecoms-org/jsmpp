@@ -186,7 +186,7 @@ public interface PDUDecomposer {
      * Decompose the SMPP PDU delivery receipt content.
      * 
      * @param data is the content.
-     * @return the delivert receipt object.
+     * @return the delivery receipt object.
      * @throws InvalidDeliveryReceiptException throw if the data is invalid, so
      *         it can be parsed.
      */

@@ -24,17 +24,17 @@ public class DeliveryReceipt {
     /**
      * Date format for the <b>submit date</b> and <b>done date</b> attribute
      */
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyMMddHHmm");
 
-    private String _id;
-    private int _submitted;
-    private int _delivered;
-    private Date _submitDate;
-    private Date _doneDate;
-    private DeliveryReceiptState _finalStatus;
-    private String _error;
-    private String _text;
+    private String id;
+    private int submitted;
+    private int delivered;
+    private Date submitDate;
+    private Date doneDate;
+    private DeliveryReceiptState finalStatus;
+    private String error;
+    private String text;
 
     public DeliveryReceipt() {
 
@@ -43,136 +43,136 @@ public class DeliveryReceipt {
     public DeliveryReceipt(String id, int submitted, int delivered,
             Date submitDate, Date doneDate, DeliveryReceiptState finalStatus,
             String error, String text) {
-        _id = id;
-        _submitted = submitted;
-        _delivered = delivered;
-        _submitDate = submitDate;
-        _doneDate = doneDate;
-        _finalStatus = finalStatus;
-        _error = error;
-        if (text.length() > 20)
-            _text = text.substring(0, 20);
-        else
-            _text = text;
-    }
-
-    public DeliveryReceipt(String data) {
-
+        this.id = id;
+        this.submitted = submitted;
+        this.delivered = delivered;
+        this.submitDate = submitDate;
+        this.doneDate = doneDate;
+        this.finalStatus = finalStatus;
+        this.error = error;
+        if (text.length() > 20) {
+            this.text = text.substring(0, 20);
+        } else {
+            this.text = text;
+        }
     }
 
     /**
      * @return Returns the delivered.
      */
     public int getDelivered() {
-        return _delivered;
+        return delivered;
     }
 
     /**
      * @param delivered The delivered to set.
      */
     public void setDelivered(int delivered) {
-        _delivered = delivered;
+        this.delivered = delivered;
     }
 
     /**
      * @return Returns the doneDate.
      */
     public Date getDoneDate() {
-        return _doneDate;
+        return doneDate;
     }
 
     /**
      * @param doneDate The doneDate to set.
      */
     public void setDoneDate(Date doneDate) {
-        _doneDate = doneDate;
+        this.doneDate = doneDate;
     }
 
     /**
      * @return Returns the error.
      */
     public String getError() {
-        return _error;
+        return error;
     }
 
     /**
      * @param error The error to set.
      */
     public void setError(String error) {
-        _error = error;
+        this.error = error;
     }
 
     /**
      * @return Returns the finalStatus.
      */
     public DeliveryReceiptState getFinalStatus() {
-        return _finalStatus;
+        return finalStatus;
     }
 
     /**
      * @param finalStatus The finalStatus to set.
      */
     public void setFinalStatus(DeliveryReceiptState finalStatus) {
-        _finalStatus = finalStatus;
+        this.finalStatus = finalStatus;
     }
 
     /**
      * @return Returns the id.
      */
     public String getId() {
-        return _id;
+        return id;
     }
 
     /**
      * @param id The id to set.
      */
     public void setId(String id) {
-        _id = id;
+        this.id = id;
     }
 
     /**
      * @return Returns the submitDate.
      */
     public Date getSubmitDate() {
-        return _submitDate;
+        return submitDate;
     }
 
     /**
      * @param submitDate The submitDate to set.
      */
     public void setSubmitDate(Date submitDate) {
-        _submitDate = submitDate;
+        this.submitDate = submitDate;
     }
 
     /**
      * @return Returns the submitted.
      */
     public int getSubmitted() {
-        return _submitted;
+        return submitted;
     }
 
     /**
      * @param submitted The submitted to set.
      */
     public void setSubmitted(int submitted) {
-        _submitted = submitted;
+        this.submitted = submitted;
     }
 
     /**
      * @return Returns the text.
      */
     public String getText() {
-        return _text;
+        return text;
     }
 
     /**
-     * @param text The text to set.
+     * Set the text of delivery receipt. Text more than 20 characters will be trim automatically.
+     * 
+     * @param text the text to set.
      */
     public void setText(String text) {
-        if (text.length() > 20)
-            _text = text.substring(0, 20);
-        else
-            _text = text;
+        if (text.length() > 20) {
+            this.text = text.substring(0, 20);
+        } else {
+            this.text = text;
+        }
     }
 
     public String toString() {
@@ -181,21 +181,21 @@ public class DeliveryReceipt {
          * date:YYMMDDhhmm stat:DDDDDDD err:E Text: . . . . . . . . .
          */
         StringBuffer sBuf = new StringBuffer(120);
-        sBuf.append(DELREC_ID + ":" + _id);
+        sBuf.append(DELREC_ID + ":" + id);
         sBuf.append(" ");
-        sBuf.append(DELREC_SUB + ":" + intToString(_submitted, 3));
+        sBuf.append(DELREC_SUB + ":" + intToString(submitted, 3));
         sBuf.append(" ");
-        sBuf.append(DELREC_DLVRD + ":" + intToString(_delivered, 3));
+        sBuf.append(DELREC_DLVRD + ":" + intToString(delivered, 3));
         sBuf.append(" ");
-        sBuf.append(DELREC_SUBMIT_DATE + ":" + dateFormat.format(_submitDate));
+        sBuf.append(DELREC_SUBMIT_DATE + ":" + dateFormat.format(submitDate));
         sBuf.append(" ");
-        sBuf.append(DELREC_DONE_DATE + ":" + dateFormat.format(_doneDate));
+        sBuf.append(DELREC_DONE_DATE + ":" + dateFormat.format(doneDate));
         sBuf.append(" ");
-        sBuf.append(DELREC_STAT + ":" + _finalStatus);
+        sBuf.append(DELREC_STAT + ":" + finalStatus);
         sBuf.append(" ");
-        sBuf.append(DELREC_STAT + ":" + _error);
+        sBuf.append(DELREC_STAT + ":" + error);
         sBuf.append(" ");
-        sBuf.append(DELREC_TEXT + ":" + _text);
+        sBuf.append(DELREC_TEXT + ":" + text);
         return sBuf.toString();
     }
 

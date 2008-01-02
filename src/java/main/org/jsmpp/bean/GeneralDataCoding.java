@@ -32,16 +32,23 @@ public class GeneralDataCoding extends DataCoding1111 {
     public GeneralDataCoding(int value) {
         super(value);
     }
-
+    
+    public GeneralDataCoding(boolean compressed, boolean containMessageClass,
+            MessageClass messageClass, Alphabet alphabet) {
+        super(alphabet, messageClass);
+        setCompressed(compressed);
+        setContainMessageClass(containMessageClass);
+    }
+    
     public boolean isCompressed() {
         return (value & MASK_COMPRESSED) == MASK_COMPRESSED;
     }
 
-    public GeneralDataCoding composeCompressed(boolean compressed) {
+    public void setCompressed(boolean compressed) {
         if (compressed) {
-            return new GeneralDataCoding(value | MASK_COMPRESSED);
+            value = (byte)(value | MASK_COMPRESSED);
         } else {
-            return new GeneralDataCoding(value & (MASK_COMPRESSED ^ 0xff));
+            value = (byte)(value & (MASK_COMPRESSED ^ 0xff));
         }
     }
 
@@ -54,13 +61,11 @@ public class GeneralDataCoding extends DataCoding1111 {
         return (value & MASK_CONTAIN_MESSAGE_CLASS) == MASK_CONTAIN_MESSAGE_CLASS;
     }
 
-    public GeneralDataCoding composeContainMessageClass(
-            boolean containsMessageClass) {
-        if (containsMessageClass) {
-            return new GeneralDataCoding(value | MASK_CONTAIN_MESSAGE_CLASS);
+    public void setContainMessageClass(boolean containMessageClass) {
+        if (containMessageClass) {
+            value = (byte)(value | MASK_CONTAIN_MESSAGE_CLASS);
         } else {
-            return new GeneralDataCoding(value
-                    & (MASK_CONTAIN_MESSAGE_CLASS ^ 0xff));
+            value = (byte)(value & (MASK_CONTAIN_MESSAGE_CLASS ^ 0xff));
         }
     }
 
