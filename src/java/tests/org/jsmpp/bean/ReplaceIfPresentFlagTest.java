@@ -1,8 +1,7 @@
 package org.jsmpp.bean;
 
-import static org.junit.Assert.*;
-import org.jsmpp.bean.ReplaceIfPresentFlag;
-import org.junit.Test;
+import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 /**
  * @author uudashr
@@ -10,10 +9,10 @@ import org.junit.Test;
  */
 public class ReplaceIfPresentFlagTest {
 	
-    @Test
+    @Test(groups="checkintest")
 	public void testEquality() {
 		ReplaceIfPresentFlag replaceIfPresentFlag = new ReplaceIfPresentFlag(1);
 		
-		assertEquals(new ReplaceIfPresentFlag(1), replaceIfPresentFlag);
+		assertEquals(replaceIfPresentFlag, new ReplaceIfPresentFlag(1));
 	}
 }

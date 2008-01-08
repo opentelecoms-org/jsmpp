@@ -1,12 +1,12 @@
 package org.jsmpp.session;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 
 import org.jsmpp.BindType;
-import org.junit.Before;
-import org.junit.Test;
+import static org.testng.Assert.*;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  * @author uudashr
@@ -16,14 +16,14 @@ public class BindRequestTest {
     private DummyResponseHandler responseHandler;
     private BindRequest bindRequest;
     
-    @Before
+    @BeforeMethod
     public void setUp() {
         responseHandler = new DummyResponseHandler();
         bindRequest = new BindRequest(1, BindType.BIND_TRX, null, null, null, null, null, null, responseHandler);
     }
     
     
-    @Test
+    @Test(groups="checkintest")
     public void testSucceedAccept() {
         try {
             bindRequest.accept();
@@ -34,7 +34,7 @@ public class BindRequestTest {
         }
     }
     
-    @Test
+    @Test(groups="checkintest")
     public void testFailedAccept() {
         responseHandler.closeConnection();
         try {
@@ -46,7 +46,7 @@ public class BindRequestTest {
         }
     }
     
-    @Test
+    @Test(groups="checkintest")
     public void testSucceedReject() {
         try {
             bindRequest.reject(-1);
@@ -57,7 +57,7 @@ public class BindRequestTest {
         }
     }
     
-    @Test
+    @Test(groups="checkintest")
     public void testFailedReject() {
         responseHandler.closeConnection();
         try {
@@ -69,7 +69,7 @@ public class BindRequestTest {
         }
     }
     
-    @Test
+    @Test(groups="checkintest")
     public void testNonSingleAccept() {
         try {
             bindRequest.accept();
@@ -88,7 +88,7 @@ public class BindRequestTest {
     }
     
     
-    @Test
+    @Test(groups="checkintest")
     public void testNonSingleReject() {
         try {
             bindRequest.reject(-1);

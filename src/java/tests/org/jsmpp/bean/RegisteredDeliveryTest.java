@@ -1,9 +1,7 @@
 package org.jsmpp.bean;
 
-import static org.junit.Assert.*;
-import org.jsmpp.bean.RegisteredDelivery;
-import org.jsmpp.bean.SMSCDeliveryReceipt;
-import org.junit.Test;
+import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 
 /**
@@ -12,7 +10,7 @@ import org.junit.Test;
  */
 public class RegisteredDeliveryTest {
 	
-    @Test
+    @Test(groups="checkintest")
 	public void testSMSCDeliveryReceipt() {
 		RegisteredDelivery regDel = new RegisteredDelivery();
 		assertTrue(SMSCDeliveryReceipt.DEFAULT.containedIn(regDel));

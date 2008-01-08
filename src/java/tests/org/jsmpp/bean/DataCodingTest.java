@@ -1,11 +1,7 @@
 package org.jsmpp.bean;
 
-import static org.junit.Assert.*;
-import org.jsmpp.bean.Alphabet;
-import org.jsmpp.bean.DataCoding;
-import org.jsmpp.bean.GeneralDataCoding;
-import org.jsmpp.bean.MessageClass;
-import org.junit.Test;
+import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 /**
  * @author uudashr
@@ -13,7 +9,7 @@ import org.junit.Test;
  */
 public class DataCodingTest {
 	
-    @Test
+    @Test(groups="checkintest")
 	public void testGeneralDataCoding() {
 		GeneralDataCoding dataCoding = new GeneralDataCoding();
 		dataCoding.setCompressed(true);
@@ -31,29 +27,35 @@ public class DataCodingTest {
 		dataCoding.setContainMessageClass(true);
 		
 		dataCoding.setMessageClass(MessageClass.CLASS0);
-		assertEquals(MessageClass.CLASS0, dataCoding.getMessageClass());
+		assertEquals(dataCoding.getMessageClass(), MessageClass.CLASS0);
+		
 		dataCoding.setMessageClass(MessageClass.CLASS1);
-		assertEquals(MessageClass.CLASS1, dataCoding.getMessageClass());
+		assertEquals(dataCoding.getMessageClass(), MessageClass.CLASS1);
+		
 		dataCoding.setMessageClass(MessageClass.CLASS2);
-		assertEquals(MessageClass.CLASS2, dataCoding.getMessageClass());
+		assertEquals(dataCoding.getMessageClass(), MessageClass.CLASS2);
+		
 		dataCoding.setMessageClass(MessageClass.CLASS3);
-		assertEquals(MessageClass.CLASS3, dataCoding.getMessageClass());
+		assertEquals(dataCoding.getMessageClass(), MessageClass.CLASS3);
 		
 		
 		dataCoding.setAlphabet(Alphabet.ALPHA_DEFAULT);
-		assertEquals(Alphabet.ALPHA_DEFAULT, dataCoding.getAlphabet());
+		assertEquals(dataCoding.getAlphabet(), Alphabet.ALPHA_DEFAULT);
+		
 		dataCoding.setAlphabet(Alphabet.ALPHA_8_BIT);
-		assertEquals(Alphabet.ALPHA_8_BIT, dataCoding.getAlphabet());
+		assertEquals(dataCoding.getAlphabet(), Alphabet.ALPHA_8_BIT);
+		
 		dataCoding.setAlphabet(Alphabet.ALPHA_UCS2);
-		assertEquals(Alphabet.ALPHA_UCS2, dataCoding.getAlphabet());
+		assertEquals(dataCoding.getAlphabet(), Alphabet.ALPHA_UCS2);
+		
 		dataCoding.setAlphabet(Alphabet.ALPHA_RESERVED);
-		assertEquals(Alphabet.ALPHA_RESERVED, dataCoding.getAlphabet());
+		assertEquals(dataCoding.getAlphabet(), Alphabet.ALPHA_RESERVED);
 		
 		assertTrue(GeneralDataCoding.isCompatible(dataCoding.value()));
 		assertFalse(GeneralDataCoding.isCompatible((byte)0xff));
 	}
 	
-    @Test
+    @Test(groups="checkintest")
 	public void testDataCoding0x1() {
 		byte value = (byte)0x11;
 		DataCoding dataCoding = DataCoding.newInstance(value);
@@ -62,7 +64,7 @@ public class DataCodingTest {
 		GeneralDataCoding coding = (GeneralDataCoding)dataCoding;
 		assertFalse(coding.isCompressed());
 		assertTrue(coding.isContainMessageClass());
-		assertEquals(Alphabet.ALPHA_DEFAULT, coding.getAlphabet());
-		assertEquals(MessageClass.CLASS1, coding.getMessageClass());
+		assertEquals(coding.getAlphabet(), Alphabet.ALPHA_DEFAULT);
+		assertEquals(coding.getMessageClass(), MessageClass.CLASS1);
 	}
 }

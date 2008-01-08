@@ -1,12 +1,11 @@
 package org.jsmpp.extra;
 
-import static org.junit.Assert.*;
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.bean.Command;
-import org.jsmpp.extra.PendingResponse;
-import org.jsmpp.extra.ResponseTimeoutException;
-import org.junit.Before;
-import org.junit.Test;
+import static org.testng.Assert.*;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  * @author uudashr
@@ -15,7 +14,7 @@ import org.junit.Test;
 public class PendingResponseTest {
     private PendingResponse<Command> pendingResponse;
     
-    @Before
+    @BeforeMethod
     public void setUp() throws Exception {
         pendingResponse = new PendingResponse<Command>(1000);
     }
@@ -23,7 +22,7 @@ public class PendingResponseTest {
     /**
      * Test {@link PendingResponse} for reached timeout.
      */
-    @Test
+    @Test(groups="checkintest")
     public void testReachTimeout() {
         try {
             notifyDone(1010, pendingResponse);
@@ -35,7 +34,7 @@ public class PendingResponseTest {
         }
     }
     
-    @Test
+    @Test(groups="checkintest")
     public void testUnreachTimeout() {
         try {
             notifyDone(90, pendingResponse);
@@ -47,11 +46,13 @@ public class PendingResponseTest {
         }
     }
     
-    @Test
+    
+    @Test(groups="checkintest")
     public void testDoneWithInvalidResponse() {
         try {
             notifyInvalidResponse(90, pendingResponse);
             pendingResponse.waitDone();
+            System.out.println("DONE");
             fail("Should throw InvalidResponseException");
         } catch (ResponseTimeoutException e) {
             fail("Should throw InvalidResponseException");
@@ -90,8 +91,13 @@ public class PendingResponseTest {
         new Thread() {
             @Override
             public void run() {
-                pendingResponse.doneWithInvalidResponse(
-                        new InvalidResponseException("Invalid response message"));
+                try {
+                    Thread.sleep(timemillis);
+                    pendingResponse.doneWithInvalidResponse(
+                            new InvalidResponseException("Invalid response message"));
+                } catch (InterruptedException e) {
+                }
+                
             }
         }.start();
     }

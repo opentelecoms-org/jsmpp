@@ -1,11 +1,8 @@
 package org.jsmpp.bean;
 
-import static org.junit.Assert.*;
-import org.jsmpp.bean.ESMClass;
-import org.jsmpp.bean.GSMSpecificFeature;
-import org.jsmpp.bean.MessageType;
-import org.junit.Before;
-import org.junit.Test;
+import static org.testng.Assert.*;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 /**
  * @author uudashr
@@ -14,12 +11,12 @@ import org.junit.Test;
 public class ESMClassTest {
 	private ESMClass esmClass;
 	
-    @Before
+    @BeforeTest
     public void setUp() {
         esmClass = new ESMClass();
     }
     
-    @Test
+    @Test(groups="checkintest")
 	public void testSpecificFeature() {
 		assertTrue(GSMSpecificFeature.DEFAULT.containedIn(esmClass));
 		
@@ -28,7 +25,7 @@ public class ESMClassTest {
 		assertTrue(GSMSpecificFeature.UDHI.containedIn(esmClass));
 	}
 	
-    @Test
+    @Test(groups="checkintest")
 	public void testMessageType() {
 		assertTrue(MessageType.DEFAULT.containedIn(esmClass));
 		

@@ -1,12 +1,11 @@
 package org.jsmpp.extra;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 public class SessionStateTest {
     
-    @Test
+    @Test(groups="checkintest")
     public void testClosedState() {
         SessionState sessionState = SessionState.CLOSED;
         assertFalse(sessionState.isReceivable());
@@ -14,7 +13,7 @@ public class SessionStateTest {
         assertFalse(sessionState.isBound());
     }
     
-    @Test
+    @Test(groups="checkintest")
     public void testOpenState() {
         SessionState sessionState = SessionState.OPEN;
         assertFalse(sessionState.isReceivable());
@@ -22,7 +21,7 @@ public class SessionStateTest {
         assertFalse(sessionState.isBound());
     }
     
-    @Test
+    @Test(groups="checkintest")
     public void testBoundTxState() {
         SessionState sessionState = SessionState.BOUND_TX;
         assertFalse(sessionState.isReceivable());
@@ -30,7 +29,7 @@ public class SessionStateTest {
         assertTrue(sessionState.isBound());
     }
     
-    @Test
+    @Test(groups="checkintest")
     public void testBoundRxState() {
         SessionState sessionState = SessionState.BOUND_RX;
         assertTrue(sessionState.isReceivable());
@@ -38,7 +37,7 @@ public class SessionStateTest {
         assertTrue(sessionState.isBound());
     }
     
-    @Test
+    @Test(groups="checkintest")
     public void testBoundTrxState() {
         SessionState sessionState = SessionState.BOUND_TRX;
         assertTrue(sessionState.isReceivable());
@@ -46,7 +45,7 @@ public class SessionStateTest {
         assertTrue(sessionState.isBound());
     }
     
-    @Test
+    @Test(groups="checkintest")
     public void testUnbound() {
         SessionState sessionState = SessionState.UNBOUND;
         assertFalse(sessionState.isReceivable());

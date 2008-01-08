@@ -1,13 +1,13 @@
 package org.jsmpp.session;
 
-import static org.junit.Assert.*;
-
 import java.util.concurrent.TimeoutException;
 
 import org.jsmpp.BindType;
 import org.jsmpp.bean.Bind;
-import org.junit.Before;
-import org.junit.Test;
+import static org.testng.Assert.*;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  * @author uudashr
@@ -16,24 +16,25 @@ import org.junit.Test;
 public class BindRequestReceiverTest {
     private BindRequestReceiver requestReceiver;
     
-    @Before
+    @BeforeMethod
     public void setUp() {
         requestReceiver = new BindRequestReceiver(new DummyResponseHandler());
     }
     
-    //@Test
+    @Test(groups="checkintest")
     public void testWaitTimeout() {
         
         try {
             BindRequest request = requestReceiver.waitForRequest(1000);
             fail("Should fail since no request for 1000 millis");
         } catch (IllegalStateException e) {
+            e.printStackTrace();
             fail("Should not fail waitForRequest");
         } catch (TimeoutException e) {
         }
     }
     
-    @Test
+    @Test(groups="checkintest")
     public void testReceiveRequest() {
         
         try {
@@ -60,7 +61,7 @@ public class BindRequestReceiverTest {
         }
     }
     
-    @Test
+    @Test(groups="checkintest")
     public void testNoSingleAccept() {
         
         try {
@@ -76,7 +77,7 @@ public class BindRequestReceiverTest {
         }
     }
     
-    @Test
+    @Test(groups="checkintest")
     public void testNonSingleWait() {
         
         try {

@@ -1,11 +1,11 @@
 package org.jsmpp.bean;
 
 
-import static org.junit.Assert.*;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.util.StringParameter;
 import org.jsmpp.util.StringValidator;
-import org.junit.Test;
+import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 /**
  * Test case of string validation.
@@ -15,7 +15,7 @@ import org.junit.Test;
  */
 public class StringValidationTest {
     
-    @Test
+    @Test(groups="checkintest")
     public void testValidation() {
         try {
             StringValidator.validateString("", StringParameter.SYSTEM_ID);

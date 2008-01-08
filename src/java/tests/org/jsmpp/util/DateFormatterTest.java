@@ -1,14 +1,10 @@
 package org.jsmpp.util;
 
-import static org.junit.Assert.*;
-
 import java.util.Calendar;
 import java.util.Date;
 
-import org.jsmpp.util.AbsoluteTimeFormatter;
-import org.jsmpp.util.RelativeTimeFormatter;
-import org.jsmpp.util.TimeFormatter;
-import org.junit.Test;
+import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 
 /**
@@ -17,19 +13,19 @@ import org.junit.Test;
  */
 public class DateFormatterTest {
     
-    @Test
+    @Test(groups="checkintest")
     public void testStaticAbsoluteFormatter() {
         String formatted = AbsoluteTimeFormatter.format(07, 12, 26, 11, 37, 03, 8, 45, '+');
-        assertEquals("071226113703845+", formatted);
+        assertEquals(formatted, "071226113703845+");
     }
     
-    @Test
+    @Test(groups="checkintest")
     public void testStaticRelativeFormatter() {
         String formatted = RelativeTimeFormatter.format(07, 12, 26, 12, 46, 10);
-        assertEquals("071226124610000R", formatted);
+        assertEquals(formatted, "071226124610000R");
     }
     
-    @Test
+    @Test(groups="checkintest")
     public void formatNullDate() {
         TimeFormatter timeFormatter = new AbsoluteTimeFormatter();
         assertNull(timeFormatter.format((Date)null));

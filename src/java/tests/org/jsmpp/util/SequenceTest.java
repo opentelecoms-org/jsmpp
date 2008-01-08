@@ -1,8 +1,7 @@
 package org.jsmpp.util;
 
-import static org.junit.Assert.*;
-import org.jsmpp.util.Sequence;
-import org.junit.Test;
+import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 /**
  * @author uudashr
@@ -10,20 +9,20 @@ import org.junit.Test;
  */
 public class SequenceTest {
     
-    @Test
+    @Test(groups="checkintest")
     public void testSequence() {
         Sequence sequence = new Sequence(1);
         for (int i = 1; i < 100; i++) {
-            assertEquals(i, sequence.nextValue());
+            assertEquals(sequence.nextValue(), i);
         }
     }
     
-    @Test
+    @Test(groups="checkintest")
     public void testCycle() {
         Sequence sequence = new Sequence(Integer.MAX_VALUE - 2);
-        assertEquals(Integer.MAX_VALUE - 2, sequence.nextValue());
-        assertEquals(Integer.MAX_VALUE - 1, sequence.nextValue());
-        assertEquals(Integer.MAX_VALUE, sequence.nextValue());
-        assertEquals(1, sequence.nextValue());
+        assertEquals(sequence.nextValue(), Integer.MAX_VALUE - 2);
+        assertEquals(sequence.nextValue(), Integer.MAX_VALUE - 1);
+        assertEquals(sequence.nextValue(), Integer.MAX_VALUE);
+        assertEquals(sequence.nextValue(), 1);
     }
 }
