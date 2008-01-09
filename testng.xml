@@ -6,6 +6,4 @@
 			<package name="org.jsmpp.*"></package>
 		</packages>
 	</test>
-	
-		
 </suite>
