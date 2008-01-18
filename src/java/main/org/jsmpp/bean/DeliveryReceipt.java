@@ -19,7 +19,7 @@ public class DeliveryReceipt {
     public static final String DELREC_DONE_DATE = "done date";
     public static final String DELREC_STAT = "stat";
     public static final String DELREC_ERR = "err";
-    public static final String DELREC_TEXT = "text";
+    public static final String DELREC_TEXT = "Text";
 
     /**
      * Date format for the <b>submit date</b> and <b>done date</b> attribute

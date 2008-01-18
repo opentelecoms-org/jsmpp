@@ -372,7 +372,7 @@ public class DefaultDecomposer implements PDUDecomposer {
                             DeliveryReceipt.DELREC_STAT, data)));
             delRec.setError(getDeliveryReceiptValue(DeliveryReceipt.DELREC_ERR,
                     data));
-            delRec.setText(getDeliveryReceiptTextValue( data));
+            delRec.setText(getDeliveryReceiptTextValue(data));
             return delRec;
         } catch (Exception e) {
             throw new InvalidDeliveryReceiptException(
