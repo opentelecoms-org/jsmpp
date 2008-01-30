@@ -79,7 +79,9 @@ public class SMPPSession {
 	private String sessionId = generateSessionId();
 	
 	public SMPPSession() {
-        this(new SynchronizedPDUSender(new DefaultPDUSender(new DefaultComposer())), new DefaultPDUReader(), SocketConnectionFactory.getInstance());
+        this(new SynchronizedPDUSender(new DefaultPDUSender(new DefaultComposer())), 
+                new DefaultPDUReader(), 
+                SocketConnectionFactory.getInstance());
     }
 	
 	public SMPPSession(PDUSender pduSender, PDUReader pduReader, ConnectionFactory connFactory) {
@@ -95,6 +97,11 @@ public class SMPPSession {
 	    this(pduSender, pduReader, connFactory);
 	    connectAndBind(host, port, bindParam);
 	}
+	
+	public SMPPSession(String host, int port, BindParameter bindParam) throws IOException {
+        this();
+        connectAndBind(host, port, bindParam);
+    }
 	
 	/**
 	 * Open connection and bind immediately.
