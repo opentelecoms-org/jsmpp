@@ -47,17 +47,18 @@ public class BindRequest {
     /**
      * Accept the bind request.
      * 
+     * @param systemId is the system identifier that will be send to ESME.
      * @throws IllegalStateException if the acceptance or rejection has been made.
      * @throws IOException is the connection already closed.
      * @see #reject(ProcessRequestException)
      */
-    public void accept() throws IllegalStateException, IOException {
+    public void accept(String systemId) throws IllegalStateException, IOException {
         lock.lock();
         try {
             if (!done) {
                 done = true;
                 try {
-                    responseHandler.sendBindResp(bindParam.getBindType(), originalSequenceNumber);
+                    responseHandler.sendBindResp(systemId, bindParam.getBindType(), originalSequenceNumber);
                 } finally {
                     condition.signal();
                 }

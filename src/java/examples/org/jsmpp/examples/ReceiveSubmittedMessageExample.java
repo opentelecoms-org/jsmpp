@@ -68,7 +68,7 @@ public class ReceiveSubmittedMessageExample {
                     
                     // accepting request and send bind response immediately
                     System.out.println("Accepting bind request");
-                    request.accept();
+                    request.accept("sys");
                     
                     
                     try { Thread.sleep(20000); } catch (InterruptedException e) {}

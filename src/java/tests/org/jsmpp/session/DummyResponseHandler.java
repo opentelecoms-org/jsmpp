@@ -68,7 +68,7 @@ class DummyResponseHandler implements ServerResponseHandler {
         return null;
     }
 
-    public void sendBindResp(BindType bindType, int sequenceNumber)
+    public void sendBindResp(String systemId, BindType bindType, int sequenceNumber)
             throws IOException {
         if (connectionClosed) {
             throw new IOException("Connection closed");

@@ -26,7 +26,7 @@ public class BindRequestTest {
     @Test(groups="checkintest")
     public void testSucceedAccept() {
         try {
-            bindRequest.accept();
+            bindRequest.accept("sys");
         } catch (IllegalStateException e1) {
             fail("Should succes accepting bind request");
         } catch (IOException e1) {
@@ -38,7 +38,7 @@ public class BindRequestTest {
     public void testFailedAccept() {
         responseHandler.closeConnection();
         try {
-            bindRequest.accept();
+            bindRequest.accept("sys");
             fail("Should throw IOException");
         } catch (IllegalStateException e) {
             fail("Should throw IOException");
@@ -72,14 +72,14 @@ public class BindRequestTest {
     @Test(groups="checkintest")
     public void testNonSingleAccept() {
         try {
-            bindRequest.accept();
+            bindRequest.accept("sys");
         } catch (IllegalStateException e1) {
             fail("Should success accepting bind request");
         } catch (IOException e1) {
             fail("Should success accepting bind request");
         }
         try {
-            bindRequest.accept();
+            bindRequest.accept("sys");
             fail("Should fail on 2nd accept");
         } catch (IllegalStateException e) {
         } catch (IOException e) {

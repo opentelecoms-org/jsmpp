@@ -14,7 +14,7 @@ import org.jsmpp.util.MessageId;
  *
  */
 public interface ServerResponseHandler extends BaseResponseHandler {
-    void sendBindResp(BindType bindType, int sequenceNumber) throws IOException;
+    void sendBindResp(String systemId, BindType bindType, int sequenceNumber) throws IOException;
     void sendSubmitSmResponse(MessageId messageId, int sequenceNumber) throws IOException;
     
     void processBind(Bind bind);

@@ -71,7 +71,6 @@ public class SMPPServerSession {
     private final ServerResponseHandler responseHandler = new ResponseHandlerImpl();
     
     private SMPPServerSessionState stateProcessor = SMPPServerSessionState.CLOSED;
-    private String systemId = "smsc"; // FIXME uud: create access to this variable
     
     private ServerMessageReceiverListener messageReceiverListener;
     private String sessionId = generateSessionId();
@@ -338,7 +337,9 @@ public class SMPPServerSession {
     }
     
     private class ResponseHandlerImpl implements ServerResponseHandler {
-
+        
+        
+        
         @SuppressWarnings("unchecked")
         public PendingResponse<Command> removeSentItem(int sequenceNumber) {
             return (PendingResponse<Command>)pendingResponse.remove(sequenceNumber);
@@ -367,7 +368,7 @@ public class SMPPServerSession {
             pduSender.sendUnbindResp(out, SMPPConstant.STAT_ESME_ROK, sequenceNumber);
         }
         
-        public void sendBindResp(BindType bindType, int sequenceNumber) throws IOException {
+        public void sendBindResp(String systemId, BindType bindType, int sequenceNumber) throws IOException {
             if (bindType.equals(BindType.BIND_RX)) {
                 changeState(SessionState.BOUND_RX);
             } else if (bindType.equals(BindType.BIND_TX)) {
