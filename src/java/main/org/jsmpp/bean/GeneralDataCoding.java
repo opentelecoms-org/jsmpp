@@ -72,4 +72,9 @@ public class GeneralDataCoding extends DataCoding1111 {
     public static boolean isCompatible(byte dataCodingValue) {
         return (dataCodingValue & MASK_CODING_GROUP) == 0x00;
     }
+    
+    @Override
+    public String toString() {
+        return "GeneralDataCoding-" + value;
+    }
 }

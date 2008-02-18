@@ -104,4 +104,9 @@ public class DataCoding1111 extends DataCoding {
     public static boolean isCompatible(byte dataCodingValue) {
         return (dataCodingValue & MASK_CODING_GROUP) == MASK_CODING_GROUP;
     }
+    
+    @Override
+    public String toString() {
+        return "DataCoding111-" + value;
+    }
 }
