@@ -5,7 +5,7 @@ import java.util.Random;
 import org.jsmpp.PDUStringException;
 
 /**
- * Generate random alhanumeric
+ * Generate random alphanumeric
  * 
  * @author uudashr
  * @version 1.0
@@ -14,26 +14,6 @@ import org.jsmpp.PDUStringException;
  */
 public class RandomMessageIDGenerator implements MessageIDGenerator {
     private Random random = new Random();
-    private final int length;
-
-    /**
-     * Length should be not more than 64 character.
-     * 
-     * @param length
-     */
-    public RandomMessageIDGenerator(int length) {
-        if (length > 64)
-            this.length = 64;
-        else
-            this.length = length;
-    }
-
-    /**
-     * Default constructor using 20 length character.
-     */
-    public RandomMessageIDGenerator() {
-        this(20);
-    }
 
     /* (non-Javadoc)
      * @see org.jsmpp.util.MessageIDGenerator#newMessageId()
@@ -43,14 +23,10 @@ public class RandomMessageIDGenerator implements MessageIDGenerator {
          * use database sequence convert into hex representation or if not using
          * database using random
          */
-        byte[] b = new byte[length / 2];
-        synchronized (random) {
-            random.nextBytes(b);
-        }
         try {
-            return new MessageId(HexUtil.conventBytesToHexString(b));
+            return new MessageId(Integer.toString(random.nextInt(Integer.MAX_VALUE), 16));
         } catch (PDUStringException e) {
-            throw new RuntimeException("SYSTEM ERROR. Failed generating random hex string", e);
+            throw new RuntimeException("Failed creating message id", e);
         }
     }
 }
