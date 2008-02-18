@@ -4,7 +4,7 @@ import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 
 /**
- * Default impementation of {@link PDUComposer}.
+ * Default implementation of {@link PDUComposer}.
  * 
  * @author uudashr
  * @version 1.0
