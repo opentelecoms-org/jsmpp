@@ -18,11 +18,11 @@ class BindRequestReceiver {
     private final ServerResponseHandler responseHandler;
     private BindRequest request;
     private boolean alreadyWaitForRequest;
-    
+
     public BindRequestReceiver(ServerResponseHandler responseHandler) {
         this.responseHandler = responseHandler;
     }
-    
+
     /**
      * Wait until the bind request received for specified timeout.
      * 
@@ -39,22 +39,21 @@ class BindRequestReceiver {
             } else if (request == null) {
                 try {
                     requestCondition.await(timeout, TimeUnit.MILLISECONDS);
-                } catch (InterruptedException e) { }
+                } catch (InterruptedException e) {
+                }
             }
-            
+
             if (request != null) {
                 return request;
-            } else {
-                throw new TimeoutException("Wating for bind request take time too long");
             }
+            throw new TimeoutException("Wating for bind request take time too long");
         } finally {
             alreadyWaitForRequest = true;
             lock.unlock();
         }
-        
-        
+
     }
-    
+
     /**
      * Notify that the bind has accepted.
      * 

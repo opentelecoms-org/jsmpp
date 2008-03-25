@@ -1,5 +1,7 @@
 package org.jsmpp.util;
 
+import org.jsmpp.bean.OptionalParameter;
+
 
 /**
  * Utility to compose the pdu bytes. The size of the buffer is depends to the
@@ -103,6 +105,10 @@ class PDUByteBuffer {
         return bytes.length;
     }
 
+    public int append(OptionalParameter optionalParameter) {
+        return append(optionalParameter.serialize());
+    }
+    
     /**
      * Append C-Octet String / null terminated Stirng value.
      * 

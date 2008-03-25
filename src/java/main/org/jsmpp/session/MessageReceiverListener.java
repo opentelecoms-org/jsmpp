@@ -26,6 +26,5 @@ public interface MessageReceiverListener {
      * @throws ProcessRequestException throw if there should be return Non-OK
      *         command_status for the response.
      */
-    void onAcceptDeliverSm(DeliverSm deliverSm)
-            throws ProcessRequestException;
+    void onAcceptDeliverSm(DeliverSm deliverSm) throws ProcessRequestException;
 }

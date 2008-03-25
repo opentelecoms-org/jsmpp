@@ -13,7 +13,7 @@ import org.jsmpp.util.MessageId;
  * @author uudashr
  *
  */
-public interface ServerResponseHandler extends BaseResponseHandler {
+public interface ServerResponseHandler extends ResponseHandler {
     void sendBindResp(String systemId, BindType bindType, int sequenceNumber) throws IOException;
     void sendSubmitSmResponse(MessageId messageId, int sequenceNumber) throws IOException;
     

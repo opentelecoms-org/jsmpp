@@ -25,6 +25,7 @@ public class MessageRequest extends Command {
     protected byte smDefaultMsgId;
     protected byte smLength;
     protected byte[] shortMessage;
+    protected OptionalParameter[] optionalParameters;
 
     public MessageRequest() {
         super();
@@ -555,5 +556,13 @@ public class MessageRequest extends Command {
         // 11110011 = 0xf3
         // (registeredDelivery & 0x0c) will clean the bits 3 - 2.
         return (byte)(registeredDelivery & 0x0c);
+    }
+
+    public OptionalParameter[] getOptionalParameters() {
+        return optionalParameters;
+    }
+
+    public void setOptionalParameters(OptionalParameter[] optionalParameters) {
+        this.optionalParameters = optionalParameters;
     }
 }

@@ -43,7 +43,7 @@ public class AbsoluteTimeFormatter implements TimeFormatter {
         }
         
         // Time difference in quarter hours
-        int timeDiff = (int)(Math.abs(rawOffset) / (15 * 60 * 1000));
+        int timeDiff = (Math.abs(rawOffset) / (15 * 60 * 1000));
         
         return format(year, month, day, hour, minute, second, tenthsOfSecond, timeDiff, sign);
     }

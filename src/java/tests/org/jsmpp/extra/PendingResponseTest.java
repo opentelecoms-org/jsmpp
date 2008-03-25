@@ -16,7 +16,7 @@ public class PendingResponseTest {
     
     @BeforeMethod
     public void setUp() throws Exception {
-        pendingResponse = new PendingResponse<Command>(1000);
+        pendingResponse = new PendingResponse<Command>(10, 1000);
     }
     
     /**

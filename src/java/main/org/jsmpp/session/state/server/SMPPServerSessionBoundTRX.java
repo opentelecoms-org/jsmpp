@@ -1,12 +1,15 @@
-package org.jsmpp.session.state;
+package org.jsmpp.session.state.server;
 
 import java.io.IOException;
 
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
+import org.jsmpp.bean.DeliverSmResp;
+import org.jsmpp.bean.PDU;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.SubmitSm;
+import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.ServerResponseHandler;
@@ -16,25 +19,40 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author uudashr
- *
+ * 
  */
-class SMPPServerSessionBoundTX extends SMPPServerSessionBound implements
-        SMPPServerSessionState {
-    private static final Logger logger = LoggerFactory.getLogger(SMPPServerSessionBoundTX.class);
-    
+public class SMPPServerSessionBoundTRX extends SMPPServerSessionUnbound {
+
+    private static final Logger logger = LoggerFactory.getLogger(SMPPServerSessionBoundTRX.class);
+
+    public SMPPServerSessionBoundTRX(ServerResponseHandler responseHandler) {
+        super(responseHandler);
+    }
+
+    @Override
     public SessionState getSessionState() {
-        return SessionState.BOUND_TX;
+        return SessionState.BOUND_TRX;
     }
-    
-    public void processDeliverSmResp(Command pduHeader, byte[] pdu,
-            ServerResponseHandler responseHandler) throws IOException {
-        responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
-                SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
-                        .getSequenceNumber());
+
+    @Override
+    public void processBind(PDU pdu) throws IOException {
+        responseHandler.sendNegativeResponse(pdu.getCommandId(), SMPPConstant.STAT_ESME_RALYBND, pdu.getCommand().getSequenceNumber());
     }
-    
-    public void processSubmitSm(Command pduHeader, byte[] pdu,
-            ServerResponseHandler responseHandler) throws IOException {
+
+    @Override
+    public void processDeliverSmResp(PDU pdu) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(pdu.getCommand().getSequenceNumber());
+        if (pendingResp != null) {
+            DeliverSmResp resp = pduDecomposer.deliverSmResp(pdu);
+            pendingResp.done(resp);
+        } else {
+            logger.warn("No request with sequence number " + pdu.getCommand().getSequenceNumber() + " found");
+        }
+    }
+
+    @Override
+    public void processSubmitSm(PDU pdu) throws IOException {
+        Command pduHeader = pdu.getCommand();
         try {
             SubmitSm submitSm = pduDecomposer.submitSm(pdu);
             MessageId messageId = responseHandler.processSubmitSm(submitSm);
@@ -46,9 +64,10 @@ class SMPPServerSessionBoundTX extends SMPPServerSessionBound implements
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
         }
     }
-    
-    public void processQuerySm(Command pduHeader, byte[] pdu,
-            ServerResponseHandler responseHandler) throws IOException {
+
+    @Override
+    public void processQuerySm(PDU pdu) throws IOException {
+        Command pduHeader = pdu.getCommand();
         try {
             QuerySm querySm = pduDecomposer.querySm(pdu);
             responseHandler.processQuerySm(querySm);

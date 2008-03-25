@@ -1,12 +1,15 @@
 package org.jsmpp;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.jsmpp.bean.Command;
+import org.jsmpp.bean.PDU;
 import org.jsmpp.util.OctetUtil;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of {@link PDUReader}.
@@ -17,12 +20,14 @@ import org.jsmpp.util.OctetUtil;
  * 
  */
 public class DefaultPDUReader implements PDUReader {
+    final DataInputStream in;
+    static final Logger logger = LoggerFactory.getLogger(DefaultPDUReader.class);
 
-    /* (non-Javadoc)
-     * @see org.jsmpp.PDUReader#readPDUHeader(java.io.DataInputStream)
-     */
-    public Command readPDUHeader(DataInputStream in)
-            throws InvalidCommandLengthException, IOException {
+    public DefaultPDUReader(InputStream in) {
+        this.in = new DataInputStream(new BufferedInputStream(in));
+    }
+
+    public Command readPDUHeader() throws InvalidCommandLengthException, IOException {
         Command header = new Command();
         header.setCommandLength(in.readInt());
 
@@ -31,8 +36,7 @@ public class DefaultPDUReader implements PDUReader {
             byte[] dump = new byte[header.getCommandLength()];
             in.read(dump, 4, header.getCommandLength() - 4);
 
-            throw new InvalidCommandLengthException("Command length "
-                    + header.getCommandLength() + " is to short");
+            throw new InvalidCommandLengthException("Command length " + header.getCommandLength() + " is to short");
         }
         header.setCommandId(in.readInt());
         header.setCommandStatus(in.readInt());
@@ -40,21 +44,16 @@ public class DefaultPDUReader implements PDUReader {
         return header;
     }
 
-    /* (non-Javadoc)
-     * @see org.jsmpp.PDUReader#readPDU(java.io.InputStream, org.jsmpp.bean.Command)
-     */
-    public byte[] readPDU(InputStream in, Command pduHeader) throws IOException {
-        return readPDU(in, pduHeader.getCommandLength(), pduHeader
-                .getCommandId(), pduHeader.getCommandStatus(), pduHeader
-                .getSequenceNumber());
+    public byte[] readPDU(Command pduHeader) throws IOException {
+        return readPDU(pduHeader.getCommandLength(), pduHeader.getCommandId(), pduHeader.getCommandStatus(), pduHeader.getSequenceNumber());
     }
 
-    /* (non-Javadoc)
-     * @see org.jsmpp.PDUReader#readPDU(java.io.InputStream, int, int, int, int)
-     */
-    public byte[] readPDU(InputStream in, int commandLength, int commandId,
-            int commandStatus, int sequenceNumber) throws IOException {
+    public synchronized PDU readPDU() throws InvalidCommandLengthException, IOException {
+        Command pduHeader = readPDUHeader();
+        return new PDU(pduHeader, readPDU(pduHeader));
+    }
 
+    public byte[] readPDU(int commandLength, int commandId, int commandStatus, int sequenceNumber) throws IOException {
         byte[] b = new byte[commandLength];
         System.arraycopy(OctetUtil.intToBytes(commandLength), 0, b, 0, 4);
         System.arraycopy(OctetUtil.intToBytes(commandId), 0, b, 4, 4);
@@ -63,14 +62,10 @@ public class DefaultPDUReader implements PDUReader {
 
         if (commandLength > 16) {
             int len = commandLength - 16;
-            int totalReaded = -1;
-            synchronized (in) {
-                totalReaded = in.read(b, 16, commandLength - 16);
-            }
-            if (totalReaded != len) {
-                throw new IOException(
-                        "Unexpected length of byte readed. Expecting " + len
-                                + " but only read " + totalReaded);
+            int totalRead = -1;
+            totalRead = in.read(b, 16, commandLength - 16);
+            if (totalRead != len) {
+                throw new IOException("Unexpected length of byte readed. Expecting " + len + " but only read " + totalRead);
             }
         }
         return b;

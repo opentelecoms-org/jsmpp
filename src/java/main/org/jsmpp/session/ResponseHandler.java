@@ -2,35 +2,65 @@ package org.jsmpp.session;
 
 import java.io.IOException;
 
-import org.jsmpp.bean.DeliverSm;
-import org.jsmpp.extra.ProcessRequestException;
+import org.jsmpp.bean.Command;
+import org.jsmpp.extra.PendingResponse;
 
 /**
- * <tt>ResponseHandler</tt> provide interface to handle response of the session
- * routines.
- * 
  * @author uudashr
- * @version 1.0
- * @since 2.0
- * 
+ *
  */
-public interface ResponseHandler extends BaseResponseHandler {
+public interface ResponseHandler {
 
     /**
-     * Process the deliver
+     * Remove the previously {@link PendingResponse} that set when the request
+     * was sent.
      * 
-     * @param deliverSm
-     * @throws ProcessRequestException
+     * @param sequenceNumber the sequence number of the request.
+     * @return the {@link PendingResponse} correspond to specified
+     *         sequenceNumber. Return <tt>null</tt> if the the mapped
+     *         sequenceNumber not found
      */
-    public void processDeliverSm(DeliverSm deliverSm)
-            throws ProcessRequestException;
+    public PendingResponse<Command> removeSentItem(int sequenceNumber);
 
     /**
-     * Response by sending <b>DELIVER_SM_RESP</b> to SMSC.
+     * Response by sending <b>GENERICK_NACK</b>.
      * 
-     * @param sequenceNumber is the sequence number of original <b>DELIVER_SM</b> request.
+     * @param commandStatus is the command status.
+     * @param sequenceNumber is the sequence number original PDU if can be decoded.
      * @throws IOException if an IO error occur.
      */
-    public void sendDeliverSmResp(int sequenceNumber) throws IOException;
+    public void sendGenerickNack(int commandStatus, int sequenceNumber) throws IOException;
+
+    /**
+     * Response by sending negative response.
+     * 
+     * @param originalCommandId is the original command id.
+     * @param commandStatus is the command status.
+     * @param sequenceNumber is the sequence number of original PDU request.
+     * @throws IOException if an IO error occur.
+     */
+    public void sendNegativeResponse(int originalCommandId, int commandStatus, int sequenceNumber) throws IOException;
+
+    /**
+     * Response by sending <b>ENQUIRE_LINK_RESP</b>.
+     * 
+     * @param sequenceNumber is the sequence number of original <b>ENQUIRE_LINK</b>
+     *          request.
+     * @throws IOException if an IO error occur.
+     */
+    public void sendEnquireLinkResp(int sequenceNumber) throws IOException;
+
+    /**
+     * Response by send <b>UNBIND_RESP</b>.
+     * 
+     * @param sequenceNumber is the sequence number of original <b>UNBIND</b> request.
+     * @throws IOException if an IO error occur.
+     */
+    public void sendUnbindResp(int sequenceNumber) throws IOException;
+
+    /**
+     * Notify for unbind.
+     */
+    public void notifyUnbonded();
 
 }
