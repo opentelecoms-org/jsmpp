@@ -1,0 +1,50 @@
+  <project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+  
+    <groupId>org.jsmpp</groupId>
+    <artifactId>jsmpp</artifactId>
+    <version>1.2-custom</version>
+  
+    <dependencies>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>1.4.3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <classifier>jdk15</classifier>
+        <version>5.7</version>
+      </dependency>
+    </dependencies>
+    <build>
+      <sourceDirectory>src/java/main</sourceDirectory>
+      <testSourceDirectory>src/java/tests</testSourceDirectory>
+      <testResources>
+        <testResource>
+          <filtering>false</filtering>
+          <directory>${basedir}/src/java/main</directory>
+          <includes>
+            <include>**/*</include>
+          </includes>
+          <excludes>
+            <exclude>**/*.java</exclude>
+          </excludes>
+        </testResource>
+      </testResources>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <encoding>UTF-8</encoding>
+            <source>1.5</source>
+            <target>1.5</target>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+  </project>
