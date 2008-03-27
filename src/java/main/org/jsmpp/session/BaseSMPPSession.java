@@ -24,12 +24,12 @@ public abstract class BaseSMPPSession {
     PDUSender pduSender;
     PDUReader pduReader;
     final PendingResponses pendingResponses = new PendingResponses();
-    protected int sessionTimer = 5000;
     private long lastActivityTimestamp;
     private String sessionId = generateSessionId();
     protected SMPPSessionState state;
     private SessionStateListener sessionStateListener;
     protected EnquireLinkSender enquireLinkSender;
+    protected int sessionTimer = 5000;
 
     public BaseSMPPSession(Connection conn) {
         this.conn = conn;
@@ -43,6 +43,21 @@ public abstract class BaseSMPPSession {
         return IntUtil.toHexString(random.nextInt());
     }
 
+    public int getSessionTimer() {
+        return sessionTimer;
+    }
+
+    public void setSessionTimer(int sessionTimer) {
+        this.sessionTimer = sessionTimer;
+        if (state.getSessionState().isBound()) {
+            try {
+                conn.setSoTimeout(sessionTimer);
+            } catch (IOException e) {
+                logger.error("Failed setting so_timeout for session timer", e);
+            }
+        }
+    }
+
     /**
      * This method provided for monitoring need.
      * 
@@ -50,10 +65,6 @@ public abstract class BaseSMPPSession {
      */
     public long getLastActivityTimestamp() {
         return lastActivityTimestamp;
-    }
-
-    public int getSessionTimer() {
-        return sessionTimer;
     }
 
     public long getTransactionTimer() {
@@ -101,6 +112,11 @@ public abstract class BaseSMPPSession {
         close();
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        close();
+    }
+
     public void close() {
         changeState(SessionState.CLOSED);
         try {
@@ -130,5 +146,4 @@ public abstract class BaseSMPPSession {
     public String getSessionId() {
         return sessionId;
     }
-
 }

@@ -25,16 +25,15 @@ public interface PDUComposer {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jsmpp.util.DefaultComposer#bindResp(int, int,
-     *      java.lang.String)
+     * @see org.jsmpp.util.DefaultComposer#bindResp(int, int, java.lang.String)
      */
     public byte[] bindResp(int commandId, int sequenceNumber, String systemId) throws PDUStringException;
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.jsmpp.util.DefaultComposer#bindResp(int, int,
-     *      java.lang.String, byte)
+     * @see org.jsmpp.util.DefaultComposer#bindResp(int, int, java.lang.String,
+     *      byte)
      */
     public byte[] bindResp(int commandId, int sequenceNumber, String systemId, byte scInterfaceVersion) throws PDUStringException;
 
@@ -87,10 +86,10 @@ public interface PDUComposer {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jsmpp.util.DefaultComposer#submitSm(int, java.lang.String,
-     *      byte, byte, java.lang.String, byte, byte, java.lang.String, byte,
-     *      byte, byte, java.lang.String, java.lang.String, byte, byte, byte,
-     *      byte, byte[])
+     * @see org.jsmpp.util.DefaultComposer#submitSm(int, java.lang.String, byte,
+     *      byte, java.lang.String, byte, byte, java.lang.String, byte, byte,
+     *      byte, java.lang.String, java.lang.String, byte, byte, byte, byte,
+     *      byte[])
      */
     public byte[] submitSm(int sequenceNumber, String serviceType, byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr, byte destAddrTon, byte destAddrNpi, String destinationAddr, byte esmClass, byte protocoId, byte priorityFlag, String scheduleDeliveryTime, String validityPeriod, byte registeredDelivery, byte replaceIfPresent, byte dataCoding, byte smDefaultMsgId, byte[] shortMessage, OptionalParameter... params) throws PDUStringException;
 
@@ -105,8 +104,8 @@ public interface PDUComposer {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jsmpp.util.DefaultComposer#querySm(int, java.lang.String,
-     *      byte, byte, java.lang.String)
+     * @see org.jsmpp.util.DefaultComposer#querySm(int, java.lang.String, byte,
+     *      byte, java.lang.String)
      */
     public byte[] querySm(int sequenceNumber, String messageId, byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr) throws PDUStringException;
 

@@ -26,13 +26,14 @@ import org.slf4j.LoggerFactory;
  * @since 2.0
  * 
  */
-public class SMPPSessionOpen extends ClientSessionState {
+public class SMPPSessionOpen extends SMPPSessionClosed {
+    private static final Logger logger = LoggerFactory.getLogger(SMPPSessionOpen.class);
+
     public SMPPSessionOpen(ClientResponseHandler responseHandler) {
         super(responseHandler);
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(SMPPSessionOpen.class);
-
+    @Override
     public SessionState getSessionState() {
         return SessionState.OPEN;
     }
@@ -55,79 +56,6 @@ public class SMPPSessionOpen extends ClientSessionState {
         } else {
             logger.error("No request with sequence number " + pduHeader.getSequenceNumber() + " found");
             responseHandler.sendGenerickNack(SMPPConstant.STAT_ESME_RINVDFTMSGID, pduHeader.getSequenceNumber());
-        }
-    }
-
-    @Override
-    public void processDeliverSm(PDU pdu) {
-        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(1);
-        if (pendingResp != null) {
-            pendingResp.doneWithInvalidResponse(new InvalidResponseException("Receive unexpected deliver_sm"));
-        }
-    }
-
-    @Override
-    public void processEnquireLink(PDU pdu) {
-        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(1);
-        if (pendingResp != null) {
-            pendingResp.doneWithInvalidResponse(new InvalidResponseException("Receive unexpected enquire_link"));
-        }
-    }
-
-    @Override
-    public void processEnquireLinkResp(PDU pdu) {
-        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(1);
-        if (pendingResp != null) {
-            pendingResp.doneWithInvalidResponse(new InvalidResponseException("Receive unexpected enquire_link_resp"));
-        }
-    }
-
-    @Override
-    public void processGenericNack(PDU pdu) {
-        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(1);
-        if (pendingResp != null) {
-            pendingResp.doneWithInvalidResponse(new InvalidResponseException("Receive unexpected generic_nack"));
-        }
-    }
-
-    @Override
-    public void processSubmitSmResp(PDU pdu) {
-        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(1);
-        if (pendingResp != null) {
-            pendingResp.doneWithInvalidResponse(new InvalidResponseException("Receive unexpected submit_sm_resp"));
-        }
-    }
-
-    @Override
-    public void processUnbind(PDU pdu) {
-        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(1);
-        if (pendingResp != null) {
-            pendingResp.doneWithInvalidResponse(new InvalidResponseException("Receive unexpected unbind"));
-        }
-    }
-
-    @Override
-    public void processUnbindResp(PDU pdu) {
-        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(1);
-        if (pendingResp != null) {
-            pendingResp.doneWithInvalidResponse(new InvalidResponseException("Receive unexpected unbind_resp"));
-        }
-    }
-
-    @Override
-    public void processUnknownCid(PDU pdu) {
-        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(1);
-        // FIXME uud: pending response might be null
-        if (pendingResp != null) {
-            pendingResp.doneWithInvalidResponse(new InvalidResponseException("Receive unknown command_id"));
-        }
-    }
-
-    @Override
-    public void processQuerySmResp(PDU pdu) {
-        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(1);
-        if (pendingResp != null) {
-            pendingResp.doneWithInvalidResponse(new InvalidResponseException("Receive unexpected query_sm"));
         }
     }
 }

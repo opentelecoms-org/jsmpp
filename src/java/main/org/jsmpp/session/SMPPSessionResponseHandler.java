@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 public class SMPPSessionResponseHandler extends BaseResponseHandler implements ClientResponseHandler {
     private static final Logger logger = LoggerFactory.getLogger(SMPPSessionResponseHandler.class);
 
-    private final SMPPSession session;
+    private final BaseClientSession session;
 
-    public SMPPSessionResponseHandler(SMPPSession session) {
+    public SMPPSessionResponseHandler(BaseClientSession session) {
         super(session);
         this.session = session;
     }

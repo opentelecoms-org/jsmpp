@@ -94,17 +94,6 @@ public class SMPPServerSession extends BaseSMPPSession {
         }
     }
 
-    public void setSessionTimer(int sessionTimer) {
-        this.sessionTimer = sessionTimer;
-        if (state.getSessionState().isBound()) {
-            try {
-                conn.setSoTimeout(sessionTimer);
-            } catch (IOException e) {
-                logger.error("Failed setting so_timeout for session timer", e);
-            }
-        }
-    }
-
     public ServerMessageReceiverListener getMessageReceiverListener() {
         return messageReceiverListener;
     }

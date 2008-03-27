@@ -21,7 +21,7 @@ public abstract class BaseResponseHandler {
 
     @SuppressWarnings("unchecked")
     public PendingResponse<Command> removeSentItem(int sequenceNumber) {
-        return  (PendingResponse<Command>) this.session.pendingResponses.remove(sequenceNumber);
+        return (PendingResponse<Command>) this.session.pendingResponses.remove(sequenceNumber);
     }
 
     public void notifyUnbonded() {

@@ -20,17 +20,15 @@ public class NegativeResponseException extends Exception {
      * @param commandStatus is the command_status.
      */
     public NegativeResponseException(int commandStatus) {
-        super("Negative response " + IntUtil.toHexString(commandStatus)
-                + " found");
-        this.commandStatus = commandStatus;
-    }
-    public NegativeResponseException(Throwable e, int commandStatus) {
-        super("Negative response " + IntUtil.toHexString(commandStatus)
-                + " found", e);
+        super("Negative response " + IntUtil.toHexString(commandStatus) + " found");
         this.commandStatus = commandStatus;
     }
 
-    
+    public NegativeResponseException(Throwable e, int commandStatus) {
+        super("Negative response " + IntUtil.toHexString(commandStatus) + " found", e);
+        this.commandStatus = commandStatus;
+    }
+
     /**
      * Get the command_status.
      * 

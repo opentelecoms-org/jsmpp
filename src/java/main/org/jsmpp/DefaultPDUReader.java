@@ -50,6 +50,7 @@ public class DefaultPDUReader implements PDUReader {
 
     public synchronized PDU readPDU() throws InvalidCommandLengthException, IOException {
         Command pduHeader = readPDUHeader();
+        logger.debug("read PDU " + pduHeader);
         return new PDU(pduHeader, readPDU(pduHeader));
     }
 

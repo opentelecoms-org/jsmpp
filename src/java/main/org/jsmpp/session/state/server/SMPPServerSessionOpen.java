@@ -14,12 +14,13 @@ import org.jsmpp.session.ServerResponseHandler;
  * @author uudashr
  * 
  */
-public class SMPPServerSessionOpen extends ServerSessionState {
+public class SMPPServerSessionOpen extends SMPPServerSessionClosed {
 
     public SMPPServerSessionOpen(ServerResponseHandler responseHandler) {
         super(responseHandler);
     }
 
+    @Override
     public SessionState getSessionState() {
         return SessionState.OPEN;
     }
@@ -38,50 +39,5 @@ public class SMPPServerSessionOpen extends ServerSessionState {
             // FIXME uud: might not need anymore
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), SMPPConstant.STAT_ESME_RINVCMDID, pduHeader.getSequenceNumber());
         }
-    }
-
-    @Override
-    public void processDeliverSmResp(PDU pdu) throws IOException {
-        throw new IOException("Invalid process for open session state");
-    }
-
-    @Override
-    public void processQuerySm(PDU pdu) throws IOException {
-        throw new IOException("Invalid process for open session state");
-    }
-
-    @Override
-    public void processSubmitSm(PDU pdu) throws IOException {
-        throw new IOException("Invalid process for open session state");
-    }
-
-    @Override
-    public void processEnquireLink(PDU pdu) throws IOException {
-        throw new IOException("Invalid process for open session state");
-    }
-
-    @Override
-    public void processEnquireLinkResp(PDU pdu) throws IOException {
-        throw new IOException("Invalid process for open session state");
-    }
-
-    @Override
-    public void processGenericNack(PDU pdu) throws IOException {
-        throw new IOException("Invalid process for open session state");
-    }
-
-    @Override
-    public void processUnbind(PDU pdu) throws IOException {
-        throw new IOException("Invalid process for open session state");
-    }
-
-    @Override
-    public void processUnbindResp(PDU pdu) throws IOException {
-        throw new IOException("Invalid process for open session state");
-    }
-
-    @Override
-    public void processUnknownCid(PDU pdu) throws IOException {
-        throw new IOException("Invalid process for open session state");
     }
 }
