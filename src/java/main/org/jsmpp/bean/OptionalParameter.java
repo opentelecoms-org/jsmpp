@@ -4,9 +4,12 @@ import java.nio.ByteBuffer;
 
 import org.jsmpp.util.IntUtil;
 import org.jsmpp.util.OctetUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class OptionalParameter {
-
+    private static final Logger logger = LoggerFactory.getLogger(OptionalParameter.class);
+    
     public final Tag tag;
 
     public OptionalParameter(Tag tag) {
@@ -158,11 +161,12 @@ public abstract class OptionalParameter {
     }
 
     public enum Tag {
+        invalid(0x0, Null.class),
         dest_addr_subunit(0x0005, Byte.class), 
         dest_network_type(0x0006, Byte.class), 
         dest_bearer_type(0x0007, Byte.class),
-        dest_telematics_id(0x0008, Short.class)
-        , source_addr_subunit(0x000D, Byte.class), 
+        dest_telematics_id(0x0008, Short.class),
+        source_addr_subunit(0x000D, Byte.class), 
         source_network_type(0x000E, Byte.class),
         source_bearer_type(0x000F, Byte.class), 
         source_telematics_id(0x0010, Byte.class), 
@@ -220,7 +224,8 @@ public abstract class OptionalParameter {
                 if (tag.value() == code)
                     return tag;
             }
-            throw new IllegalArgumentException("No tag for: " + IntUtil.toHexString(code));
+            logger.warn("Invalid optional parameter received: "+ IntUtil.toHexString(code));
+            return invalid;
         }
     }
 }
