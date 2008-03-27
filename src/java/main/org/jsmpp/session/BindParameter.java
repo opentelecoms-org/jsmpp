@@ -18,7 +18,7 @@ public class BindParameter {
     private TypeOfNumber addrTon;
     private NumberingPlanIndicator addrNpi;
     private String addressRange;
-    
+
     /**
      * Construct with all mandatory parameters.
      * 
@@ -30,9 +30,7 @@ public class BindParameter {
      * @param addrNpi is the address NPI.
      * @param addressRange is the address range.
      */
-    public BindParameter(BindType bindType, String systemId, String password,
-            String systemType, TypeOfNumber addrTon,
-            NumberingPlanIndicator addrNpi, String addressRange) {
+    public BindParameter(BindType bindType, String systemId, String password, String systemType, TypeOfNumber addrTon, NumberingPlanIndicator addrNpi, String addressRange) {
         this.bindType = bindType;
         this.systemId = systemId;
         this.password = password;
@@ -76,16 +74,11 @@ public class BindParameter {
         int result = 1;
         result = prime * result + ((addrNpi == null) ? 0 : addrNpi.hashCode());
         result = prime * result + ((addrTon == null) ? 0 : addrTon.hashCode());
-        result = prime * result
-                + ((addressRange == null) ? 0 : addressRange.hashCode());
-        result = prime * result
-                + ((bindType == null) ? 0 : bindType.hashCode());
-        result = prime * result
-                + ((password == null) ? 0 : password.hashCode());
-        result = prime * result
-                + ((systemId == null) ? 0 : systemId.hashCode());
-        result = prime * result
-                + ((systemType == null) ? 0 : systemType.hashCode());
+        result = prime * result + ((addressRange == null) ? 0 : addressRange.hashCode());
+        result = prime * result + ((bindType == null) ? 0 : bindType.hashCode());
+        result = prime * result + ((password == null) ? 0 : password.hashCode());
+        result = prime * result + ((systemId == null) ? 0 : systemId.hashCode());
+        result = prime * result + ((systemType == null) ? 0 : systemType.hashCode());
         return result;
     }
 
@@ -97,7 +90,7 @@ public class BindParameter {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final BindParameter other = (BindParameter)obj;
+        final BindParameter other = (BindParameter) obj;
         if (addrNpi == null) {
             if (other.addrNpi != null)
                 return false;
@@ -135,6 +128,5 @@ public class BindParameter {
             return false;
         return true;
     }
-    
-    
+
 }

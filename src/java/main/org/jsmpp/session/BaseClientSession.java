@@ -135,11 +135,11 @@ public abstract class BaseClientSession extends BaseSMPPSession {
         }
     }
 
-    public MessageReceiverListener getMessageReceiverListener() {
-        return messageReceiverListener;
+    public void setMessageReceiverListener(MessageReceiverListener listener) {
+        this.messageReceiverListener = listener;
     }
 
-    public void setMessageReceiverListener(MessageReceiverListener messageReceiverListener) {
-        this.messageReceiverListener = messageReceiverListener;
+    public MessageReceiverListener getMessageReceiverListener() {
+        return messageReceiverListener;
     }
 }

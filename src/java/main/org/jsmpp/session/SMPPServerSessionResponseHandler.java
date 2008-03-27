@@ -41,18 +41,6 @@ class SMPPServerSessionResponseHandler extends BaseResponseHandler implements Se
         }
     }
 
-    public void sendSubmitSmResponse(MessageId messageId, int sequenceNumber) throws IOException {
-        try {
-            serverSession.pduSender.sendSubmitSmResp(sequenceNumber, messageId.getValue());
-        } catch (PDUStringException e) {
-            /*
-             * There should be no PDUStringException thrown since creation of
-             * MessageId should be safe.
-             */
-            logger.error("SYSTEM ERROR. Failed sending submitSmResp", e);
-        }
-    }
-
     public void processBind(Bind bind) {
         this.serverSession.bindRequestReceiver.notifyAcceptBind(bind);
     }

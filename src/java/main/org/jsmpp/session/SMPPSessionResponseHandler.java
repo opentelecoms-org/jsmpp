@@ -1,5 +1,7 @@
 package org.jsmpp.session;
 
+import java.io.IOException;
+
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.extra.ProcessRequestException;
 import org.slf4j.Logger;
@@ -17,6 +19,11 @@ public class SMPPSessionResponseHandler extends BaseResponseHandler implements C
 
     public void processDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
         fireAcceptDeliverSm(deliverSm);
+        try {
+            sendDeliverSmResp(deliverSm.getSequenceNumber());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     void fireAcceptDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {

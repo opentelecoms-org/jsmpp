@@ -18,32 +18,27 @@ import org.jsmpp.extra.ProcessRequestException;
 public class BindRequest {
     private final Lock lock = new ReentrantLock();
     private final Condition condition = lock.newCondition();
-    
+
     private final BindParameter bindParam;
     private final int originalSequenceNumber;
     private boolean done;
-    
+
     private final ServerResponseHandler responseHandler;
-    public BindRequest(int sequenceNumber, BindType bindType, String systemId, String password, 
-            String systemType, TypeOfNumber addrTon, NumberingPlanIndicator addrNpi, 
-            String addressRange, ServerResponseHandler responseHandler) {
+
+    public BindRequest(int sequenceNumber, BindType bindType, String systemId, String password, String systemType, TypeOfNumber addrTon, NumberingPlanIndicator addrNpi, String addressRange, ServerResponseHandler responseHandler) {
         this.originalSequenceNumber = sequenceNumber;
         bindParam = new BindParameter(bindType, systemId, password, systemType, addrTon, addrNpi, addressRange);
         this.responseHandler = responseHandler;
     }
-    
+
     public BindRequest(Bind bind, ServerResponseHandler responseHandler) {
-        this(bind.getSequenceNumber(), BindType.valueOf(bind.getCommandId()), bind.getSystemId(), 
-                bind.getPassword(), bind.getSystemType(), 
-                TypeOfNumber.valueOf(bind.getAddrTon()), 
-                NumberingPlanIndicator.valueOf(bind.getAddrNpi()), 
-                bind.getAddressRange(), responseHandler);
+        this(bind.getSequenceNumber(), BindType.valueOf(bind.getCommandId()), bind.getSystemId(), bind.getPassword(), bind.getSystemType(), TypeOfNumber.valueOf(bind.getAddrTon()), NumberingPlanIndicator.valueOf(bind.getAddrNpi()), bind.getAddressRange(), responseHandler);
     }
-    
+
     public BindParameter getBindParameter() {
         return bindParam;
     }
-    
+
     /**
      * Accept the bind request.
      * 
@@ -70,7 +65,7 @@ public class BindRequest {
         }
         done = true;
     }
-    
+
     /**
      * Reject the bind request.
      * 

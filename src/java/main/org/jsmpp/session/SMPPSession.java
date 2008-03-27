@@ -83,5 +83,4 @@ public class SMPPSession extends BaseClientSession {
         // message id requested not same as the returned
         throw new InvalidResponseException("Requested message_id doesn't match with the result");
     }
-
 }

@@ -51,7 +51,6 @@ public class SMPPSessionBoundTRX extends SMPPSessionUnbound {
         try {
             DeliverSm deliverSm = pduDecomposer.deliverSm(pdu);
             responseHandler.processDeliverSm(deliverSm);
-            responseHandler.sendDeliverSmResp(pdu.getCommand().getSequenceNumber());
         } catch (PDUStringException e) {
             logger.error("Failed decomposing deliver_sm", e);
             responseHandler.sendNegativeResponse(pdu.getCommandId(), e.getErrorCode(), pdu.getCommand().getSequenceNumber());

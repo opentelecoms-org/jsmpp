@@ -55,9 +55,7 @@ public class SMPPServerSessionBoundTRX extends SMPPServerSessionUnbound {
         Command pduHeader = pdu.getCommand();
         try {
             SubmitSm submitSm = pduDecomposer.submitSm(pdu);
-            MessageId messageId = responseHandler.processSubmitSm(submitSm);
-            logger.debug("Sending response with message_id " + messageId + " for request with sequence_number " + pduHeader.getSequenceNumber());
-            responseHandler.sendSubmitSmResponse(messageId, pduHeader.getSequenceNumber());
+            responseHandler.processSubmitSm(submitSm);
         } catch (PDUStringException e) {
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
         } catch (ProcessRequestException e) {

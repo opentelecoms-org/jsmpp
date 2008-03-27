@@ -31,8 +31,7 @@ public class ProcessRequestException extends Exception {
      * @param errorCode is the error code (or known as command_status).
      * @param cause is the parent cause.
      */
-    public ProcessRequestException(String message, int errorCode,
-            Throwable cause) {
+    public ProcessRequestException(String message, int errorCode, Throwable cause) {
         super(message, cause);
         this.errorCode = errorCode;
     }

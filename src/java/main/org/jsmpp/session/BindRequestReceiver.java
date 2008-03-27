@@ -10,7 +10,7 @@ import org.jsmpp.bean.Bind;
 
 /**
  * @author uudashr
- *
+ * 
  */
 class BindRequestReceiver {
     private final Lock lock = new ReentrantLock();
@@ -26,10 +26,13 @@ class BindRequestReceiver {
     /**
      * Wait until the bind request received for specified timeout.
      * 
-     * @param timeout is the timeout.
+     * @param timeout
+     *            is the timeout.
      * @return the {@link BindRequest}.
-     * @throws IllegalStateException if this method already called before.
-     * @throws TimeoutException if the timeout has been reach.
+     * @throws IllegalStateException
+     *             if this method already called before.
+     * @throws TimeoutException
+     *             if the timeout has been reach.
      */
     BindRequest waitForRequest(long timeout) throws IllegalStateException, TimeoutException {
         lock.lock();
@@ -57,8 +60,10 @@ class BindRequestReceiver {
     /**
      * Notify that the bind has accepted.
      * 
-     * @param bindParameter is the {@link Bind} command.
-     * @throws IllegalStateException if this method already called before.
+     * @param bindParameter
+     *            is the {@link Bind} command.
+     * @throws IllegalStateException
+     *             if this method already called before.
      */
     void notifyAcceptBind(Bind bindParameter) throws IllegalStateException {
         lock.lock();
