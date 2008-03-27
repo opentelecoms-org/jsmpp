@@ -5,7 +5,7 @@
   
     <groupId>org.jsmpp</groupId>
     <artifactId>jsmpp</artifactId>
-    <version>1.2-custom</version>
+    <version>1.2-SNAPSHOT</version>
   
     <dependencies>
       <dependency>
