@@ -5,7 +5,6 @@ import java.util.Date;
 
 import org.jsmpp.util.DeliveryReceiptState;
 
-
 /**
  * @author uudashr
  * 
@@ -24,8 +23,7 @@ public class DeliveryReceipt {
     /**
      * Date format for the <b>submit date</b> and <b>done date</b> attribute
      */
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat(
-            "yyMMddHHmm");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmm");
 
     private String id;
     private int submitted;
@@ -40,9 +38,7 @@ public class DeliveryReceipt {
 
     }
 
-    public DeliveryReceipt(String id, int submitted, int delivered,
-            Date submitDate, Date doneDate, DeliveryReceiptState finalStatus,
-            String error, String text) {
+    public DeliveryReceipt(String id, int submitted, int delivered, Date submitDate, Date doneDate, DeliveryReceiptState finalStatus, String error, String text) {
         this.id = id;
         this.submitted = submitted;
         this.delivered = delivered;
@@ -168,7 +164,7 @@ public class DeliveryReceipt {
      * @param text the text to set.
      */
     public void setText(String text) {
-        if (text.length() > 20) {
+        if (text != null && text.length() > 20) {
             this.text = text.substring(0, 20);
         } else {
             this.text = text;
