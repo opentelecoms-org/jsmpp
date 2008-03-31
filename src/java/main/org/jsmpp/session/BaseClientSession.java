@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class BaseClientSession extends BaseSMPPSession {
 
-    private static final Logger logger = LoggerFactory.getLogger(AsynchronousSMPPSession.class);
+    private static final Logger logger = LoggerFactory.getLogger(BaseClientSession.class);
     protected final ConnectionFactory connFactory;
     protected final SessionStateFinder<ClientResponseHandler> sessionStateFinder;
     protected MessageReceiverListener messageReceiverListener;
