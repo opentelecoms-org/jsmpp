@@ -1,6 +1,7 @@
 package org.jsmpp.session;
 
 import org.jsmpp.bean.DeliverSm;
+import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.extra.ProcessRequestException;
 
 /**
@@ -14,12 +15,8 @@ import org.jsmpp.extra.ProcessRequestException;
  */
 public interface ClientResponseHandler extends ResponseHandler {
 
-    /**
-     * Process the deliver
-     * 
-     * @param deliverSm
-     * @throws ProcessRequestException
-     */
     public void processDeliverSm(DeliverSm deliverSm) throws ProcessRequestException;
+
+    public void processSubmitSmResp(SubmitSmResp resp);
 
 }

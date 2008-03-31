@@ -26,9 +26,9 @@ public abstract class BaseClientSession extends BaseSMPPSession {
 
     private static final Logger logger = LoggerFactory.getLogger(AsynchronousSMPPSession.class);
     protected final ConnectionFactory connFactory;
-    protected final SMPPSessionResponseHandler responseHandler = new SMPPSessionResponseHandler(this);
     protected final SessionStateFinder<ClientResponseHandler> sessionStateFinder;
     protected MessageReceiverListener messageReceiverListener;
+    protected final ClientResponseHandler responseHandler = new SMPPSessionResponseHandler(this);
 
     public BaseClientSession(ConnectionFactory connFactory) {
         this.connFactory = connFactory;

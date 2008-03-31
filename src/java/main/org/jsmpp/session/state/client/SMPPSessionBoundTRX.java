@@ -62,19 +62,12 @@ public class SMPPSessionBoundTRX extends SMPPSessionUnbound {
 
     @Override
     public void processSubmitSmResp(PDU pdu) throws IOException {
-        logger.debug("Received submit_sm_resp " + pdu.getCommand());
-        Command pduHeader = pdu.getCommand();
-        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(pduHeader.getSequenceNumber());
-        if (pendingResp != null) {
-            try {
-                SubmitSmResp resp = pduDecomposer.submitSmResp(pdu);
-                pendingResp.done(resp);
-            } catch (PDUStringException e) {
-                logger.error("Failed decomposing submit_sm_resp", e);
-                responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader.getSequenceNumber());
-            }
-        } else {
-            logger.warn("No request with sequence number " + pduHeader.getSequenceNumber() + " found");
+        try {
+            SubmitSmResp resp = pduDecomposer.submitSmResp(pdu);
+            responseHandler.processSubmitSmResp(resp);
+        } catch (PDUStringException e) {
+            logger.error("Failed decomposing submit_sm_resp", e);
+            responseHandler.sendGenerickNack(e.getErrorCode(), pdu.getCommand().getSequenceNumber());
         }
     }
 

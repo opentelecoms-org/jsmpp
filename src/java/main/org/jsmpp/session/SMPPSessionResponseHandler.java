@@ -2,7 +2,11 @@ package org.jsmpp.session;
 
 import java.io.IOException;
 
+import org.jsmpp.PDUStringException;
+import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DeliverSm;
+import org.jsmpp.bean.SubmitSmResp;
+import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ProcessRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +30,15 @@ public class SMPPSessionResponseHandler extends BaseResponseHandler implements C
         }
     }
 
+    public void sendDeliverSmResp(int sequenceNumber) throws IOException {
+        try {
+            session.pduSender.sendDeliverSmResp(sequenceNumber);
+            logger.debug("deliver_sm_resp with seq_number " + sequenceNumber + " has been sent");
+        } catch (PDUStringException e) {
+            logger.error("Failed sending deliver_sm_resp", e);
+        }
+    }
+
     void fireAcceptDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
         if (session.messageReceiverListener != null) {
             session.messageReceiverListener.onAcceptDeliverSm(deliverSm);
@@ -34,4 +47,12 @@ public class SMPPSessionResponseHandler extends BaseResponseHandler implements C
         }
     }
 
+    public void processSubmitSmResp(SubmitSmResp resp) {
+        PendingResponse<Command> pendingResp = removeSentItem(resp.getSequenceNumber());
+        if (pendingResp != null) {
+            pendingResp.done(resp);
+        } else {
+            logger.warn("No request with sequence number " + resp.getSequenceNumber() + " found");
+        }
+    }
 }

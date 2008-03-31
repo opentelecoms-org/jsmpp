@@ -2,7 +2,6 @@ package org.jsmpp.session;
 
 import java.io.IOException;
 
-import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
 import org.jsmpp.extra.PendingResponse;
@@ -26,15 +25,6 @@ public abstract class BaseResponseHandler {
 
     public void notifyUnbonded() {
         this.session.changeState(SessionState.UNBOUND);
-    }
-
-    public void sendDeliverSmResp(int sequenceNumber) throws IOException {
-        try {
-            session.pduSender.sendDeliverSmResp(sequenceNumber);
-            logger.debug("deliver_sm_resp with seq_number " + sequenceNumber + " has been sent");
-        } catch (PDUStringException e) {
-            logger.error("Failed sending deliver_sm_resp", e);
-        }
     }
 
     public void sendEnquireLinkResp(int sequenceNumber) throws IOException {

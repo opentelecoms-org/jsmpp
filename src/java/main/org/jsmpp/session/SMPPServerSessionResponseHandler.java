@@ -6,8 +6,11 @@ import org.jsmpp.BindType;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Bind;
+import org.jsmpp.bean.Command;
+import org.jsmpp.bean.DeliverSmResp;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.SubmitSm;
+import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.util.MessageId;
@@ -17,9 +20,9 @@ import org.slf4j.LoggerFactory;
 class SMPPServerSessionResponseHandler extends BaseResponseHandler implements ServerResponseHandler {
     private static final Logger logger = LoggerFactory.getLogger(SMPPServerSessionResponseHandler.class);
 
-    private final SMPPServerSession serverSession;
+    final BaseServerSession serverSession;
 
-    SMPPServerSessionResponseHandler(SMPPServerSession serverSession) {
+    SMPPServerSessionResponseHandler(BaseServerSession serverSession) {
         super(serverSession);
         this.serverSession = serverSession;
     }
@@ -65,5 +68,14 @@ class SMPPServerSessionResponseHandler extends BaseResponseHandler implements Se
             return serverSession.messageReceiverListener.onAcceptQuerySm(querySm, serverSession);
         }
         throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RINVDFTMSGID);
+    }
+
+    public void processDeliverSmResp(DeliverSmResp resp) {
+        PendingResponse<Command> pendingResp = serverSession.responseHandler.removeSentItem(resp.getSequenceNumber());
+        if (pendingResp != null) {
+            pendingResp.done(resp);
+        } else {
+            logger.warn("No request with sequence number " + resp.getSequenceNumber() + " found");
+        }
     }
 }

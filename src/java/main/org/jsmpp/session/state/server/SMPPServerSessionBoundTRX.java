@@ -9,21 +9,15 @@ import org.jsmpp.bean.DeliverSmResp;
 import org.jsmpp.bean.PDU;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.SubmitSm;
-import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.ServerResponseHandler;
-import org.jsmpp.util.MessageId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author uudashr
  * 
  */
 public class SMPPServerSessionBoundTRX extends SMPPServerSessionUnbound {
-
-    private static final Logger logger = LoggerFactory.getLogger(SMPPServerSessionBoundTRX.class);
 
     public SMPPServerSessionBoundTRX(ServerResponseHandler responseHandler) {
         super(responseHandler);
@@ -41,13 +35,8 @@ public class SMPPServerSessionBoundTRX extends SMPPServerSessionUnbound {
 
     @Override
     public void processDeliverSmResp(PDU pdu) throws IOException {
-        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(pdu.getCommand().getSequenceNumber());
-        if (pendingResp != null) {
-            DeliverSmResp resp = pduDecomposer.deliverSmResp(pdu);
-            pendingResp.done(resp);
-        } else {
-            logger.warn("No request with sequence number " + pdu.getCommand().getSequenceNumber() + " found");
-        }
+        DeliverSmResp resp = pduDecomposer.deliverSmResp(pdu);
+        responseHandler.processDeliverSmResp(resp);
     }
 
     @Override

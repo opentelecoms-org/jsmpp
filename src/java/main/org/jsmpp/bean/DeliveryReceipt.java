@@ -171,6 +171,7 @@ public class DeliveryReceipt {
         }
     }
 
+    @Override
     public String toString() {
         /*
          * id:IIIIIIIIII sub:SSS dlvrd:DDD submit date:YYMMDDhhmm done
