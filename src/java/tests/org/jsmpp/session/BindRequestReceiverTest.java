@@ -15,15 +15,15 @@ import org.testng.annotations.Test;
  */
 public class BindRequestReceiverTest {
     private BindRequestReceiver requestReceiver;
-    
+
     @BeforeMethod
     public void setUp() {
-        requestReceiver = new BindRequestReceiver(new DummyResponseHandler());
+        requestReceiver = new BindRequestReceiver(null);
     }
-    
-    @Test(groups="checkintest")
+
+    @Test(groups = "checkintest")
     public void testWaitTimeout() {
-        
+
         try {
             BindRequest request = requestReceiver.waitForRequest(1000);
             fail("Should fail since no request for 1000 millis");
@@ -33,10 +33,10 @@ public class BindRequestReceiverTest {
         } catch (TimeoutException e) {
         }
     }
-    
-    @Test(groups="checkintest")
+
+    @Test(groups = "checkintest")
     public void testReceiveRequest() {
-        
+
         try {
             requestReceiver.notifyAcceptBind(dummyBind());
             BindRequest request = requestReceiver.waitForRequest(1000);
@@ -45,13 +45,13 @@ public class BindRequestReceiverTest {
         } catch (TimeoutException e) {
             fail("Should not fail waitForRequest and success accepting request");
         }
-        
+
         try {
             requestReceiver.notifyAcceptBind(dummyBind());
             fail("Should throw IllegalStateException");
         } catch (IllegalStateException e) {
         }
-        
+
         try {
             requestReceiver.waitForRequest(1000);
             fail("Should throw IllegalStateException");
@@ -60,26 +60,26 @@ public class BindRequestReceiverTest {
             fail("Should throw IllegalStateException");
         }
     }
-    
-    @Test(groups="checkintest")
+
+    @Test(groups = "checkintest")
     public void testNoSingleAccept() {
-        
+
         try {
             requestReceiver.notifyAcceptBind(dummyBind());
         } catch (IllegalStateException e) {
             fail("Should not fail waitForRequest and success accepting request");
         }
-        
+
         try {
             requestReceiver.notifyAcceptBind(dummyBind());
             fail("Should throw IllegalStateException");
         } catch (IllegalStateException e) {
         }
     }
-    
-    @Test(groups="checkintest")
+
+    @Test(groups = "checkintest")
     public void testNonSingleWait() {
-        
+
         try {
             BindRequest request = requestReceiver.waitForRequest(1000);
             fail("Should throw TimeoutException");
@@ -87,7 +87,7 @@ public class BindRequestReceiverTest {
             fail("Should throw TimeoutException");
         } catch (TimeoutException e) {
         }
-        
+
         try {
             requestReceiver.waitForRequest(1000);
             fail("Should throw IllegalStateException");
@@ -96,7 +96,7 @@ public class BindRequestReceiverTest {
             fail("Should throw IllegalStateException");
         }
     }
-    
+
     private static final Bind dummyBind() {
         Bind bind = new Bind();
         bind.setCommandId(BindType.BIND_RX.commandId());

@@ -1,9 +1,5 @@
 package org.jsmpp.session;
 
-import java.io.IOException;
-
-import org.jsmpp.BindType;
-import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.Command;
@@ -12,36 +8,18 @@ import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ProcessRequestException;
-import org.jsmpp.extra.SessionState;
 import org.jsmpp.util.MessageId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class SMPPServerSessionResponseHandler extends BaseResponseHandler implements ServerResponseHandler {
+public class SMPPServerSessionResponseHandler extends BaseResponseHandler implements ServerResponseHandler {
     private static final Logger logger = LoggerFactory.getLogger(SMPPServerSessionResponseHandler.class);
 
     final BaseServerSession serverSession;
 
-    SMPPServerSessionResponseHandler(BaseServerSession serverSession) {
+    public SMPPServerSessionResponseHandler(BaseServerSession serverSession) {
         super(serverSession);
         this.serverSession = serverSession;
-    }
-
-    public void sendBindResp(String systemId, BindType bindType, int sequenceNumber) throws IOException {
-        if (bindType.equals(BindType.BIND_RX)) {
-            this.serverSession.changeState(SessionState.BOUND_RX);
-        } else if (bindType.equals(BindType.BIND_TX)) {
-            this.serverSession.changeState(SessionState.BOUND_TX);
-        } else if (bindType.equals(BindType.BIND_TRX)) {
-            this.serverSession.changeState(SessionState.BOUND_TRX);
-        }
-        try {
-            serverSession.pduSender.sendBindResp(bindType.commandId() | SMPPConstant.MASK_CID_RESP, sequenceNumber, systemId);
-        } catch (PDUStringException e) {
-            logger.error("Failed sending bind response", e);
-            // FIXME uud: validate the systemId when the setting up the
-            // value, so it never throws PDUStringException on above block
-        }
     }
 
     public void processBind(Bind bind) {

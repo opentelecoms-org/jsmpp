@@ -15,12 +15,12 @@ import org.jsmpp.bean.Bind;
 class BindRequestReceiver {
     private final Lock lock = new ReentrantLock();
     private final Condition requestCondition = lock.newCondition();
-    private final ServerResponseHandler responseHandler;
+    private final BaseServerSession serverSession;
     private BindRequest request;
     private boolean alreadyWaitForRequest;
 
-    public BindRequestReceiver(ServerResponseHandler responseHandler) {
-        this.responseHandler = responseHandler;
+    public BindRequestReceiver(BaseServerSession baseServerSession) {
+        this.serverSession = baseServerSession;
     }
 
     /**
@@ -69,7 +69,7 @@ class BindRequestReceiver {
         lock.lock();
         try {
             if (request == null) {
-                request = new BindRequest(bindParameter, responseHandler);
+                request = new BindRequest(bindParameter, serverSession);
                 requestCondition.signal();
             } else {
                 throw new IllegalStateException("Already waiting for acceptance bind");

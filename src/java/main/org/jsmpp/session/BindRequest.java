@@ -13,7 +13,7 @@ import org.jsmpp.extra.ProcessRequestException;
 
 /**
  * @author uudashr
- *
+ * 
  */
 public class BindRequest {
     private final Lock lock = new ReentrantLock();
@@ -23,16 +23,16 @@ public class BindRequest {
     private final int originalSequenceNumber;
     private boolean done;
 
-    private final ServerResponseHandler responseHandler;
+    private final BaseServerSession serverSession;
 
-    public BindRequest(int sequenceNumber, BindType bindType, String systemId, String password, String systemType, TypeOfNumber addrTon, NumberingPlanIndicator addrNpi, String addressRange, ServerResponseHandler responseHandler) {
+    public BindRequest(int sequenceNumber, BindType bindType, String systemId, String password, String systemType, TypeOfNumber addrTon, NumberingPlanIndicator addrNpi, String addressRange, BaseServerSession serverSession) {
         this.originalSequenceNumber = sequenceNumber;
         bindParam = new BindParameter(bindType, systemId, password, systemType, addrTon, addrNpi, addressRange);
-        this.responseHandler = responseHandler;
+        this.serverSession = serverSession;
     }
 
-    public BindRequest(Bind bind, ServerResponseHandler responseHandler) {
-        this(bind.getSequenceNumber(), BindType.valueOf(bind.getCommandId()), bind.getSystemId(), bind.getPassword(), bind.getSystemType(), TypeOfNumber.valueOf(bind.getAddrTon()), NumberingPlanIndicator.valueOf(bind.getAddrNpi()), bind.getAddressRange(), responseHandler);
+    public BindRequest(Bind bind, BaseServerSession serverSession) {
+        this(bind.getSequenceNumber(), BindType.valueOf(bind.getCommandId()), bind.getSystemId(), bind.getPassword(), bind.getSystemType(), TypeOfNumber.valueOf(bind.getAddrTon()), NumberingPlanIndicator.valueOf(bind.getAddrNpi()), bind.getAddressRange(), serverSession);
     }
 
     public BindParameter getBindParameter() {
@@ -42,9 +42,12 @@ public class BindRequest {
     /**
      * Accept the bind request.
      * 
-     * @param systemId is the system identifier that will be send to ESME.
-     * @throws IllegalStateException if the acceptance or rejection has been made.
-     * @throws IOException is the connection already closed.
+     * @param systemId
+     *            is the system identifier that will be send to ESME.
+     * @throws IllegalStateException
+     *             if the acceptance or rejection has been made.
+     * @throws IOException
+     *             is the connection already closed.
      * @see #reject(ProcessRequestException)
      */
     public void accept(String systemId) throws IllegalStateException, IOException {
@@ -53,7 +56,7 @@ public class BindRequest {
             if (!done) {
                 done = true;
                 try {
-                    responseHandler.sendBindResp(systemId, bindParam.getBindType(), originalSequenceNumber);
+                    serverSession.sendBindResp(systemId, bindParam.getBindType(), originalSequenceNumber);
                 } finally {
                     condition.signal();
                 }
@@ -69,9 +72,12 @@ public class BindRequest {
     /**
      * Reject the bind request.
      * 
-     * @param errorCode is the reason of rejection.
-     * @throws IllegalStateException if the acceptance or rejection has been made.
-     * @throws IOException if the connection already closed.
+     * @param errorCode
+     *            is the reason of rejection.
+     * @throws IllegalStateException
+     *             if the acceptance or rejection has been made.
+     * @throws IOException
+     *             if the connection already closed.
      * @see {@link #accept()}
      */
     public void reject(int errorCode) throws IllegalStateException, IOException {
@@ -79,13 +85,12 @@ public class BindRequest {
         try {
             if (done) {
                 throw new IllegalStateException("Response already initiated");
-            } else {
-                done = true;
-                try {
-                    responseHandler.sendNegativeResponse(bindParam.getBindType().commandId(), errorCode, originalSequenceNumber);
-                } finally {
-                    condition.signal();
-                }
+            }
+            done = true;
+            try {
+                serverSession.responseHandler.sendNegativeResponse(bindParam.getBindType().commandId(), errorCode, originalSequenceNumber);
+            } finally {
+                condition.signal();
             }
         } finally {
             lock.unlock();

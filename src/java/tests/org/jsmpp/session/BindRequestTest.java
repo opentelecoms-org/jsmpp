@@ -2,6 +2,9 @@ package org.jsmpp.session;
 
 import java.io.IOException;
 
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.jsmpp.BindType;
 import static org.testng.Assert.*;
 
@@ -10,21 +13,29 @@ import org.testng.annotations.Test;
 
 /**
  * @author uudashr
- *
+ * 
  */
 public class BindRequestTest {
-    private DummyResponseHandler responseHandler;
+    private SMPPServerSession serverSession;
     private BindRequest bindRequest;
-    
+    private Mockery mockery;
+
     @BeforeMethod
     public void setUp() {
-        responseHandler = new DummyResponseHandler();
-        bindRequest = new BindRequest(1, BindType.BIND_TRX, null, null, null, null, null, null, responseHandler);
+        mockery = new Mockery();
+        mockery.setImposteriser(ClassImposteriser.INSTANCE);
+        serverSession = mockery.mock(SMPPServerSession.class);
+        serverSession.responseHandler = mockery.mock(SMPPServerSessionResponseHandler.class);
+        bindRequest = new BindRequest(1, BindType.BIND_TRX, null, null, null, null, null, null, serverSession);
     }
-    
-    
-    @Test(groups="checkintest")
-    public void testSucceedAccept() {
+
+    @Test(groups = "checkintest")
+    public void testSucceedAccept() throws IOException {
+        mockery.checking(new Expectations() {
+            {
+                one(serverSession).sendBindResp("sys", BindType.BIND_TRX, 1);
+            }
+        });
         try {
             bindRequest.accept("sys");
         } catch (IllegalStateException e1) {
@@ -33,21 +44,15 @@ public class BindRequestTest {
             fail("Should succes accepting bind request");
         }
     }
-    
-    @Test(groups="checkintest")
-    public void testFailedAccept() {
-        responseHandler.closeConnection();
-        try {
-            bindRequest.accept("sys");
-            fail("Should throw IOException");
-        } catch (IllegalStateException e) {
-            fail("Should throw IOException");
-        } catch (IOException e) {
-        }
-    }
-    
-    @Test(groups="checkintest")
-    public void testSucceedReject() {
+
+    @Test(groups = "checkintest")
+    public void testSucceedReject() throws IOException {
+        mockery.checking(new Expectations() {
+            {
+                one(serverSession.responseHandler).sendNegativeResponse(9, -1, 1);
+            }
+        });
+
         try {
             bindRequest.reject(-1);
         } catch (IllegalStateException e1) {
@@ -56,21 +61,15 @@ public class BindRequestTest {
             fail("Should succes rejecting bind request");
         }
     }
-    
-    @Test(groups="checkintest")
-    public void testFailedReject() {
-        responseHandler.closeConnection();
-        try {
-            bindRequest.reject(-1);
-            fail("Should throw IOException");
-        } catch (IllegalStateException e) {
-            fail("Should throw IOException");
-        } catch (IOException e) {
-        }
-    }
-    
-    @Test(groups="checkintest")
-    public void testNonSingleAccept() {
+
+    @Test(groups = "checkintest")
+    public void testNonSingleAccept() throws IOException {
+        mockery.checking(new Expectations() {
+            {
+                one(serverSession).sendBindResp("sys", BindType.BIND_TRX, 1);
+            }
+        });
+
         try {
             bindRequest.accept("sys");
         } catch (IllegalStateException e1) {
@@ -86,10 +85,15 @@ public class BindRequestTest {
             fail("Should throw IllegalStateException");
         }
     }
-    
-    
-    @Test(groups="checkintest")
-    public void testNonSingleReject() {
+
+    @Test(groups = "checkintest")
+    public void testNonSingleReject() throws IOException {
+        mockery.checking(new Expectations() {
+            {
+                one(serverSession.responseHandler).sendNegativeResponse(9, -1, 1);
+            }
+        });
+
         try {
             bindRequest.reject(-1);
         } catch (IllegalStateException e1) {
@@ -105,5 +109,5 @@ public class BindRequestTest {
             fail("Should throw IllegalStateException");
         }
     }
-    
+
 }

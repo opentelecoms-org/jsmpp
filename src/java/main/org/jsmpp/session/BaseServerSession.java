@@ -1,9 +1,13 @@
 package org.jsmpp.session;
 
+import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
+import org.jsmpp.BindType;
 import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
+import org.jsmpp.PDUStringException;
+import org.jsmpp.SMPPConstant;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.connection.Connection;
 import org.jsmpp.session.state.SessionStateFinder;
@@ -19,7 +23,7 @@ public abstract class BaseServerSession extends BaseSMPPSession {
 
     private final SessionStateFinder<ServerResponseHandler> sessionStateFinder;
 
-    final SMPPServerSessionResponseHandler responseHandler;
+    SMPPServerSessionResponseHandler responseHandler;
     ServerMessageReceiverListener messageReceiverListener;
     BindRequestReceiver bindRequestReceiver;
 
@@ -35,7 +39,7 @@ public abstract class BaseServerSession extends BaseSMPPSession {
         this.sessionStateListener = sessionStateListener;
         this.messageReceiverListener = messageReceiverListener;
         enquireLinkSender = new EnquireLinkSender(this, pduSender);
-        bindRequestReceiver = new BindRequestReceiver(responseHandler);
+        bindRequestReceiver = new BindRequestReceiver(this);
     }
 
     @Override
@@ -81,4 +85,22 @@ public abstract class BaseServerSession extends BaseSMPPSession {
         }
         throw new IllegalStateException("waitForBind() should be invoked on OPEN state, actual state is " + getSessionState());
     }
+
+    public void sendBindResp(String systemId, BindType bindType, int sequenceNumber) throws IOException {
+        if (bindType.equals(BindType.BIND_RX)) {
+            changeState(SessionState.BOUND_RX);
+        } else if (bindType.equals(BindType.BIND_TX)) {
+            changeState(SessionState.BOUND_TX);
+        } else if (bindType.equals(BindType.BIND_TRX)) {
+            changeState(SessionState.BOUND_TRX);
+        }
+        try {
+            pduSender.sendBindResp(bindType.commandId() | SMPPConstant.MASK_CID_RESP, sequenceNumber, systemId);
+        } catch (PDUStringException e) {
+            logger.error("Failed sending bind response", e);
+            // FIXME uud: validate the systemId when the setting up the
+            // value, so it never throws PDUStringException on above block
+        }
+    }
+
 }
