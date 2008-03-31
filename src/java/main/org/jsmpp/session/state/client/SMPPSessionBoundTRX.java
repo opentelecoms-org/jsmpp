@@ -9,7 +9,6 @@ import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.PDU;
 import org.jsmpp.bean.QuerySmResp;
 import org.jsmpp.bean.SubmitSmResp;
-import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.ClientResponseHandler;
@@ -74,18 +73,12 @@ public class SMPPSessionBoundTRX extends SMPPSessionUnbound {
     @Override
     public void processQuerySmResp(PDU pdu) throws IOException {
         Command pduHeader = pdu.getCommand();
-        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(pduHeader.getSequenceNumber());
-        if (pendingResp != null) {
-            try {
-                QuerySmResp resp = pduDecomposer.querySmResp(pdu);
-                pendingResp.done(resp);
-            } catch (PDUStringException e) {
-                logger.error("Failed decomposing submit_sm_resp", e);
-                responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader.getSequenceNumber());
-            }
-        } else {
-            logger.error("No request find for sequence number " + pduHeader.getSequenceNumber());
-            responseHandler.sendGenerickNack(SMPPConstant.STAT_ESME_RINVDFTMSGID, pduHeader.getSequenceNumber());
+        try {
+            QuerySmResp resp = pduDecomposer.querySmResp(pdu);
+            responseHandler.processQuerySmResp(resp);
+        } catch (PDUStringException e) {
+            logger.error("Failed decomposing submit_sm_resp", e);
+            responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader.getSequenceNumber());
         }
     }
 }
