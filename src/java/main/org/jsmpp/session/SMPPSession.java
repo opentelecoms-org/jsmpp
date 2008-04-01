@@ -2,6 +2,7 @@ package org.jsmpp.session;
 
 import java.io.IOException;
 
+import org.jsmpp.Assert;
 import org.jsmpp.BindType;
 import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
@@ -51,6 +52,9 @@ public class SMPPSession extends BaseSMPPSession {
     }
 
     public SMPPSession(ConnectionFactory connFactory, MessageReceiverListener messageReceiverListener, ClientResponseHandler responseHandler) {
+        Assert.notNull(responseHandler);
+        Assert.notNull(connFactory);
+        Assert.notNull(messageReceiverListener);
         this.responseHandler = responseHandler;
         this.connFactory = connFactory;
         this.messageReceiverListener = messageReceiverListener;

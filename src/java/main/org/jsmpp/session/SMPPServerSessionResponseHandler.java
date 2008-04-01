@@ -3,6 +3,7 @@ package org.jsmpp.session;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
+import org.jsmpp.Assert;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Bind;
@@ -22,37 +23,32 @@ public class SMPPServerSessionResponseHandler extends BaseResponseHandler implem
     BindRequestReceiver bindRequestReceiver = new BindRequestReceiver(this);
 
     public SMPPServerSessionResponseHandler(ServerMessageReceiverListener messageReceiverListener) {
+        Assert.notNull(messageReceiverListener);
         this.messageReceiverListener = messageReceiverListener;
     }
 
     public MessageId processSubmitSm(SubmitSm submitSm) throws ProcessRequestException {
-        if (messageReceiverListener != null) {
-            MessageId messageId = messageReceiverListener.onAcceptSubmitSm(submitSm);
-            try {
-                pduSender().sendSubmitSmResp(submitSm.getSequenceNumber(), messageId.getValue());
-            } catch (PDUStringException e) {
-                throw new ProcessRequestException("send submit_sm_resp failed", SMPPConstant.STAT_ESME_RX_R_APPN, e);
-            } catch (IOException e) {
-                throw new ProcessRequestException("send submit_sm_resp failed", SMPPConstant.STAT_ESME_RX_R_APPN, e);
-            }
-            return messageId;
+        MessageId messageId = messageReceiverListener.onAcceptSubmitSm(submitSm);
+        try {
+            pduSender().sendSubmitSmResp(submitSm.getSequenceNumber(), messageId.getValue());
+        } catch (PDUStringException e) {
+            throw new ProcessRequestException("send submit_sm_resp failed", SMPPConstant.STAT_ESME_RDELIVERYFAILURE, e);
+        } catch (IOException e) {
+            throw new ProcessRequestException("send submit_sm_resp failed", SMPPConstant.STAT_ESME_RDELIVERYFAILURE, e);
         }
-        throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
+        return messageId;
     }
 
     public QuerySmResult processQuerySm(QuerySm querySm) throws ProcessRequestException {
-        if (messageReceiverListener != null) {
-            QuerySmResult res= messageReceiverListener.onAcceptQuerySm(querySm);
-            try {
-                pduSender().sendQuerySmResp(querySm, res);
-            } catch (PDUStringException e) {
-                throw new ProcessRequestException("send submit_sm_resp failed", SMPPConstant.STAT_ESME_RX_R_APPN, e);
-            } catch (IOException e) {
-                throw new ProcessRequestException("send submit_sm_resp failed", SMPPConstant.STAT_ESME_RX_R_APPN, e);
-            }
-            return res;
+        QuerySmResult res = messageReceiverListener.onAcceptQuerySm(querySm);
+        try {
+            pduSender().sendQuerySmResp(querySm, res);
+        } catch (PDUStringException e) {
+            throw new ProcessRequestException("send submit_sm_resp failed", SMPPConstant.STAT_ESME_RQUERYFAIL, e);
+        } catch (IOException e) {
+            throw new ProcessRequestException("send submit_sm_resp failed", SMPPConstant.STAT_ESME_RQUERYFAIL, e);
         }
-        throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RINVDFTMSGID);
+        return res;
     }
 
     @SuppressWarnings("unchecked")

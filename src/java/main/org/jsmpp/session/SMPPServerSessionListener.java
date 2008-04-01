@@ -7,17 +7,21 @@ import org.jsmpp.session.connection.Connection;
 import org.jsmpp.session.connection.ServerConnection;
 import org.jsmpp.session.connection.ServerConnectionFactory;
 import org.jsmpp.session.connection.socket.ServerSocketConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author uudashr
  * 
  */
 public class SMPPServerSessionListener {
+
+    static final Logger logger = LoggerFactory.getLogger(SMPPServerSessionListener.class);
+
     private final int port;
     private final ServerConnection serverConn;
     private int initiationTimer = 5000;
     private SessionStateListener sessionStateListener;
-    private ServerMessageReceiverListener messageReceiverListener;
     private ServerResponseHandler responseHandler;
 
     public SMPPServerSessionListener(int port) throws IOException {
@@ -26,16 +30,19 @@ public class SMPPServerSessionListener {
 
     public SMPPServerSessionListener(int port, ServerConnectionFactory serverConnFactory) throws IOException {
         this.port = port;
+        logger.debug("Starting listener on port " + port);
         serverConn = serverConnFactory.listen(port);
     }
 
     public SMPPServerSessionListener(int port, int timeout, ServerConnectionFactory serverConnFactory) throws IOException {
         this.port = port;
+        logger.debug("Starting listener on port " + port);
         serverConn = serverConnFactory.listen(port, timeout);
     }
 
     public SMPPServerSessionListener(int port, int timeout, int backlog, ServerConnectionFactory serverConnFactory) throws IOException {
         this.port = port;
+        logger.debug("Starting listener on port " + port);
         serverConn = serverConnFactory.listen(port, timeout, backlog);
     }
 
@@ -75,16 +82,12 @@ public class SMPPServerSessionListener {
         this.sessionStateListener = sessionStateListener;
     }
 
-    public ServerMessageReceiverListener getMessageReceiverListener() {
-        return messageReceiverListener;
-    }
-
-    public void setMessageReceiverListener(ServerMessageReceiverListener messageReceiverListener) {
-        this.messageReceiverListener = messageReceiverListener;
-    }
-
     /**
      * Accept session request from client.
+     * 
+     * @param serverMessageReceiverListener
+     * 
+     * @param serverMessageReceiverListener
      * 
      * @return the accepted {@link SMPPServerSession}.
      * @throws SocketTimeoutException
@@ -92,25 +95,21 @@ public class SMPPServerSessionListener {
      * @throws IOException
      *             if there is an IO error occur.
      */
-    public SMPPServerSession accept() throws IOException {
+    public SMPPServerSession accept(ServerMessageReceiverListener serverMessageReceiverListener) throws IOException {
         Connection conn = serverConn.accept();
         conn.setSoTimeout(initiationTimer);
-        return initSession(conn);
-    }
-
-    private SMPPServerSession initSession(Connection conn) {
-        responseHandler = newResponseHandler();
-        SMPPServerSession serverSession = newServerSession(conn);
+        responseHandler = newResponseHandler(serverMessageReceiverListener);
+        SMPPServerSession serverSession = newServerSession(conn, serverMessageReceiverListener);
         responseHandler.init(serverSession.pduSender, serverSession.pendingResponses, serverSession);
         return serverSession;
     }
 
-    protected SMPPServerSession newServerSession(Connection conn) {
-        return new SMPPServerSession(conn, responseHandler, sessionStateListener, messageReceiverListener);
+    protected SMPPServerSession newServerSession(Connection conn, ServerMessageReceiverListener serverMessageReceiverListener) {
+        return new SMPPServerSession(conn, responseHandler, sessionStateListener, serverMessageReceiverListener);
     }
 
-    protected ServerResponseHandler newResponseHandler() {
-        return new SMPPServerSessionResponseHandler(messageReceiverListener);
+    protected ServerResponseHandler newResponseHandler(ServerMessageReceiverListener serverMessageReceiverListener) {
+        return new SMPPServerSessionResponseHandler(serverMessageReceiverListener);
     }
 
     public void close() throws IOException {

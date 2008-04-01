@@ -12,6 +12,7 @@ import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.session.QuerySmResult;
 import org.jsmpp.util.DefaultComposer;
+import org.jsmpp.util.DefaultDecomposer;
 import org.jsmpp.util.PDUComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,6 +101,7 @@ public class DefaultPDUSender implements PDUSender {
     }
 
     private void write(byte bytes[]) throws IOException {
+        logger.debug("write PDU " + DefaultDecomposer.getInstance().header(bytes));
         out.write(bytes);
         out.flush();
     }
