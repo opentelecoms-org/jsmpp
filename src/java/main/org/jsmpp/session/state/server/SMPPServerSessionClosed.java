@@ -22,7 +22,7 @@ public class SMPPServerSessionClosed implements SMPPSessionState {
     private static final Logger logger = LoggerFactory.getLogger(SMPPServerSessionClosed.class);
     protected PDUDecomposer pduDecomposer = DefaultDecomposer.getInstance();
 
-    public SMPPServerSessionClosed(ServerResponseHandler responseHandler) {
+    public SMPPServerSessionClosed(ServerResponseHandler responseHandler) {        
         this.responseHandler = responseHandler;
     }
 

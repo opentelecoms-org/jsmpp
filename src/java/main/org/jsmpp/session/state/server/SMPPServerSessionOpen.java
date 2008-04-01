@@ -8,6 +8,7 @@ import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.PDU;
 import org.jsmpp.extra.SessionState;
+import org.jsmpp.session.BindRequestReceiver;
 import org.jsmpp.session.ServerResponseHandler;
 
 /**
@@ -31,8 +32,6 @@ public class SMPPServerSessionOpen extends SMPPServerSessionClosed {
         try {
             Bind bind = pduDecomposer.bind(pdu);
             responseHandler.processBind(bind);
-            // responseHandler.sendBindResp(BindType.valueOf(pduHeader.getCommandId()),
-            // pduHeader.getSequenceNumber());
         } catch (PDUStringException e) {
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
         } catch (IllegalArgumentException e) {
@@ -40,4 +39,5 @@ public class SMPPServerSessionOpen extends SMPPServerSessionClosed {
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), SMPPConstant.STAT_ESME_RINVCMDID, pduHeader.getSequenceNumber());
         }
     }
+
 }

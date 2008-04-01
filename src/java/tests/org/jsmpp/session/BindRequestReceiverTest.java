@@ -2,6 +2,8 @@ package org.jsmpp.session;
 
 import java.util.concurrent.TimeoutException;
 
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.jsmpp.BindType;
 import org.jsmpp.bean.Bind;
 import static org.testng.Assert.*;
@@ -11,14 +13,16 @@ import org.testng.annotations.Test;
 
 /**
  * @author uudashr
- *
+ * 
  */
 public class BindRequestReceiverTest {
     private BindRequestReceiver requestReceiver;
 
     @BeforeMethod
     public void setUp() {
-        requestReceiver = new BindRequestReceiver(null);
+        Mockery mockery = new Mockery();
+        mockery.setImposteriser(ClassImposteriser.INSTANCE);
+        requestReceiver = new BindRequestReceiver(mockery.mock(ServerResponseHandler.class));
     }
 
     @Test(groups = "checkintest")

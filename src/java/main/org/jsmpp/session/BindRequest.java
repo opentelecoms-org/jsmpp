@@ -22,17 +22,16 @@ public class BindRequest {
     private final BindParameter bindParam;
     private final int originalSequenceNumber;
     private boolean done;
+    ServerResponseHandler responseHandler;
 
-    private final BaseServerSession serverSession;
-
-    public BindRequest(int sequenceNumber, BindType bindType, String systemId, String password, String systemType, TypeOfNumber addrTon, NumberingPlanIndicator addrNpi, String addressRange, BaseServerSession serverSession) {
+    public BindRequest(int sequenceNumber, BindType bindType, String systemId, String password, String systemType, TypeOfNumber addrTon, NumberingPlanIndicator addrNpi, String addressRange, ServerResponseHandler responseHandler) {
         this.originalSequenceNumber = sequenceNumber;
+        this.responseHandler = responseHandler;
         bindParam = new BindParameter(bindType, systemId, password, systemType, addrTon, addrNpi, addressRange);
-        this.serverSession = serverSession;
     }
 
-    public BindRequest(Bind bind, BaseServerSession serverSession) {
-        this(bind.getSequenceNumber(), BindType.valueOf(bind.getCommandId()), bind.getSystemId(), bind.getPassword(), bind.getSystemType(), TypeOfNumber.valueOf(bind.getAddrTon()), NumberingPlanIndicator.valueOf(bind.getAddrNpi()), bind.getAddressRange(), serverSession);
+    public BindRequest(Bind bind, ServerResponseHandler responseHandler) {
+        this(bind.getSequenceNumber(), BindType.valueOf(bind.getCommandId()), bind.getSystemId(), bind.getPassword(), bind.getSystemType(), TypeOfNumber.valueOf(bind.getAddrTon()), NumberingPlanIndicator.valueOf(bind.getAddrNpi()), bind.getAddressRange(), responseHandler);
     }
 
     public BindParameter getBindParameter() {
@@ -56,7 +55,7 @@ public class BindRequest {
             if (!done) {
                 done = true;
                 try {
-                    serverSession.sendBindResp(systemId, bindParam.getBindType(), originalSequenceNumber);
+                    responseHandler.sendBindResp(systemId, bindParam.getBindType(), originalSequenceNumber);
                 } finally {
                     condition.signal();
                 }
@@ -88,7 +87,7 @@ public class BindRequest {
             }
             done = true;
             try {
-                serverSession.responseHandler.sendNegativeResponse(bindParam.getBindType().commandId(), errorCode, originalSequenceNumber);
+                responseHandler.sendNegativeResponse(bindParam.getBindType().commandId(), errorCode, originalSequenceNumber);
             } finally {
                 condition.signal();
             }

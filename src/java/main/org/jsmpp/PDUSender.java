@@ -7,7 +7,9 @@ import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.session.QuerySmResult;
 
 /**
  * This class provide way to send SMPP Command over an {@link OutputStream}.
@@ -244,6 +246,8 @@ public interface PDUSender {
      *             if there is an IO error occur.
      */
     public void sendQuerySmResp(int sequenceNumber, String messageId, String finalDate, MessageState messageState, byte errorCode) throws PDUStringException, IOException;
+
+    public void sendQuerySmResp(QuerySm querySm, QuerySmResult res) throws PDUStringException, IOException;
 
     /**
      * Send the deliver short message command.

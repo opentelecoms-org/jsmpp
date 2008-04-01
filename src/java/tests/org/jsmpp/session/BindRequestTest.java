@@ -25,15 +25,16 @@ public class BindRequestTest {
         mockery = new Mockery();
         mockery.setImposteriser(ClassImposteriser.INSTANCE);
         serverSession = mockery.mock(SMPPServerSession.class);
-        serverSession.responseHandler = mockery.mock(SMPPServerSessionResponseHandler.class);
-        bindRequest = new BindRequest(1, BindType.BIND_TRX, null, null, null, null, null, null, serverSession);
+        SMPPServerSessionResponseHandler responseHandler = mockery.mock(SMPPServerSessionResponseHandler.class);
+        serverSession.responseHandler = responseHandler;
+        bindRequest = new BindRequest(1, BindType.BIND_TRX, null, null, null, null, null, null, responseHandler);
     }
 
     @Test(groups = "checkintest")
     public void testSucceedAccept() throws IOException {
         mockery.checking(new Expectations() {
             {
-                one(serverSession).sendBindResp("sys", BindType.BIND_TRX, 1);
+                one(serverSession.responseHandler).sendBindResp("sys", BindType.BIND_TRX, 1);
             }
         });
         try {
@@ -66,7 +67,7 @@ public class BindRequestTest {
     public void testNonSingleAccept() throws IOException {
         mockery.checking(new Expectations() {
             {
-                one(serverSession).sendBindResp("sys", BindType.BIND_TRX, 1);
+                one(serverSession.responseHandler).sendBindResp("sys", BindType.BIND_TRX, 1);
             }
         });
 

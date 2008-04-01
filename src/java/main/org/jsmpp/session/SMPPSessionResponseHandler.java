@@ -15,16 +15,14 @@ import org.slf4j.LoggerFactory;
 
 public class SMPPSessionResponseHandler extends BaseResponseHandler implements ClientResponseHandler {
     private static final Logger logger = LoggerFactory.getLogger(SMPPSessionResponseHandler.class);
+    final MessageReceiverListener messageReceiverListener;
 
-    private final BaseClientSession session;
-
-    public SMPPSessionResponseHandler(BaseClientSession session) {
-        super(session);
-        this.session = session;
+    public SMPPSessionResponseHandler(MessageReceiverListener messageReceiverListener) {
+        this.messageReceiverListener = messageReceiverListener;
     }
 
     public void processDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
-        fireAcceptDeliverSm(deliverSm);
+        messageReceiverListener.onAcceptDeliverSm(deliverSm);
         try {
             sendDeliverSmResp(deliverSm.getSequenceNumber());
         } catch (IOException e) {
@@ -34,18 +32,10 @@ public class SMPPSessionResponseHandler extends BaseResponseHandler implements C
 
     public void sendDeliverSmResp(int sequenceNumber) throws IOException {
         try {
-            session.pduSender.sendDeliverSmResp(sequenceNumber);
+            pduSender().sendDeliverSmResp(sequenceNumber);
             logger.debug("deliver_sm_resp with seq_number " + sequenceNumber + " has been sent");
         } catch (PDUStringException e) {
             logger.error("Failed sending deliver_sm_resp", e);
-        }
-    }
-
-    void fireAcceptDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
-        if (session.messageReceiverListener != null) {
-            session.messageReceiverListener.onAcceptDeliverSm(deliverSm);
-        } else {
-            logger.warn("Receive deliver_sm but MessageReceiverListener is null. Short message = " + new String(deliverSm.getShortMessage()));
         }
     }
 

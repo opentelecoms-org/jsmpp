@@ -12,15 +12,16 @@ import org.jsmpp.bean.Bind;
  * @author uudashr
  * 
  */
-class BindRequestReceiver {
+public class BindRequestReceiver {
     private final Lock lock = new ReentrantLock();
     private final Condition requestCondition = lock.newCondition();
-    private final BaseServerSession serverSession;
+
     private BindRequest request;
     private boolean alreadyWaitForRequest;
+    private ServerResponseHandler serverResponseHandler;
 
-    public BindRequestReceiver(BaseServerSession baseServerSession) {
-        this.serverSession = baseServerSession;
+    public BindRequestReceiver(ServerResponseHandler serverResponseHandler) {
+        this.serverResponseHandler = serverResponseHandler;
     }
 
     /**
@@ -34,7 +35,7 @@ class BindRequestReceiver {
      * @throws TimeoutException
      *             if the timeout has been reach.
      */
-    BindRequest waitForRequest(long timeout) throws IllegalStateException, TimeoutException {
+    public BindRequest waitForRequest(long timeout) throws IllegalStateException, TimeoutException {
         lock.lock();
         try {
             if (alreadyWaitForRequest) {
@@ -54,7 +55,6 @@ class BindRequestReceiver {
             alreadyWaitForRequest = true;
             lock.unlock();
         }
-
     }
 
     /**
@@ -65,11 +65,11 @@ class BindRequestReceiver {
      * @throws IllegalStateException
      *             if this method already called before.
      */
-    void notifyAcceptBind(Bind bindParameter) throws IllegalStateException {
+    public void notifyAcceptBind(Bind bindParameter) throws IllegalStateException {
         lock.lock();
         try {
             if (request == null) {
-                request = new BindRequest(bindParameter, serverSession);
+                request = new BindRequest(bindParameter, serverResponseHandler);
                 requestCondition.signal();
             } else {
                 throw new IllegalStateException("Already waiting for acceptance bind");

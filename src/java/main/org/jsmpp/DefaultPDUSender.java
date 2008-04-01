@@ -8,7 +8,9 @@ import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.session.QuerySmResult;
 import org.jsmpp.util.DefaultComposer;
 import org.jsmpp.util.PDUComposer;
 import org.slf4j.Logger;
@@ -85,6 +87,10 @@ public class DefaultPDUSender implements PDUSender {
         write(pduComposer.querySmResp(sequenceNumber, messageId, finalDate, messageState.value(), errorCode));
     }
 
+    public void sendQuerySmResp(QuerySm querySm, QuerySmResult res) throws PDUStringException, IOException {
+        sendQuerySmResp(querySm.getSequenceNumber(), querySm.getMessageId(), res.getFinalDate(), res.getMessageState(), res.getErrorCode());
+    }
+
     public void sendDeliverSm(int sequenceNumber, String serviceType, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr, TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi, String destinationAddr, ESMClass esmClass, byte protocoId, byte priorityFlag, RegisteredDelivery registeredDelivery, DataCoding dataCoding, byte[] shortMessage, OptionalParameter... params) throws PDUStringException, IOException {
         write(pduComposer.deliverSm(sequenceNumber, serviceType, sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr, destAddrTon.value(), destAddrNpi.value(), destinationAddr, esmClass.value(), protocoId, priorityFlag, registeredDelivery.value(), dataCoding.value(), shortMessage, params));
     }
@@ -97,4 +103,5 @@ public class DefaultPDUSender implements PDUSender {
         out.write(bytes);
         out.flush();
     }
+
 }

@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
+import org.jsmpp.bean.DeliverSmResp;
 import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ResponseTimeoutException;
@@ -37,6 +38,11 @@ public class PendingResponses {
 
     public PendingResponse<? extends Command> remove(int sequenceNumber) {
         return responses.remove(sequenceNumber);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Command> PendingResponse<T> remove(T resp) {
+        return (PendingResponse<T>) remove(resp.getSequenceNumber());
     }
 
     private void doWait(PendingResponse<? extends Command> pendingResp) throws ResponseTimeoutException, InvalidResponseException {
@@ -76,4 +82,5 @@ public class PendingResponses {
     public int currentSequenceValue() {
         return sequence.currentValue();
     }
+
 }

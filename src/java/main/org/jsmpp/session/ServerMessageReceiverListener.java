@@ -10,7 +10,7 @@ import org.jsmpp.util.MessageId;
  *
  */
 public interface ServerMessageReceiverListener {
-    MessageId onAcceptSubmitSm(SubmitSm submitSm, BaseServerSession source) throws ProcessRequestException;
-    
-    QuerySmResult onAcceptQuerySm(QuerySm querySm, BaseServerSession source) throws ProcessRequestException;
+    MessageId onAcceptSubmitSm(SubmitSm submitSm) throws ProcessRequestException;
+
+    QuerySmResult onAcceptQuerySm(QuerySm querySm) throws ProcessRequestException;
 }
