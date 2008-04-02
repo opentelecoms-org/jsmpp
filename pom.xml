@@ -6,7 +6,8 @@
   <groupId>org.jsmpp</groupId>
   <artifactId>jsmpp</artifactId>
   <version>1.2-SNAPSHOT</version>
-
+  <name>jsmpp</name>
+  
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
