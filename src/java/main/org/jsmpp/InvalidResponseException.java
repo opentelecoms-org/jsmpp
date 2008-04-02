@@ -9,7 +9,7 @@ package org.jsmpp;
  * @since 1.0
  * 
  */
-public class InvalidResponseException extends Exception {
+public class InvalidResponseException extends RuntimeException {
 	private static final long serialVersionUID = -1143300950975646034L;
 
 	/**

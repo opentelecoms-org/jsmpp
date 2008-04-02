@@ -10,10 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class PDUReaderWorker extends Thread {
-    private final BaseSMPPSession session;
+    private final BaseSession session;
     static final Logger logger = LoggerFactory.getLogger(PDUReaderWorker.class);
 
-    PDUReaderWorker(BaseSMPPSession session) {
+    PDUReaderWorker(BaseSession session) {
         this.session = session;
     }
 
@@ -36,7 +36,7 @@ class PDUReaderWorker extends Thread {
             logger.warn("Receive invalid command length", e);
             try {
                 this.session.pduSender.sendGenericNack(SMPPConstant.STAT_ESME_RINVCMDLEN, 0);
-            } catch (IOException ee) {
+            } catch (RuntimeException ee) {
                 logger.warn("Failed sending generic nack", ee);
             }
             this.session.unbindAndClose();

@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
-import org.jsmpp.bean.DeliverSmResp;
 import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ResponseTimeoutException;

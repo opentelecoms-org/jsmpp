@@ -12,7 +12,6 @@ import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.ClientResponseHandler;
 import org.jsmpp.session.state.SMPPSessionState;
-import org.jsmpp.util.DefaultDecomposer;
 import org.jsmpp.util.IntUtil;
 import org.jsmpp.util.PDUDecomposer;
 import org.slf4j.Logger;
@@ -31,7 +30,7 @@ import org.slf4j.LoggerFactory;
 public class SMPPSessionClosed implements SMPPSessionState {
     private static final Logger logger = LoggerFactory.getLogger(SMPPSessionClosed.class);
 
-    protected PDUDecomposer pduDecomposer = DefaultDecomposer.getInstance();
+    protected PDUDecomposer pduDecomposer = PDUDecomposer.getInstance();
     final protected ClientResponseHandler responseHandler;
 
     public SMPPSessionClosed(ClientResponseHandler responseHandler) {
@@ -82,7 +81,7 @@ public class SMPPSessionClosed implements SMPPSessionState {
         responseHandler.sendEnquireLinkResp(pdu.getCommand().getSequenceNumber());
     }
 
-    public void processEnquireLinkResp(PDU pdu) throws IOException {
+    public void processEnquireLinkResp(PDU pdu) {
         PendingResponse<Command> pendingResp = responseHandler.removeSentItem(pdu.getCommand().getSequenceNumber());
         if (pendingResp != null) {
             EnquireLinkResp resp = pduDecomposer.enquireLinkResp(pdu);
@@ -102,7 +101,7 @@ public class SMPPSessionClosed implements SMPPSessionState {
         }
     }
 
-    public void processUnbindResp(PDU pdu) throws IOException {
+    public void processUnbindResp(PDU pdu) {
         PendingResponse<Command> pendingResp = responseHandler.removeSentItem(pdu.getCommand().getSequenceNumber());
         if (pendingResp != null) {
             UnbindResp resp = pduDecomposer.unbindResp(pdu);
@@ -117,7 +116,7 @@ public class SMPPSessionClosed implements SMPPSessionState {
         responseHandler.sendGenerickNack(SMPPConstant.STAT_ESME_RINVCMDID, pdu.getCommand().getSequenceNumber());
     }
 
-    public void processGenericNack(PDU pdu) throws IOException {
+    public void processGenericNack(PDU pdu) {
         PendingResponse<Command> pendingResp = responseHandler.removeSentItem(pdu.getCommand().getSequenceNumber());
         if (pendingResp != null) {
             pendingResp.doneWithInvalidResponse(new InvalidResponseException("Receive generic_nack with command_status " + pdu.getCommand().getCommandStatusAsHex()));

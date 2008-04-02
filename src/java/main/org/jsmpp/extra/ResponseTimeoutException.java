@@ -8,7 +8,7 @@ package org.jsmpp.extra;
  * @since 1.0
  * 
  */
-public class ResponseTimeoutException extends Exception {
+public class ResponseTimeoutException extends RuntimeException {
     private static final long serialVersionUID = 2091678783085990727L;
 
     /**

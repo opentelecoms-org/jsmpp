@@ -12,7 +12,7 @@ import org.jsmpp.extra.PendingResponse;
  * 
  */
 public interface ResponseHandler {
-    public void init(PDUSender pduSender, PendingResponses pendingResponses, BaseSMPPSession session);
+    public void init(PDUSender pduSender, PendingResponses pendingResponses, BaseSession session);
 
     /**
      * Remove the previously {@link PendingResponse} that set when the request

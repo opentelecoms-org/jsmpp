@@ -12,7 +12,7 @@ import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.ServerResponseHandler;
 import org.jsmpp.session.state.SMPPSessionState;
-import org.jsmpp.util.DefaultDecomposer;
+import org.jsmpp.util.PDUDecomposer;
 import org.jsmpp.util.PDUDecomposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 public class SMPPServerSessionClosed implements SMPPSessionState {
     final protected ServerResponseHandler responseHandler;
     private static final Logger logger = LoggerFactory.getLogger(SMPPServerSessionClosed.class);
-    protected PDUDecomposer pduDecomposer = DefaultDecomposer.getInstance();
+    protected PDUDecomposer pduDecomposer = PDUDecomposer.getInstance();
 
     public SMPPServerSessionClosed(ServerResponseHandler responseHandler) {        
         this.responseHandler = responseHandler;
@@ -70,7 +70,7 @@ public class SMPPServerSessionClosed implements SMPPSessionState {
         responseHandler.sendEnquireLinkResp(pdu.getCommand().getSequenceNumber());
     }
 
-    public void processEnquireLinkResp(PDU pdu) throws IOException {
+    public void processEnquireLinkResp(PDU pdu) {
         PendingResponse<Command> pendingResp = responseHandler.removeSentItem(pdu.getCommand().getSequenceNumber());
         if (pendingResp != null) {
             EnquireLinkResp resp = pduDecomposer.enquireLinkResp(pdu);
@@ -90,7 +90,7 @@ public class SMPPServerSessionClosed implements SMPPSessionState {
         }
     }
 
-    public void processUnbindResp(PDU pdu) throws IOException {
+    public void processUnbindResp(PDU pdu) {
         PendingResponse<Command> pendingResp = responseHandler.removeSentItem(pdu.getCommand().getSequenceNumber());
         if (pendingResp != null) {
             UnbindResp resp = pduDecomposer.unbindResp(pdu);
@@ -105,7 +105,7 @@ public class SMPPServerSessionClosed implements SMPPSessionState {
         responseHandler.sendGenerickNack(SMPPConstant.STAT_ESME_RINVCMDID, pdu.getCommand().getSequenceNumber());
     }
 
-    public void processGenericNack(PDU pdu) throws IOException {
+    public void processGenericNack(PDU pdu) {
         Command pduHeader = pdu.getCommand();
         PendingResponse<Command> pendingResp = responseHandler.removeSentItem(pduHeader.getSequenceNumber());
         if (pendingResp != null) {

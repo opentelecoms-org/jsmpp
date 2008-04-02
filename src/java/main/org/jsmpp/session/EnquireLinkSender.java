@@ -15,17 +15,17 @@ class EnquireLinkSender extends Thread {
     private static final Logger logger = LoggerFactory.getLogger(EnquireLinkSender.class);
 
     private final AtomicBoolean sendingEnquireLink = new AtomicBoolean(false);
-    BaseSMPPSession session;
+    BaseSession session;
     PDUSender pduSender;
 
-    public EnquireLinkSender(BaseSMPPSession session, PDUSender pduSender) {
+    public EnquireLinkSender(BaseSession session, PDUSender pduSender) {
         this.session = session;
         this.pduSender = pduSender;
     }
 
     @Override
     public void run() {
-        SMPPServerSession.logger.info("Starting EnquireLinkSender");
+        ServerSession.logger.info("Starting EnquireLinkSender");
         while (this.session.isConnected()) {
             while (!sendingEnquireLink.compareAndSet(true, false) && this.session.isConnected()) {
                 synchronized (sendingEnquireLink) {
@@ -45,11 +45,11 @@ class EnquireLinkSender extends Thread {
             } catch (InvalidResponseException e) {
                 // lets unbind gracefully
                 this.session.unbindAndClose();
-            } catch (IOException e) {
+            } catch (RuntimeException e) {
                 this.session.close();
             }
         }
-        SMPPServerSession.logger.info("EnquireLinkSender stop");
+        ServerSession.logger.info("EnquireLinkSender stop");
     }
 
     /**
@@ -70,15 +70,13 @@ class EnquireLinkSender extends Thread {
      *             if there is no valid response after defined millisecond.
      * @throws InvalidResponseException
      *             if there is invalid response found.
-     * @throws IOException
-     *             if there is an IO error found.
      */
-    private void sendEnquireLink() throws ResponseTimeoutException, InvalidResponseException, IOException {
+    private void sendEnquireLink() throws ResponseTimeoutException, InvalidResponseException {
         PendingResponse<EnquireLinkResp> pendingResp = this.session.pendingResponses.add(EnquireLinkResp.class);
         try {
             logger.debug("Sending enquire_link");
             pduSender.sendEnquireLink(pendingResp.getSequenceNumber());
-        } catch (IOException e) {
+        } catch (RuntimeException e) {
             logger.error("Failed sending enquire link", e);
             this.session.pendingResponses.remove(pendingResp);
             throw e;

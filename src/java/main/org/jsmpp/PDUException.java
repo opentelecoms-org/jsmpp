@@ -8,7 +8,7 @@ package org.jsmpp;
  * @since 1.0
  *
  */
-public class PDUException extends Exception {
+public class PDUException extends RuntimeException {
 
 	private static final long serialVersionUID = -4168434058788171394L;
 

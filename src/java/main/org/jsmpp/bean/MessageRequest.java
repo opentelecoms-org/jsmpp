@@ -112,23 +112,23 @@ public class MessageRequest extends Command {
     public byte getDestAddrTon() {
         return destAddrTon;
     }
-    
+
     public void setDestAddrTon(byte destAddrTon) {
         this.destAddrTon = destAddrTon;
     }
-    
+
     public byte getDestAddrNpi() {
         return destAddrNpi;
     }
-    
+
     public void setDestAddrNpi(byte destAddrNpi) {
         this.destAddrNpi = destAddrNpi;
     }
-    
+
     public String getDestAddress() {
         return destAddress;
     }
-    
+
     public void setDestAddress(String destAddress) {
         this.destAddress = destAddress;
     }
@@ -276,27 +276,27 @@ public class MessageRequest extends Command {
     public byte getSourceAddrTon() {
         return sourceAddrTon;
     }
-    
+
     public void setSourceAddrTon(byte sourceAddrTon) {
         this.sourceAddrTon = sourceAddrTon;
     }
-    
+
     public byte getSourceAddrNpi() {
         return sourceAddrNpi;
     }
-    
+
     public void setSourceAddrNpi(byte sourceAddrNpi) {
         this.sourceAddrNpi = sourceAddrNpi;
     }
-    
+
     public String getSourceAddr() {
         return sourceAddr;
     }
-    
+
     public void setSourceAddr(String sourceAddr) {
         this.sourceAddr = sourceAddr;
     }
-    
+
     /**
      * @return the validityPeriod
      */
@@ -338,8 +338,7 @@ public class MessageRequest extends Command {
      * @return
      */
     public static boolean isUdhi(byte esmClass) {
-        return isSpecificFeatures(esmClass,
-                SMPPConstant.ESMCLS_UDHI_INDICATOR_SET);
+        return isSpecificFeatures(esmClass, SMPPConstant.ESMCLS_UDHI_INDICATOR_SET);
     }
 
     /**
@@ -349,8 +348,7 @@ public class MessageRequest extends Command {
      * @return
      */
     public static byte composeUdhi(byte esmClass) {
-        return composeSpecificFeatures(esmClass,
-                SMPPConstant.ESMCLS_UDHI_INDICATOR_SET);
+        return composeSpecificFeatures(esmClass, SMPPConstant.ESMCLS_UDHI_INDICATOR_SET);
     }
 
     /**
@@ -390,15 +388,13 @@ public class MessageRequest extends Command {
      * @return
      */
     public static byte composeUdhiAndReplyPath(byte esmClass) {
-        return composeSpecificFeatures(esmClass,
-                SMPPConstant.ESMCLS_UDHI_REPLY_PATH);
+        return composeSpecificFeatures(esmClass, SMPPConstant.ESMCLS_UDHI_REPLY_PATH);
     }
 
     /*
      * Messaging Mode.
      */
-    protected final static boolean isMessagingMode(byte esmClass,
-            byte messagingModeValue) {
+    protected final static boolean isMessagingMode(byte esmClass, byte messagingModeValue) {
         // 00000011 = 0x03
         return (esmClass & 0x03) == messagingModeValue;
     }
@@ -411,9 +407,8 @@ public class MessageRequest extends Command {
      * @param messagingModeValue
      * @return the encoded messaging mode at ESM class
      */
-    protected final static byte composeMessagingMode(byte esmClass,
-            byte messagingModeValue) {
-        return (byte)(cleanMessagingMode(esmClass) | messagingModeValue);
+    protected final static byte composeMessagingMode(byte esmClass, byte messagingModeValue) {
+        return (byte) (cleanMessagingMode(esmClass) | messagingModeValue);
     }
 
     /**
@@ -428,14 +423,13 @@ public class MessageRequest extends Command {
          * 
          * esmClass & 0x03 -> will clear the bits 1 - 0
          */
-        return (byte)(esmClass & 0x03);
+        return (byte) (esmClass & 0x03);
     }
 
     /*
      * Message Type.
      */
-    protected final static boolean isMessageType(byte esmClass,
-            byte messageTypeValue) {
+    protected final static boolean isMessageType(byte esmClass, byte messageTypeValue) {
         // 00111100 = 0x3c
         return (esmClass & 0x3c) == messageTypeValue;
     }
@@ -448,9 +442,8 @@ public class MessageRequest extends Command {
      * @param messageTypeValue
      * @return
      */
-    protected final static byte composeMessageType(byte esmClass,
-            byte messageTypeValue) {
-        return (byte)(cleanMessageType(esmClass) | messageTypeValue);
+    protected final static byte composeMessageType(byte esmClass, byte messageTypeValue) {
+        return (byte) (cleanMessageType(esmClass) | messageTypeValue);
     }
 
     /**
@@ -465,14 +458,13 @@ public class MessageRequest extends Command {
          * 
          * esmClass & 0xc3 -> will clear the bits 5 - 2
          */
-        return (byte)(esmClass & 0xc3);
+        return (byte) (esmClass & 0xc3);
     }
 
     /*
      * Specific Features.
      */
-    protected final static boolean isSpecificFeatures(byte esmClass,
-            byte specificFeaturesValue) {
+    protected final static boolean isSpecificFeatures(byte esmClass, byte specificFeaturesValue) {
         // 01000000 = 0xC0
         return (esmClass & 0xC0) == specificFeaturesValue;
     }
@@ -485,9 +477,8 @@ public class MessageRequest extends Command {
      * @param specificFeaturesValue
      * @return
      */
-    protected final static byte composeSpecificFeatures(byte esmClass,
-            byte specificFeaturesValue) {
-        return (byte)(cleanSpecificFeatures(esmClass) | specificFeaturesValue);
+    protected final static byte composeSpecificFeatures(byte esmClass, byte specificFeaturesValue) {
+        return (byte) (cleanSpecificFeatures(esmClass) | specificFeaturesValue);
     }
 
     /**
@@ -502,7 +493,7 @@ public class MessageRequest extends Command {
          * 
          * esmClass & 0x3f -> will clear the bits 7 -6
          */
-        return (byte)(esmClass & 0x3f);
+        return (byte) (esmClass & 0x3f);
     }
 
     /*
@@ -515,20 +506,18 @@ public class MessageRequest extends Command {
      * @param smscDeliveryReceiptValue
      * @return
      */
-    protected static final boolean isSmscDeliveryReceipt(
-            byte registeredDelivery, byte smscDeliveryReceiptValue) {
+    protected static final boolean isSmscDeliveryReceipt(byte registeredDelivery, byte smscDeliveryReceiptValue) {
         // xxxxxx11 = 0x03 mask bits 1 - 0
         return (registeredDelivery & 0x03) == smscDeliveryReceiptValue;
     }
 
-    protected static final byte composeSmscDelReceipt(byte registeredDelivery,
-            byte smscDeliveryReceiptValue) {
-        return (byte)(cleanSmscDeliveryReceipt(registeredDelivery) | smscDeliveryReceiptValue);
+    protected static final byte composeSmscDelReceipt(byte registeredDelivery, byte smscDeliveryReceiptValue) {
+        return (byte) (cleanSmscDeliveryReceipt(registeredDelivery) | smscDeliveryReceiptValue);
     }
 
     protected static final byte cleanSmscDeliveryReceipt(byte registeredDelivery) {
         // 11111100 = 0x0fc
-        return (byte)(registeredDelivery & 0x0fc);
+        return (byte) (registeredDelivery & 0x0fc);
     }
 
     /*
@@ -541,21 +530,19 @@ public class MessageRequest extends Command {
      * @param smeOriginatedAckValue
      * @return
      */
-    protected static final boolean isSmeAck(byte registeredDeliery,
-            byte smeOriginatedAckValue) {
+    protected static final boolean isSmeAck(byte registeredDeliery, byte smeOriginatedAckValue) {
         // xxxx11xx = 0x0c mask bits 3 - 2
         return (registeredDeliery & 0x0c) == smeOriginatedAckValue;
     }
 
-    protected static final byte composeSmeAck(byte registeredDelivery,
-            byte smeOriginatedValue) {
-        return (byte)(cleanSmeAck(registeredDelivery) | smeOriginatedValue);
+    protected static final byte composeSmeAck(byte registeredDelivery, byte smeOriginatedValue) {
+        return (byte) (cleanSmeAck(registeredDelivery) | smeOriginatedValue);
     }
 
     protected static final byte cleanSmeAck(byte registeredDelivery) {
         // 11110011 = 0xf3
         // (registeredDelivery & 0x0c) will clean the bits 3 - 2.
-        return (byte)(registeredDelivery & 0x0c);
+        return (byte) (registeredDelivery & 0x0c);
     }
 
     public OptionalParameter[] getOptionalParameters() {

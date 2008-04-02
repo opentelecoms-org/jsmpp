@@ -16,7 +16,7 @@ import org.testng.annotations.Test;
  * 
  */
 public class BindRequestTest {
-    private SMPPServerSession serverSession;
+    private ServerSession serverSession;
     private BindRequest bindRequest;
     private Mockery mockery;
 

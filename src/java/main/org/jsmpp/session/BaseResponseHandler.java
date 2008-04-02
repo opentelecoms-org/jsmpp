@@ -18,9 +18,9 @@ public abstract class BaseResponseHandler implements ResponseHandler {
 
     private PDUSender pduSender;
     private PendingResponses pendingResponses;
-    private BaseSMPPSession session;
+    private BaseSession session;
 
-    public void init(PDUSender pduSender, PendingResponses pendingResponses, BaseSMPPSession session) {
+    public void init(PDUSender pduSender, PendingResponses pendingResponses, BaseSession session) {
         Assert.isNull(this.pduSender);
         Assert.isNull(this.pendingResponses);
         Assert.isNull(this.session);

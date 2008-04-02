@@ -10,7 +10,7 @@ import org.jsmpp.util.IntUtil;
  * @since 1.0
  * 
  */
-public class NegativeResponseException extends Exception {
+public class NegativeResponseException extends RuntimeException {
     private static final long serialVersionUID = 7198456791204091251L;
     private int commandStatus;
 

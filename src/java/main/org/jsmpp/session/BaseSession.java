@@ -16,8 +16,8 @@ import org.jsmpp.util.IntUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class BaseSMPPSession {
-    private static final Logger logger = LoggerFactory.getLogger(BaseSMPPSession.class);
+public abstract class BaseSession {
+    private static final Logger logger = LoggerFactory.getLogger(BaseSession.class);
 
     private static final Random random = new Random();
     Connection conn;
@@ -31,11 +31,11 @@ public abstract class BaseSMPPSession {
     protected EnquireLinkSender enquireLinkSender;
     protected int sessionTimer = 5000;
 
-    public BaseSMPPSession(Connection conn) {
+    public BaseSession(Connection conn) {
         this.conn = conn;
     }
 
-    public BaseSMPPSession() {
+    public BaseSession() {
 
     }
 
@@ -106,7 +106,7 @@ public abstract class BaseSMPPSession {
             logger.error("Timeout waiting unbind response", e);
         } catch (InvalidResponseException e) {
             logger.error("Receive invalid unbind response", e);
-        } catch (IOException e) {
+        } catch (RuntimeException e) {
             logger.error("IO error found ", e);
         }
         close();
@@ -125,12 +125,12 @@ public abstract class BaseSMPPSession {
         }
     }
 
-    private void unbind() throws ResponseTimeoutException, InvalidResponseException, IOException {
+    private void unbind() throws ResponseTimeoutException, InvalidResponseException {
         PendingResponse<UnbindResp> pendingResp = pendingResponses.add(UnbindResp.class);
 
         try {
             pduSender.sendUnbind(pendingResp.getSequenceNumber());
-        } catch (IOException e) {
+        } catch (RuntimeException e) {
             logger.error("Failed sending unbind", e);
             pendingResponses.remove(pendingResp);
             throw e;
@@ -145,5 +145,9 @@ public abstract class BaseSMPPSession {
 
     public String getSessionId() {
         return sessionId;
+    }
+
+    public PDUSender getPDUSender() {
+        return pduSender;
     }
 }

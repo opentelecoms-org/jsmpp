@@ -1,7 +1,7 @@
 package org.jsmpp.bean;
 
 import org.jsmpp.SMPPConstant;
-import org.jsmpp.util.DefaultDecomposer;
+import org.jsmpp.util.PDUDecomposer;
 import org.jsmpp.util.InvalidDeliveryReceiptException;
 
 /**
@@ -24,7 +24,7 @@ public class DeliverSm extends MessageRequest {
      */
     public DeliveryReceipt getShortMessageAsDeliveryReceipt() throws InvalidDeliveryReceiptException {
         if (MessageType.SMSC_DEL_RECEIPT.containedIn(getEsmClass())) {
-            return DefaultDecomposer.getInstance().deliveryReceipt(getShortMessage());
+            return PDUDecomposer.getInstance().deliveryReceipt(getShortMessage());
         }
         throw new InvalidDeliveryReceiptException("deliver_sm is not a Delivery Receipt since ems_class value = " + getEsmClass());
 
