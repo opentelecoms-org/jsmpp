@@ -15,7 +15,7 @@ public class SMPPServerSessionResponseHandler implements ServerResponseHandler {
     }
 
     public QuerySmResult processQuerySm(ServerSession session, QuerySm querySm) throws ProcessRequestException {
-        QuerySmResult res = messageReceiverListener.onAcceptQuerySm(querySm);
+        QuerySmResult res = session.getMessageReceiverListener().onAcceptQuerySm(querySm);
         session.getPDUSender().sendQuerySmResp(querySm, res);
         return res;
     }

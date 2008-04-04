@@ -18,10 +18,11 @@ public class ServerSession extends Session<ServerSessionState> {
     protected ServerResponseHandler responseHandler;
     protected ServerMessageReceiverListener serverMessageReceiverListener;
     private BindRequestReceiver bindRequestReceiver = new BindRequestReceiver();
-    protected ServerStates states = new ServerStates();
+    protected ServerStates states;
 
-    public ServerSession(Connection conn, ServerResponseHandler responseHandler, SessionStateListener sessionStateListener) {
+    public ServerSession(Connection conn, ServerStates states, ServerResponseHandler responseHandler, SessionStateListener sessionStateListener) {
         super(conn);
+        this.states = states;
         pduSender = new PDUSender(conn.getOutputStream());
         pduReader = new PDUReader(conn.getInputStream());
         this.responseHandler = responseHandler;

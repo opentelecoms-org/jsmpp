@@ -31,7 +31,7 @@ class EnquireLinkSender extends Thread {
         ServerSession.logger.info("EnquireLinkSender stop");
     }
 
-    private void sendEnquireLink() throws ResponseTimeoutException, InvalidResponseException {
+    synchronized void sendEnquireLink() throws ResponseTimeoutException, InvalidResponseException {
         PendingResponse<EnquireLinkResp> pendingResp = this.session.pendingResponses.add(EnquireLinkResp.class);
         try {
             logger.debug("Sending enquire_link");

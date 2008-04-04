@@ -13,6 +13,7 @@ import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.session.connection.Connection;
+import org.jsmpp.session.state.server.ServerStates;
 
 /**
  * @author uudashr
@@ -20,8 +21,8 @@ import org.jsmpp.session.connection.Connection;
  */
 public class SMPPServerSession extends ServerSession {
 
-    public SMPPServerSession(Connection conn, ServerResponseHandler responseHandler, SessionStateListener sessionStateListener) {
-        super(conn, responseHandler, sessionStateListener);
+    public SMPPServerSession(Connection conn, ServerStates states, ServerResponseHandler responseHandler, SessionStateListener sessionStateListener) {
+        super(conn, states, responseHandler, sessionStateListener);
     }
 
     public void deliverShortMessage(String serviceType, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr, TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi, String destinationAddr, ESMClass esmClass, byte protocoId, byte priorityFlag, String scheduleDeliveryTime, String validityPeriod, RegisteredDelivery registeredDelivery, byte replaceIfPresent, DataCoding dataCoding, byte smDefaultMsgId, byte[] shortMessage, OptionalParameter... params) throws PDUStringException, ResponseTimeoutException, InvalidResponseException, NegativeResponseException {

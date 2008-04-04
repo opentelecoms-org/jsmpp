@@ -7,6 +7,7 @@ import org.jsmpp.session.connection.Connection;
 import org.jsmpp.session.connection.ServerConnection;
 import org.jsmpp.session.connection.ServerConnectionFactory;
 import org.jsmpp.session.connection.socket.ServerSocketConnectionFactory;
+import org.jsmpp.session.state.server.ServerStates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,7 @@ public class SMPPServerSessionListener {
     private final ServerConnection serverConn;
     private int initiationTimer = 5000;
     private SessionStateListener sessionStateListener;
+    private ServerStates states = new ServerStates();
 
     public SMPPServerSessionListener(int port) throws IOException {
         this(port, new ServerSocketConnectionFactory());
@@ -102,7 +104,7 @@ public class SMPPServerSessionListener {
     }
 
     protected SMPPServerSession newServerSession(ServerResponseHandler responseHandler, Connection conn) {
-        return new SMPPServerSession(conn, responseHandler, sessionStateListener);
+        return new SMPPServerSession(conn, states, responseHandler, sessionStateListener);
     }
 
     protected ServerResponseHandler newResponseHandler() {

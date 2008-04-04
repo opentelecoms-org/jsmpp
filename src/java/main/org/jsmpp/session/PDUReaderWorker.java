@@ -52,6 +52,6 @@ class PDUReaderWorker extends Thread {
      */
     private void notifyNoActivity() {
         logger.debug("No activity notified");
-        this.session.enquireLinkSender.enquireLink();
+        session.enquireLinkSender.sendEnquireLink();
     }
 }
