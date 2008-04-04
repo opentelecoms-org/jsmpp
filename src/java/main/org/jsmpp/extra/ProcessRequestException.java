@@ -1,5 +1,7 @@
 package org.jsmpp.extra;
 
+import org.jsmpp.SMPPConstant;
+
 /**
  * Thrown if there is an error occur when processing request.
  * 
@@ -8,7 +10,7 @@ package org.jsmpp.extra;
  * @since 1.0
  * 
  */
-public class ProcessRequestException extends Exception {
+public class ProcessRequestException extends RuntimeException {
     private static final long serialVersionUID = -3633100382131187197L;
 
     private final int errorCode;
@@ -16,8 +18,10 @@ public class ProcessRequestException extends Exception {
     /**
      * Construct with specified message and error code.
      * 
-     * @param message is the detail message.
-     * @param errorCode is the error code (or known as command_status).
+     * @param message
+     *            is the detail message.
+     * @param errorCode
+     *            is the error code (or known as command_status).
      */
     public ProcessRequestException(String message, int errorCode) {
         super(message);
@@ -27,13 +31,21 @@ public class ProcessRequestException extends Exception {
     /**
      * Construct with specified message, error code, and cause.
      * 
-     * @param message is the detail message.
-     * @param errorCode is the error code (or known as command_status).
-     * @param cause is the parent cause.
+     * @param message
+     *            is the detail message.
+     * @param errorCode
+     *            is the error code (or known as command_status).
+     * @param cause
+     *            is the parent cause.
      */
     public ProcessRequestException(String message, int errorCode, Throwable cause) {
         super(message, cause);
         this.errorCode = errorCode;
+    }
+
+    public ProcessRequestException(String message) {
+        super(message);
+        this.errorCode = SMPPConstant.CID_GENERIC_NACK;
     }
 
     /**

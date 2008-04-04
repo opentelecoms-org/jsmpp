@@ -1,7 +1,6 @@
 package org.jsmpp.session;
 
 import java.io.IOException;
-import java.util.Random;
 
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUReader;
@@ -9,38 +8,39 @@ import org.jsmpp.PDUSender;
 import org.jsmpp.bean.UnbindResp;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ResponseTimeoutException;
-import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.connection.Connection;
-import org.jsmpp.session.state.SMPPSessionState;
-import org.jsmpp.util.IntUtil;
+import org.jsmpp.session.state.Mode;
+import org.jsmpp.session.state.SessionState;
+import org.jsmpp.util.RandomSessionIDGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class BaseSession {
-    private static final Logger logger = LoggerFactory.getLogger(BaseSession.class);
+public abstract class Session<T extends SessionState<?>> {
+    private static final Logger logger = LoggerFactory.getLogger(Session.class);
 
-    private static final Random random = new Random();
     Connection conn;
     PDUSender pduSender;
     PDUReader pduReader;
     final PendingResponses pendingResponses = new PendingResponses();
     private long lastActivityTimestamp;
-    private String sessionId = generateSessionId();
-    protected SMPPSessionState state;
+    protected T state;
     private SessionStateListener sessionStateListener;
-    protected EnquireLinkSender enquireLinkSender;
-    protected int sessionTimer = 5000;
+    protected EnquireLinkSender enquireLinkSender = new EnquireLinkSender(this);
 
-    public BaseSession(Connection conn) {
+    protected int sessionTimer = 5000;
+    private String sessionId = new RandomSessionIDGenerator().newSessionId();
+
+    public Session(Connection conn) {
+        this();
         this.conn = conn;
     }
 
-    public BaseSession() {
-
+    public Session() {
+        enquireLinkSender.start();
     }
 
-    public static final String generateSessionId() {
-        return IntUtil.toHexString(random.nextInt());
+    public String getSessionId() {
+        return sessionId;
     }
 
     public int getSessionTimer() {
@@ -49,7 +49,7 @@ public abstract class BaseSession {
 
     public void setSessionTimer(int sessionTimer) {
         this.sessionTimer = sessionTimer;
-        if (state.getSessionState().isBound()) {
+        if (state.getMode().isBound()) {
             try {
                 conn.setSoTimeout(sessionTimer);
             } catch (IOException e) {
@@ -91,14 +91,6 @@ public abstract class BaseSession {
         lastActivityTimestamp = System.currentTimeMillis();
     }
 
-    synchronized boolean isConnected() {
-        return state.getSessionState().isBound() || state.getSessionState().equals(SessionState.OPEN);
-    }
-
-    public SessionState getSessionState() {
-        return state.getSessionState();
-    }
-
     public void unbindAndClose() {
         try {
             unbind();
@@ -118,7 +110,8 @@ public abstract class BaseSession {
     }
 
     public void close() {
-        changeState(SessionState.CLOSED);
+        enquireLinkSender.shutdown();
+        changeState(Mode.CLOSED);
         try {
             conn.close();
         } catch (IOException e) {
@@ -138,16 +131,45 @@ public abstract class BaseSession {
 
         pendingResponses.tryWait(pendingResp);
         logger.info("Unbind response received");
-        changeState(SessionState.UNBOUND);
+        changeState(Mode.UNBOUND);
     }
 
-    abstract void changeState(SessionState state);
+    public void changeState(Mode mode) {
+        if (!state.getMode().equals(mode)) {
+            Mode oldState = state.getMode();
+            state = getState(mode);
+            fireChangeState(mode, oldState);
+        }
+    }
 
-    public String getSessionId() {
-        return sessionId;
+    protected abstract T getState(Mode mode);
+
+    private void fireChangeState(Mode newState, Mode oldState) {
+        if (sessionStateListener != null) {
+            sessionStateListener.onStateChange(newState, oldState, this);
+        } else {
+            logger.warn("SessionStateListener is null");
+        }
     }
 
     public PDUSender getPDUSender() {
         return pduSender;
     }
+
+    public boolean isConnected() {
+        return conn.isOpen();
+    }
+
+    public boolean isBound() {
+        return state.getMode().isBound();
+    }
+
+    public PendingResponses getPendingResponses() {
+        return pendingResponses;
+    }
+
+    public T getSessionState() {
+        return state;
+    }
+
 }

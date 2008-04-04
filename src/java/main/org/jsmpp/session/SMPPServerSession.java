@@ -20,8 +20,8 @@ import org.jsmpp.session.connection.Connection;
  */
 public class SMPPServerSession extends ServerSession {
 
-    public SMPPServerSession(Connection conn, ServerResponseHandler responseHandler, SessionStateListener sessionStateListener, ServerMessageReceiverListener messageReceiverListener) {
-        super(conn, responseHandler, sessionStateListener, messageReceiverListener);
+    public SMPPServerSession(Connection conn, ServerResponseHandler responseHandler, SessionStateListener sessionStateListener) {
+        super(conn, responseHandler, sessionStateListener);
     }
 
     public void deliverShortMessage(String serviceType, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr, TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi, String destinationAddr, ESMClass esmClass, byte protocoId, byte priorityFlag, String scheduleDeliveryTime, String validityPeriod, RegisteredDelivery registeredDelivery, byte replaceIfPresent, DataCoding dataCoding, byte smDefaultMsgId, byte[] shortMessage, OptionalParameter... params) throws PDUStringException, ResponseTimeoutException, InvalidResponseException, NegativeResponseException {

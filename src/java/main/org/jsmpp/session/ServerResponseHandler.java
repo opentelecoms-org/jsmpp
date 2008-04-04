@@ -1,27 +1,19 @@
 package org.jsmpp.session;
 
-import java.util.concurrent.TimeoutException;
-
 import org.jsmpp.bean.Bind;
-import org.jsmpp.bean.DeliverSmResp;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.SubmitSm;
-import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.util.MessageId;
 
 /**
  * @author uudashr
  * 
  */
-public interface ServerResponseHandler extends ResponseHandler {
+public interface ServerResponseHandler {
 
-    MessageId processSubmitSm(SubmitSm submitSm) throws ProcessRequestException;
+    MessageId processSubmitSm(ServerSession session, SubmitSm submitSm);
 
-    QuerySmResult processQuerySm(QuerySm querySm) throws ProcessRequestException;
+    QuerySmResult processQuerySm(ServerSession session, QuerySm querySm);
 
-    void processDeliverSmResp(DeliverSmResp resp);
-
-    void processBind(Bind bind);
-
-    BindRequest waitForRequest(long timeout) throws TimeoutException;
+    void processBind(ServerSession session, Bind bind);
 }

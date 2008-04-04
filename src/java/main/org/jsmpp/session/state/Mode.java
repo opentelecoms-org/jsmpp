@@ -1,4 +1,4 @@
-package org.jsmpp.extra;
+package org.jsmpp.session.state;
 
 /**
  * Enum constant represent session state.
@@ -8,7 +8,7 @@ package org.jsmpp.extra;
  * @since 1.0
  * 
  */
-public enum SessionState {
+public enum Mode {
 
     /**
      * Open, means connection has established but not bounded.
@@ -51,40 +51,24 @@ public enum SessionState {
     private boolean transmitable;
     private boolean receiveable;
 
-    private SessionState(boolean bound, boolean transmitable,
-            boolean receiveable) {
+    private Mode(boolean bound, boolean transmitable, boolean receiveable) {
         this.bound = bound;
         this.transmitable = transmitable;
         this.receiveable = receiveable;
     }
 
-    private SessionState(boolean bound) {
+    private Mode(boolean bound) {
         this(bound, false, false);
     }
 
-    /**
-     * Check whether the session state is bound or not.
-     * 
-     * @return <tt>true</tt> if session state is bound state
-     */
     public boolean isBound() {
         return bound;
     }
 
-    /**
-     * Check whether the session state is transmittable.
-     * 
-     * @return <tt>true</tt> if session is transmittable.
-     */
     public boolean isTransmittable() {
         return transmitable;
     }
 
-    /**
-     * Check whether the session state is receivable.
-     * 
-     * @return <tt>true</tt> if session is receivable.
-     */
     public boolean isReceivable() {
         return receiveable;
     }

@@ -7,6 +7,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.jsmpp.bean.Bind;
+import org.jsmpp.session.state.SessionState;
 
 /**
  * @author uudashr
@@ -18,11 +19,6 @@ public class BindRequestReceiver {
 
     private BindRequest request;
     private boolean alreadyWaitForRequest;
-    private ServerResponseHandler serverResponseHandler;
-
-    public BindRequestReceiver(ServerResponseHandler serverResponseHandler) {
-        this.serverResponseHandler = serverResponseHandler;
-    }
 
     /**
      * Wait until the bind request received for specified timeout.
@@ -65,11 +61,11 @@ public class BindRequestReceiver {
      * @throws IllegalStateException
      *             if this method already called before.
      */
-    public void notifyAcceptBind(Bind bindParameter) throws IllegalStateException {
+    public void notifyAcceptBind(SessionState<?> sessionState, Bind bindParameter) throws IllegalStateException {
         lock.lock();
         try {
             if (request == null) {
-                request = new BindRequest(bindParameter, serverResponseHandler);
+                request = new BindRequest(bindParameter, sessionState);
                 requestCondition.signal();
             } else {
                 throw new IllegalStateException("Already waiting for acceptance bind");

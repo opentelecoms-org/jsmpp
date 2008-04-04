@@ -1,65 +1,27 @@
 package org.jsmpp.session;
 
-import java.util.concurrent.TimeoutException;
-
-import org.jsmpp.Assert;
-import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Bind;
-import org.jsmpp.bean.DeliverSmResp;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.SubmitSm;
-import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.util.MessageId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class SMPPServerSessionResponseHandler extends BaseResponseHandler implements ServerResponseHandler {
-    private static final Logger logger = LoggerFactory.getLogger(SMPPServerSessionResponseHandler.class);
+public class SMPPServerSessionResponseHandler implements ServerResponseHandler {
 
-    ServerMessageReceiverListener messageReceiverListener;
-    BindRequestReceiver bindRequestReceiver = new BindRequestReceiver(this);
-
-    public SMPPServerSessionResponseHandler(ServerMessageReceiverListener messageReceiverListener) {
-        Assert.notNull(messageReceiverListener);
-        this.messageReceiverListener = messageReceiverListener;
-    }
-
-    public MessageId processSubmitSm(SubmitSm submitSm) throws ProcessRequestException {
-        MessageId messageId = messageReceiverListener.onAcceptSubmitSm(submitSm);
-        try {
-            pduSender().sendSubmitSmResp(submitSm.getSequenceNumber(), messageId.getValue());
-        } catch (RuntimeException e) {
-            throw new ProcessRequestException("send submit_sm_resp failed", SMPPConstant.STAT_ESME_RDELIVERYFAILURE, e);
-        }
+    public MessageId processSubmitSm(ServerSession session, SubmitSm submitSm) throws ProcessRequestException {
+        MessageId messageId = session.getMessageReceiverListener().onAcceptSubmitSm(submitSm);
+        session.getPDUSender().sendSubmitSmResp(submitSm, messageId);
         return messageId;
     }
 
-    public QuerySmResult processQuerySm(QuerySm querySm) throws ProcessRequestException {
+    public QuerySmResult processQuerySm(ServerSession session, QuerySm querySm) throws ProcessRequestException {
         QuerySmResult res = messageReceiverListener.onAcceptQuerySm(querySm);
-        try {
-            pduSender().sendQuerySmResp(querySm, res);
-        } catch (RuntimeException e) {
-            throw new ProcessRequestException("send submit_sm_resp failed", SMPPConstant.STAT_ESME_RQUERYFAIL, e);
-        }
+        session.getPDUSender().sendQuerySmResp(querySm, res);
         return res;
     }
 
-    @SuppressWarnings("unchecked")
-    public void processDeliverSmResp(DeliverSmResp resp) {
-        PendingResponse<DeliverSmResp> pendingResp = pendingResponses().remove(resp);
-        if (pendingResp != null) {
-            pendingResp.done(resp);
-        } else {
-            logger.warn("No request with sequence number " + resp.getSequenceNumber() + " found");
-        }
+    public void processBind(ServerSession session, Bind bind) {
+        session.getBindRequestReceiver().notifyAcceptBind(session.getSessionState(), bind);
     }
 
-    public void processBind(Bind bind) {
-        bindRequestReceiver.notifyAcceptBind(bind);
-    }
-
-    public BindRequest waitForRequest(long timeout) throws TimeoutException {
-        return bindRequestReceiver.waitForRequest(timeout);
-    }
 }

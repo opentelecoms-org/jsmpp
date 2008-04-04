@@ -10,10 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class PDUReaderWorker extends Thread {
-    private final BaseSession session;
+    private final Session<?> session;
     static final Logger logger = LoggerFactory.getLogger(PDUReaderWorker.class);
 
-    PDUReaderWorker(BaseSession session) {
+    PDUReaderWorker(Session<?> session) {
         this.session = session;
     }
 

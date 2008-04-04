@@ -1,11 +1,6 @@
 package org.jsmpp.session;
 
-import java.io.IOException;
-
 import org.jsmpp.bean.DeliverSm;
-import org.jsmpp.bean.QuerySmResp;
-import org.jsmpp.bean.SubmitSmResp;
-import org.jsmpp.extra.ProcessRequestException;
 
 /**
  * <tt>ResponseHandler</tt> provide interface to handle response of the
@@ -16,12 +11,8 @@ import org.jsmpp.extra.ProcessRequestException;
  * @since 2.0
  * 
  */
-public interface ClientResponseHandler extends ResponseHandler {
+public interface ClientResponseHandler {
 
-    public void processDeliverSm(DeliverSm deliverSm) throws ProcessRequestException;
-
-    public void processSubmitSmResp(SubmitSmResp resp) throws IOException;
-    
-    public void processQuerySmResp(QuerySmResp resp) throws IOException;
+    public void processDeliverSm(ClientSession session, DeliverSm deliverSm);
 
 }

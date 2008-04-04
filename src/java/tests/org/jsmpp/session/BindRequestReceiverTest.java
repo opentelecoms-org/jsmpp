@@ -1,13 +1,13 @@
 package org.jsmpp.session;
 
+import static org.testng.Assert.fail;
+
 import java.util.concurrent.TimeoutException;
 
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.jsmpp.BindType;
 import org.jsmpp.bean.Bind;
-import static org.testng.Assert.*;
-
+import org.jsmpp.session.state.SessionState;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -17,12 +17,13 @@ import org.testng.annotations.Test;
  */
 public class BindRequestReceiverTest {
     private BindRequestReceiver requestReceiver;
+    private SessionState<?> sessionState;
 
     @BeforeMethod
     public void setUp() {
         Mockery mockery = new Mockery();
-        mockery.setImposteriser(ClassImposteriser.INSTANCE);
-        requestReceiver = new BindRequestReceiver(mockery.mock(ServerResponseHandler.class));
+        sessionState = mockery.mock(SessionState.class);
+        requestReceiver = new BindRequestReceiver();
     }
 
     @Test(groups = "checkintest")
@@ -42,7 +43,7 @@ public class BindRequestReceiverTest {
     public void testReceiveRequest() {
 
         try {
-            requestReceiver.notifyAcceptBind(dummyBind());
+            requestReceiver.notifyAcceptBind(sessionState, dummyBind());
             BindRequest request = requestReceiver.waitForRequest(1000);
         } catch (IllegalStateException e) {
             fail("Should not fail waitForRequest and success accepting request");
@@ -51,7 +52,7 @@ public class BindRequestReceiverTest {
         }
 
         try {
-            requestReceiver.notifyAcceptBind(dummyBind());
+            requestReceiver.notifyAcceptBind(sessionState, dummyBind());
             fail("Should throw IllegalStateException");
         } catch (IllegalStateException e) {
         }
@@ -67,15 +68,14 @@ public class BindRequestReceiverTest {
 
     @Test(groups = "checkintest")
     public void testNoSingleAccept() {
-
         try {
-            requestReceiver.notifyAcceptBind(dummyBind());
+            requestReceiver.notifyAcceptBind(sessionState, dummyBind());
         } catch (IllegalStateException e) {
             fail("Should not fail waitForRequest and success accepting request");
         }
 
         try {
-            requestReceiver.notifyAcceptBind(dummyBind());
+            requestReceiver.notifyAcceptBind(sessionState, dummyBind());
             fail("Should throw IllegalStateException");
         } catch (IllegalStateException e) {
         }

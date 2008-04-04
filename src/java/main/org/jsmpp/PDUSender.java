@@ -5,12 +5,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.jsmpp.bean.DataCoding;
+import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.session.QuerySmResult;
+import org.jsmpp.util.MessageId;
 import org.jsmpp.util.PDUComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,8 +77,8 @@ public class PDUSender {
         write(pduComposer.submitSm(sequenceNumber, serviceType, sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr, destAddrTon.value(), destAddrNpi.value(), destinationAddr, esmClass.value(), protocoId, priorityFlag, scheduleDeliveryTime, validityPeriod, registeredDelivery.value(), replaceIfPresent, dataCoding.value(), smDefaultMsgId, shortMessage, params));
     }
 
-    public void sendSubmitSmResp(int sequenceNumber, String messageId) throws PDUStringException {
-        write(pduComposer.submitSmResp(sequenceNumber, messageId));
+    public void sendSubmitSmResp(SubmitSm submitSm, MessageId messageId) throws PDUStringException {
+        write(pduComposer.submitSmResp(submitSm.getSequenceNumber(), messageId.getValue()));
     }
 
     public void sendQuerySm(int sequenceNumber, String messageId, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr) throws PDUStringException {
@@ -94,8 +97,8 @@ public class PDUSender {
         write(pduComposer.deliverSm(sequenceNumber, serviceType, sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr, destAddrTon.value(), destAddrNpi.value(), destinationAddr, esmClass.value(), protocoId, priorityFlag, registeredDelivery.value(), dataCoding.value(), shortMessage, params));
     }
 
-    public void sendDeliverSmResp(int sequenceNumber) {
-        write(pduComposer.deliverSmResp(sequenceNumber));
+    public void sendDeliverSmResp(DeliverSm deliverSm) {
+        write(pduComposer.deliverSmResp(deliverSm.getSequenceNumber()));
     }
 
     private void write(byte bytes[]) {

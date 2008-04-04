@@ -22,7 +22,6 @@ public class SMPPServerSessionListener {
     private final ServerConnection serverConn;
     private int initiationTimer = 5000;
     private SessionStateListener sessionStateListener;
-    private ServerResponseHandler responseHandler;
 
     public SMPPServerSessionListener(int port) throws IOException {
         this(port, new ServerSocketConnectionFactory());
@@ -95,21 +94,19 @@ public class SMPPServerSessionListener {
      * @throws IOException
      *             if there is an IO error occur.
      */
-    public SMPPServerSession accept(ServerMessageReceiverListener serverMessageReceiverListener) throws IOException {
+    public SMPPServerSession accept() throws IOException {
         Connection conn = serverConn.accept();
         conn.setSoTimeout(initiationTimer);
-        responseHandler = newResponseHandler(serverMessageReceiverListener);
-        SMPPServerSession serverSession = newServerSession(conn, serverMessageReceiverListener);
-        responseHandler.init(serverSession.pduSender, serverSession.pendingResponses, serverSession);
+        SMPPServerSession serverSession = newServerSession(newResponseHandler(), conn);
         return serverSession;
     }
 
-    protected SMPPServerSession newServerSession(Connection conn, ServerMessageReceiverListener serverMessageReceiverListener) {
-        return new SMPPServerSession(conn, responseHandler, sessionStateListener, serverMessageReceiverListener);
+    protected SMPPServerSession newServerSession(ServerResponseHandler responseHandler, Connection conn) {
+        return new SMPPServerSession(conn, responseHandler, sessionStateListener);
     }
 
-    protected ServerResponseHandler newResponseHandler(ServerMessageReceiverListener serverMessageReceiverListener) {
-        return new SMPPServerSessionResponseHandler(serverMessageReceiverListener);
+    protected ServerResponseHandler newResponseHandler() {
+        return new SMPPServerSessionResponseHandler();
     }
 
     public void close() throws IOException {

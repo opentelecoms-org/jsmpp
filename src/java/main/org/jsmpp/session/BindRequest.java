@@ -1,6 +1,5 @@
 package org.jsmpp.session;
 
-import java.io.IOException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -10,6 +9,7 @@ import org.jsmpp.NumberingPlanIndicator;
 import org.jsmpp.TypeOfNumber;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.extra.ProcessRequestException;
+import org.jsmpp.session.state.SessionState;
 
 /**
  * @author uudashr
@@ -22,16 +22,16 @@ public class BindRequest {
     private final BindParameter bindParam;
     private final int originalSequenceNumber;
     private boolean done;
-    ServerResponseHandler responseHandler;
+    SessionState<?> state;
 
-    public BindRequest(int sequenceNumber, BindType bindType, String systemId, String password, String systemType, TypeOfNumber addrTon, NumberingPlanIndicator addrNpi, String addressRange, ServerResponseHandler responseHandler) {
+    public BindRequest(int sequenceNumber, BindType bindType, String systemId, String password, String systemType, TypeOfNumber addrTon, NumberingPlanIndicator addrNpi, String addressRange, SessionState<?> state) {
         this.originalSequenceNumber = sequenceNumber;
-        this.responseHandler = responseHandler;
+        this.state = state;
         bindParam = new BindParameter(bindType, systemId, password, systemType, addrTon, addrNpi, addressRange);
     }
 
-    public BindRequest(Bind bind, ServerResponseHandler responseHandler) {
-        this(bind.getSequenceNumber(), BindType.valueOf(bind.getCommandId()), bind.getSystemId(), bind.getPassword(), bind.getSystemType(), TypeOfNumber.valueOf(bind.getAddrTon()), NumberingPlanIndicator.valueOf(bind.getAddrNpi()), bind.getAddressRange(), responseHandler);
+    public BindRequest(Bind bind, SessionState<?> state) {
+        this(bind.getSequenceNumber(), BindType.valueOf(bind.getCommandId()), bind.getSystemId(), bind.getPassword(), bind.getSystemType(), TypeOfNumber.valueOf(bind.getAddrTon()), NumberingPlanIndicator.valueOf(bind.getAddrNpi()), bind.getAddressRange(), state);
     }
 
     public BindParameter getBindParameter() {
@@ -45,17 +45,15 @@ public class BindRequest {
      *            is the system identifier that will be send to ESME.
      * @throws IllegalStateException
      *             if the acceptance or rejection has been made.
-     * @throws IOException
-     *             is the connection already closed.
      * @see #reject(ProcessRequestException)
      */
-    public void accept(String systemId) throws IllegalStateException, IOException {
+    public void accept(String systemId) throws IllegalStateException {
         lock.lock();
         try {
             if (!done) {
                 done = true;
                 try {
-                    responseHandler.sendBindResp(systemId, bindParam.getBindType(), originalSequenceNumber);
+                    state.sendBindResp(systemId, bindParam.getBindType(), originalSequenceNumber);
                 } finally {
                     condition.signal();
                 }
@@ -75,11 +73,9 @@ public class BindRequest {
      *            is the reason of rejection.
      * @throws IllegalStateException
      *             if the acceptance or rejection has been made.
-     * @throws IOException
-     *             if the connection already closed.
      * @see {@link #accept()}
      */
-    public void reject(int errorCode) throws IllegalStateException, IOException {
+    public void reject(int errorCode) throws IllegalStateException {
         lock.lock();
         try {
             if (done) {
@@ -87,7 +83,7 @@ public class BindRequest {
             }
             done = true;
             try {
-                responseHandler.sendNegativeResponse(bindParam.getBindType().commandId(), errorCode, originalSequenceNumber);
+                state.sendNegativeResponse(bindParam.getBindType().commandId(), errorCode, originalSequenceNumber);
             } finally {
                 condition.signal();
             }

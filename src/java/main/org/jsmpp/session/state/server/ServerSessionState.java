@@ -9,25 +9,20 @@ import org.jsmpp.bean.EnquireLinkResp;
 import org.jsmpp.bean.PDU;
 import org.jsmpp.bean.UnbindResp;
 import org.jsmpp.extra.PendingResponse;
-import org.jsmpp.extra.SessionState;
-import org.jsmpp.session.ServerResponseHandler;
-import org.jsmpp.session.state.SMPPSessionState;
-import org.jsmpp.util.PDUDecomposer;
+import org.jsmpp.extra.ProcessRequestException;
+import org.jsmpp.session.ServerSession;
+import org.jsmpp.session.state.BaseSessionState;
 import org.jsmpp.util.PDUDecomposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SMPPServerSessionClosed implements SMPPSessionState {
-    final protected ServerResponseHandler responseHandler;
-    private static final Logger logger = LoggerFactory.getLogger(SMPPServerSessionClosed.class);
+public abstract class ServerSessionState extends BaseSessionState<ServerSession> {
+    private static final Logger logger = LoggerFactory.getLogger(ServerSessionState.class);
+
     protected PDUDecomposer pduDecomposer = PDUDecomposer.getInstance();
 
-    public SMPPServerSessionClosed(ServerResponseHandler responseHandler) {        
-        this.responseHandler = responseHandler;
-    }
-
-    public SessionState getSessionState() {
-        return SessionState.CLOSED;
+    public ServerSessionState(ServerSession serverSession) {
+        super(serverSession);
     }
 
     public void process(PDU pdu) throws IOException {
@@ -66,12 +61,12 @@ public class SMPPServerSessionClosed implements SMPPSessionState {
         }
     }
 
-    public void processEnquireLink(PDU pdu) throws IOException {
-        responseHandler.sendEnquireLinkResp(pdu.getCommand().getSequenceNumber());
+    public void processEnquireLink(PDU pdu) {
+        sendEnquireLinkResp(pdu.getCommand().getSequenceNumber());
     }
 
     public void processEnquireLinkResp(PDU pdu) {
-        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(pdu.getCommand().getSequenceNumber());
+        PendingResponse<Command> pendingResp = pendingResponses().remove(pdu.getCommand());
         if (pendingResp != null) {
             EnquireLinkResp resp = pduDecomposer.enquireLinkResp(pdu);
             pendingResp.done(resp);
@@ -80,18 +75,18 @@ public class SMPPServerSessionClosed implements SMPPSessionState {
         }
     }
 
-    public void processUnbind(PDU pdu) throws IOException {
+    public void processUnbind(PDU pdu) {
         Command pduHeader = pdu.getCommand();
         logger.info("Receving unbind request");
         try {
-            responseHandler.sendUnbindResp(pduHeader.getSequenceNumber());
+            sendUnbindResp(pduHeader.getSequenceNumber());
         } finally {
-            responseHandler.notifyUnbonded();
+            notifyUnbonded();
         }
     }
 
     public void processUnbindResp(PDU pdu) {
-        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(pdu.getCommand().getSequenceNumber());
+        PendingResponse<Command> pendingResp = pendingResponses().remove(pdu.getCommand());
         if (pendingResp != null) {
             UnbindResp resp = pduDecomposer.unbindResp(pdu);
             pendingResp.done(resp);
@@ -100,33 +95,32 @@ public class SMPPServerSessionClosed implements SMPPSessionState {
         }
     }
 
-    public void processUnknownCid(PDU pdu) throws IOException {
+    public void processUnknownCid(PDU pdu) {
         logger.warn("Received unknown CommandId " + pdu.getCommand().getCommandIdAsHex());
-        responseHandler.sendGenerickNack(SMPPConstant.STAT_ESME_RINVCMDID, pdu.getCommand().getSequenceNumber());
+        sendGenerickNack(SMPPConstant.STAT_ESME_RINVCMDID, pdu.getCommand().getSequenceNumber());
     }
 
     public void processGenericNack(PDU pdu) {
         Command pduHeader = pdu.getCommand();
-        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(pduHeader.getSequenceNumber());
+        PendingResponse<Command> pendingResp = pendingResponses().remove(pduHeader);
         if (pendingResp != null) {
             pendingResp.doneWithInvalidResponse(new InvalidResponseException("Receive generic_nack with command_status " + pduHeader.getCommandStatusAsHex()));
         }
     }
 
-    public void processBind(PDU pdu) throws IOException {
-        throw new IOException("Invalid operation for " + getSessionState() + " session state");
+    public void processBind(PDU pdu) {
+        throw new ProcessRequestException("Invalid operation for " + getMode() + " session state");
     }
 
-    public void processDeliverSmResp(PDU pdu) throws IOException {
-        throw new IOException("Invalid operation for " + getSessionState() + " session state");
+    public void processDeliverSmResp(PDU pdu) {
+        throw new ProcessRequestException("Invalid operation for " + getMode() + " session state");
     }
 
-    public void processQuerySm(PDU pdu) throws IOException {
-        throw new IOException("Invalid operation for " + getSessionState() + " session state");
+    public void processQuerySm(PDU pdu) {
+        throw new ProcessRequestException("Invalid operation for " + getMode() + " session state");
     }
 
-    public void processSubmitSm(PDU pdu) throws IOException {
-        throw new IOException("Invalid operation for " + getSessionState() + " session state");
+    public void processSubmitSm(PDU pdu) {
+        throw new ProcessRequestException("Invalid operation for " + getMode() + " session state");
     }
-
 }
