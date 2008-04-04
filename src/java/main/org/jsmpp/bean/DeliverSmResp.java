@@ -20,7 +20,8 @@ public class DeliverSmResp extends Command {
     /**
      * It should be always set to null.
      * 
-     * @param messageId is the message_id (it should be always set to null).
+     * @param messageId
+     *            is the message_id (it should be always set to null).
      */
     public void setMessageId(String messageId) {
         this.messageId = messageId;

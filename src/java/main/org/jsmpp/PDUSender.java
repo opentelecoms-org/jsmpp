@@ -4,13 +4,9 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.DeliverSm;
-import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.MessageState;
-import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.QuerySm;
-import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.session.QuerySmResult;
 import org.jsmpp.util.MessageId;
@@ -73,16 +69,17 @@ public class PDUSender {
         write(pduComposer.enquireLinkResp(sequenceNumber));
     }
 
-    public void sendSubmitSm(int sequenceNumber, String serviceType, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr, TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi, String destinationAddr, ESMClass esmClass, byte protocoId, byte priorityFlag, String scheduleDeliveryTime, String validityPeriod, RegisteredDelivery registeredDelivery, byte replaceIfPresent, DataCoding dataCoding, byte smDefaultMsgId, byte[] shortMessage, OptionalParameter... params) throws PDUStringException {
-        write(pduComposer.submitSm(sequenceNumber, serviceType, sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr, destAddrTon.value(), destAddrNpi.value(), destinationAddr, esmClass.value(), protocoId, priorityFlag, scheduleDeliveryTime, validityPeriod, registeredDelivery.value(), replaceIfPresent, dataCoding.value(), smDefaultMsgId, shortMessage, params));
+    public void sendSubmitSm(SubmitSm submitSm) throws PDUStringException {
+        byte smDefaultMsgId = 0;
+        write(pduComposer.submitSm(submitSm.getSequenceNumber(), submitSm.getServiceType(), submitSm.getSourceAddrTon().value(), submitSm.getSourceAddrTon().value(), submitSm.getSourceAddr(), submitSm.getDestAddrTon().value(), submitSm.getDestAddrNpi().value(), submitSm.getDestAddress(), submitSm.getEsmClass().value(), submitSm.getProtocolId(), submitSm.getPriorityFlag(), submitSm.getScheduleDeliveryTime(), submitSm.getValidityPeriod(), submitSm.getRegisteredDelivery().value(), submitSm.getReplaceIfPresent(), submitSm.getDataCoding().value(), smDefaultMsgId, submitSm.getShortMessage(), submitSm.getOptionalParameters()));
     }
 
     public void sendSubmitSmResp(SubmitSm submitSm, MessageId messageId) throws PDUStringException {
         write(pduComposer.submitSmResp(submitSm.getSequenceNumber(), messageId.getValue()));
     }
 
-    public void sendQuerySm(int sequenceNumber, String messageId, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr) throws PDUStringException {
-        write(pduComposer.querySm(sequenceNumber, messageId, sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr));
+    public void sendQuerySm(QuerySm querySm) throws PDUStringException {
+        write(pduComposer.querySm(querySm.getSequenceNumber(), querySm.getMessageId(), querySm.getSourceAddrTon().value(), querySm.getSourceAddrNpi().value(), querySm.getSourceAddr()));
     }
 
     public void sendQuerySmResp(int sequenceNumber, String messageId, String finalDate, MessageState messageState, byte errorCode) throws PDUStringException {
@@ -93,8 +90,8 @@ public class PDUSender {
         sendQuerySmResp(querySm.getSequenceNumber(), querySm.getMessageId(), res.getFinalDate(), res.getMessageState(), res.getErrorCode());
     }
 
-    public void sendDeliverSm(int sequenceNumber, String serviceType, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr, TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi, String destinationAddr, ESMClass esmClass, byte protocoId, byte priorityFlag, RegisteredDelivery registeredDelivery, DataCoding dataCoding, byte[] shortMessage, OptionalParameter... params) throws PDUStringException {
-        write(pduComposer.deliverSm(sequenceNumber, serviceType, sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr, destAddrTon.value(), destAddrNpi.value(), destinationAddr, esmClass.value(), protocoId, priorityFlag, registeredDelivery.value(), dataCoding.value(), shortMessage, params));
+    public void sendDeliverSm(DeliverSm deliverSm) {
+        write(pduComposer.deliverSm(deliverSm.getSequenceNumber(), deliverSm.getServiceType(), deliverSm.getSourceAddrTon().value(), deliverSm.getSourceAddrNpi().value(), deliverSm.getSourceAddr(), deliverSm.getDestAddrTon().value(), deliverSm.getDestAddrNpi().value(), deliverSm.getDestAddress(), deliverSm.getEsmClass().value(), deliverSm.getProtocolId(), deliverSm.getPriorityFlag(), deliverSm.getRegisteredDelivery().value(), deliverSm.getDataCoding().value(), deliverSm.getShortMessage(), deliverSm.getOptionalParameters()));
     }
 
     public void sendDeliverSmResp(DeliverSm deliverSm) {

@@ -1,6 +1,8 @@
 package org.jsmpp.bean;
 
+import org.jsmpp.NumberingPlanIndicator;
 import org.jsmpp.SMPPConstant;
+import org.jsmpp.TypeOfNumber;
 
 /**
  * @author uudashr
@@ -8,11 +10,11 @@ import org.jsmpp.SMPPConstant;
  */
 public class MessageRequest extends Command {
     protected String serviceType;
-    protected byte sourceAddrTon;
-    protected byte sourceAddrNpi;
+    protected TypeOfNumber sourceAddrTon;
+    protected NumberingPlanIndicator sourceAddrNpi;
     protected String sourceAddr;
-    protected byte destAddrTon;
-    protected byte destAddrNpi;
+    protected TypeOfNumber destAddrTon;
+    protected NumberingPlanIndicator destAddrNpi;
     protected String destAddress;
     protected byte esmClass;
     protected byte protocolId;
@@ -21,7 +23,7 @@ public class MessageRequest extends Command {
     protected String validityPeriod;
     protected byte registeredDelivery;
     protected byte replaceIfPresent;
-    protected byte dataCoding;
+    protected DataCoding dataCoding;
     protected byte smDefaultMsgId;
     protected byte smLength;
     protected byte[] shortMessage;
@@ -98,30 +100,31 @@ public class MessageRequest extends Command {
     /**
      * @return the dataCoding
      */
-    public byte getDataCoding() {
+    public DataCoding getDataCoding() {
         return dataCoding;
     }
 
     /**
-     * @param dataCoding the dataCoding to set
+     * @param dataCoding
+     *            the dataCoding to set
      */
-    public void setDataCoding(byte dataCoding) {
+    public void setDataCoding(DataCoding dataCoding) {
         this.dataCoding = dataCoding;
     }
 
-    public byte getDestAddrTon() {
+    public TypeOfNumber getDestAddrTon() {
         return destAddrTon;
     }
 
-    public void setDestAddrTon(byte destAddrTon) {
+    public void setDestAddrTon(TypeOfNumber destAddrTon) {
         this.destAddrTon = destAddrTon;
     }
 
-    public byte getDestAddrNpi() {
+    public NumberingPlanIndicator getDestAddrNpi() {
         return destAddrNpi;
     }
 
-    public void setDestAddrNpi(byte destAddrNpi) {
+    public void setDestAddrNpi(NumberingPlanIndicator destAddrNpi) {
         this.destAddrNpi = destAddrNpi;
     }
 
@@ -136,15 +139,16 @@ public class MessageRequest extends Command {
     /**
      * @return the esmClass
      */
-    public byte getEsmClass() {
-        return esmClass;
+    public ESMClass getEsmClass() {
+        return new ESMClass(esmClass);
     }
 
     /**
-     * @param esmClass the esmClass to set
+     * @param esmClass
+     *            the esmClass to set
      */
-    public void setEsmClass(byte esmClass) {
-        this.esmClass = esmClass;
+    public void setEsmClass(ESMClass esmClass) {
+        this.esmClass = esmClass.value();
     }
 
     /**
@@ -155,7 +159,8 @@ public class MessageRequest extends Command {
     }
 
     /**
-     * @param priorityFlag the priorityFlag to set
+     * @param priorityFlag
+     *            the priorityFlag to set
      */
     public void setPriorityFlag(byte priorityFlag) {
         this.priorityFlag = priorityFlag;
@@ -169,7 +174,8 @@ public class MessageRequest extends Command {
     }
 
     /**
-     * @param protocolId the protocolId to set
+     * @param protocolId
+     *            the protocolId to set
      */
     public void setProtocolId(byte protocolId) {
         this.protocolId = protocolId;
@@ -178,15 +184,16 @@ public class MessageRequest extends Command {
     /**
      * @return the registeredDelivery
      */
-    public byte getRegisteredDelivery() {
-        return registeredDelivery;
+    public RegisteredDelivery getRegisteredDelivery() {
+        return new RegisteredDelivery(registeredDelivery);
     }
 
     /**
-     * @param registeredDelivery the registeredDelivery to set
+     * @param registeredDelivery
+     *            the registeredDelivery to set
      */
-    public void setRegisteredDelivery(byte registeredDelivery) {
-        this.registeredDelivery = registeredDelivery;
+    public void setRegisteredDelivery(RegisteredDelivery registeredDelivery) {
+        this.registeredDelivery = registeredDelivery.value();
     }
 
     /**
@@ -197,7 +204,8 @@ public class MessageRequest extends Command {
     }
 
     /**
-     * @param replaceIfPresent the replaceIfPresent to set
+     * @param replaceIfPresent
+     *            the replaceIfPresent to set
      */
     public void setReplaceIfPresent(byte replaceIfPresent) {
         this.replaceIfPresent = replaceIfPresent;
@@ -211,7 +219,8 @@ public class MessageRequest extends Command {
     }
 
     /**
-     * @param scheduleDeliveryTime the scheduleDeliveryTime to set
+     * @param scheduleDeliveryTime
+     *            the scheduleDeliveryTime to set
      */
     public void setScheduleDeliveryTime(String scheduleDeliveryTime) {
         this.scheduleDeliveryTime = scheduleDeliveryTime;
@@ -225,7 +234,8 @@ public class MessageRequest extends Command {
     }
 
     /**
-     * @param serviceType the serviceType to set
+     * @param serviceType
+     *            the serviceType to set
      */
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
@@ -239,7 +249,8 @@ public class MessageRequest extends Command {
     }
 
     /**
-     * @param shortMessage the shortMessage to set
+     * @param shortMessage
+     *            the shortMessage to set
      */
     public void setShortMessage(byte[] shortMessage) {
         this.shortMessage = shortMessage;
@@ -253,7 +264,8 @@ public class MessageRequest extends Command {
     }
 
     /**
-     * @param smDefaultMsgId the smDefaultMsgId to set
+     * @param smDefaultMsgId
+     *            the smDefaultMsgId to set
      */
     public void setSmDefaultMsgId(byte smDefaultMsgId) {
         this.smDefaultMsgId = smDefaultMsgId;
@@ -267,25 +279,26 @@ public class MessageRequest extends Command {
     }
 
     /**
-     * @param smLength the smLength to set
+     * @param smLength
+     *            the smLength to set
      */
     public void setSmLength(byte smLength) {
         this.smLength = smLength;
     }
 
-    public byte getSourceAddrTon() {
+    public TypeOfNumber getSourceAddrTon() {
         return sourceAddrTon;
     }
 
-    public void setSourceAddrTon(byte sourceAddrTon) {
+    public void setSourceAddrTon(TypeOfNumber sourceAddrTon) {
         this.sourceAddrTon = sourceAddrTon;
     }
 
-    public byte getSourceAddrNpi() {
+    public NumberingPlanIndicator getSourceAddrNpi() {
         return sourceAddrNpi;
     }
 
-    public void setSourceAddrNpi(byte sourceAddrNpi) {
+    public void setSourceAddrNpi(NumberingPlanIndicator sourceAddrNpi) {
         this.sourceAddrNpi = sourceAddrNpi;
     }
 
@@ -305,7 +318,8 @@ public class MessageRequest extends Command {
     }
 
     /**
-     * @param validityPeriod the validityPeriod to set
+     * @param validityPeriod
+     *            the validityPeriod to set
      */
     public void setValidityPeriod(String validityPeriod) {
         this.validityPeriod = validityPeriod;
@@ -403,7 +417,8 @@ public class MessageRequest extends Command {
      * Compose the Messaging Mode. Messaging Mode encoded on ESM Class at bits 1 -
      * 0.
      * 
-     * @param esmClass current/old ESM class.
+     * @param esmClass
+     *            current/old ESM class.
      * @param messagingModeValue
      * @return the encoded messaging mode at ESM class
      */

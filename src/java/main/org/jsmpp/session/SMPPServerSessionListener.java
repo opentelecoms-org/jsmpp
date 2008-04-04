@@ -99,16 +99,12 @@ public class SMPPServerSessionListener {
     public SMPPServerSession accept() throws IOException {
         Connection conn = serverConn.accept();
         conn.setSoTimeout(initiationTimer);
-        SMPPServerSession serverSession = newServerSession(newResponseHandler(), conn);
+        SMPPServerSession serverSession = newServerSession(conn);
         return serverSession;
     }
 
-    protected SMPPServerSession newServerSession(ServerResponseHandler responseHandler, Connection conn) {
-        return new SMPPServerSession(conn, states, responseHandler, sessionStateListener);
-    }
-
-    protected ServerResponseHandler newResponseHandler() {
-        return new SMPPServerSessionResponseHandler();
+    protected SMPPServerSession newServerSession(Connection conn) {
+        return new SMPPServerSession(conn, states, sessionStateListener);
     }
 
     public void close() throws IOException {

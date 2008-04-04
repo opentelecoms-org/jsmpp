@@ -25,7 +25,7 @@ public class BindRequestTest {
         mockery.setImposteriser(ClassImposteriser.INSTANCE);
         serverSession = mockery.mock(SMPPServerSession.class);
         serverSession.state = mockery.mock(ServerSessionState.class);
-        SMPPServerSessionResponseHandler responseHandler = mockery.mock(SMPPServerSessionResponseHandler.class);
+        ServerResponseHandler responseHandler = mockery.mock(ServerResponseHandler.class);
         serverSession.responseHandler = responseHandler;
         bindRequest = new BindRequest(1, BindType.BIND_TRX, null, null, null, null, null, null, serverSession.state);
     }

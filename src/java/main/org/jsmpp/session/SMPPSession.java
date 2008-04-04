@@ -9,8 +9,10 @@ import org.jsmpp.TypeOfNumber;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.QuerySmResp;
 import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.PendingResponse;
@@ -29,22 +31,33 @@ public class SMPPSession extends ClientSession {
         super();
     }
 
-    public SMPPSession(ClientResponseHandler responseHandler) {
-        super(responseHandler);
+    public SMPPSession(String host, int port, BindParameter bindParam, ConnectionFactory connFactory) throws IOException {
+        super(host, port, bindParam, connFactory);
     }
 
-    public SMPPSession(ConnectionFactory connFactory, ClientResponseHandler responseHandler) {
-        super(connFactory, responseHandler);
-    }
-
-    public SMPPSession(String host, int port, BindParameter bindParam, ConnectionFactory connFactory, ClientResponseHandler responseHandler) throws IOException {
-        super(host, port, bindParam, connFactory, responseHandler);
-    }
-
-    public MessageId submitShortMessage(String serviceType, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr, TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi, String destinationAddr, ESMClass esmClass, byte protocoId, byte priorityFlag, String scheduleDeliveryTime, String validityPeriod, RegisteredDelivery registeredDelivery, byte replaceIfPresentFlag, DataCoding dataCoding, byte smDefaultMsgId, byte[] shortMessage, OptionalParameter... params) throws PDUStringException, ResponseTimeoutException, InvalidResponseException, NegativeResponseException {
+    public MessageId submitShortMessage(String serviceType, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr, TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi, String destinationAddr, ESMClass esmClass, byte protocolId, byte priorityFlag, String scheduleDeliveryTime, String validityPeriod, RegisteredDelivery registeredDelivery, byte replaceIfPresentFlag, DataCoding dataCoding, byte smDefaultMsgId, byte[] shortMessage, OptionalParameter... params) throws PDUStringException, ResponseTimeoutException, InvalidResponseException, NegativeResponseException {
         PendingResponse<SubmitSmResp> pendingResp = pendingResponses.add(SubmitSmResp.class);
         try {
-            pduSender.sendSubmitSm(pendingResp.getSequenceNumber(), serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr, destAddrTon, destAddrNpi, destinationAddr, esmClass, protocoId, priorityFlag, scheduleDeliveryTime, validityPeriod, registeredDelivery, replaceIfPresentFlag, dataCoding, smDefaultMsgId, shortMessage, params);
+            SubmitSm submitSm = new SubmitSm();
+            submitSm.setSequenceNumber(pendingResp.getSequenceNumber());
+            submitSm.setServiceType(serviceType);
+            submitSm.setSourceAddrTon(sourceAddrTon);
+            submitSm.setSourceAddrNpi(sourceAddrNpi);
+            submitSm.setSourceAddr(sourceAddr);
+            submitSm.setDestAddress(destinationAddr);
+            submitSm.setDestAddrNpi(destAddrNpi);
+            submitSm.setDestAddrTon(destAddrTon);
+            submitSm.setEsmClass(esmClass);
+            submitSm.setProtocolId(protocolId);
+            submitSm.setPriorityFlag(priorityFlag);
+            submitSm.setScheduleDeliveryTime(scheduleDeliveryTime);
+            submitSm.setValidityPeriod(validityPeriod);
+            submitSm.setRegisteredDelivery(registeredDelivery);
+            submitSm.setReplaceIfPresent(replaceIfPresentFlag);
+            submitSm.setDataCoding(dataCoding);
+            submitSm.setShortMessage(shortMessage);
+            submitSm.setOptionalParameters(params);
+            pduSender.sendSubmitSm(submitSm);
         } catch (RuntimeException e) {
             logger.error("Failed submit short message", e);
             pendingResponses.remove(pendingResp);
@@ -59,7 +72,13 @@ public class SMPPSession extends ClientSession {
     public QuerySmResult queryShortMessage(String messageId, TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr) throws PDUStringException, ResponseTimeoutException, InvalidResponseException, NegativeResponseException {
         PendingResponse<QuerySmResp> pendingResp = pendingResponses.add(QuerySmResp.class);
         try {
-            pduSender.sendQuerySm(pendingResp.getSequenceNumber(), messageId, sourceAddrTon, sourceAddrNpi, sourceAddr);
+            QuerySm querySm = new QuerySm();
+            querySm.setSequenceNumber(pendingResp.getSequenceNumber());
+            querySm.setMessageId(messageId);
+            querySm.setSourceAddrTon(sourceAddrTon);
+            querySm.setSourceAddr(sourceAddr);
+            querySm.setSourceAddrNpi(sourceAddrNpi);
+            pduSender.sendQuerySm(querySm);
         } catch (RuntimeException e) {
             logger.error("Failed to submit short message", e);
             pendingResponses.remove(pendingResp);

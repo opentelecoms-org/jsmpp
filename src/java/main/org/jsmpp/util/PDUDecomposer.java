@@ -5,13 +5,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.jsmpp.NumberingPlanIndicator;
 import org.jsmpp.PDUStringException;
+import org.jsmpp.TypeOfNumber;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.Command;
+import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.DeliverSmResp;
 import org.jsmpp.bean.DeliveryReceipt;
+import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.EnquireLink;
 import org.jsmpp.bean.EnquireLinkResp;
 import org.jsmpp.bean.GenericNack;
@@ -21,6 +25,7 @@ import org.jsmpp.bean.Outbind;
 import org.jsmpp.bean.PDU;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.QuerySmResp;
+import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.bean.Unbind;
@@ -181,26 +186,26 @@ public class PDUDecomposer {
         req.setServiceType(reader.readCString());
         StringValidator.validateString(req.getServiceType(), StringParameter.SERVICE_TYPE);
 
-        req.setSourceAddrTon(reader.readByte());
-        req.setSourceAddrNpi(reader.readByte());
+        req.setSourceAddrTon(TypeOfNumber.valueOf(reader.readByte()));
+        req.setSourceAddrNpi(NumberingPlanIndicator.valueOf(reader.readByte()));
         req.setSourceAddr(reader.readCString());
         StringValidator.validateString(req.getSourceAddr(), StringParameter.SOURCE_ADDR);
 
-        req.setDestAddrTon(reader.readByte());
-        req.setDestAddrNpi(reader.readByte());
+        req.setDestAddrTon(TypeOfNumber.valueOf(reader.readByte()));
+        req.setDestAddrNpi(NumberingPlanIndicator.valueOf(reader.readByte()));
         req.setDestAddress(reader.readCString());
         StringValidator.validateString(req.getDestAddress(), StringParameter.DESTINATION_ADDR);
 
-        req.setEsmClass(reader.readByte());
+        req.setEsmClass(new ESMClass(reader.readByte()));
         req.setProtocolId(reader.readByte());
         req.setPriorityFlag(reader.readByte());
         req.setScheduleDeliveryTime(reader.readCString());
         StringValidator.validateString(req.getScheduleDeliveryTime(), StringParameter.SCHEDULE_DELIVERY_TIME);
         req.setValidityPeriod(reader.readCString());
         StringValidator.validateString(req.getValidityPeriod(), StringParameter.VALIDITY_PERIOD);
-        req.setRegisteredDelivery(reader.readByte());
+        req.setRegisteredDelivery(new RegisteredDelivery(reader.readByte()));
         req.setReplaceIfPresent(reader.readByte());
-        req.setDataCoding(reader.readByte());
+        req.setDataCoding(DataCoding.newInstance(reader.readByte()));
         req.setSmDefaultMsgId(reader.readByte());
         req.setSmLength(reader.readByte());
         // req.setShortMessage(reader.readString(req.getSmLength()));
@@ -238,8 +243,8 @@ public class PDUDecomposer {
         assignHeader(req, reader);
         req.setMessageId(reader.readCString());
         StringValidator.validateString(req.getMessageId(), StringParameter.MESSAGE_ID);
-        req.setSourceAddrTon(reader.readByte());
-        req.setSourceAddrNpi(reader.readByte());
+        req.setSourceAddrTon(TypeOfNumber.valueOf(reader.readByte()));
+        req.setSourceAddrNpi(NumberingPlanIndicator.valueOf(reader.readByte()));
         req.setSourceAddr(reader.readCString());
         StringValidator.validateString(req.getSourceAddr(), StringParameter.SOURCE_ADDR);
 
@@ -277,17 +282,17 @@ public class PDUDecomposer {
         req.setServiceType(reader.readCString());
         StringValidator.validateString(req.getServiceType(), StringParameter.SERVICE_TYPE);
 
-        req.setSourceAddrTon(reader.readByte());
-        req.setSourceAddrNpi(reader.readByte());
+        req.setSourceAddrTon(TypeOfNumber.valueOf(reader.readByte()));
+        req.setSourceAddrNpi(NumberingPlanIndicator.valueOf(reader.readByte()));
         req.setSourceAddr(reader.readCString());
         StringValidator.validateString(req.getSourceAddr(), StringParameter.SOURCE_ADDR);
 
-        req.setDestAddrTon(reader.readByte());
-        req.setDestAddrNpi(reader.readByte());
+        req.setDestAddrTon(TypeOfNumber.valueOf(reader.readByte()));
+        req.setDestAddrNpi(NumberingPlanIndicator.valueOf(reader.readByte()));
         req.setDestAddress(reader.readCString());
         StringValidator.validateString(req.getDestAddress(), StringParameter.DESTINATION_ADDR);
 
-        req.setEsmClass(reader.readByte());
+        req.setEsmClass(new ESMClass(reader.readByte()));
         req.setProtocolId(reader.readByte());
         req.setPriorityFlag(reader.readByte());
         // FIXME uud: it should be null of c-octet string
@@ -296,10 +301,10 @@ public class PDUDecomposer {
         // FIXME uud: it should be null of c-octet string
         req.setValidityPeriod(reader.readCString());
         StringValidator.validateString(req.getValidityPeriod(), StringParameter.VALIDITY_PERIOD);
-        req.setRegisteredDelivery(reader.readByte());
+        req.setRegisteredDelivery(new RegisteredDelivery(reader.readByte()));
         // FIXME uud: it should be set to null
         req.setReplaceIfPresent(reader.readByte());
-        req.setDataCoding(reader.readByte());
+        req.setDataCoding(DataCoding.newInstance(reader.readByte()));
         // FIXME uud: it should be set to null
         req.setSmDefaultMsgId(reader.readByte());
         req.setSmLength(reader.readByte());

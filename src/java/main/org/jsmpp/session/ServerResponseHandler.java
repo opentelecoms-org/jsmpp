@@ -3,17 +3,24 @@ package org.jsmpp.session;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.SubmitSm;
+import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.util.MessageId;
 
-/**
- * @author uudashr
- * 
- */
-public interface ServerResponseHandler {
+public class ServerResponseHandler {
 
-    MessageId processSubmitSm(ServerSession session, SubmitSm submitSm);
+    public MessageId processSubmitSm(ServerSession session, SubmitSm submitSm) throws ProcessRequestException {
+        MessageId messageId = session.getMessageReceiverListener().onAcceptSubmitSm(submitSm);
+        session.getPDUSender().sendSubmitSmResp(submitSm, messageId);
+        return messageId;
+    }
 
-    QuerySmResult processQuerySm(ServerSession session, QuerySm querySm);
+    public QuerySmResult processQuerySm(ServerSession session, QuerySm querySm) throws ProcessRequestException {
+        QuerySmResult res = session.getMessageReceiverListener().onAcceptQuerySm(querySm);
+        session.getPDUSender().sendQuerySmResp(querySm, res);
+        return res;
+    }
 
-    void processBind(ServerSession session, Bind bind);
+    public void processBind(ServerSession session, Bind bind) {
+        session.getBindRequestReceiver().notifyAcceptBind(session.getSessionState(), bind);
+    }
 }

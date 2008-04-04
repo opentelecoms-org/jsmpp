@@ -2,17 +2,10 @@ package org.jsmpp.session;
 
 import org.jsmpp.bean.DeliverSm;
 
-/**
- * <tt>ResponseHandler</tt> provide interface to handle response of the
- * session routines.
- * 
- * @author uudashr
- * @version 1.0
- * @since 2.0
- * 
- */
-public interface ClientResponseHandler {
+public class ClientResponseHandler {
 
-    public void processDeliverSm(ClientSession session, DeliverSm deliverSm);
-
+    public void processDeliverSm(ClientSession session, DeliverSm deliverSm) {
+        session.getMessageReceiverListener().onAcceptDeliverSm(deliverSm);
+        session.getPDUSender().sendDeliverSmResp(deliverSm);
+    }
 }

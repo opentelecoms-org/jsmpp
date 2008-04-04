@@ -30,27 +30,21 @@ public class ClientSession extends Session<ClientSessionState> {
 
     protected MessageReceiverListener messageReceiverListener;
     protected final ConnectionFactory connFactory;
-    protected final ClientResponseHandler responseHandler;
+    protected final ClientResponseHandler responseHandler = new ClientResponseHandler();
     protected ClientStates states = new ClientStates();
 
     public ClientSession() {
-        this(new SMPPSessionResponseHandler());
+        this(SocketConnectionFactory.getInstance());
     }
 
-    public ClientSession(ClientResponseHandler responseHandler) {
-        this(SocketConnectionFactory.getInstance(), responseHandler);
-    }
-
-    public ClientSession(ConnectionFactory connFactory, ClientResponseHandler responseHandler) {
-        Assert.notNull(responseHandler);
+    public ClientSession(ConnectionFactory connFactory) {
         Assert.notNull(connFactory);
-        this.responseHandler = responseHandler;
         this.connFactory = connFactory;
         state = new Closed(this);
     }
 
-    public ClientSession(String host, int port, BindParameter bindParam, ConnectionFactory connFactory, ClientResponseHandler responseHandler) throws IOException {
-        this(connFactory, responseHandler);
+    public ClientSession(String host, int port, BindParameter bindParam, ConnectionFactory connFactory) throws IOException {
+        this(connFactory);
         connectAndBind(host, port, bindParam);
     }
 

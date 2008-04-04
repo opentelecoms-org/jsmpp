@@ -15,20 +15,16 @@ import org.slf4j.LoggerFactory;
 public class ServerSession extends Session<ServerSessionState> {
 
     protected static final Logger logger = LoggerFactory.getLogger(ServerSession.class);
-    protected ServerResponseHandler responseHandler;
+    protected ServerResponseHandler responseHandler = new ServerResponseHandler();
     protected ServerMessageReceiverListener serverMessageReceiverListener;
     private BindRequestReceiver bindRequestReceiver = new BindRequestReceiver();
     protected ServerStates states;
 
-    public ServerSession(Connection conn, ServerStates states, ServerResponseHandler responseHandler, SessionStateListener sessionStateListener) {
+    public ServerSession(Connection conn, ServerStates states, SessionStateListener sessionStateListener) {
         super(conn);
         this.states = states;
         pduSender = new PDUSender(conn.getOutputStream());
         pduReader = new PDUReader(conn.getInputStream());
-        this.responseHandler = responseHandler;
-        if (responseHandler == null) {
-            throw new IllegalArgumentException("ServerResponseHandler can't be null");
-        }
 
         state = new Closed(this);
         changeState(Mode.OPEN);
