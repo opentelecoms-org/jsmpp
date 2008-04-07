@@ -82,4 +82,8 @@ public class PendingResponses {
         return sequence.currentValue();
     }
 
+    public Sequence getSequence() {
+        return sequence;
+    }
+
 }

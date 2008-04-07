@@ -4,10 +4,10 @@ import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.PDU;
 import org.jsmpp.session.ClientSession;
-import org.jsmpp.session.state.Mode;
+import org.jsmpp.session.state.State;
 
 /**
- * This class is unbound state implementation of {@link Mode}. This class give
+ * This class is unbound state implementation of {@link State}. This class give
  * specific response to a transmit related transaction, otherwise it always give
  * negative response.
  * 
@@ -23,8 +23,8 @@ public class TX extends TRX {
     }
 
     @Override
-    public Mode getMode() {
-        return Mode.BOUND_TX;
+    public State getState() {
+        return State.BOUND_TX;
     }
 
     @Override

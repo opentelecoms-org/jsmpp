@@ -1,6 +1,6 @@
 package org.jsmpp.session;
 
-import org.jsmpp.session.state.Mode;
+import org.jsmpp.session.state.State;
 
 /**
  * This listener contains an event related to the session state.
@@ -12,5 +12,5 @@ import org.jsmpp.session.state.Mode;
  */
 public interface SessionStateListener {
 
-    public void onStateChange(Mode newState, Mode oldState, Session<?> session);
+    public void onStateChange(State newState, State oldState, Session<?> session);
 }

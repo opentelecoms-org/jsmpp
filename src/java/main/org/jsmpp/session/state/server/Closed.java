@@ -1,7 +1,7 @@
 package org.jsmpp.session.state.server;
 
 import org.jsmpp.session.ServerSession;
-import org.jsmpp.session.state.Mode;
+import org.jsmpp.session.state.State;
 
 public class Closed extends ServerSessionState {
 
@@ -9,7 +9,7 @@ public class Closed extends ServerSessionState {
         super(serverSession);
     }
 
-    public Mode getMode() {
-        return Mode.CLOSED;
+    public State getState() {
+        return State.CLOSED;
     }
 }

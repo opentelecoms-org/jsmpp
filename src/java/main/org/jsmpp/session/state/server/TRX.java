@@ -10,7 +10,7 @@ import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.session.ServerSession;
-import org.jsmpp.session.state.Mode;
+import org.jsmpp.session.state.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +25,8 @@ public class TRX extends ServerSessionState {
         super(serverSession);
     }
 
-    public Mode getMode() {
-        return Mode.BOUND_TRX;
+    public State getState() {
+        return State.BOUND_TRX;
     }
 
     @Override

@@ -3,10 +3,10 @@ package org.jsmpp.session.state.client;
 import java.io.IOException;
 
 import org.jsmpp.session.ClientSession;
-import org.jsmpp.session.state.Mode;
+import org.jsmpp.session.state.State;
 
 /**
- * This class is unbound state implementation of {@link Mode}. All this method
+ * This class is unbound state implementation of {@link State}. All this method
  * is throw {@link IOException} since when the state is unbound we should not
  * give any positive response.
  * 
@@ -21,7 +21,7 @@ public class Unbound extends ClientSessionState {
         super(session);
     }
 
-    public Mode getMode() {
-        return Mode.UNBOUND;
+    public State getState() {
+        return State.UNBOUND;
     }
 }

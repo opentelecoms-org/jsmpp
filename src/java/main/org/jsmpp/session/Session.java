@@ -9,9 +9,10 @@ import org.jsmpp.bean.UnbindResp;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.session.connection.Connection;
-import org.jsmpp.session.state.Mode;
+import org.jsmpp.session.state.State;
 import org.jsmpp.session.state.SessionState;
 import org.jsmpp.util.RandomSessionIDGenerator;
+import org.jsmpp.util.Sequence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +50,7 @@ public abstract class Session<T extends SessionState<?>> {
 
     public void setSessionTimer(int sessionTimer) {
         this.sessionTimer = sessionTimer;
-        if (state.getMode().isBound()) {
+        if (state.getState().isBound()) {
             try {
                 conn.setSoTimeout(sessionTimer);
             } catch (IOException e) {
@@ -73,6 +74,10 @@ public abstract class Session<T extends SessionState<?>> {
 
     public void setTransactionTimer(long transactionTimer) {
         pendingResponses.setTransactionTimer(transactionTimer);
+    }
+
+    public Sequence getSequence() {
+        return pendingResponses.getSequence();
     }
 
     public SessionStateListener getSessionStateListener() {
@@ -100,8 +105,9 @@ public abstract class Session<T extends SessionState<?>> {
             logger.error("Receive invalid unbind response", e);
         } catch (RuntimeException e) {
             logger.error("IO error found ", e);
+        } finally {
+            close();
         }
-        close();
     }
 
     @Override
@@ -111,7 +117,7 @@ public abstract class Session<T extends SessionState<?>> {
 
     public void close() {
         enquireLinkSender.shutdown();
-        changeState(Mode.CLOSED);
+        changeState(State.CLOSED);
         try {
             conn.close();
         } catch (IOException e) {
@@ -131,20 +137,20 @@ public abstract class Session<T extends SessionState<?>> {
 
         pendingResponses.tryWait(pendingResp);
         logger.info("Unbind response received");
-        changeState(Mode.UNBOUND);
+        changeState(State.UNBOUND);
     }
 
-    public void changeState(Mode mode) {
-        if (!state.getMode().equals(mode)) {
-            Mode oldState = state.getMode();
+    public void changeState(State mode) {
+        if (!state.getState().equals(mode)) {
+            State oldState = state.getState();
             state = getState(mode);
             fireChangeState(mode, oldState);
         }
     }
 
-    protected abstract T getState(Mode mode);
+    protected abstract T getState(State mode);
 
-    private void fireChangeState(Mode newState, Mode oldState) {
+    private void fireChangeState(State newState, State oldState) {
         if (sessionStateListener != null) {
             sessionStateListener.onStateChange(newState, oldState, this);
         } else {
@@ -161,7 +167,7 @@ public abstract class Session<T extends SessionState<?>> {
     }
 
     public boolean isBound() {
-        return state.getMode().isBound();
+        return state.getState().isBound();
     }
 
     public PendingResponses getPendingResponses() {

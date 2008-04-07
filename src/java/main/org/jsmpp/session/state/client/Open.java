@@ -8,13 +8,13 @@ import org.jsmpp.bean.Command;
 import org.jsmpp.bean.PDU;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.session.ClientSession;
-import org.jsmpp.session.state.Mode;
+import org.jsmpp.session.state.State;
 import org.jsmpp.util.IntUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is open state implementation of {@link Mode}. When the session
+ * This class is open state implementation of {@link State}. When the session
  * state is open, we only give positive response to bind related intention.
  * 
  * @author uudashr
@@ -29,8 +29,8 @@ public class Open extends ClientSessionState {
         super(session);
     }
 
-    public Mode getMode() {
-        return Mode.OPEN;
+    public State getState() {
+        return State.OPEN;
     }
 
     @Override

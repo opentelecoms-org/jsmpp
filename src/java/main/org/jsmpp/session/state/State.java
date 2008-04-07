@@ -8,7 +8,7 @@ package org.jsmpp.session.state;
  * @since 1.0
  * 
  */
-public enum Mode {
+public enum State {
 
     /**
      * Open, means connection has established but not bounded.
@@ -51,13 +51,13 @@ public enum Mode {
     private boolean transmitable;
     private boolean receiveable;
 
-    private Mode(boolean bound, boolean transmitable, boolean receiveable) {
+    private State(boolean bound, boolean transmitable, boolean receiveable) {
         this.bound = bound;
         this.transmitable = transmitable;
         this.receiveable = receiveable;
     }
 
-    private Mode(boolean bound) {
+    private State(boolean bound) {
         this(bound, false, false);
     }
 

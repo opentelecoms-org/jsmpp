@@ -11,7 +11,7 @@ import org.jsmpp.session.Session;
  * 
  */
 public interface SessionState<T extends Session<?>> {
-    public Mode getMode();
+    public State getState();
 
     public void process(PDU pdu) throws IOException;
 

@@ -19,20 +19,20 @@ public abstract class BaseSessionState<T extends Session<?>> implements SessionS
     }
 
     public void notifyUnbonded() {
-        changeState(Mode.UNBOUND);
+        changeState(State.UNBOUND);
     }
 
-    private void changeState(Mode state) {
+    private void changeState(State state) {
         getSession().changeState(state);
     }
 
     public void sendBindResp(String systemId, BindType bindType, int sequenceNumber) {
         if (bindType.equals(BindType.BIND_RX)) {
-            changeState(Mode.BOUND_RX);
+            changeState(State.BOUND_RX);
         } else if (bindType.equals(BindType.BIND_TX)) {
-            changeState(Mode.BOUND_TX);
+            changeState(State.BOUND_TX);
         } else if (bindType.equals(BindType.BIND_TRX)) {
-            changeState(Mode.BOUND_TRX);
+            changeState(State.BOUND_TRX);
         }
         try {
             pduSender().sendBindResp(bindType.commandId() | SMPPConstant.MASK_CID_RESP, sequenceNumber, systemId);

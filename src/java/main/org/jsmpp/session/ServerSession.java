@@ -5,7 +5,7 @@ import java.util.concurrent.TimeoutException;
 import org.jsmpp.PDUReader;
 import org.jsmpp.PDUSender;
 import org.jsmpp.session.connection.Connection;
-import org.jsmpp.session.state.Mode;
+import org.jsmpp.session.state.State;
 import org.jsmpp.session.state.server.Closed;
 import org.jsmpp.session.state.server.ServerSessionState;
 import org.jsmpp.session.state.server.ServerStates;
@@ -27,7 +27,7 @@ public class ServerSession extends Session<ServerSessionState> {
         pduReader = new PDUReader(conn.getInputStream());
 
         state = new Closed(this);
-        changeState(Mode.OPEN);
+        changeState(State.OPEN);
         setSessionStateListener(sessionStateListener);
     }
 
@@ -36,7 +36,7 @@ public class ServerSession extends Session<ServerSessionState> {
     }
 
     public BindRequest waitForBind(long timeout) throws IllegalStateException {
-        if (state.getMode().equals(Mode.OPEN)) {
+        if (state.getState().equals(State.OPEN)) {
             new PDUReaderWorker(this).start();
             try {
                 return bindRequestReceiver.waitForRequest(timeout);
@@ -59,11 +59,15 @@ public class ServerSession extends Session<ServerSessionState> {
     }
 
     @Override
-    protected ServerSessionState getState(Mode mode) {
-        return states.stateForMode(this, mode);
+    protected ServerSessionState getState(State mode) {
+        return states.sessionStateForState(this, mode);
     }
 
     public ServerMessageReceiverListener getMessageReceiverListener() {
         return serverMessageReceiverListener;
+    }
+
+    public void setStates(ServerStates states) {
+        this.states = states;
     }
 }

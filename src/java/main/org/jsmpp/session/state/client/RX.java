@@ -3,10 +3,10 @@ package org.jsmpp.session.state.client;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.PDU;
 import org.jsmpp.session.ClientSession;
-import org.jsmpp.session.state.Mode;
+import org.jsmpp.session.state.State;
 
 /**
- * This class is bound_tx state implementation of {@link Mode}. Response to
+ * This class is bound_tx state implementation of {@link State}. Response to
  * receiver related transaction.
  * 
  * @author uudashr
@@ -21,8 +21,8 @@ public class RX extends TRX {
     }
 
     @Override
-    public Mode getMode() {
-        return Mode.BOUND_RX;
+    public State getState() {
+        return State.BOUND_RX;
     }
 
     @Override

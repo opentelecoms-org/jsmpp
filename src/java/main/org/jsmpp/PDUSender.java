@@ -70,12 +70,15 @@ public class PDUSender {
     }
 
     public void sendSubmitSm(SubmitSm submitSm) throws PDUStringException {
-        byte smDefaultMsgId = 0;
-        write(pduComposer.submitSm(submitSm.getSequenceNumber(), submitSm.getServiceType(), submitSm.getSourceAddrTon().value(), submitSm.getSourceAddrTon().value(), submitSm.getSourceAddr(), submitSm.getDestAddrTon().value(), submitSm.getDestAddrNpi().value(), submitSm.getDestAddress(), submitSm.getEsmClass().value(), submitSm.getProtocolId(), submitSm.getPriorityFlag(), submitSm.getScheduleDeliveryTime(), submitSm.getValidityPeriod(), submitSm.getRegisteredDelivery().value(), submitSm.getReplaceIfPresent(), submitSm.getDataCoding().value(), smDefaultMsgId, submitSm.getShortMessage(), submitSm.getOptionalParameters()));
+        write(pduComposer.submitSm(submitSm));
     }
 
     public void sendSubmitSmResp(SubmitSm submitSm, MessageId messageId) throws PDUStringException {
-        write(pduComposer.submitSmResp(submitSm.getSequenceNumber(), messageId.getValue()));
+        sendSubmitSmResp(submitSm.getSequenceNumber(), messageId.getValue());
+    }
+
+    public void sendSubmitSmResp(int sequenceNumber, String messageId) throws PDUStringException {
+        write(pduComposer.submitSmResp(sequenceNumber, messageId));
     }
 
     public void sendQuerySm(QuerySm querySm) throws PDUStringException {
@@ -95,7 +98,11 @@ public class PDUSender {
     }
 
     public void sendDeliverSmResp(DeliverSm deliverSm) {
-        write(pduComposer.deliverSmResp(deliverSm.getSequenceNumber()));
+        sendDeliverSmResp(deliverSm.getSequenceNumber());
+    }
+
+    public void sendDeliverSmResp(int sequenceNumber) {
+        write(pduComposer.deliverSmResp(sequenceNumber));
     }
 
     private void write(byte bytes[]) {

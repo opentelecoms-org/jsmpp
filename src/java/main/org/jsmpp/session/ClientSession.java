@@ -17,7 +17,7 @@ import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.session.connection.ConnectionFactory;
 import org.jsmpp.session.connection.socket.SocketConnectionFactory;
-import org.jsmpp.session.state.Mode;
+import org.jsmpp.session.state.State;
 import org.jsmpp.session.state.client.ClientSessionState;
 import org.jsmpp.session.state.client.ClientStates;
 import org.jsmpp.session.state.client.Closed;
@@ -50,11 +50,11 @@ public class ClientSession extends Session<ClientSessionState> {
 
     protected void changeToBoundState(BindType bindType) {
         if (bindType.equals(BindType.BIND_TX)) {
-            changeState(Mode.BOUND_TX);
+            changeState(State.BOUND_TX);
         } else if (bindType.equals(BindType.BIND_RX)) {
-            changeState(Mode.BOUND_RX);
+            changeState(State.BOUND_RX);
         } else if (bindType.equals(BindType.BIND_TRX)) {
-            changeState(Mode.BOUND_TRX);
+            changeState(State.BOUND_TRX);
         } else {
             throw new IllegalArgumentException("Bind type " + bindType + " not supported");
         }
@@ -74,7 +74,7 @@ public class ClientSession extends Session<ClientSessionState> {
         conn = connFactory.createConnection(host, port);
         logger.info("Connected");
 
-        changeState(Mode.OPEN);
+        changeState(State.OPEN);
         try {
             pduSender = new PDUSender(conn.getOutputStream(), new PDUComposer());
             pduReader = new PDUReader(conn.getInputStream());
@@ -143,7 +143,11 @@ public class ClientSession extends Session<ClientSessionState> {
     }
 
     @Override
-    protected ClientSessionState getState(Mode mode) {
-        return states.stateForMode(this, mode);
+    protected ClientSessionState getState(State mode) {
+        return states.sessionStateForState(this, mode);
+    }
+
+    public void setStates(ClientStates states) {
+        this.states = states;
     }
 }

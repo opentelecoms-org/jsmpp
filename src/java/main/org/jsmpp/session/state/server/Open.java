@@ -6,7 +6,7 @@ import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.PDU;
 import org.jsmpp.session.ServerSession;
-import org.jsmpp.session.state.Mode;
+import org.jsmpp.session.state.State;
 
 /**
  * @author uudashr
@@ -18,8 +18,8 @@ public class Open extends ServerSessionState {
         super(serverSession);
     }
 
-    public Mode getMode() {
-        return Mode.OPEN;
+    public State getState() {
+        return State.OPEN;
     }
 
     @Override

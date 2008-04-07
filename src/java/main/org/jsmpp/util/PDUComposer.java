@@ -3,6 +3,7 @@ package org.jsmpp.util;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.SubmitSm;
 
 /**
  * Default implementation of {@link PDUComposer}.
@@ -102,8 +103,12 @@ public class PDUComposer {
 
     // SUBMIT_SM OPERATION
 
-    public byte[] submitSm(int sequenceNumber, String serviceType, byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr, byte destAddrTon, byte destAddrNpi, String destinationAddr, byte esmClass, byte protocoId, byte priorityFlag, String scheduleDeliveryTime, String validityPeriod, byte registeredDelivery, byte replaceIfPresent, byte dataCoding, byte smDefaultMsgId, byte[] shortMessage, OptionalParameter... params) throws PDUStringException {
+    public byte[] submitSm(SubmitSm submitSm) {
+        byte smDefaultMsgId = 0;
+        return submitSm(submitSm.getSequenceNumber(), submitSm.getServiceType(), submitSm.getSourceAddrTon().value(), submitSm.getSourceAddrTon().value(), submitSm.getSourceAddr(), submitSm.getDestAddrTon().value(), submitSm.getDestAddrNpi().value(), submitSm.getDestAddress(), submitSm.getEsmClass().value(), submitSm.getProtocolId(), submitSm.getPriorityFlag(), submitSm.getScheduleDeliveryTime(), submitSm.getValidityPeriod(), submitSm.getRegisteredDelivery().value(), submitSm.getReplaceIfPresent(), submitSm.getDataCoding().value(), smDefaultMsgId, submitSm.getShortMessage(), submitSm.getOptionalParameters());
+    }
 
+    public byte[] submitSm(int sequenceNumber, String serviceType, byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr, byte destAddrTon, byte destAddrNpi, String destinationAddr, byte esmClass, byte protocoId, byte priorityFlag, String scheduleDeliveryTime, String validityPeriod, byte registeredDelivery, byte replaceIfPresent, byte dataCoding, byte smDefaultMsgId, byte[] shortMessage, OptionalParameter... params) throws PDUStringException {
         StringValidator.validateString(serviceType, StringParameter.SERVICE_TYPE);
         StringValidator.validateString(sourceAddr, StringParameter.SOURCE_ADDR);
         StringValidator.validateString(destinationAddr, StringParameter.DESTINATION_ADDR);

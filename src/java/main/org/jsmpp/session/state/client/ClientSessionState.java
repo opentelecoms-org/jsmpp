@@ -109,18 +109,18 @@ public abstract class ClientSessionState extends BaseSessionState<ClientSession>
     }
 
     public void processBindResp(PDU pdu) {
-        throw new ProcessRequestException("Invalid operation for " + getMode() + " session state");
+        throw new ProcessRequestException("Invalid operation for " + getState() + " session state");
     }
 
     public void processDeliverSm(PDU pdu) {
-        throw new ProcessRequestException("Invalid operation for " + getMode() + " session state");
+        throw new ProcessRequestException("Invalid operation for " + getState() + " session state");
     }
 
     public void processQuerySmResp(PDU pdu) {
-        throw new ProcessRequestException("Invalid operation for " + getMode() + " session state");
+        throw new ProcessRequestException("Invalid operation for " + getState() + " session state");
     }
 
     public void processSubmitSmResp(PDU pdu) {
-        throw new ProcessRequestException("Invalid operation for " + getMode() + " session state");
+        throw new ProcessRequestException("Invalid operation for " + getState() + " session state");
     }
 }

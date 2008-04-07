@@ -1,7 +1,7 @@
 package org.jsmpp.session.state.server;
 
 import org.jsmpp.session.ServerSession;
-import org.jsmpp.session.state.Mode;
+import org.jsmpp.session.state.State;
 
 /**
  * @author uudashr
@@ -13,7 +13,7 @@ public class Unbound extends ServerSessionState {
         super(serverSession);
     }
 
-    public Mode getMode() {
-        return Mode.UNBOUND;
+    public State getState() {
+        return State.UNBOUND;
     }
 }

@@ -10,12 +10,12 @@ import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.session.ClientSession;
-import org.jsmpp.session.state.Mode;
+import org.jsmpp.session.state.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is bound_trx state implementation of {@link Mode}. Response both
+ * This class is bound_trx state implementation of {@link State}. Response both
  * to transmit and receive related transaction.
  * 
  * @author uudashr
@@ -30,8 +30,8 @@ public class TRX extends ClientSessionState {
         super(session);
     }
 
-    public Mode getMode() {
-        return Mode.BOUND_TRX;
+    public State getState() {
+        return State.BOUND_TRX;
     }
 
     @Override

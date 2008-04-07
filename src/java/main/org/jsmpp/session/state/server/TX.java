@@ -4,7 +4,7 @@ import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.PDU;
 import org.jsmpp.session.ServerSession;
-import org.jsmpp.session.state.Mode;
+import org.jsmpp.session.state.State;
 
 /**
  * @author uudashr
@@ -17,8 +17,8 @@ public class TX extends TRX {
     }
 
     @Override
-    public Mode getMode() {
-        return Mode.BOUND_TX;
+    public State getState() {
+        return State.BOUND_TX;
     }
 
     @Override
