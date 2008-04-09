@@ -9,7 +9,7 @@ import org.jsmpp.session.PendingResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class BaseSessionState<T extends Session<?>> implements SessionState<T> {
+public abstract class BaseSessionState<T extends Session<?>> implements SessionState {
     private static final Logger logger = LoggerFactory.getLogger(BaseSessionState.class);
 
     private final T session;

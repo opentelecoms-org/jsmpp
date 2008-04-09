@@ -2,6 +2,6 @@ package org.jsmpp.session.state;
 
 import org.jsmpp.session.Session;
 
-public interface States<T extends SessionState<V>, V extends Session<T>> {
+public interface States<T extends SessionState, V extends Session<T>> {
     public T sessionStateForState(V session, State m);
 }

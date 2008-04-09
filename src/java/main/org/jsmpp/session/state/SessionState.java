@@ -4,13 +4,12 @@ import java.io.IOException;
 
 import org.jsmpp.BindType;
 import org.jsmpp.bean.PDU;
-import org.jsmpp.session.Session;
 
 /**
  * @author uudashr
  * 
  */
-public interface SessionState<T extends Session<?>> {
+public interface SessionState {
     public State getState();
 
     public void process(PDU pdu) throws IOException;

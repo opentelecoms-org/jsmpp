@@ -22,15 +22,15 @@ public class BindRequest {
     private final BindParameter bindParam;
     private final int originalSequenceNumber;
     private boolean done;
-    SessionState<?> state;
+    SessionState state;
 
-    public BindRequest(int sequenceNumber, BindType bindType, String systemId, String password, String systemType, TypeOfNumber addrTon, NumberingPlanIndicator addrNpi, String addressRange, SessionState<?> state) {
+    public BindRequest(int sequenceNumber, BindType bindType, String systemId, String password, String systemType, TypeOfNumber addrTon, NumberingPlanIndicator addrNpi, String addressRange, SessionState state) {
         this.originalSequenceNumber = sequenceNumber;
         this.state = state;
         bindParam = new BindParameter(bindType, systemId, password, systemType, addrTon, addrNpi, addressRange);
     }
 
-    public BindRequest(Bind bind, SessionState<?> state) {
+    public BindRequest(Bind bind, SessionState state) {
         this(bind.getSequenceNumber(), BindType.valueOf(bind.getCommandId()), bind.getSystemId(), bind.getPassword(), bind.getSystemType(), TypeOfNumber.valueOf(bind.getAddrTon()), NumberingPlanIndicator.valueOf(bind.getAddrNpi()), bind.getAddressRange(), state);
     }
 

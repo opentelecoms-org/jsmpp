@@ -17,7 +17,7 @@ import org.testng.annotations.Test;
  */
 public class BindRequestReceiverTest {
     private BindRequestReceiver requestReceiver;
-    private SessionState<?> sessionState;
+    private SessionState sessionState;
 
     @BeforeMethod
     public void setUp() {

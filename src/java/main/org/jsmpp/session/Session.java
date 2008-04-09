@@ -16,7 +16,7 @@ import org.jsmpp.util.Sequence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class Session<T extends SessionState<?>> {
+public abstract class Session<T extends SessionState> {
     private static final Logger logger = LoggerFactory.getLogger(Session.class);
 
     Connection conn;

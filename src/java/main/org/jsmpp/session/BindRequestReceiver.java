@@ -61,7 +61,7 @@ public class BindRequestReceiver {
      * @throws IllegalStateException
      *             if this method already called before.
      */
-    public void notifyAcceptBind(SessionState<?> sessionState, Bind bindParameter) throws IllegalStateException {
+    public void notifyAcceptBind(SessionState sessionState, Bind bindParameter) throws IllegalStateException {
         lock.lock();
         try {
             if (request == null) {
