@@ -11,10 +11,10 @@ public class OptionalParameterTest {
 
     @Test(groups = "checkintest")
     public byte[] stringParameterSerialisation() {
-        OptionalParameter param = new OptionalParameter.OctetString(Tag.dest_subaddress, "jeah");
+        OptionalParameter param = new OptionalParameter.OctetString(Tag.DEST_SUBADDRESS, "jeah");
         byte[] serialised = param.serialize();
         assertEquals(serialised.length, 2 + 2 + 4);
-        assertEquals(OctetUtil.bytesToShort(serialised, 0), Tag.dest_subaddress.value());
+        assertEquals(OctetUtil.bytesToShort(serialised, 0), Tag.DEST_SUBADDRESS.value());
         assertEquals(OctetUtil.bytesToShort(serialised, 2), "jeah".getBytes().length);
         assertEquals(new String(serialised, 4, serialised.length - 4), "jeah");
         return serialised;
@@ -22,7 +22,7 @@ public class OptionalParameterTest {
 
     @Test(groups = "checkintest")
     public void stringParameterDeserialisation() {
-        OptionalParameter param = OptionalParameter.deserialize(Tag.dest_subaddress.value(), "jeah".getBytes());
+        OptionalParameter param = OptionalParameter.deserialize(Tag.DEST_SUBADDRESS.value(), "jeah".getBytes());
         assertTrue(param instanceof OptionalParameter.OctetString);
         OptionalParameter.OctetString stringParam = (OctetString) param;
         assertEquals(stringParam.value, "jeah");
