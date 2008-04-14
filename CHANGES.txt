@@ -1,0 +1,4 @@
+Changes:
+
+- Add SMPP Server component
+- Add Optional Parameter support (contribution from mikko.koponen@gmail.com)
