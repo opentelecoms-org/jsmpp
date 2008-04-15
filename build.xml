@@ -1,4 +1,4 @@
-<project name="jSMPP" basedir="." default="compile" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="jSMPP" basedir="." default="compile">
 	
 	<property name="src.dir" value="src/java/main" />
 	<property name="src.tests.dir" value="src/java/tests" />
@@ -34,10 +34,6 @@
 	<target name="clean">
 		<delete dir="${classes.dir}" />
 		<delete dir="${tests.dir}" />
-	</target>
-	
-	<target name="resolve">
-		<ivy:retrieve />
 	</target>
 	
 	<target name="prepare">
