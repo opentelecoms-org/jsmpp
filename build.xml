@@ -43,9 +43,11 @@
 	
 	<target name="compile" depends="prepare">
 		<javac destdir="${classes.dir}" srcdir="${src.dir}" 
-				classpathref="compile.path" debug="on" />
+				classpathref="compile.path" debug="on" 
+				source="1.5" target="1.5"/>
 		<javac destdir="${tests.dir}" srcdir="${src.tests.dir}" 
-				classpathref="test.path" debug="on" />
+				classpathref="test.path" debug="on" 
+		 		source="1.5" target="1.5"/>
 	</target>
 	
 	<target name="test" depends="compile">
