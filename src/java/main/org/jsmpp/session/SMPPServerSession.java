@@ -429,10 +429,10 @@ public class SMPPServerSession {
             try {
                 Command pduHeader = null;
                 byte[] pdu = null;
-                synchronized (in) {
-                    pduHeader = pduReader.readPDUHeader(in);
-                    pdu = pduReader.readPDU(in, pduHeader);
-                }
+
+                pduHeader = pduReader.readPDUHeader(in);
+                pdu = pduReader.readPDU(in, pduHeader);
+                
                 switch (pduHeader.getCommandId()) {
                 case SMPPConstant.CID_BIND_RECEIVER:
                 case SMPPConstant.CID_BIND_TRANSMITTER:
