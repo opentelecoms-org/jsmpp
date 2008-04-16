@@ -5,8 +5,11 @@ import java.util.Date;
 
 
 /**
+ * This provide time formatter functionality from a type to a String
+ * representation of date that can be recognized based on SMPP protocol.
+ * 
  * @author uudashr
- *
+ * 
  */
 public interface TimeFormatter {
     
