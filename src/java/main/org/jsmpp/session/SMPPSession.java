@@ -84,7 +84,8 @@ public class SMPPSession {
                 SocketConnectionFactory.getInstance());
     }
 	
-	public SMPPSession(PDUSender pduSender, PDUReader pduReader, ConnectionFactory connFactory) {
+	public SMPPSession(PDUSender pduSender, PDUReader pduReader, 
+	        ConnectionFactory connFactory) {
 	    this.pduSender = pduSender;
 	    this.pduReader = pduReader;
 	    this.connFactory = connFactory;
@@ -134,7 +135,8 @@ public class SMPPSession {
 	 * @return the SMSC system id.
 	 * @throws IOException if there is an IO error found.
 	 */
-	public String connectAndBind(String host, int port, BindParameter bindParam) throws IOException {
+	public String connectAndBind(String host, int port, BindParameter bindParam) 
+	        throws IOException {
 	    logger.debug("Connect and bind to " + host + " port " + port);
 		if (sequence.currentValue() != 1) {
 			throw new IOException("Failed connecting");

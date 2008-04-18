@@ -81,7 +81,9 @@ public class SMPPServerSession {
     public SMPPServerSession(Connection conn,
             SessionStateListener sessionStateListener,
             ServerMessageReceiverListener messageReceiverListener) {
-        this(conn, sessionStateListener, messageReceiverListener, new SynchronizedPDUSender(new DefaultPDUSender()), new DefaultPDUReader());
+        this(conn, sessionStateListener, messageReceiverListener, 
+                new SynchronizedPDUSender(new DefaultPDUSender()), 
+                new DefaultPDUReader());
     }
     
     public SMPPServerSession(Connection conn,
