@@ -26,7 +26,7 @@ public enum BindType {
     BIND_RX(SMPPConstant.CID_BIND_RECEIVER),
 
     /**
-     * Bind transcevver.
+     * Bind transceiver.
      */
     BIND_TRX(SMPPConstant.CID_BIND_TRANSCEIVER);
 
