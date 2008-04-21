@@ -6,6 +6,8 @@ import java.io.OutputStream;
 import java.net.SocketTimeoutException;
 import java.util.Hashtable;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -38,7 +40,6 @@ import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.connection.Connection;
-import org.jsmpp.session.state.SMPPServerSessionState;
 import org.jsmpp.util.IntUtil;
 import org.jsmpp.util.MessageId;
 import org.jsmpp.util.Sequence;
@@ -57,8 +58,6 @@ public class SMPPServerSession {
     private final DataInputStream in;
     private final OutputStream out;
     
-    private long lastActivityTimestamp;
-    
     private final Sequence sequence = new Sequence(1);
     private final Hashtable<Integer, PendingResponse<? extends Command>> pendingResponse = new Hashtable<Integer, PendingResponse<? extends Command>>();
     
@@ -68,15 +67,15 @@ public class SMPPServerSession {
     private int sessionTimer = 5000;
     private long transactionTimer = 2000;
     
-    private SessionStateListener sessionStateListener;
+    private SessionStateListener sessionStateListener = new SessionStateListenerDecorator();
+    private SMPPServerSessionContext sessionContext = new SMPPServerSessionContext(this, sessionStateListener);
     private final ServerResponseHandler responseHandler = new ResponseHandlerImpl();
-    
-    private SMPPServerSessionState stateProcessor = SMPPServerSessionState.CLOSED;
     
     private ServerMessageReceiverListener messageReceiverListener;
     private String sessionId = generateSessionId();
     private final EnquireLinkSender enquireLinkSender;
     private BindRequestReceiver bindRequestReceiver = new BindRequestReceiver(responseHandler);
+    private int pduDispatcherThreadCount = 3;
     
     public SMPPServerSession(Connection conn,
             SessionStateListener sessionStateListener,
@@ -90,7 +89,7 @@ public class SMPPServerSession {
             SessionStateListener sessionStateListener,
             ServerMessageReceiverListener messageReceiverListener,
             PDUSender pduSender, PDUReader pduReader) {
-        changeState(SessionState.OPEN);
+        sessionContext.open();
         this.conn = conn;
         this.sessionStateListener = sessionStateListener;
         this.messageReceiverListener = messageReceiverListener;
@@ -129,7 +128,7 @@ public class SMPPServerSession {
     }
     
     private synchronized boolean isReadPdu() {
-        SessionState sessionState = stateProcessor.getSessionState();
+        SessionState sessionState = sessionContext.getSessionState();
         return sessionState.isBound() || sessionState.equals(SessionState.OPEN);
     }
     
@@ -192,33 +191,8 @@ public class SMPPServerSession {
         throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RINVDFTMSGID);
     }
     
-    private synchronized void changeState(SessionState newState) {
-        if (!stateProcessor.getSessionState().equals(newState)) {
-            final SessionState oldState = stateProcessor.getSessionState();
-            
-            // change the session state processor
-            if (newState == SessionState.OPEN) {
-                stateProcessor = SMPPServerSessionState.OPEN;
-            } else if (newState == SessionState.BOUND_RX) {
-                stateProcessor = SMPPServerSessionState.BOUND_RX;
-            } else if (newState == SessionState.BOUND_TX) {
-                stateProcessor = SMPPServerSessionState.BOUND_TX;
-            } else if (newState == SessionState.BOUND_TRX) {
-                stateProcessor = SMPPServerSessionState.BOUND_TRX;
-            } else if (newState == SessionState.UNBOUND) {
-                stateProcessor = SMPPServerSessionState.UNBOUND;
-            } else if (newState == SessionState.CLOSED) {
-                stateProcessor = SMPPServerSessionState.CLOSED;
-            }
-            if (newState.isBound()) {
-                enquireLinkSender.start();
-            }
-            fireChangeState(newState, oldState);
-        }
-    }
-    
     public synchronized SessionState getSessionState() {
-        return stateProcessor.getSessionState();
+        return sessionContext.getSessionState();
     }
     
     public String getSessionId() {
@@ -231,7 +205,7 @@ public class SMPPServerSession {
     
     public void setSessionTimer(int sessionTimer) {
         this.sessionTimer = sessionTimer;
-        if (stateProcessor.getSessionState().isBound()) {
+        if (sessionContext.getSessionState().isBound()) {
             try {
                 conn.setSoTimeout(sessionTimer);
             } catch (IOException e) {
@@ -272,15 +246,7 @@ public class SMPPServerSession {
      * @return the last activity timestamp.
      */
     public long getLastActivityTimestamp() {
-        return lastActivityTimestamp;
-    }
-    
-    private void fireChangeState(SessionState newState, SessionState oldState) {
-        if (sessionStateListener != null) {
-            sessionStateListener.onStateChange(newState, oldState, this);
-        } else {
-            logger.warn("SessionStateListener is null");
-        }
+        return sessionContext.getLastActivityTimestamp();
     }
     
     public void unbindAndClose() {
@@ -312,7 +278,7 @@ public class SMPPServerSession {
         try {
             pendingResp.waitDone();
             logger.info("Unbind response received");
-            changeState(SessionState.UNBOUND);
+            sessionContext.unbound();
         } catch (ResponseTimeoutException e) {
             pendingResponse.remove(seqNum);
             throw e;
@@ -329,7 +295,7 @@ public class SMPPServerSession {
      * Close the connection.
      */
     public void close() {
-        changeState(SessionState.CLOSED);
+        sessionContext.close();
         try {
             conn.close();
         } catch (IOException e) {
@@ -350,7 +316,7 @@ public class SMPPServerSession {
         }
         
         public void notifyUnbonded() {
-            changeState(SessionState.UNBOUND);
+            sessionContext.unbound();
         }
         
         public void sendEnquireLinkResp(int sequenceNumber) throws IOException {
@@ -373,13 +339,7 @@ public class SMPPServerSession {
         }
         
         public void sendBindResp(String systemId, BindType bindType, int sequenceNumber) throws IOException {
-            if (bindType.equals(BindType.BIND_RX)) {
-                changeState(SessionState.BOUND_RX);
-            } else if (bindType.equals(BindType.BIND_TX)) {
-                changeState(SessionState.BOUND_TX);
-            } else if (bindType.equals(BindType.BIND_TRX)) {
-                changeState(SessionState.BOUND_TRX);
-            }
+            sessionContext.bound(bindType);
             try {
                 pduSender.sendBindResp(out, bindType.commandId() | SMPPConstant.MASK_CID_RESP, sequenceNumber, systemId);
             } catch (PDUStringException e) {
@@ -417,6 +377,13 @@ public class SMPPServerSession {
     }
     
     private class PDUReaderWorker extends Thread {
+        private ExecutorService executorService = Executors.newFixedThreadPool(pduDispatcherThreadCount);
+        private Runnable onIOExceptionTask = new Runnable() {
+            public void run() {
+                close();
+            };
+        };
+        
         @Override
         public void run() {
             logger.info("Starting PDUReaderWorker");
@@ -435,48 +402,11 @@ public class SMPPServerSession {
                 pduHeader = pduReader.readPDUHeader(in);
                 pdu = pduReader.readPDU(in, pduHeader);
                 
-                switch (pduHeader.getCommandId()) {
-                case SMPPConstant.CID_BIND_RECEIVER:
-                case SMPPConstant.CID_BIND_TRANSMITTER:
-                case SMPPConstant.CID_BIND_TRANSCEIVER:
-                    notifyActivity();
-                    stateProcessor.processBind(pduHeader, pdu, responseHandler);
-                    break;
-                case SMPPConstant.CID_GENERIC_NACK:
-                    notifyActivity();
-                    stateProcessor.processGenericNack(pduHeader, pdu, responseHandler);
-                    break;
-                case SMPPConstant.CID_ENQUIRE_LINK:
-                    notifyActivity();
-                    stateProcessor.processEnquireLink(pduHeader, pdu, responseHandler);
-                    break;
-                case SMPPConstant.CID_ENQUIRE_LINK_RESP:
-                    notifyActivity();
-                    stateProcessor.processEnquireLinkResp(pduHeader, pdu, responseHandler);
-                    break;
-                case SMPPConstant.CID_SUBMIT_SM:
-                    notifyActivity();
-                    stateProcessor.processSubmitSm(pduHeader, pdu, responseHandler);
-                    break;
-                case SMPPConstant.CID_QUERY_SM_RESP:
-                    notifyActivity();
-                    stateProcessor.processQuerySm(pduHeader, pdu, responseHandler);
-                    break;
-                case SMPPConstant.CID_DELIVER_SM_RESP:
-                    notifyActivity();
-                    stateProcessor.processDeliverSmResp(pduHeader, pdu, responseHandler);
-                    break;
-                case SMPPConstant.CID_UNBIND:
-                    notifyActivity();
-                    stateProcessor.processUnbind(pduHeader, pdu, responseHandler);
-                    break;
-                case SMPPConstant.CID_UNBIND_RESP:
-                    notifyActivity();
-                    stateProcessor.processUnbindResp(pduHeader, pdu, responseHandler);
-                    break;
-                default:
-                    stateProcessor.processUnknownCid(pduHeader, pdu, responseHandler);
-                }
+                PDUProcessServerTask task = new PDUProcessServerTask(pduHeader,
+                        pdu, sessionContext.getStateProcessor(),
+                        sessionContext, responseHandler, onIOExceptionTask);
+                executorService.execute(task);
+                
             } catch (InvalidCommandLengthException e) {
                 logger.warn("Receive invalid command length", e);
                 try {
@@ -490,14 +420,6 @@ public class SMPPServerSession {
             } catch (IOException e) {
                 close();
             }
-        }
-        
-        /**
-         * This method provided for monitoring need.
-         */
-        private void notifyActivity() {
-            logger.debug("Activity notified");
-            lastActivityTimestamp = System.currentTimeMillis();
         }
         
         /**
@@ -593,6 +515,30 @@ public class SMPPServerSession {
                 // this is ok, we just want to enquire we have proper link.
                 logger.warn("Receive NON-OK response of enquire link: " + pendingResp.getResponse().getCommandIdAsHex());
             }
+        }
+    }
+    
+    private class SessionStateListenerDecorator implements SessionStateListener {
+        private SessionStateListener sessionStateListener;
+        
+        public void onStateChange(SessionState newState, SessionState oldState,
+                Object source) {
+            if (newState.isBound()) {
+                enquireLinkSender.start();
+            }
+            
+            if (sessionStateListener != null) {
+                sessionStateListener.onStateChange(newState, oldState, source);
+            }
+        }
+        
+        public void setSessionStateListener(
+                SessionStateListener sessionStateListener) {
+            this.sessionStateListener = sessionStateListener;
+        }
+        
+        public SessionStateListener getSessionStateListener() {
+            return sessionStateListener;
         }
     }
 }

@@ -39,5 +39,10 @@ public interface SessionContext extends ActivityNotifier {
      */
     SessionState getSessionState();
     
+    /**
+     * Get the last activity of a session.
+     * 
+     * @return the last activity timestamp. 
+     */
     long getLastActivityTimestamp();
 }

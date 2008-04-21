@@ -74,7 +74,7 @@ public class SMPPSession {
 	private long transactionTimer = 2000;
 	private MessageReceiverListener messageReceiverListener;
     private SessionStateListenerDecorator sessionStateListener = new SessionStateListenerDecorator();
-    SMPPSessionContext sessionContext = new SMPPSessionContext(this, sessionStateListener);
+    private SMPPSessionContext sessionContext = new SMPPSessionContext(this, sessionStateListener);
 	private EnquireLinkSender enquireLinkSender;
 	private String sessionId = generateSessionId();
 	private int pduDispatcherThreadCount = 3;
@@ -602,10 +602,9 @@ public class SMPPSession {
                  * the code on event might take non-short time, so we need to
                  * process it concurrently.
                  */
-                PDUProcessTask task = new PDUProcessTask(pduHeader, pdu, 
-                        sessionContext.getStateProcessor(), 
-                        responseHandler, sessionContext, sessionContext, 
-                        onIOExceptionTask);
+                PDUProcessTask task = new PDUProcessTask(pduHeader, pdu,
+                        sessionContext.getStateProcessor(), responseHandler,
+                        sessionContext, onIOExceptionTask);
 	            executorService.execute(task);
 	            
 	        } catch (InvalidCommandLengthException e) {

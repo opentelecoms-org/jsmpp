@@ -4,39 +4,41 @@ import java.io.IOException;
 
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
-import org.jsmpp.session.state.SMPPSessionState;
+import org.jsmpp.session.state.SMPPServerSessionState;
 
 /**
  * @author uudashr
  *
  */
-public class PDUProcessTask implements Runnable {
+public class PDUProcessServerTask implements Runnable {
     private final Command pduHeader;
     private final byte[] pdu;
-    private final SMPPSessionState stateProcessor;
-    private final ResponseHandler responseHandler;
+    private final SMPPServerSessionState stateProcessor;
     private final ActivityNotifier activityNotifier;
+    private final ServerResponseHandler responseHandler;
     private final Runnable onIOExceptionTask;
     
-    public PDUProcessTask(Command pduHeader, byte[] pdu,
-            SMPPSessionState stateProcessor, ResponseHandler responseHandler,
-            ActivityNotifier activityNotifier, Runnable onIOExceptionTask) {
+    
+    public PDUProcessServerTask(Command pduHeader, byte[] pdu,
+            SMPPServerSessionState stateProcessor,
+            ActivityNotifier activityNotifier,
+            ServerResponseHandler responseHandler, Runnable onIOExceptionTask) {
         this.pduHeader = pduHeader;
         this.pdu = pdu;
         this.stateProcessor = stateProcessor;
-        this.responseHandler = responseHandler;
         this.activityNotifier = activityNotifier;
+        this.responseHandler = responseHandler;
         this.onIOExceptionTask = onIOExceptionTask;
     }
 
     public void run() {
         try {
             switch (pduHeader.getCommandId()) {
-            case SMPPConstant.CID_BIND_RECEIVER_RESP:
-            case SMPPConstant.CID_BIND_TRANSMITTER_RESP:
-            case SMPPConstant.CID_BIND_TRANSCEIVER_RESP:
+            case SMPPConstant.CID_BIND_RECEIVER:
+            case SMPPConstant.CID_BIND_TRANSMITTER:
+            case SMPPConstant.CID_BIND_TRANSCEIVER:
                 activityNotifier.notifyActivity();
-                stateProcessor.processBindResp(pduHeader, pdu, responseHandler);
+                stateProcessor.processBind(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_GENERIC_NACK:
                 activityNotifier.notifyActivity();
@@ -50,17 +52,17 @@ public class PDUProcessTask implements Runnable {
                 activityNotifier.notifyActivity();
                 stateProcessor.processEnquireLinkResp(pduHeader, pdu, responseHandler);
                 break;
-            case SMPPConstant.CID_SUBMIT_SM_RESP:
+            case SMPPConstant.CID_SUBMIT_SM:
                 activityNotifier.notifyActivity();
-                stateProcessor.processSubmitSmResp(pduHeader, pdu, responseHandler);
+                stateProcessor.processSubmitSm(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_QUERY_SM_RESP:
                 activityNotifier.notifyActivity();
-                stateProcessor.processQuerySmResp(pduHeader, pdu, responseHandler);
+                stateProcessor.processQuerySm(pduHeader, pdu, responseHandler);
                 break;
-            case SMPPConstant.CID_DELIVER_SM:
+            case SMPPConstant.CID_DELIVER_SM_RESP:
                 activityNotifier.notifyActivity();
-                stateProcessor.processDeliverSm(pduHeader, pdu, responseHandler);
+                stateProcessor.processDeliverSmResp(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_UNBIND:
                 activityNotifier.notifyActivity();
