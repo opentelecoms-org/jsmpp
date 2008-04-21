@@ -2,4 +2,4 @@ Changes:
 
 - Add SMPP Server component
 - Add Optional Parameter support (contribution from mikko.koponen@gmail.com)
-- Processing PDU handle concurrently MessageReceiverListener#onAcceptDeliverSm
+- Handling PDU processing concurrently
