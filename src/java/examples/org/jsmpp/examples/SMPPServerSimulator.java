@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class SMPPServerSimulator implements Runnable, ServerMessageReceiverListener {
+    private static final Integer DEFAULT_PORT = 8056;
     private static final Logger logger = LoggerFactory.getLogger(SMPPServerSimulator.class);
     private final ExecutorService execService = Executors.newFixedThreadPool(5);
     private final ExecutorService execServiceDelReciept = Executors.newFixedThreadPool(100);
@@ -129,14 +130,19 @@ public class SMPPServerSimulator implements Runnable, ServerMessageReceiverListe
             } catch (Exception e) {
                 logger.error("Failed sending delivery_receipt for message id " + messageId + ":" + stringValue, e);
             }
-            
         }
     }
     
     
     public static void main(String[] args) {
+        int port;
+        try {
+            port = Integer.parseInt(System.getProperty("jsmpp.simulator.port", DEFAULT_PORT.toString()));
+        } catch (NumberFormatException e) {
+            port = DEFAULT_PORT;
+        }
         BasicConfigurator.configure();
-        SMPPServerSimulator smppServerSim = new SMPPServerSimulator(8056);
+        SMPPServerSimulator smppServerSim = new SMPPServerSimulator(port);
         smppServerSim.run();
     }
 }
