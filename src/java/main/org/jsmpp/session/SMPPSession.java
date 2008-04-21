@@ -436,7 +436,7 @@ public class SMPPSession {
 		this.transactionTimer = transactionTimer;
 	}
 	
-	public void setPduDispatcherThreadCount(int pduDispatcherThreadCount) {
+	public void setPduDispatcherThreadCount(int pduDispatcherThreadCount) throws IllegalStateException {
 	    if (!sessionContext.getSessionState().equals(SessionState.CLOSED)) {
 	        throw new IllegalStateException(
                     "Cannot set pdu distpatcher thread count since the pdu dispatcher thread already created.");
