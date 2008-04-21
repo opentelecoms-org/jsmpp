@@ -65,4 +65,6 @@
 			<fileset dir="${classes.dir}" />
 		</jar>
 	</target>
+	
+	<target name="cleanall" depends="cleanjar,clean" />
 </project>
