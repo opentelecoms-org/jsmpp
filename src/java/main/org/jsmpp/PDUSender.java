@@ -142,7 +142,7 @@ public interface PDUSender {
      * @param destAddrNpi is the dest_addr_npi.
      * @param destinationAddr is the destination_addr.
      * @param esmClass is the esm_class.
-     * @param protocoId is the protocol_id.
+     * @param protocolId is the protocol_id.
      * @param priorityFlag is the priority_flag.
      * @param scheduleDeliveryTime is the schedule_delivery_time
      * @param validityPeriod is the validity_period.
@@ -160,7 +160,7 @@ public interface PDUSender {
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
-            String destinationAddr, ESMClass esmClass, byte protocoId,
+            String destinationAddr, ESMClass esmClass, byte protocolId,
             byte priorityFlag, String scheduleDeliveryTime,
             String validityPeriod, RegisteredDelivery registeredDelivery,
             byte replaceIfPresentFlag, DataCoding dataCoding, byte smDefaultMsgId,
@@ -257,5 +257,48 @@ public interface PDUSender {
      */
     public byte[] sendDeliverSmResp(OutputStream os, int sequenceNumber)
             throws PDUStringException, IOException;
-
+    
+    /**
+     * Send the data short message command.
+     * 
+     * @param os is the {@link OutputStream}.
+     * @param sequenceNumber the sequence_number.
+     * @param serviceType the service_type.
+     * @param sourceAddrTon is the source_addr_ton.
+     * @param sourceAddrNpi is the source_addr_npi.
+     * @param sourceAddr is the source_addr.
+     * @param destAddrTon is the dest_addr_ton.
+     * @param destAddrNpi is the dest_addr_npi.
+     * @param destinationAddr is the destination_addr.
+     * @param esmClass is the esm_class.
+     * @param registeredDelivery is the registered_delivery.
+     * @param dataCoding is the data_coding.
+     * @param optionalParameters is the optional parameters.
+     * @return the composed bytes.
+     * @throws PDUStringException if there is an invalid string constraint found.
+     * @throws IOException if there is an IO error occur.
+     */
+    public byte[] sendDataSm(OutputStream os, int sequenceNumber,
+            String serviceType, TypeOfNumber sourceAddrTon,
+            NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
+            String destinationAddr, ESMClass esmClass,
+            RegisteredDelivery registeredDelivery, DataCoding dataCoding,
+            OptionalParameter... optionalParameters) throws PDUStringException,
+            IOException;
+    
+    /**
+     * Send data short message response command.
+     * 
+     * @param os is the {@link OutputStream}.
+     * @param sequenceNumber is the sequence_number.
+     * @param messageId is the message_id.
+     * @param optionalParameters is the optional parameters.
+     * @return the composed bytes.
+     * @throws PDUStringException if there is an invalid string constraint found.
+     * @throws IOException if there is an IO error occur.
+     */
+    public byte[] sendDataSmResp(OutputStream os, int sequenceNumber,
+            String messageId, OptionalParameter... optionalParameters)
+            throws PDUStringException, IOException;
 }

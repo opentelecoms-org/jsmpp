@@ -126,6 +126,20 @@ class PDUByteBuffer {
     }
     
     /**
+     * Append all optional parameters.
+     * 
+     * @param optionalParameters is the optional parameters.
+     * @return the latest length of the buffer.
+     */
+    public int appendAll(OptionalParameter[] optionalParameters) {
+        int length = 0;
+        for (OptionalParameter optionalParamameter : optionalParameters) {
+            append(optionalParamameter);
+        }
+        return length;
+    }
+    
+    /**
      * Normalize the command_length parameter.
      */
     private void normalizeCommandLength() {

@@ -4,16 +4,16 @@ import org.jsmpp.bean.MessageState;
 
 /**
  * Result of query short message.
+ * 
  * @author uudashr
  * @version 1.0
  * @since 1.0
  *
  */
 public class QuerySmResult {
-	// TODO uud: change using Date instead of String.
-	private String finalDate;
-	private MessageState messageState;
-	private byte errorCode;
+	private final String finalDate;
+	private final MessageState messageState;
+	private final byte errorCode;
 	
 	public QuerySmResult(String finalDate, MessageState messageState, byte errorCode) {
 		this.finalDate = finalDate;

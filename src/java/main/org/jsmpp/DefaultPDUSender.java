@@ -32,9 +32,9 @@ public class DefaultPDUSender implements PDUSender {
     }
     
     /**
-     * Construct with specified pdu composer.
+     * Construct with specified PDU composer.
      * 
-     * @param pduComposer is the pdu composer.
+     * @param pduComposer is the PDU composer.
      */
     public DefaultPDUSender(PDUComposer pduComposer) {
         this.pduComposer = pduComposer;
@@ -48,10 +48,8 @@ public class DefaultPDUSender implements PDUSender {
 
         byte[] b = pduComposer.composeHeader(commandId, commandStatus,
                 sequenceNumber);
-        synchronized (os) {
-            os.write(b);
-            os.flush();
-        }
+        os.write(b);
+        os.flush();
         return b;
     }
 
@@ -67,10 +65,8 @@ public class DefaultPDUSender implements PDUSender {
         byte[] b = pduComposer.bind(bindType.commandId(), sequenceNumber,
                 systemId, password, systemType, interfaceVersion.value(),
                 addrTon.value(), addrNpi.value(), addressRange);
-        synchronized (os) {
-            os.write(b);
-            os.flush();
-        }
+        os.write(b);
+        os.flush();
         return b;
     }
 
@@ -82,10 +78,8 @@ public class DefaultPDUSender implements PDUSender {
             IOException {
 
         byte[] b = pduComposer.bindResp(commandId, sequenceNumber, systemId);
-        synchronized (os) {
-            os.write(b);
-            os.flush();
-        }
+        os.write(b);
+        os.flush();
         return b;
     }
 
@@ -95,10 +89,8 @@ public class DefaultPDUSender implements PDUSender {
     public byte[] sendUnbind(OutputStream os, int sequenceNumber)
             throws IOException {
         byte[] b = pduComposer.unbind(sequenceNumber);
-        synchronized (os) {
-            os.write(b);
-            os.flush();
-        }
+        os.write(b);
+        os.flush();
         return b;
     }
 
@@ -108,10 +100,8 @@ public class DefaultPDUSender implements PDUSender {
     public byte[] sendGenericNack(OutputStream os, int commandStatus,
             int sequenceNumber) throws IOException {
         byte[] b = pduComposer.genericNack(commandStatus, sequenceNumber);
-        synchronized (os) {
-            os.write(b);
-            os.flush();
-        }
+        os.write(b);
+        os.flush();
         return b;
     }
 
@@ -121,10 +111,8 @@ public class DefaultPDUSender implements PDUSender {
     public byte[] sendUnbindResp(OutputStream os, int commandStatus,
             int sequenceNumber) throws IOException {
         byte[] b = pduComposer.unbindResp(commandStatus, sequenceNumber);
-        synchronized (os) {
-            os.write(b);
-            os.flush();
-        }
+        os.write(b);
+        os.flush();
         return b;
     }
 
@@ -135,10 +123,8 @@ public class DefaultPDUSender implements PDUSender {
             throws IOException {
         
         byte[] b = pduComposer.enquireLink(sequenceNumber);
-        synchronized (out) {
-            out.write(b);
-            out.flush();
-        }
+        out.write(b);
+        out.flush();
         return b;
     }
 
@@ -148,10 +134,8 @@ public class DefaultPDUSender implements PDUSender {
     public byte[] sendEnquireLinkResp(OutputStream os, int sequenceNumber)
             throws IOException {
         byte[] b = pduComposer.enquireLinkResp(sequenceNumber);
-        synchronized (os) {
-            os.write(b);
-            os.flush();
-        }
+        os.write(b);
+        os.flush();
         return b;
     }
 
@@ -166,18 +150,16 @@ public class DefaultPDUSender implements PDUSender {
             byte priorityFlag, String scheduleDeliveryTime,
             String validityPeriod, RegisteredDelivery registeredDelivery,
             byte replaceIfPresent, DataCoding dataCoding, byte smDefaultMsgId,
-            byte[] shortMessage, OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+            byte[] shortMessage, OptionalParameter... optionalParameters)
+            throws PDUStringException, IOException {
         byte[] b = pduComposer.submitSm(sequenceNumber, serviceType,
                 sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr,
                 destAddrTon.value(), destAddrNpi.value(), destinationAddr,
-                esmClass.value(), protocoId, priorityFlag,
-                scheduleDeliveryTime, validityPeriod, registeredDelivery
-                        .value(), replaceIfPresent, dataCoding.value(),
-                smDefaultMsgId, shortMessage, optionalParameters);
-        synchronized (os) {
-            os.write(b);
-            os.flush();
-        }
+                esmClass.value(), protocoId, priorityFlag, scheduleDeliveryTime, 
+                validityPeriod, registeredDelivery.value(), replaceIfPresent, 
+                dataCoding.value(), smDefaultMsgId, shortMessage, optionalParameters);
+        os.write(b);
+        os.flush();
         return b;
     }
 
@@ -187,10 +169,8 @@ public class DefaultPDUSender implements PDUSender {
     public byte[] sendSubmitSmResp(OutputStream os, int sequenceNumber,
             String messageId) throws PDUStringException, IOException {
         byte[] b = pduComposer.submitSmResp(sequenceNumber, messageId);
-        synchronized (os) {
-            os.write(b);
-            os.flush();
-        }
+        os.write(b);
+        os.flush();
         return b;
     }
 
@@ -240,10 +220,8 @@ public class DefaultPDUSender implements PDUSender {
                 esmClass.value(), protocoId, priorityFlag, 
                 registeredDelivery.value(), dataCoding.value(), shortMessage, 
                 optionalParameters);
-        synchronized (os) {
-            os.write(b);
-            os.flush();
-        }
+        os.write(b);
+        os.flush();
         return b;
     }
 
@@ -253,10 +231,38 @@ public class DefaultPDUSender implements PDUSender {
     public byte[] sendDeliverSmResp(OutputStream os, int sequenceNumber)
             throws PDUStringException, IOException {
         byte[] b = pduComposer.deliverSmResp(sequenceNumber);
-        synchronized (os) {
-            os.write(b);
-            os.flush();
-        }
+        os.write(b);
+        os.flush();
+        return b;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jsmpp.PDUSender#sendDataSm(java.io.OutputStream, int, java.lang.String, org.jsmpp.TypeOfNumber, org.jsmpp.NumberingPlanIndicator, java.lang.String, org.jsmpp.TypeOfNumber, org.jsmpp.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.ESMClass, org.jsmpp.bean.RegisteredDelivery, org.jsmpp.bean.DataCoding, org.jsmpp.bean.OptionalParameter[])
+     */
+    public byte[] sendDataSm(OutputStream os, int sequenceNumber,
+            String serviceType, TypeOfNumber sourceAddrTon,
+            NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
+            String destinationAddr, ESMClass esmClass,
+            RegisteredDelivery registeredDelivery, DataCoding dataCoding,
+            OptionalParameter... optionalParameters) throws PDUStringException,
+            IOException {
+        byte[] b = pduComposer.dataSm(sequenceNumber, serviceType,
+                sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr, 
+                destAddrTon.value(), destAddrNpi.value(), destinationAddr, 
+                esmClass.value(), registeredDelivery.value(), dataCoding.value(), 
+                optionalParameters);
+        os.write(b);
+        os.flush();
+        return b;
+    }
+    
+    public byte[] sendDataSmResp(OutputStream os, int sequenceNumber,
+            String messageId, OptionalParameter... optionalParameters)
+            throws PDUStringException, IOException {
+        byte[] b = pduComposer.dataSmResp(sequenceNumber, messageId, optionalParameters);
+        os.write(b);
+        os.flush();
         return b;
     }
 }

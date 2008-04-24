@@ -4,6 +4,8 @@ import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.Command;
+import org.jsmpp.bean.DataSm;
+import org.jsmpp.bean.DataSmResp;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.DeliverSmResp;
 import org.jsmpp.bean.DeliveryReceipt;
@@ -35,7 +37,7 @@ public interface PDUDecomposer {
      * @param b is the PDU.
      * @return the header ( {@link Command} ) object.
      */
-    public Command header(byte[] b);
+    Command header(byte[] b);
 
     // BIND OPERATION
     /**
@@ -43,20 +45,20 @@ public interface PDUDecomposer {
      * 
      * @param b is the PDU.
      * @return the bind command object.
-     * @throws PDUStringException throw if there is an invalid constraint of
+     * PDUStringException if there is an invalid constraint of
      *         string parameter found.
      */
-    public Bind bind(byte[] b) throws PDUStringException;
+    Bind bind(byte[] b) throws PDUStringException;
 
     /**
      * Decompose the SMPP PDU bind response command.
      * 
      * @param b is the PDU.
      * @return the bind response command object.
-     * @throws PDUStringException throw if there is an invalid constraint of
+     * @PDUStringException if there is an invalid constraint of
      *         string parameter found.
      */
-    public BindResp bindResp(byte[] b) throws PDUStringException;
+    BindResp bindResp(byte[] b) throws PDUStringException;
 
     /**
      * Decompose the SMPP PDU unbind command.
@@ -64,7 +66,7 @@ public interface PDUDecomposer {
      * @param b is the PDU.
      * @return the unbind command object.
      */
-    public Unbind unbind(byte[] b);
+    Unbind unbind(byte[] b);
 
     /**
      * Decompose the SMPP PDU unbind response command.
@@ -72,17 +74,17 @@ public interface PDUDecomposer {
      * @param b is the PDU.
      * @return the unbind response command object.
      */
-    public UnbindResp unbindResp(byte[] b);
+    UnbindResp unbindResp(byte[] b);
 
     /**
      * Decompose the SMPP PDU outbind command.
      * 
      * @param b is the PDU.
      * @return the outbind command object.
-     * @throws PDUStringException throw if there is an invalid constraint of
+     * PDUStringException if there is an invalid constraint of
      *         string parameter found.
      */
-    public Outbind outbind(byte[] b) throws PDUStringException;
+    Outbind outbind(byte[] b) throws PDUStringException;
 
     // ENQUIRE_LINK OPERATION
     /**
@@ -91,7 +93,7 @@ public interface PDUDecomposer {
      * @param b is the PDU.
      * @return the enquire link command object.
      */
-    public EnquireLink enquireLink(byte[] b);
+    EnquireLink enquireLink(byte[] b);
 
     /**
      * Decompose the SMPP PDU enquire link response command.
@@ -99,7 +101,7 @@ public interface PDUDecomposer {
      * @param b is the PDU.
      * @return the enquire link response command object.
      */
-    public EnquireLinkResp enquireLinkResp(byte[] b);
+    EnquireLinkResp enquireLinkResp(byte[] b);
 
     // GENERICK_NACK OPERATION
     /**
@@ -108,7 +110,7 @@ public interface PDUDecomposer {
      * @param b is the PDU.
      * @return the generic nack command object.
      */
-    public GenericNack genericNack(byte[] b);
+    GenericNack genericNack(byte[] b);
 
     // SUBMIT_SM OPERATION
     /**
@@ -116,20 +118,20 @@ public interface PDUDecomposer {
      * 
      * @param b is the PDU.
      * @return the submit short message command object.
-     * @throws PDUStringException throw if there is an invalid constraint of
+     * PDUStringException if there is an invalid constraint of
      *         string parameter found.
      */
-    public SubmitSm submitSm(byte[] b) throws PDUStringException;
+    SubmitSm submitSm(byte[] b) throws PDUStringException;
 
     /**
      * Decompose the SMPP PDU submit short message response command.
      * 
      * @param b is the PDU.
      * @return the submit short message response command object.
-     * @throws PDUStringException throw if there is an invalid constraint of
+     * PDUStringException if there is an invalid constraint of
      *         string parameter found.
      */
-    public SubmitSmResp submitSmResp(byte[] b) throws PDUStringException;
+    SubmitSmResp submitSmResp(byte[] b) throws PDUStringException;
 
     // QUERY_SM OPERATION
     /**
@@ -137,20 +139,20 @@ public interface PDUDecomposer {
      * 
      * @param b is the PDU.
      * @return the query short message command object.
-     * @throws PDUStringException throw if there is an invalid constraint of
+     * PDUStringException if there is an invalid constraint of
      *         string parameter found.
      */
-    public QuerySm querySm(byte[] b) throws PDUStringException;
+    QuerySm querySm(byte[] b) throws PDUStringException;
 
     /**
      * Decompose the SMPP PDU query short message reponse command.
      * 
      * @param b is the PDU.
      * @return the query short message response command object.
-     * @throws PDUStringException throw if there is an invalid constraint of
+     * PDUStringException if there is an invalid constraint of
      *         string parameter found.
      */
-    public QuerySmResp querySmResp(byte[] b) throws PDUStringException;
+    QuerySmResp querySmResp(byte[] b) throws PDUStringException;
 
     // DELIVER_SM OPERATION
     /**
@@ -158,10 +160,10 @@ public interface PDUDecomposer {
      * 
      * @param b is the PDU.
      * @return the deliver short message command object.
-     * @throws PDUStringException throw if there is an invalid constraint of
+     * @throws PDUStringException if there is an invalid constraint of
      *         string parameter found.
      */
-    public DeliverSm deliverSm(byte[] b) throws PDUStringException;
+    DeliverSm deliverSm(byte[] b) throws PDUStringException;
 
     /**
      * Decompose the SMPP PDU deliver short message response command.
@@ -169,7 +171,7 @@ public interface PDUDecomposer {
      * @param b is the PDU.
      * @return the deliver short message response command object.
      */
-    public DeliverSmResp deliverSmResp(byte[] b);
+    DeliverSmResp deliverSmResp(byte[] b);
 
     /**
      * Decompose the SMPP PDU delivery receipt content.
@@ -179,7 +181,7 @@ public interface PDUDecomposer {
      * @throws InvalidDeliveryReceiptException throw if the data is invalid, so
      *         it can be parsed.
      */
-    public DeliveryReceipt deliveryReceipt(String data)
+    DeliveryReceipt deliveryReceipt(String data)
             throws InvalidDeliveryReceiptException;
 
     /**
@@ -190,6 +192,27 @@ public interface PDUDecomposer {
      * @throws InvalidDeliveryReceiptException throw if the data is invalid, so
      *         it can be parsed.
      */
-    public DeliveryReceipt deliveryReceipt(byte[] data)
+    DeliveryReceipt deliveryReceipt(byte[] data)
             throws InvalidDeliveryReceiptException;
+    
+    // DATA_SM OPERATION
+    /**
+     * Decompose the SMPP PDU data short message command.
+     * 
+     * @param data is the PDU.
+     * @return the data short message command object.
+     * @throws PDUStringException if there is an invalid constraint of
+     *         string parameter found.
+     */
+    DataSm dataSm(byte[] data) throws PDUStringException;
+    
+    /**
+     * Decompose the SMPP PDU data short message response command.
+     * 
+     * @param data is the PDU.
+     * @return the data short message command object.
+     * @PDUStringException if there is an invalid constraint of
+     *         string parameter found.
+     */
+    DataSmResp dataSmResp(byte[] data) throws PDUStringException;
 }

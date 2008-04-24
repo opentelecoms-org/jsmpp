@@ -9,6 +9,8 @@ import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.Command;
+import org.jsmpp.bean.DataSm;
+import org.jsmpp.bean.DataSmResp;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.DeliverSmResp;
 import org.jsmpp.bean.DeliveryReceipt;
@@ -236,15 +238,15 @@ public class DefaultDecomposer implements PDUDecomposer {
      * @see org.jsmpp.util.PDUDecomposer#submitSmResp(byte[])
      */
     public SubmitSmResp submitSmResp(byte[] b) throws PDUStringException {
-        SubmitSmResp req = new SubmitSmResp();
+        SubmitSmResp resp = new SubmitSmResp();
         SequentialBytesReader reader = new SequentialBytesReader(b);
-        assignHeader(req, reader);
-        if (req.getCommandLength() > 16 && req.getCommandStatus() == 0) {
-            req.setMessageId(reader.readCString());
-            StringValidator.validateString(req.getMessageId(),
+        assignHeader(resp, reader);
+        if (resp.getCommandLength() > 16 && resp.getCommandStatus() == 0) {
+            resp.setMessageId(reader.readCString());
+            StringValidator.validateString(resp.getMessageId(),
                     StringParameter.MESSAGE_ID);
         }
-        return req;
+        return resp;
     }
 
     // QUERY_SM OPERATION
@@ -394,6 +396,46 @@ public class DefaultDecomposer implements PDUDecomposer {
     public DeliveryReceipt deliveryReceipt(byte[] data)
             throws InvalidDeliveryReceiptException {
         return deliveryReceipt(new String(data));
+    }
+    
+    public DataSm dataSm(byte[] data) throws PDUStringException {
+        DataSm req = new DataSm();
+        SequentialBytesReader reader = new SequentialBytesReader(data);
+        assignHeader(req, reader);
+        req.setServiceType(reader.readCString());
+        StringValidator.validateString(req.getServiceType(),
+                StringParameter.SERVICE_TYPE);
+        
+        req.setSourceAddrTon(reader.readByte());
+        req.setSourceAddrNpi(reader.readByte());
+        req.setSourceAddr(reader.readCString());
+        StringValidator.validateString(req.getSourceAddr(),
+                StringParameter.SOURCE_ADDR);
+        
+        req.setDestAddrTon(reader.readByte());
+        req.setDestAddrNpi(reader.readByte());
+        req.setDestAddress(reader.readCString());
+        StringValidator.validateString(req.getDestAddress(),
+                StringParameter.DESTINATION_ADDR);
+        
+        req.setEsmClass(reader.readByte());
+        req.setRegisteredDelivery(reader.readByte());
+        req.setDataCoding(reader.readByte());
+        req.setOptionalParametes(readOptionalParameters(reader));
+        return req;
+    }
+    
+    public DataSmResp dataSmResp(byte[] data) throws PDUStringException {
+        DataSmResp resp = new DataSmResp();
+        SequentialBytesReader reader = new SequentialBytesReader(data);
+        assignHeader(resp, reader);
+        if (resp.getCommandLength() > 16 && resp.getCommandStatus() == 0) {
+            resp.setMessageId(reader.readCString());
+            StringValidator.validateString(resp.getMessageId(),
+                    StringParameter.MESSAGE_ID);
+        }
+        resp.setOptionalParameters(readOptionalParameters(reader));
+        return resp;
     }
     
     private OptionalParameter[] readOptionalParameters(

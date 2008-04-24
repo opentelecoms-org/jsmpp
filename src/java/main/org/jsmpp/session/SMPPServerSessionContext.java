@@ -36,12 +36,6 @@ public class SMPPServerSessionContext extends AbstractSessionContext {
             } else if (newState == SessionState.CLOSED) {
                 stateProcessor = SMPPServerSessionState.CLOSED;
             }
-            /*
-             * TODO uudashr: move to state listener
-            if (newState.isBound()) {
-                enquireLinkSender.start();
-            }
-            */
             fireStateChanged(newState, oldState, smppServerSession);
         }
     }

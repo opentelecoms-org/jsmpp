@@ -67,7 +67,7 @@ public class SMPPServerSession {
     private int sessionTimer = 5000;
     private long transactionTimer = 2000;
     
-    private SessionStateListener sessionStateListener = new SessionStateListenerDecorator();
+    private final SessionStateListenerDecorator sessionStateListener = new SessionStateListenerDecorator();
     private SMPPServerSessionContext sessionContext = new SMPPServerSessionContext(this, sessionStateListener);
     private final ServerResponseHandler responseHandler = new ResponseHandlerImpl();
     
@@ -91,7 +91,7 @@ public class SMPPServerSession {
             PDUSender pduSender, PDUReader pduReader) {
         sessionContext.open();
         this.conn = conn;
-        this.sessionStateListener = sessionStateListener;
+        this.sessionStateListener.setSessionStateListener(sessionStateListener);
         this.messageReceiverListener = messageReceiverListener;
         this.pduSender = pduSender;
         this.pduReader = pduReader;
@@ -232,12 +232,12 @@ public class SMPPServerSession {
     }
     
     public SessionStateListener getSessionStateListener() {
-        return sessionStateListener;
+        return sessionStateListener.getSessionStateListener();
     }
     
     public void setSessionStateListener(
             SessionStateListener sessionStateListener) {
-        this.sessionStateListener = sessionStateListener;
+        this.sessionStateListener.setSessionStateListener(sessionStateListener);
     }
     
     /**
@@ -520,6 +520,9 @@ public class SMPPServerSession {
     
     private class SessionStateListenerDecorator implements SessionStateListener {
         private SessionStateListener sessionStateListener;
+        
+        public SessionStateListenerDecorator() {
+        }
         
         public void onStateChange(SessionState newState, SessionState oldState,
                 Object source) {

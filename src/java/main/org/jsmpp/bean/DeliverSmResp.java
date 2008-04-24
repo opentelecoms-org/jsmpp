@@ -7,31 +7,11 @@ package org.jsmpp.bean;
  * @version 1.0
  * 
  */
-public class DeliverSmResp extends Command {
-    private String messageId;
-
+public class DeliverSmResp extends AbstractSmRespCommand {
     /**
      * Default constructor.
      */
     public DeliverSmResp() {
         super();
-    }
-
-    /**
-     * It should be always set to null.
-     * 
-     * @param messageId is the message_id (it should be always set to null).
-     */
-    public void setMessageId(String messageId) {
-        this.messageId = messageId;
-    }
-
-    /**
-     * Get the message_id (It should be always null).
-     * 
-     * @return the message_id (it should be always set to null).
-     */
-    public String getMessageId() {
-        return messageId;
     }
 }

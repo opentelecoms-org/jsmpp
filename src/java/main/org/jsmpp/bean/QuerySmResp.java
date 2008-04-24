@@ -5,11 +5,10 @@ package org.jsmpp.bean;
  * 
  */
 public class QuerySmResp extends Command {
-    private String _messageId;
-    // TODO uud: change using Date instead of String.
-    private String _finalDate;
-    private MessageState _messageState;
-    private byte _errorCode;
+    private String messageId;
+    private String finalDate;
+    private MessageState messageState;
+    private byte errorCode;
 
     public QuerySmResp() {
         super();
@@ -19,55 +18,55 @@ public class QuerySmResp extends Command {
      * @return the errorCode
      */
     public byte getErrorCode() {
-        return _errorCode;
+        return errorCode;
     }
 
     /**
      * @param errorCode the errorCode to set
      */
     public void setErrorCode(byte errorCode) {
-        _errorCode = errorCode;
+        this.errorCode = errorCode;
     }
 
     /**
      * @return the finalDate
      */
     public String getFinalDate() {
-        return _finalDate;
+        return finalDate;
     }
 
     /**
      * @param finalDate the finalDate to set
      */
     public void setFinalDate(String finalDate) {
-        _finalDate = finalDate;
+        this.finalDate = finalDate;
     }
 
     /**
      * @return the messageId
      */
     public String getMessageId() {
-        return _messageId;
+        return messageId;
     }
 
     /**
      * @param messageId the messageId to set
      */
     public void setMessageId(String messageId) {
-        _messageId = messageId;
+        this.messageId = messageId;
     }
 
     /**
      * @return the messageState
      */
     public MessageState getMessageState() {
-        return _messageState;
+        return messageState;
     }
 
     /**
      * @param messageState the messageState to set
      */
     public void setMessageState(MessageState messageState) {
-        _messageState = messageState;
+        this.messageState = messageState;
     }
 }

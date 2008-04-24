@@ -26,9 +26,11 @@ import org.jsmpp.TypeOfNumber;
 import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataCoding;
+import org.jsmpp.bean.DataSmResp;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.EnquireLinkResp;
+import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.QuerySmResp;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.SubmitSmResp;
@@ -76,7 +78,7 @@ public class SMPPSession {
     private SessionStateListenerDecorator sessionStateListener = new SessionStateListenerDecorator();
     private SMPPSessionContext sessionContext = new SMPPSessionContext(this, sessionStateListener);
 	private EnquireLinkSender enquireLinkSender;
-	private String sessionId = generateSessionId();
+	private String sessionId = newSessionId();
 	private int pduDispatcherThreadCount = 3;
 	
 	public SMPPSession() {
@@ -265,7 +267,8 @@ public class SMPPSession {
 		
 		return pendingResp.getResponse().getSystemId();
 	}
-
+	
+	
 	/**
 	 * Submit short message with specified parameter.
 	 * 
@@ -277,7 +280,7 @@ public class SMPPSession {
      * @param destAddrNpi is the dest_addr_npi parameter.
      * @param destinationAddr is the destination_addr parameter.
      * @param esmClass is the esm_class parameter.
-     * @param protocoId is the protocol_id parameter.
+     * @param protocolId is the protocol_id parameter.
      * @param priorityFlag is the priority_flag parameter.
      * @param scheduleDeliveryTime is the schedule_delivery_time parameter. (It is time in string format).
      * @param validityPeriod is the validity_period parameter (It is time in string format).
@@ -286,6 +289,7 @@ public class SMPPSession {
      * @param dataCoding is the data_coding parameter.
      * @param smDefaultMsgId is the sm_default_message_id parameter.
      * @param shortMessage is the short message.
+     * @param optionalParameters is the optional parameters.
      * @return the message id from SMSC.
      * @throws PDUStringException if we enter invalid bind parameter(s).
      * @throws ResponseTimeoutException if there is no valid response after defined millisecond.
@@ -294,83 +298,95 @@ public class SMPPSession {
      * @throws IOException if there is an IO error found.
      */
     public String submitShortMessage(String serviceType,
-    		TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
-    		String sourceAddr, TypeOfNumber destAddrTon,
-    		NumberingPlanIndicator destAddrNpi, String destinationAddr,
-    		ESMClass esmClass, byte protocoId, byte priorityFlag,
-    		String scheduleDeliveryTime, String validityPeriod,
-    		RegisteredDelivery registeredDelivery, byte replaceIfPresentFlag,
-    		DataCoding dataCoding, byte smDefaultMsgId, byte[] shortMessage)
-    		throws PDUStringException, ResponseTimeoutException,
-    		InvalidResponseException, NegativeResponseException, IOException {
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
+            String sourceAddr, TypeOfNumber destAddrTon,
+            NumberingPlanIndicator destAddrNpi, String destinationAddr,
+            ESMClass esmClass, byte protocolId, byte priorityFlag,
+            String scheduleDeliveryTime, String validityPeriod,
+            RegisteredDelivery registeredDelivery, byte replaceIfPresentFlag,
+            DataCoding dataCoding, byte smDefaultMsgId, byte[] shortMessage,
+            OptionalParameter... optionalParameters) throws PDUStringException,
+            ResponseTimeoutException, InvalidResponseException,
+            NegativeResponseException, IOException {
     	
-    	int seqNum = sequence.nextValue();
-    	PendingResponse<SubmitSmResp> pendingResp = new PendingResponse<SubmitSmResp>(transactionTimer);
-    	pendingResponse.put(seqNum, pendingResp);
-    	try {
-    		pduSender.sendSubmitSm(out, seqNum, serviceType, sourceAddrTon,
-    				sourceAddrNpi, sourceAddr, destAddrTon, destAddrNpi,
-    				destinationAddr, esmClass, protocoId, priorityFlag,
-    				scheduleDeliveryTime, validityPeriod, registeredDelivery,
-    				replaceIfPresentFlag, dataCoding, smDefaultMsgId, shortMessage);
-    		
-    	} catch (IOException e) {
-    		logger.error("Failed submit short message", e);
-    		pendingResponse.remove(seqNum);
-    		close();
-    		throw e;
-    	}
+        SendSubmitSmCommandTask submitSmTask = new SendSubmitSmCommandTask(out,
+                pduSender, serviceType, sourceAddrTon, sourceAddrNpi,
+                sourceAddr, destAddrTon, destAddrNpi, destinationAddr,
+                esmClass, protocolId, priorityFlag, scheduleDeliveryTime,
+                validityPeriod, registeredDelivery, replaceIfPresentFlag,
+                dataCoding, smDefaultMsgId, shortMessage, optionalParameters);
     	
-    	try {
-    		pendingResp.waitDone();
-    		logger.debug("Submit sm response received");
-    	} catch (ResponseTimeoutException e) {
-    		pendingResponse.remove(seqNum);
-    		logger.debug("Response timeout for submit_sm with sessionIdSequence number " + seqNum);
-    		throw e;
-    	} catch (InvalidResponseException e) {
-    		pendingResponse.remove(seqNum);
-    		throw e;
-    	}
+        SubmitSmResp resp = (SubmitSmResp)sendSmCommand(submitSmTask);
+    	validateResponse(resp);
     	
-    	if (pendingResp.getResponse().getCommandStatus() != SMPPConstant.STAT_ESME_ROK)
-    		throw new NegativeResponseException(pendingResp.getResponse().getCommandStatus());
-    	
-    	return pendingResp.getResponse().getMessageId();
+    	return resp.getMessageId();
     }
-
+    
+    /**
+     * Send the data_sm command.
+     * 
+     * @param serviceType is the service_type parameter.
+     * @param sourceAddrTon is the source_addr_ton parameter.
+     * @param sourceAddrNpi is the source_addr_npi parameter.
+     * @param sourceAddr is the source_addr parameter.
+     * @param destAddrTon is the dest_addr_ton parameter.
+     * @param destAddrNpi is the dest_addr_npi parameter.
+     * @param destinationAddr is the destination_addr parameter.
+     * @param esmClass is the esm_class parameter.
+     * @param registeredDelivery is the registered_delivery parameter.
+     * @param dataCoding is the data_coding parameter.
+     * @param optionalParameters is the optional parameters.
+     * @return the result of data_sm (data_sm_resp).
+     * @throws PDUStringException if there is an invalid PDU String found.
+     * @throws ResponseTimeoutException if the response take time too long.
+     * @throws InvalidResponseException if the response is invalid.
+     * @throws NegativeResponseException if the response return non-ok command_status.
+     * @throws IOException if there is an IO error found.
+     */
+    public DataSmResult dataShortMessage(String serviceType,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
+            String sourceAddr, TypeOfNumber destAddrTon,
+            NumberingPlanIndicator destAddrNpi, String destinationAddr,
+            ESMClass esmClass, RegisteredDelivery registeredDelivery,
+            DataCoding dataCoding, OptionalParameter... optionalParameters)
+            throws PDUStringException, ResponseTimeoutException,
+            InvalidResponseException, NegativeResponseException, IOException {
+        
+        
+        SendDataSmCommandTask task = new SendDataSmCommandTask(out, pduSender, 
+                serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr, destAddrTon, 
+                destAddrNpi, destinationAddr, esmClass, registeredDelivery, 
+                dataCoding, optionalParameters);
+        
+        DataSmResp resp = (DataSmResp)sendSmCommand(task);
+        
+        return new DataSmResult(resp.getMessageId(), resp.getOptionalParameters());
+    }
+    
+    /**
+     * Query short message.
+     * 
+     * @param messageId is the message_id parameter.
+     * @param sourceAddrTon is the source_addr_ton parameter.
+     * @param sourceAddrNpi is the source_addr_npi parameter.
+     * @param sourceAddr is the source_addr parameter.
+     * @return the query_sm response (query_sm_resp).
+     * @throws PDUStringException if there is an invalid PDU String found.
+     * @throws ResponseTimeoutException if the response take time too long.
+     * @throws InvalidResponseException if the response is invalid.
+     * @throws NegativeResponseException if the response contains non-ok command_status.
+     * @throws IOException if there is an IO error found.
+     */
     public QuerySmResult queryShortMessage(String messageId, TypeOfNumber sourceAddrTon,
     		NumberingPlanIndicator sourceAddrNpi, String sourceAddr)
     		throws PDUStringException, ResponseTimeoutException,
     		InvalidResponseException, NegativeResponseException, IOException {
     	
-    	int seqNum = sequence.nextValue();
-    	PendingResponse<QuerySmResp> pendingResp = new PendingResponse<QuerySmResp>(transactionTimer);
-    	pendingResponse.put(seqNum, pendingResp);
-    	try {
-    		pduSender.sendQuerySm(out, seqNum, messageId, sourceAddrTon, sourceAddrNpi, sourceAddr);
-    		
-    	} catch (IOException e) {
-    		logger.error("Failed submit short message", e);
-    		pendingResponse.remove(seqNum);
-    		close();
-    		throw e;
-    	}
-    	
-    	try {
-    		pendingResp.waitDone();
-    		logger.info("Query sm response received");
-    	} catch (ResponseTimeoutException e) {
-    		pendingResponse.remove(seqNum);
-    		throw e;
-    	} catch (InvalidResponseException e) {
-    		pendingResponse.remove(seqNum);
-    		throw e;
-    	}
-    	
-    	QuerySmResp resp = pendingResp.getResponse();
-    	if (resp.getCommandStatus() != SMPPConstant.STAT_ESME_ROK)
-    		throw new NegativeResponseException(resp.getCommandStatus());
+        QuerySmCommandTask task = new QuerySmCommandTask(out, pduSender, messageId, 
+                sourceAddrTon, sourceAddrNpi, sourceAddr);
+        
+        
+    	QuerySmResp resp = (QuerySmResp)sendSmCommand(task);
     	
     	if (resp.getMessageId().equals(messageId)) {
     		return new QuerySmResult(resp.getFinalDate(), resp.getMessageState(), resp.getErrorCode());
@@ -379,7 +395,70 @@ public class SMPPSession {
     		throw new InvalidResponseException("Requested message_id doesn't match with the result");
     	}
     }
+    
+    /**
+     * Send common short message command task.
+     * 
+     * @param task is the task.
+     * @return the command response.
+     * @throws PDUStringException if there is invalid PDU String found.
+     * @throws ResponseTimeoutException if the response has reach it timeout.
+     * @throws InvalidResponseException if invalid response found.
+     * @throws NegativeResponseException if the negative response found.
+     * @throws IOException if there is an IO error found.
+     */
+    public Command sendSmCommand(SendSmCommandTask task)
+            throws PDUStringException, ResponseTimeoutException,
+            InvalidResponseException, NegativeResponseException, IOException {
+        
+        int seqNum = sequence.nextValue();
+        PendingResponse<Command> pendingResp = new PendingResponse<Command>(transactionTimer);
+        pendingResponse.put(seqNum, pendingResp);
+        try {
+            task.executeTask(out, seqNum);
+        } catch (IOException e) {
+            logger.error("Failed sending " + task.getSmName() + " command", e);
+            pendingResponse.remove(seqNum);
+            close();
+            throw e;
+        }
+        
+        try {
+            pendingResp.waitDone();
+            logger.debug(task.getSmName() + " response received");
+        } catch (ResponseTimeoutException e) {
+            pendingResponse.remove(seqNum);
+            logger.debug("Response timeout for " + task.getSmName() + " with sessionIdSequence number " + seqNum);
+            throw e;
+        } catch (InvalidResponseException e) {
+            pendingResponse.remove(seqNum);
+            throw e;
+        }
+        
+        Command resp = pendingResp.getResponse();
+        validateResponse(resp);
+        return resp;
+        
+    }
+    
+    /**
+     * Validate the response, the command_status should be 0 otherwise will
+     * throw {@link NegativeResponseException}.
+     * 
+     * @param response is the response.
+     * @throws NegativeResponseException if the command_status value is not zero.
+     */
+    private static void validateResponse(Command response) throws NegativeResponseException {
+        if (response.getCommandStatus() != SMPPConstant.STAT_ESME_ROK) {
+            throw new NegativeResponseException(response.getCommandStatus());
+        }
+    }
 
+    /**
+     * Get the session id of session.
+     * 
+     * @return the session id.
+     */
     public String getSessionId() {
     	return sessionId;
     }
@@ -517,7 +596,7 @@ public class SMPPSession {
         }
 	}
 	
-    private synchronized static final String generateSessionId() {
+    private synchronized static final String newSessionId() {
         return IntUtil.toHexString(random.nextInt());
     }
     

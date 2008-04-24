@@ -3,6 +3,7 @@ package org.jsmpp.util;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.OptionalParameter.Tag;
 
 /**
  * Default implementation of {@link PDUComposer}.
@@ -72,11 +73,8 @@ public class DefaultComposer implements PDUComposer {
         PDUByteBuffer buf = new PDUByteBuffer(commandId, 0, sequenceNumber);
         buf.append(systemId);
 
-        // optional parameters
-        // TODO uudashr: use optional parameter from mikko.koponen
-        buf.append(SMPPConstant.TAG_SC_INTERFACE_VERSION);
-        buf.append(0x0001);
-        buf.append(scInterfaceVersion);
+        OptionalParameter optParam = new OptionalParameter.Byte(Tag.SC_INTERFACE_VERSION, scInterfaceVersion);
+        buf.append(optParam.serialize());
         return buf.getBytes();
     }
 
@@ -148,7 +146,7 @@ public class DefaultComposer implements PDUComposer {
     public byte[] submitSm(int sequenceNumber, String serviceType,
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
             byte destAddrTon, byte destAddrNpi, String destinationAddr,
-            byte esmClass, byte protocoId, byte priorityFlag,
+            byte esmClass, byte protocolId, byte priorityFlag,
             String scheduleDeliveryTime, String validityPeriod,
             byte registeredDelivery, byte replaceIfPresent, byte dataCoding,
             byte smDefaultMsgId, byte[] shortMessage,
@@ -176,7 +174,7 @@ public class DefaultComposer implements PDUComposer {
         buf.append(destAddrNpi);
         buf.append(destinationAddr);
         buf.append(esmClass);
-        buf.append(protocoId);
+        buf.append(protocolId);
         buf.append(priorityFlag);
         buf.append(scheduleDeliveryTime);
         buf.append(validityPeriod);
@@ -186,7 +184,7 @@ public class DefaultComposer implements PDUComposer {
         buf.append(smDefaultMsgId);
         buf.append((byte)shortMessage.length);
         buf.append(shortMessage);
-        appendOptional(buf, optionalParameters);
+        buf.appendAll(optionalParameters);
         return buf.getBytes();
     }
 
@@ -283,23 +281,8 @@ public class DefaultComposer implements PDUComposer {
         buf.append((byte)0); // sm default msg id
         buf.append((byte)shortMessage.length);
         buf.append(shortMessage);
-        appendOptional(buf, optionalParameters);
+        buf.appendAll(optionalParameters);;
         return buf.getBytes();
-    }
-    
-    /**
-     * Append any optional parameters (TLV's) to the end of the byte buffer
-     * 
-     * @param buf the byte buffer.s
-     * @param optionalParameters the optional parameters.
-     */
-    private static void appendOptional(PDUByteBuffer buf, OptionalParameter... optionalParameters) {
-        // TODO uudashr: optionalParameters  might never null
-        if (optionalParameters != null) {
-            for (OptionalParameter param : optionalParameters) {
-                buf.append(param);
-            }
-        }
     }
     
     /* (non-Javadoc)
@@ -311,5 +294,49 @@ public class DefaultComposer implements PDUComposer {
         buf.append((String)null);
         return buf.getBytes();
     }
+    
+    /* (non-Javadoc)
+     * @see org.jsmpp.util.PDUComposer#dataSm(int, java.lang.String, byte, byte, java.lang.String, byte, byte, java.lang.String, byte, byte, byte, org.jsmpp.bean.OptionalParameter[])
+     */
+    public byte[] dataSm(int sequenceNumber, String serviceType,
+            byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
+            byte destAddrTon, byte destAddrNpi, String destinationAddr,
+            byte esmClass, byte registeredDelivery, byte dataCoding,
+            OptionalParameter... optionalParameters) throws PDUStringException {
+        
+        StringValidator.validateString(serviceType,
+                StringParameter.SERVICE_TYPE);
+        StringValidator.validateString(sourceAddr, StringParameter.SOURCE_ADDR);
+        StringValidator.validateString(destinationAddr,
+                StringParameter.DESTINATION_ADDR);
 
+        PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_DATA_SM, 0,
+                sequenceNumber);
+        buf.append(serviceType);
+        buf.append(sourceAddrTon);
+        buf.append(sourceAddrNpi);
+        buf.append(sourceAddr);
+        buf.append(destAddrTon);
+        buf.append(destAddrNpi);
+        buf.append(destinationAddr);
+        buf.append(esmClass);
+        buf.append(registeredDelivery);
+        buf.append(dataCoding);
+        buf.appendAll(optionalParameters);
+        return buf.getBytes();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jsmpp.util.PDUComposer#dataSmResp(int, java.lang.String, org.jsmpp.bean.OptionalParameter[])
+     */
+    public byte[] dataSmResp(int sequenceNumber, String messageId, OptionalParameter... optionalParameters)
+            throws PDUStringException {
+        StringValidator.validateString(messageId, StringParameter.MESSAGE_ID);
+
+        PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_DATA_SM_RESP,
+                0, sequenceNumber);
+        buf.append(messageId);
+        
+        return buf.getBytes();
+    }
 }

@@ -127,7 +127,7 @@ public class SynchronizedPDUSender implements PDUSender {
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
-            String destinationAddr, ESMClass esmClass, byte protocoId,
+            String destinationAddr, ESMClass esmClass, byte protocolId,
             byte priorityFlag, String scheduleDeliveryTime,
             String validityPeriod, RegisteredDelivery registeredDelivery,
             byte replaceIfPresent, DataCoding dataCoding, byte smDefaultMsgId,
@@ -136,7 +136,7 @@ public class SynchronizedPDUSender implements PDUSender {
         synchronized (os) {
             return pduSender.sendSubmitSm(os, sequenceNumber, serviceType,
                     sourceAddrTon, sourceAddrNpi, sourceAddr, destAddrTon,
-                    destAddrNpi, destinationAddr, esmClass, protocoId,
+                    destAddrNpi, destinationAddr, esmClass, protocolId,
                     priorityFlag, scheduleDeliveryTime, validityPeriod,
                     registeredDelivery, replaceIfPresent, dataCoding,
                     smDefaultMsgId, shortMessage, optionalParameters);
@@ -203,6 +203,37 @@ public class SynchronizedPDUSender implements PDUSender {
             throws PDUStringException, IOException {
         synchronized (os) {
             return pduSender.sendDeliverSmResp(os, sequenceNumber);
+        }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jsmpp.PDUSender#sendDataSm(java.io.OutputStream, int, java.lang.String, org.jsmpp.TypeOfNumber, org.jsmpp.NumberingPlanIndicator, java.lang.String, org.jsmpp.TypeOfNumber, org.jsmpp.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.ESMClass, org.jsmpp.bean.RegisteredDelivery, org.jsmpp.bean.DataCoding, org.jsmpp.bean.OptionalParameter[])
+     */
+    public byte[] sendDataSm(OutputStream os, int sequenceNumber,
+            String serviceType, TypeOfNumber sourceAddrTon,
+            NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
+            String destinationAddr, ESMClass esmClass,
+            RegisteredDelivery registeredDelivery, DataCoding dataCoding,
+            OptionalParameter... optionalParameters) throws PDUStringException,
+            IOException {
+        synchronized (os) {
+            return pduSender.sendDataSm(os, sequenceNumber, serviceType,
+                    sourceAddrTon, sourceAddrNpi, sourceAddr, destAddrTon,
+                    destAddrNpi, destinationAddr, esmClass, registeredDelivery,
+                    dataCoding, optionalParameters);
+        }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jsmpp.PDUSender#sendDataSmResp(java.io.OutputStream, int, java.lang.String, org.jsmpp.bean.OptionalParameter[])
+     */
+    public byte[] sendDataSmResp(OutputStream os, int sequenceNumber,
+            String messageId, OptionalParameter... optionalParameters)
+            throws PDUStringException, IOException {
+        synchronized (os) {
+            return pduSender.sendDataSmResp(os, sequenceNumber, messageId,
+                    optionalParameters);
         }
     }
 }

@@ -70,7 +70,7 @@ public final class StringValidator {
      * @param maxLength
      * @return
      */
-    private static boolean isCOctetStringValid(String value, int maxLength) {
+    static boolean isCOctetStringValid(String value, int maxLength) {
         if (value == null)
             return true;
         if (value.length() >= maxLength)
@@ -79,7 +79,7 @@ public final class StringValidator {
 
     }
 
-    private static boolean isCOctetStringValid(byte[] value, int maxLength) {
+    static boolean isCOctetStringValid(byte[] value, int maxLength) {
         if (value == null)
             return true;
         if (value.length >= maxLength)
@@ -95,18 +95,23 @@ public final class StringValidator {
      * @param length
      * @return
      */
-    private static boolean isCOctetStringNullOrNValValid(String value,
+    static boolean isCOctetStringNullOrNValValid(String value,
             int length) {
-        if (value == null)
+        if (value == null) {
             return true;
-        if (value.length() == 0)
+        }
+        
+        if (value.length() == 0) {
             return true;
-        if (value.length() != length)
-            return false;
-        return true;
+        }
+        
+        if (value.length() == length - 1) {
+            return true;
+        }
+        return false;
     }
 
-    private static boolean isCOctetStringNullOrNValValid(byte[] value,
+    static boolean isCOctetStringNullOrNValValid(byte[] value,
             int length) {
         if (value == null)
             return true;
@@ -124,7 +129,7 @@ public final class StringValidator {
      * @param maxLength
      * @return
      */
-    private static boolean isOctetStringValid(String value, int maxLength) {
+    static boolean isOctetStringValid(String value, int maxLength) {
         if (value == null)
             return true;
         if (value.length() > maxLength)
@@ -132,7 +137,7 @@ public final class StringValidator {
         return true;
     }
 
-    private static boolean isOctetStringValid(byte[] value, int maxLength) {
+    static boolean isOctetStringValid(byte[] value, int maxLength) {
         if (value == null)
             return true;
         if (value.length > maxLength)
