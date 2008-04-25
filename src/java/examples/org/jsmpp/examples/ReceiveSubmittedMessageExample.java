@@ -6,10 +6,12 @@ import java.util.concurrent.TimeoutException;
 import org.apache.log4j.BasicConfigurator;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
+import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.session.BindRequest;
+import org.jsmpp.session.DataSmResult;
 import org.jsmpp.session.QuerySmResult;
 import org.jsmpp.session.SMPPServerSession;
 import org.jsmpp.session.SMPPServerSessionListener;
@@ -44,6 +46,12 @@ public class ReceiveSubmittedMessageExample {
                 
                 public QuerySmResult onAcceptQuerySm(QuerySm querySm,
                         SMPPServerSession source)
+                        throws ProcessRequestException {
+                    // TODO Auto-generated method stub
+                    return null;
+                }
+                
+                public DataSmResult onAcceptDataSm(DataSm dataSm)
                         throws ProcessRequestException {
                     // TODO Auto-generated method stub
                     return null;

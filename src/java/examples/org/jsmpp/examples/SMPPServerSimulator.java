@@ -12,6 +12,7 @@ import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.TypeOfNumber;
 import org.jsmpp.bean.DataCoding;
+import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliveryReceipt;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.GSMSpecificFeature;
@@ -23,6 +24,7 @@ import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.session.BindRequest;
+import org.jsmpp.session.DataSmResult;
 import org.jsmpp.session.QuerySmResult;
 import org.jsmpp.session.SMPPServerSession;
 import org.jsmpp.session.SMPPServerSessionListener;
@@ -80,6 +82,12 @@ public class SMPPServerSimulator implements Runnable, ServerMessageReceiverListe
             execServiceDelReciept.execute(new DeliveryReceiptTask(source, submitSm, messageId));
         }
         return messageId;
+    }
+    
+    public DataSmResult onAcceptDataSm(DataSm dataSm)
+            throws ProcessRequestException {
+        // TODO Auto-generated method stub
+        return null;
     }
     
     private class WaitBindTask implements Runnable {
