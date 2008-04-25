@@ -6,10 +6,12 @@ import java.io.OutputStream;
 import org.jsmpp.PDUStringException;
 
 /**
+ * Task for sending SMPP command.
+ * 
  * @author uudashr
  *
  */
-public interface SendSmCommandTask {
+public interface SendCommandTask {
     
     /**
      * Executing the task.
@@ -25,7 +27,7 @@ public interface SendSmCommandTask {
     /**
      * It should be like submit_sm, deliver_sm, query_sm, data_sm, etc.
      * 
-     * @return the sm name.
+     * @return the command name.
      */
-    String getSmName();
+    String getCommandName();
 }

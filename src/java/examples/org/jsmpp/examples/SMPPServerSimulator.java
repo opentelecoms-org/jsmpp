@@ -8,6 +8,8 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.log4j.BasicConfigurator;
 import org.jsmpp.NumberingPlanIndicator;
+import org.jsmpp.PDUStringException;
+import org.jsmpp.SMPPConstant;
 import org.jsmpp.TypeOfNumber;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.DeliveryReceipt;
@@ -93,13 +95,17 @@ public class SMPPServerSimulator implements Runnable, ServerMessageReceiverListe
                 logger.info("Accepting bind for session {}", serverSession.getSessionId());
                 try {
                     bindRequest.accept("sys");
-                } catch (IOException e) {
-                    logger.error("Failed accepting bind request for session {}", serverSession.getSessionId());
+                } catch (PDUStringException e) {
+                    logger.error("Invalid system id", e);
+                    bindRequest.reject(SMPPConstant.STAT_ESME_RSYSERR);
                 }
+            
             } catch (IllegalStateException e) {
                 logger.error("System error", e);
             } catch (TimeoutException e) {
                 logger.warn("Wait for bind has reach timeout", e);
+            } catch (IOException e) {
+                logger.error("Failed accepting bind request for session {}", serverSession.getSessionId());
             }
         }
     }
@@ -125,7 +131,20 @@ public class SMPPServerSimulator implements Runnable, ServerMessageReceiverListe
             try {
                 
                 DeliveryReceipt delRec = new DeliveryReceipt(stringValue, 1, 1, new Date(), new Date(), DeliveryReceiptState.DELIVRD,  null, new String(submitSm.getShortMessage()));
-                session.deliverShortMessage("mc", TypeOfNumber.valueOf(submitSm.getDestAddrTon()), NumberingPlanIndicator.valueOf(submitSm.getDestAddrNpi()), submitSm.getDestAddress(), TypeOfNumber.valueOf(submitSm.getSourceAddrTon()), NumberingPlanIndicator.valueOf(submitSm.getSourceAddrNpi()), submitSm.getSourceAddr(), new ESMClass(MessageMode.DEFAULT, MessageType.SMSC_DEL_RECEIPT, GSMSpecificFeature.DEFAULT), (byte)0, (byte)0, null, null, new RegisteredDelivery(0), (byte)0, DataCoding.newInstance(0), (byte)0, delRec.toString().getBytes());
+                session.deliverShortMessage(
+                        "mc", 
+                        TypeOfNumber.valueOf(submitSm.getDestAddrTon()), 
+                        NumberingPlanIndicator.valueOf(submitSm.getDestAddrNpi()), 
+                        submitSm.getDestAddress(), 
+                        TypeOfNumber.valueOf(submitSm.getSourceAddrTon()), 
+                        NumberingPlanIndicator.valueOf(submitSm.getSourceAddrNpi()), 
+                        submitSm.getSourceAddr(), 
+                        new ESMClass(MessageMode.DEFAULT, MessageType.SMSC_DEL_RECEIPT, GSMSpecificFeature.DEFAULT), 
+                        (byte)0, 
+                        (byte)0, 
+                        new RegisteredDelivery(0), 
+                        DataCoding.newInstance(0), 
+                        delRec.toString().getBytes());
                 logger.debug("Sending delivery reciept for message id " + messageId + ":" + stringValue);
             } catch (Exception e) {
                 logger.error("Failed sending delivery_receipt for message id " + messageId + ":" + stringValue, e);

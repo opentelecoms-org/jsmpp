@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.jsmpp.bean.Command;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BaseResponseHandler;
+import org.jsmpp.session.ResponseHandler;
 
 /**
  * @author uudashr
@@ -83,5 +84,27 @@ interface GenericSMPPSessionState {
      * @throws IOException throw if there is an IO error occur.
      */
     void processUnknownCid(Command pduHeader, byte[] pdu,
+            BaseResponseHandler responseHandler) throws IOException;
+    
+    /**
+     * Process the data short message request command.
+     * 
+     * @param pduHeader is the PDU header.
+     * @param pdu is the complete PDU.
+     * @param responseHandler is the session handler.
+     * @throws IOException throw if there is an IO error occur.
+     */
+    void processDataSm(Command pduHeader, byte[] pdu,
+            BaseResponseHandler responseHandler) throws IOException;
+    
+    /**
+     * Process the data short message response command.
+     * 
+     * @param pduHeader is the PDU header.
+     * @param pdu is the complete PDU.
+     * @param responseHandler is the session handler.
+     * @throws IOException throw if there is an IO error occur.
+     */
+    void processDataSmResp(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException;
 }

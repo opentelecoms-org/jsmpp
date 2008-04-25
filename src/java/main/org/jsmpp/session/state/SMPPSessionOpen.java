@@ -155,4 +155,24 @@ class SMPPSessionOpen implements SMPPSessionState {
                     "Receive unexpected query_sm"));
         }
     }
+    
+    public void processDataSm(Command pduHeader, byte[] pdu,
+            BaseResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
+                .removeSentItem(1);
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                    "Receive unexpected data_sm"));
+        }
+    }
+    
+    public void processDataSmResp(Command pduHeader, byte[] pdu,
+            BaseResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
+                .removeSentItem(1);
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                    "Receive unexpected data_sm_resp"));
+        }
+    }
 }

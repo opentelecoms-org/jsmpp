@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.log4j.BasicConfigurator;
+import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.session.BindRequest;
 import org.jsmpp.session.SMPPServerSession;
@@ -53,7 +54,8 @@ public class AcceptingConnectionAndBindExample {
             }
             System.out.println("Closing session listener");
             sessionListener.close();
-            
+        } catch (PDUStringException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

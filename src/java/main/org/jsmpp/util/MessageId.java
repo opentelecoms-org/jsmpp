@@ -34,7 +34,7 @@ public class MessageId {
     
     @Override
     public String toString() {
-        return "MessageId(" + value + ")";
+        return value;
     }
 
     @Override

@@ -9,7 +9,7 @@ import org.jsmpp.util.MessageId;
  * @author uudashr
  *
  */
-public interface ServerMessageReceiverListener {
+public interface ServerMessageReceiverListener extends GenericMessageReceiverListener {
     MessageId onAcceptSubmitSm(SubmitSm submitSm, SMPPServerSession source) throws ProcessRequestException;
     
     QuerySmResult onAcceptQuerySm(QuerySm querySm, SMPPServerSession source) throws ProcessRequestException;

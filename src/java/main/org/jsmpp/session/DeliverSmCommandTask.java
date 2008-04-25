@@ -16,26 +16,31 @@ import org.jsmpp.bean.RegisteredDelivery;
  * @author uudashr
  *
  */
-public class SendDataSmCommandTask extends AbstractSendCommandTask {
-    private final String serviceType; 
+public class DeliverSmCommandTask extends AbstractSendCommandTask {
+    private final String serviceType;
     private final TypeOfNumber sourceAddrTon;
-    private final NumberingPlanIndicator sourceAddrNpi; 
+    private final NumberingPlanIndicator sourceAddrNpi;
     private final String sourceAddr;
-    private final TypeOfNumber destAddrTon; 
+    private final TypeOfNumber destAddrTon;
     private final NumberingPlanIndicator destAddrNpi;
-    private final String destinationAddr; 
+    private final String destinationAddr;
     private final ESMClass esmClass;
-    private final RegisteredDelivery registeredDelivery; 
+    private final byte protocoId;
+    private final byte priorityFlag;
+    private final RegisteredDelivery registeredDelivery;
     private final DataCoding dataCoding;
+    private final byte[] shortMessage;
     private final OptionalParameter[] optionalParameters;
     
-    public SendDataSmCommandTask(OutputStream out, PDUSender pduSender,
+    public DeliverSmCommandTask(OutputStream out, PDUSender pduSender,
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
-            String destinationAddr, ESMClass esmClass,
-            RegisteredDelivery registeredDelivery, DataCoding dataCoding,
+            String destinationAddr, ESMClass esmClass, byte protocoId,
+            byte priorityFlag, RegisteredDelivery registeredDelivery,
+            DataCoding dataCoding, byte[] shortMessage,
             OptionalParameter[] optionalParameters) {
+        
         super(out, pduSender);
         this.serviceType = serviceType;
         this.sourceAddrTon = sourceAddrTon;
@@ -45,20 +50,25 @@ public class SendDataSmCommandTask extends AbstractSendCommandTask {
         this.destAddrNpi = destAddrNpi;
         this.destinationAddr = destinationAddr;
         this.esmClass = esmClass;
+        this.protocoId = protocoId;
+        this.priorityFlag = priorityFlag;
         this.registeredDelivery = registeredDelivery;
         this.dataCoding = dataCoding;
+        this.shortMessage = shortMessage;
         this.optionalParameters = optionalParameters;
     }
     
     public void executeTask(OutputStream out, int sequenceNumber)
             throws PDUStringException, IOException {
-        pduSender.sendDataSm(out, sequenceNumber, serviceType, sourceAddrTon,
-                sourceAddrNpi, sourceAddr, destAddrTon, destAddrNpi,
-                destinationAddr, esmClass, registeredDelivery, dataCoding,
+        
+        pduSender.sendDeliverSm(out, sequenceNumber, serviceType,
+                sourceAddrTon, sourceAddrNpi, sourceAddr, destAddrTon,
+                destAddrNpi, destinationAddr, esmClass, protocoId,
+                priorityFlag, registeredDelivery, dataCoding, shortMessage,
                 optionalParameters);
     }
     
     public String getCommandName() {
-        return "data_sm";
+        return "deliver_sm";
     }
 }

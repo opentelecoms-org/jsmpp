@@ -12,7 +12,7 @@ import org.jsmpp.TypeOfNumber;
  * @author uudashr
  *
  */
-public class QuerySmCommandTask extends AbstractSendSmCommandTask {
+public class QuerySmCommandTask extends AbstractSendCommandTask {
     private final String messageId;
     private final TypeOfNumber sourceAddrTon;
     private final NumberingPlanIndicator sourceAddrNpi;
@@ -34,7 +34,7 @@ public class QuerySmCommandTask extends AbstractSendSmCommandTask {
                 sourceAddrNpi, sourceAddr);
     }
     
-    public String getSmName() {
+    public String getCommandName() {
         return "query_sm";
     }
 }

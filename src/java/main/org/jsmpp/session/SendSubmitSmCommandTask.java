@@ -16,7 +16,7 @@ import org.jsmpp.bean.RegisteredDelivery;
  * @author uudashr
  *
  */
-public class SendSubmitSmCommandTask extends AbstractSendSmCommandTask {
+public class SendSubmitSmCommandTask extends AbstractSendCommandTask {
     private final String serviceType;
     private final TypeOfNumber sourceAddrTon;
     private final NumberingPlanIndicator sourceAddrNpi;
@@ -78,7 +78,7 @@ public class SendSubmitSmCommandTask extends AbstractSendSmCommandTask {
                 optionalParameters);
     }
     
-    public String getSmName() {
+    public String getCommandName() {
         return "submit_sm";
     }
 }

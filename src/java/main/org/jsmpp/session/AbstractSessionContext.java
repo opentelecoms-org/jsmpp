@@ -1,5 +1,8 @@
 package org.jsmpp.session;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jsmpp.BindType;
 import org.jsmpp.extra.SessionState;
 import org.slf4j.Logger;
@@ -12,13 +15,13 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractSessionContext implements SessionContext {
     private static final Logger logger = LoggerFactory.getLogger(AbstractSessionContext.class);
     private long lastActivityTimestamp;
-    private SessionStateListener sessionStateListener;
+    private List<SessionStateListener> sessionStateListeners = new ArrayList<SessionStateListener>();
     
     public AbstractSessionContext() {
     }
     
     public AbstractSessionContext(SessionStateListener sessionStateListener) {
-        this.sessionStateListener = sessionStateListener;
+        sessionStateListeners.add(sessionStateListener);
     }
     
     public synchronized void open() {
@@ -45,20 +48,19 @@ public abstract class AbstractSessionContext implements SessionContext {
         changeState(SessionState.CLOSED);
     }
     
-    public void setSessionStateListener(
-            SessionStateListener sessionStateListener) {
-        this.sessionStateListener = sessionStateListener;
+    public void addSessionStateListener(
+            SessionStateListener l) {
+        sessionStateListeners.add(l);
     }
     
-    public SessionStateListener getSessionStateListener() {
-        return sessionStateListener;
+    public void removeSessionStateListener(SessionStateListener l) {
+        sessionStateListeners.remove(l);
     }
     
-    protected void fireStateChanged(SessionState newState, SessionState oldState, Object source) {
-        if (sessionStateListener != null) {
-            sessionStateListener.onStateChange(newState, oldState, source);
-        } else {
-            logger.warn("SessionStateListener is never been set");
+    protected void fireStateChanged(SessionState newState,
+            SessionState oldState, Object source) {
+        for (SessionStateListener l : sessionStateListeners) {
+            l.onStateChange(newState, oldState, source);
         }
     }
     

@@ -3,7 +3,9 @@ package org.jsmpp.session;
 import java.io.IOException;
 
 import org.jsmpp.bean.Command;
+import org.jsmpp.bean.DataSm;
 import org.jsmpp.extra.PendingResponse;
+import org.jsmpp.extra.ProcessRequestException;
 
 /**
  * @author uudashr
@@ -20,7 +22,7 @@ public interface BaseResponseHandler {
      *         sequenceNumber. Return <tt>null</tt> if the the mapped
      *         sequenceNumber not found
      */
-    public PendingResponse<Command> removeSentItem(int sequenceNumber);
+    PendingResponse<Command> removeSentItem(int sequenceNumber);
     
     /**
      * Response by sending <b>GENERICK_NACK</b>.
@@ -29,7 +31,7 @@ public interface BaseResponseHandler {
      * @param sequenceNumber is the sequence number original PDU if can be decoded.
      * @throws IOException if an IO error occur.
      */
-    public void sendGenerickNack(int commandStatus, int sequenceNumber)
+    void sendGenerickNack(int commandStatus, int sequenceNumber)
             throws IOException;
     /**
      * Response by sending negative response.
@@ -39,7 +41,7 @@ public interface BaseResponseHandler {
      * @param sequenceNumber is the sequence number of original PDU request.
      * @throws IOException if an IO error occur.
      */
-    public void sendNegativeResponse(int originalCommandId, int commandStatus,
+    void sendNegativeResponse(int originalCommandId, int commandStatus,
             int sequenceNumber) throws IOException;
     
     /**
@@ -49,7 +51,7 @@ public interface BaseResponseHandler {
      *          request.
      * @throws IOException if an IO error occur.
      */
-    public void sendEnquireLinkResp(int sequenceNumber) throws IOException;
+    void sendEnquireLinkResp(int sequenceNumber) throws IOException;
     
     /**
      * Response by send <b>UNBIND_RESP</b>.
@@ -57,11 +59,31 @@ public interface BaseResponseHandler {
      * @param sequenceNumber is the sequence number of original <b>UNBIND</b> request.
      * @throws IOException if an IO error occur.
      */
-    public void sendUnbindResp(int sequenceNumber) throws IOException;
+    void sendUnbindResp(int sequenceNumber) throws IOException;
+    
+    /**
+     * Process the data short message.
+     * 
+     * @param dataSm is the data short message.
+     * @return the result for response.
+     * @throws ProcessRequestException if there is a failure when processing
+     *         data_sm.
+     */
+    DataSmResult processDataSm(DataSm dataSm) throws ProcessRequestException;
+    
+    /**
+     * Response by sending <b>DATA_SM_RESP</b> to SMSC.
+     * 
+     * @param dataSmResult is the result of data_sm.
+     * @param sequenceNumber is the sequence number of original <b>DATA_SM</b>
+     *        request.
+     * @throws IOException if an IO error occur.
+     */
+    public void sendDataSmResp(DataSmResult dataSmResult, int sequenceNumber) throws IOException;
     
     /**
      * Notify for unbind.
      */
-    public void notifyUnbonded();
+    void notifyUnbonded();
 
 }

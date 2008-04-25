@@ -11,9 +11,7 @@ public class SMPPServerSessionContext extends AbstractSessionContext {
     private SMPPServerSessionState stateProcessor = SMPPServerSessionState.CLOSED;
     private final SMPPServerSession smppServerSession;
     
-    public SMPPServerSessionContext(SMPPServerSession smppServerSession, 
-            SessionStateListener sessionStateListener) {
-        super(sessionStateListener);
+    public SMPPServerSessionContext(SMPPServerSession smppServerSession) {
         this.smppServerSession = smppServerSession;
     }
     

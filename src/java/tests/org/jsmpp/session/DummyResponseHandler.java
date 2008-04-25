@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.jsmpp.BindType;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.Command;
+import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.extra.PendingResponse;
@@ -79,6 +80,18 @@ class DummyResponseHandler implements ServerResponseHandler {
             throws IOException {
         // TODO Auto-generated method stub
 
+    }
+    
+    public DataSmResult processDataSm(DataSm dataSm)
+            throws ProcessRequestException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    public void sendDataSmResp(DataSmResult dataSmResult, int sequenceNumber)
+            throws IOException {
+        // TODO Auto-generated method stub
+        
     }
     
     public void closeConnection() {

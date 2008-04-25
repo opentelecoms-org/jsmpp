@@ -1,10 +1,11 @@
 package org.jsmpp.session;
 
+import static org.testng.Assert.fail;
+
 import java.io.IOException;
 
 import org.jsmpp.BindType;
-import static org.testng.Assert.*;
-
+import org.jsmpp.PDUStringException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -27,6 +28,8 @@ public class BindRequestTest {
     public void testSucceedAccept() {
         try {
             bindRequest.accept("sys");
+        } catch (PDUStringException e) {
+            fail("Should succes accepting bind request");
         } catch (IllegalStateException e1) {
             fail("Should succes accepting bind request");
         } catch (IOException e1) {
@@ -39,6 +42,8 @@ public class BindRequestTest {
         responseHandler.closeConnection();
         try {
             bindRequest.accept("sys");
+            fail("Should throw IOException");
+        } catch (PDUStringException e) {
             fail("Should throw IOException");
         } catch (IllegalStateException e) {
             fail("Should throw IOException");
@@ -73,6 +78,8 @@ public class BindRequestTest {
     public void testNonSingleAccept() {
         try {
             bindRequest.accept("sys");
+        } catch (PDUStringException e) {
+            fail("Should success accepting bind request");
         } catch (IllegalStateException e1) {
             fail("Should success accepting bind request");
         } catch (IOException e1) {
@@ -81,6 +88,8 @@ public class BindRequestTest {
         try {
             bindRequest.accept("sys");
             fail("Should fail on 2nd accept");
+        } catch (PDUStringException e) {
+            fail("Should throw IllegalStateException");
         } catch (IllegalStateException e) {
         } catch (IOException e) {
             fail("Should throw IllegalStateException");

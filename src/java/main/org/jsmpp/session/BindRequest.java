@@ -7,9 +7,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.jsmpp.BindType;
 import org.jsmpp.NumberingPlanIndicator;
+import org.jsmpp.PDUStringException;
 import org.jsmpp.TypeOfNumber;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.extra.ProcessRequestException;
+import org.jsmpp.util.StringParameter;
+import org.jsmpp.util.StringValidator;
 
 /**
  * @author uudashr
@@ -48,11 +51,13 @@ public class BindRequest {
      * Accept the bind request.
      * 
      * @param systemId is the system identifier that will be send to ESME.
+     * @throws PDUStringException if the system id is not valid.
      * @throws IllegalStateException if the acceptance or rejection has been made.
      * @throws IOException is the connection already closed.
      * @see #reject(ProcessRequestException)
      */
-    public void accept(String systemId) throws IllegalStateException, IOException {
+    public void accept(String systemId) throws PDUStringException, IllegalStateException, IOException {
+        StringValidator.validateString(systemId, StringParameter.SYSTEM_ID);
         lock.lock();
         try {
             if (!done) {

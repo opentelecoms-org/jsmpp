@@ -3,17 +3,29 @@ package org.jsmpp.session.state;
 import java.io.IOException;
 
 import org.jsmpp.InvalidResponseException;
+import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
+import org.jsmpp.bean.DataSm;
+import org.jsmpp.bean.DataSmResp;
+import org.jsmpp.bean.DeliverSm;
+import org.jsmpp.bean.DeliverSmResp;
 import org.jsmpp.bean.EnquireLinkResp;
+import org.jsmpp.bean.SubmitSm;
+import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.bean.UnbindResp;
 import org.jsmpp.extra.PendingResponse;
+import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.session.BaseResponseHandler;
+import org.jsmpp.session.DataSmResult;
 import org.jsmpp.util.DefaultDecomposer;
 import org.jsmpp.util.IntUtil;
+import org.jsmpp.util.MessageId;
 import org.jsmpp.util.PDUDecomposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import sun.print.resources.serviceui;
 
 /**
  * @author uudashr
@@ -81,6 +93,40 @@ abstract class AbstractGenericSMPPSessionBound implements GenericSMPPSessionStat
                     + "command_status=" + pduHeader.getCommandStatusAsHex()
                     + ", sequence_number="
                     + IntUtil.toHexString(pduHeader.getSequenceNumber()));
+        }
+    }
+    
+    public void processDataSm(Command pduHeader, byte[] pdu,
+            BaseResponseHandler responseHandler) throws IOException {
+        try {
+            DataSm dataSm = pduDecomposer.dataSm(pdu);
+            DataSmResult dataSmResult = responseHandler.processDataSm(dataSm);
+            logger.debug("Sending response with message_id " + dataSmResult.getMessageId() + " for request with sequence_number " + pduHeader.getSequenceNumber());
+            responseHandler.sendDataSmResp(dataSmResult, pduHeader.getSequenceNumber());
+        } catch (PDUStringException e) {
+            responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
+        } catch (ProcessRequestException e) {
+            responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
+        }
+    }
+    
+    public void processDataSmResp(Command pduHeader, byte[] pdu,
+            BaseResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
+                .removeSentItem(pduHeader.getSequenceNumber());
+        
+        if (pendingResp != null) {
+            try {
+                DataSmResp resp = pduDecomposer.dataSmResp(pdu);
+                pendingResp.done(resp);
+            } catch (PDUStringException e) {
+                logger.error("Failed decomposing data_sm_resp", e);
+                responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
+                        .getSequenceNumber());
+            }
+        } else {
+            logger.warn("No request with sequence number "
+                    + pduHeader.getSequenceNumber() + " found");
         }
     }
 }
