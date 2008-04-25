@@ -3,6 +3,8 @@ package org.jsmpp.util;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.BindResp;
+import org.jsmpp.bean.CancelSm;
+import org.jsmpp.bean.CancelSmResp;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DataSmResp;
@@ -215,4 +217,22 @@ public interface PDUDecomposer {
      *         string parameter found.
      */
     DataSmResp dataSmResp(byte[] data) throws PDUStringException;
+    
+    /**
+     * Decompose the SMPP PDU cancel short message command.
+     * 
+     * @param data is the PDU.
+     * @return the cancel short message command object.
+     * @throws PDUStringException if there is an invalid constraint of string
+     *         parameter found.
+     */
+    CancelSm cancelSm(byte[] data) throws PDUStringException;
+    
+    /**
+     * Decompose the SMPP PDU cancel short message response command.
+     * 
+     * @param data is the PDU.
+     * @return the cancel short message command object.
+     */
+    CancelSmResp cancelSmResp(byte[] data);
 }

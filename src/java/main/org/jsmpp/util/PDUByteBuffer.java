@@ -95,7 +95,7 @@ class PDUByteBuffer {
      * @param stringValue
      * @param nullTerminated <tt>true<tt> means C-Octet String. 
      *      The default value is <tt>true</tt>.
-     * @return te latest length of the buffer.
+     * @return the latest length of the buffer.
      */
     public int append(String stringValue, boolean nullTerminated) {
         if (stringValue != null)

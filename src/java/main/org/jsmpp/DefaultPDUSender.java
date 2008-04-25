@@ -265,4 +265,27 @@ public class DefaultPDUSender implements PDUSender {
         os.flush();
         return b;
     }
+    
+    public byte[] sendCancelSm(OutputStream os, int sequenceNumber,
+            String serviceType, String messageId, TypeOfNumber sourceAddrTon,
+            NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
+            String destinationAddr) throws PDUStringException, IOException {
+
+        byte[] b = pduComposer.cancelSm(sequenceNumber, serviceType, messageId, 
+                sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr, 
+                destAddrTon.value(), destAddrNpi.value(), destinationAddr);
+        os.write(b);
+        os.flush();
+        return b;
+    }
+    
+    public byte[] sendCancelSmResp(OutputStream os, int sequenceNumber)
+            throws IOException {
+        
+        byte[] b = pduComposer.cancelSmResp(sequenceNumber);
+        os.write(b);
+        os.flush();
+        return b;
+    }
 }

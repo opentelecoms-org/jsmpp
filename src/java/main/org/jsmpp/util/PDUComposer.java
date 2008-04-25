@@ -11,35 +11,35 @@ import org.jsmpp.bean.OptionalParameter;
  */
 public interface PDUComposer {
 
-    public byte[] composeHeader(int commandId, int commandStatus,
+    byte[] composeHeader(int commandId, int commandStatus,
             int sequenceNumber);
 
     // GENERAL BIND OPERATION
-    public byte[] bind(int commandId, int sequenceNumber, String systemId,
+    byte[] bind(int commandId, int sequenceNumber, String systemId,
             String password, String systemType, byte interfaceVersion,
             byte addrTon, byte addrNpi, String addressRange)
             throws PDUStringException;
 
-    public byte[] bindResp(int commandId, int sequenceNumber, String systemId)
+    byte[] bindResp(int commandId, int sequenceNumber, String systemId)
             throws PDUStringException;
 
-    public byte[] bindResp(int commandId, int sequenceNumber, String systemId,
+    byte[] bindResp(int commandId, int sequenceNumber, String systemId,
             byte scInterfaceVersion) throws PDUStringException;
     
-    public byte[] unbind(int sequenceNumber);
+    byte[] unbind(int sequenceNumber);
 
-    public byte[] unbindResp(int commandStatus, int sequenceNumber);
+    byte[] unbindResp(int commandStatus, int sequenceNumber);
 
-    public byte[] outbind(int sequenceNumber, String systemId, String password)
+    byte[] outbind(int sequenceNumber, String systemId, String password)
             throws PDUStringException;
 
     // ENQUIRE_LINK OPERATION
-    public byte[] enquireLink(int sequenceNumber);
+    byte[] enquireLink(int sequenceNumber);
 
-    public byte[] enquireLinkResp(int sequenceNumber);
+    byte[] enquireLinkResp(int sequenceNumber);
 
     // GENEICK_NACK OPERATION
-    public byte[] genericNack(int commandStatus, int sequenceNumber);
+    byte[] genericNack(int commandStatus, int sequenceNumber);
 
     // SUBMIT_SM OPERATION
     /**
@@ -67,7 +67,7 @@ public interface PDUComposer {
      * @return the composed byte values.
      * @throws PDUStringException
      */
-    public byte[] submitSm(int sequenceNumber, String serviceType,
+    byte[] submitSm(int sequenceNumber, String serviceType,
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
             byte destAddrTon, byte destAddrNpi, String destinationAddr,
             byte esmClass, byte protocolId, byte priorityFlag,
@@ -84,27 +84,27 @@ public interface PDUComposer {
      * @return the composed byte values.
      * @throws PDUStringException
      */
-    public byte[] submitSmResp(int sequenceNumber, String messageId)
+    byte[] submitSmResp(int sequenceNumber, String messageId)
             throws PDUStringException;
 
     // QUERY_SM OPERATION
-    public byte[] querySm(int sequenceNumber, String messageId,
+    byte[] querySm(int sequenceNumber, String messageId,
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr)
             throws PDUStringException;
 
-    public byte[] querySmResp(int sequenceNumber, String messageId,
+    byte[] querySmResp(int sequenceNumber, String messageId,
             String finalDate, byte messageState, byte errorCode)
             throws PDUStringException;
 
     // DELIVER_SM OPERATION
-    public byte[] deliverSm(int sequenceNumber, String serviceType,
+    byte[] deliverSm(int sequenceNumber, String serviceType,
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
             byte destAddrTon, byte destAddrNpi, String destinationAddr,
             byte esmClass, byte protocolId, byte priorityFlag,
             byte registeredDelivery, byte dataCoding, byte[] shortMessage,
             OptionalParameter... optionalParameters) throws PDUStringException;
 
-    public byte[] deliverSmResp(int sequenceNumber);
+    byte[] deliverSmResp(int sequenceNumber);
     
     
     /**
@@ -125,7 +125,7 @@ public interface PDUComposer {
      * @return
      * @throws PDUStringException
      */
-    public byte[] dataSm(int sequenceNumber, String serviceType,
+    byte[] dataSm(int sequenceNumber, String serviceType,
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
             byte destAddrTon, byte destAddrNpi, String destinationAddr,
             byte esmClass, byte registeredDelivery, byte dataCoding,
@@ -140,7 +140,35 @@ public interface PDUComposer {
      * @return the composed byte values.
      * @throws PDUStringException
      */
-    public byte[] dataSmResp(int sequenceNumber, String messageId,
+    byte[] dataSmResp(int sequenceNumber, String messageId,
             OptionalParameter... optionalParameters)
             throws PDUStringException;
+    
+    /**
+     * Compose cancel short message (cancel_sm) PDU.
+     * 
+     * @param sequenceNumber
+     * @param serviceType
+     * @param messageId
+     * @param sourceAddrTon
+     * @param sourceAddrNpi
+     * @param sourceAddr
+     * @param destAddrTon
+     * @param destAddrNpi
+     * @param destinationAddr
+     * @return the composed byte values.
+     * @throws PDUStringException
+     */
+    byte[] cancelSm(int sequenceNumber, String serviceType, String messageId,
+            byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
+            byte destAddrTon, byte destAddrNpi, String destinationAddr)
+            throws PDUStringException;
+    
+    /**
+     * Compose cancel short message response (cancel_sm_resp) PDU.
+     * 
+     * @param sequenceNumber
+     * @return the composed byte values.
+     */
+    byte[] cancelSmResp(int sequenceNumber);
 }

@@ -3,3 +3,4 @@ Changes:
 - Add SMPP Server component
 - Add Optional Parameter support (contribution from mikko.koponen@gmail.com)
 - Handling PDU processing concurrently (performance improvement)
+- Add data_sm support

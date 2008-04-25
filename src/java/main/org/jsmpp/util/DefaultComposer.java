@@ -339,4 +339,34 @@ public class DefaultComposer implements PDUComposer {
         
         return buf.getBytes();
     }
+    
+    public byte[] cancelSm(int sequenceNumber, String serviceType,
+            String messageId, byte sourceAddrTon, byte sourceAddrNpi,
+            String sourceAddr, byte destAddrTon, byte destAddrNpi,
+            String destinationAddr) throws PDUStringException {
+        
+        StringValidator.validateString(serviceType, StringParameter.SERVICE_TYPE);
+        StringValidator.validateString(messageId, StringParameter.MESSAGE_ID);
+        StringValidator.validateString(sourceAddr, StringParameter.SOURCE_ADDR);
+        StringValidator.validateString(destinationAddr, StringParameter.DESTINATION_ADDR);
+        
+        PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_CANCEL_SM, 0,
+                sequenceNumber);
+        buf.append(serviceType);
+        buf.append(messageId);
+        buf.append(sourceAddrTon);
+        buf.append(sourceAddrNpi);
+        buf.append(sourceAddr);
+        buf.append(destAddrTon);
+        buf.append(destAddrNpi);
+        buf.append(destinationAddr);
+        
+        return buf.getBytes();
+    }
+    
+    public byte[] cancelSmResp(int sequenceNumber) {
+        byte[] b = composeHeader(SMPPConstant.CID_CANCEL_SM_RESP,
+                SMPPConstant.STAT_ESME_ROK, sequenceNumber);
+        return b;
+    }
 }

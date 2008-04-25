@@ -236,4 +236,21 @@ public class SynchronizedPDUSender implements PDUSender {
                     optionalParameters);
         }
     }
+    
+    public byte[] sendCancelSm(OutputStream os, int sequenceNumber,
+            String serviceType, String messageId, TypeOfNumber sourceAddrTon,
+            NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
+            String destinationAddr) throws PDUStringException, IOException {
+        synchronized (os) {
+            return pduSender.sendCancelSm(os, sequenceNumber, serviceType, messageId, sourceAddrTon, sourceAddrNpi, sourceAddr, destAddrTon, destAddrNpi, destinationAddr);
+        }
+    }
+    
+    public byte[] sendCancelSmResp(OutputStream os, int sequenceNumber)
+            throws IOException {
+        synchronized (os) {
+            return pduSender.sendCancelSmResp(os, sequenceNumber);
+        }
+    }
 }

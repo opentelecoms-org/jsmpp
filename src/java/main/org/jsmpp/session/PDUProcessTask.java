@@ -64,11 +64,15 @@ public class PDUProcessTask implements Runnable {
                 break;
             case SMPPConstant.CID_DATA_SM:
                 activityNotifier.notifyActivity();
-                // TODO uudashr: handler data_sm
+                stateProcessor.processDataSm(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_DATA_SM_RESP:
                 activityNotifier.notifyActivity();
-                // TODO uudashr: handle data_sm_resp
+                stateProcessor.processDataSmResp(pduHeader, pdu, responseHandler);
+                break;
+            case SMPPConstant.CID_CANCEL_SM_RESP:
+                activityNotifier.notifyActivity();
+                // TODO uudashr: processCancelSmResp
                 break;
             case SMPPConstant.CID_UNBIND:
                 activityNotifier.notifyActivity();

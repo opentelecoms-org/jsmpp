@@ -31,7 +31,7 @@ public interface PDUSender {
      * @return the composed bytes.
      * @throws IOException if an I/O error occur.
      */
-    public byte[] sendHeader(OutputStream os, int commandId, int commandStatus,
+    byte[] sendHeader(OutputStream os, int commandId, int commandStatus,
             int sequenceNumber) throws IOException;
 
     /**
@@ -51,7 +51,7 @@ public interface PDUSender {
      * @throws PDUStringException if there is an invalid string constaint found.
      * @throws IOException if an I/O error occur.
      */
-    public byte[] sendBind(OutputStream os, BindType bindType,
+    byte[] sendBind(OutputStream os, BindType bindType,
             int sequenceNumber, String systemId, String password,
             String systemType, InterfaceVersion interfaceVersion,
             TypeOfNumber addrTon, NumberingPlanIndicator addrNpi,
@@ -68,7 +68,7 @@ public interface PDUSender {
      * @throws PDUStringException
      * @throws IOException if an IO error occur.
      */
-    public byte[] sendBindResp(OutputStream os, int commandId,
+    byte[] sendBindResp(OutputStream os, int commandId,
             int sequenceNumber, String systemId) throws PDUStringException,
             IOException;
 
@@ -80,7 +80,7 @@ public interface PDUSender {
      * @return the composed bytes.
      * @throws IOException if an IO error occur.
      */
-    public byte[] sendUnbind(OutputStream os, int sequenceNumber)
+    byte[] sendUnbind(OutputStream os, int sequenceNumber)
             throws IOException;
 
     /**
@@ -92,7 +92,7 @@ public interface PDUSender {
      * @return the composed bytes.
      * @throws IOException if an IO error occur.
      */
-    public byte[] sendGenericNack(OutputStream os, int commandStatus,
+    byte[] sendGenericNack(OutputStream os, int commandStatus,
             int sequenceNumber) throws IOException;
 
     /**
@@ -104,7 +104,7 @@ public interface PDUSender {
      * @return the composed bytes.
      * @throws IOException if an IO error occur.
      */
-    public byte[] sendUnbindResp(OutputStream os, int commandStatus,
+    byte[] sendUnbindResp(OutputStream os, int commandStatus,
             int sequenceNumber) throws IOException;
 
     /**
@@ -115,7 +115,7 @@ public interface PDUSender {
      * @return the composed bytes.
      * @throws IOException if an IO error occur.
      */
-    public byte[] sendEnquireLink(OutputStream out, int sequenceNumber)
+    byte[] sendEnquireLink(OutputStream out, int sequenceNumber)
             throws IOException;
 
     /**
@@ -126,7 +126,7 @@ public interface PDUSender {
      * @return the composed bytes.
      * @throws IOException if an IO error occur.
      */
-    public byte[] sendEnquireLinkResp(OutputStream os, int sequenceNumber)
+    byte[] sendEnquireLinkResp(OutputStream os, int sequenceNumber)
             throws IOException;
 
     /**
@@ -156,7 +156,7 @@ public interface PDUSender {
      * @throws PDUStringException if there is an invalid string constraint found.
      * @throws IOException if there is an IO error occur.
      */
-    public byte[] sendSubmitSm(OutputStream os, int sequenceNumber,
+    byte[] sendSubmitSm(OutputStream os, int sequenceNumber,
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
@@ -176,7 +176,7 @@ public interface PDUSender {
      * @throws PDUStringException if there is an invalid string constraint found.
      * @throws IOException if there is an IO error occur.
      */
-    public byte[] sendSubmitSmResp(OutputStream os, int sequenceNumber,
+    byte[] sendSubmitSmResp(OutputStream os, int sequenceNumber,
             String messageId) throws PDUStringException, IOException;
 
     /**
@@ -192,7 +192,7 @@ public interface PDUSender {
      * @throws PDUStringException if there is an invalid constraint found.
      * @throws IOException if there is an IO error occur.
      */
-    public byte[] sendQuerySm(OutputStream os, int sequenceNumber,
+    byte[] sendQuerySm(OutputStream os, int sequenceNumber,
             String messageId, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr)
             throws PDUStringException, IOException;
@@ -210,7 +210,7 @@ public interface PDUSender {
      * @throws PDUStringException if there is an invalid constraint found.
      * @throws IOException if there is an IO error occur.
      */
-    public byte[] sendQuerySmResp(OutputStream os, int sequenceNumber,
+    byte[] sendQuerySmResp(OutputStream os, int sequenceNumber,
             String messageId, String finalDate, MessageState messageState,
             byte errorCode) throws PDUStringException, IOException;
 
@@ -237,7 +237,7 @@ public interface PDUSender {
      * @throws PDUStringException if there is an invalid string constraint found.
      * @throws IOException if there is an IO error occur.
      */
-    public byte[] sendDeliverSm(OutputStream os, int sequenceNumber,
+    byte[] sendDeliverSm(OutputStream os, int sequenceNumber,
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
@@ -255,7 +255,7 @@ public interface PDUSender {
      * @throws PDUStringException if there is an invalid string constraint found.
      * @throws IOException if there is an IO error occur.
      */
-    public byte[] sendDeliverSmResp(OutputStream os, int sequenceNumber)
+    byte[] sendDeliverSmResp(OutputStream os, int sequenceNumber)
             throws PDUStringException, IOException;
     
     /**
@@ -278,7 +278,7 @@ public interface PDUSender {
      * @throws PDUStringException if there is an invalid string constraint found.
      * @throws IOException if there is an IO error occur.
      */
-    public byte[] sendDataSm(OutputStream os, int sequenceNumber,
+    byte[] sendDataSm(OutputStream os, int sequenceNumber,
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
@@ -298,7 +298,41 @@ public interface PDUSender {
      * @throws PDUStringException if there is an invalid string constraint found.
      * @throws IOException if there is an IO error occur.
      */
-    public byte[] sendDataSmResp(OutputStream os, int sequenceNumber,
+    byte[] sendDataSmResp(OutputStream os, int sequenceNumber,
             String messageId, OptionalParameter... optionalParameters)
             throws PDUStringException, IOException;
+    
+    /**
+     * Send cancel short message command.
+     * 
+     * @param os
+     * @param sequenceNumber
+     * @param serviceType
+     * @param messageId
+     * @param sourceAddrTon
+     * @param sourceAddrNpi
+     * @param sourceAddr
+     * @param destAddrTon
+     * @param destAddrNpi
+     * @param destinationAddr
+     * @return
+     * @throws PDUStringException
+     * @throws IOException
+     */
+    byte[] sendCancelSm(OutputStream os, int sequenceNumber,
+            String serviceType, String messageId, TypeOfNumber sourceAddrTon,
+            NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
+            String destinationAddr) throws PDUStringException, IOException;
+    
+    /**
+     * Send cancel short message response command.
+     * 
+     * @param os
+     * @param sequenceNumber
+     * @return
+     * @throws IOException
+     */
+    byte[] sendCancelSmResp(OutputStream os, int sequenceNumber)
+            throws IOException;
 }

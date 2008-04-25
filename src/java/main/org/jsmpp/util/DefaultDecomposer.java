@@ -8,6 +8,8 @@ import java.util.List;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.BindResp;
+import org.jsmpp.bean.CancelSm;
+import org.jsmpp.bean.CancelSmResp;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DataSmResp;
@@ -435,6 +437,39 @@ public class DefaultDecomposer implements PDUDecomposer {
                     StringParameter.MESSAGE_ID);
         }
         resp.setOptionalParameters(readOptionalParameters(reader));
+        return resp;
+    }
+    
+    public CancelSm cancelSm(byte[] data) throws PDUStringException {
+        CancelSm req = new CancelSm();
+        SequentialBytesReader reader = new SequentialBytesReader(data);
+        assignHeader(req, reader);
+        req.setServiceType(reader.readCString());
+        StringValidator.validateString(req.getServiceType(),
+                StringParameter.SERVICE_TYPE);
+        
+        req.setMessageId(reader.readCString());
+        StringValidator.validateString(req.getMessageId(),
+                StringParameter.MESSAGE_ID);
+        
+        req.setSourceAddrTon(reader.readByte());
+        req.setSourceAddrNpi(reader.readByte());
+        req.setSourceAddr(reader.readCString());
+        StringValidator.validateString(req.getSourceAddr(),
+                StringParameter.SOURCE_ADDR);
+        
+        req.setDestAddrTon(reader.readByte());
+        req.setDestAddrNpi(reader.readByte());
+        req.setDestAddress(reader.readCString());
+        StringValidator.validateString(req.getDestAddress(),
+                StringParameter.DESTINATION_ADDR);
+        
+        return req;
+    }
+    
+    public CancelSmResp cancelSmResp(byte[] data) {
+        CancelSmResp resp = new CancelSmResp();
+        assignHeader(resp, data);
         return resp;
     }
     
