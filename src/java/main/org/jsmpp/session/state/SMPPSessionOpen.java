@@ -139,7 +139,6 @@ class SMPPSessionOpen implements SMPPSessionState {
             BaseResponseHandler responseHandler) throws IOException {
         PendingResponse<Command> pendingResp = responseHandler
                 .removeSentItem(1);
-        // FIXME uud: pending response might be null
         if (pendingResp != null) {
             pendingResp.doneWithInvalidResponse(new InvalidResponseException(
                     "Receive unknown command_id"));

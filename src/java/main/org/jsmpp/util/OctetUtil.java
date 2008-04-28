@@ -68,7 +68,7 @@ public class OctetUtil {
         int end = offset + length;
         for (int i = 0; i < length; i++) {
             // result |= bytes[end - i - 1] << (8 * i);
-            result |= (bytes[end - i - 1] & 0xff) << (8 * i); // TODO uud: CHECK FOR IMPROVEMENT
+            result |= (bytes[end - i - 1] & 0xff) << (8 * i); // TODO uudashr: CHECK FOR IMPROVEMENT
         }
         return result;
     }

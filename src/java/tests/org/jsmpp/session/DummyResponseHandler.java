@@ -22,24 +22,17 @@ class DummyResponseHandler implements ServerResponseHandler {
     private boolean connectionClosed;
     
     public void notifyUnbonded() {
-        // TODO Auto-generated method stub
-
     }
 
     public PendingResponse<Command> removeSentItem(int sequenceNumber) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public void sendEnquireLinkResp(int sequenceNumber) throws IOException {
-        // TODO Auto-generated method stub
-
     }
 
     public void sendGenerickNack(int commandStatus, int sequenceNumber)
             throws IOException {
-        // TODO Auto-generated method stub
-
     }
 
     public void sendNegativeResponse(int originalCommandId, int commandStatus,
@@ -50,24 +43,18 @@ class DummyResponseHandler implements ServerResponseHandler {
     }
 
     public void sendUnbindResp(int sequenceNumber) throws IOException {
-        // TODO Auto-generated method stub
-
     }
     
     public void processBind(Bind bind) {
-        // TODO Auto-generated method stub
-        
     }
 
     public QuerySmResult processQuerySm(QuerySm querySm)
             throws ProcessRequestException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public MessageId processSubmitSm(SubmitSm submitSm)
             throws ProcessRequestException {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -80,38 +67,28 @@ class DummyResponseHandler implements ServerResponseHandler {
 
     public void sendSubmitSmResponse(MessageId messageId, int sequenceNumber)
             throws IOException {
-        // TODO Auto-generated method stub
 
     }
     
     public DataSmResult processDataSm(DataSm dataSm)
             throws ProcessRequestException {
-        // TODO Auto-generated method stub
         return null;
     }
     
     public void sendDataSmResp(DataSmResult dataSmResult, int sequenceNumber)
             throws IOException {
-        // TODO Auto-generated method stub
-        
     }
     
     public void processCancelSm(CancelSm cancelSm)
             throws ProcessRequestException {
-        // TODO Auto-generated method stub
-        
     }
     
     public void sendCancelSmResp(int sequenceNumber) throws IOException {
-        // TODO Auto-generated method stub
-        
     }
     
     public void sendQuerySmResp(String messageId, String finalDate,
             MessageState messageState, byte errorCode, int sequenceNumber)
             throws IOException {
-        // TODO Auto-generated method stub
-        
     }
     
     public void closeConnection() {

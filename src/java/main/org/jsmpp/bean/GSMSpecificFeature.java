@@ -6,7 +6,7 @@ package org.jsmpp.bean;
  */
 public enum GSMSpecificFeature {
 
-    // TODO uud: complete the specific feature
+    // TODO uudashr: complete the specific feature
     DEFAULT((byte) 0x00), 
     /**
      * User data header indicator.

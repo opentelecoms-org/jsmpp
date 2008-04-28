@@ -87,13 +87,11 @@ public class SMPPServerSimulator implements Runnable, ServerMessageReceiverListe
     
     public DataSmResult onAcceptDataSm(DataSm dataSm)
             throws ProcessRequestException {
-        // TODO Auto-generated method stub
         return null;
     }
     
     public void onAcceptCancelSm(CancelSm cancelSm, SMPPServerSession source)
             throws ProcessRequestException {
-        // TODO Auto-generated method stub
     }
     
     private class WaitBindTask implements Runnable {

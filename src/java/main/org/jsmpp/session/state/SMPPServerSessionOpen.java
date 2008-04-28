@@ -33,7 +33,7 @@ class SMPPServerSessionOpen implements SMPPServerSessionState {
         } catch (PDUStringException e) {
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
         } catch (IllegalArgumentException e) {
-            // FIXME uud: might not need anymore
+            // TODO uudashr: might not need anymore
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), SMPPConstant.STAT_ESME_RINVCMDID, pduHeader.getSequenceNumber());
         }
     }

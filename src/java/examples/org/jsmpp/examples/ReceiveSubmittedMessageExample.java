@@ -48,21 +48,17 @@ public class ReceiveSubmittedMessageExample {
                 public QuerySmResult onAcceptQuerySm(QuerySm querySm,
                         SMPPServerSession source)
                         throws ProcessRequestException {
-                    // TODO Auto-generated method stub
                     return null;
                 }
                 
                 public DataSmResult onAcceptDataSm(DataSm dataSm)
                         throws ProcessRequestException {
-                    // TODO Auto-generated method stub
                     return null;
                 }
                 
                 public void onAcceptCancelSm(CancelSm cancelSm,
                         SMPPServerSession source)
                         throws ProcessRequestException {
-                    // TODO Auto-generated method stub
-                    
                 }
             };
             

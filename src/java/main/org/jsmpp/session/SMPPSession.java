@@ -364,7 +364,6 @@ public class SMPPSession extends AbstractSession {
 	
 	@Override
 	protected GenericMessageReceiverListener messageReceiverListener() {
-	    // TODO Auto-generated method stub
 	    return null;
 	}
 	

@@ -320,22 +320,21 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setEsmClass(reader.readByte());
         req.setProtocolId(reader.readByte());
         req.setPriorityFlag(reader.readByte());
-        // FIXME uud: it should be null of c-octet string
+        // scheduleDeliveryTime should be null of c-octet string
         req.setScheduleDeliveryTime(reader.readCString()); 
         StringValidator.validateString(req.getScheduleDeliveryTime(),
                 StringParameter.SCHEDULE_DELIVERY_TIME);
-        // FIXME uud: it should be null of c-octet string
+        // validityPeriod should be null of c-octet string
         req.setValidityPeriod(reader.readCString()); 
         StringValidator.validateString(req.getValidityPeriod(),
                 StringParameter.VALIDITY_PERIOD);
         req.setRegisteredDelivery(reader.readByte());
-        // FIXME uud: it should be set to null
+        // replaceIfPresent should be null
         req.setReplaceIfPresent(reader.readByte());
         req.setDataCoding(reader.readByte());
-        // FIXME uud: it should be set to null
+        // smDefaultMsgId should be null
         req.setSmDefaultMsgId(reader.readByte());
         req.setSmLength(reader.readByte());
-        // req.setShortMessage(reader.readString(req.getSmLength()));
         req.setShortMessage(reader.readBytes(req.getSmLength()));
         StringValidator.validateString(req.getShortMessage(),
                 StringParameter.SHORT_MESSAGE);
@@ -598,7 +597,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         }
 
         public byte[] readBytesUntilNull() {
-            // TODO uud: we can do some improvement here
+            // TODO uudashr: we can do some improvement here
             int i = cursor;
             while (bytes[i++] != (byte)0) {
             }
@@ -617,7 +616,7 @@ public class DefaultDecomposer implements PDUDecomposer {
          * @return <tt>String</tt> value. Nullable.
          */
         public String readCString() {
-            // TODO uud: we can do some improvement here
+            // TODO uudashr: we can do some improvement here
             int i = cursor;
             while (bytes[i++] != (byte)0) {
             }
