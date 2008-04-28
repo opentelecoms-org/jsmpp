@@ -22,7 +22,7 @@ public interface ResponseHandler extends BaseResponseHandler {
      * @param deliverSm
      * @throws ProcessRequestException
      */
-    public void processDeliverSm(DeliverSm deliverSm)
+    void processDeliverSm(DeliverSm deliverSm)
             throws ProcessRequestException;
 
     /**
@@ -31,6 +31,6 @@ public interface ResponseHandler extends BaseResponseHandler {
      * @param sequenceNumber is the sequence number of original <b>DELIVER_SM</b> request.
      * @throws IOException if an IO error occur.
      */
-    public void sendDeliverSmResp(int sequenceNumber) throws IOException;
-
+    void sendDeliverSmResp(int sequenceNumber) throws IOException;
+    
 }

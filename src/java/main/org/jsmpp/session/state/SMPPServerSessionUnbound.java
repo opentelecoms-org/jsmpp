@@ -80,4 +80,8 @@ public class SMPPServerSessionUnbound implements SMPPServerSessionState {
         throw new IOException("Invalid process for open session state");
     }
     
+    public void processCancelSm(Command pduHeader, byte[] pdu,
+            ServerResponseHandler responseHandler) throws IOException {
+        throw new IOException("Invalid process for open session state");
+    }
 }

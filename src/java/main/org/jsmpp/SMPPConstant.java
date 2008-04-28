@@ -120,8 +120,17 @@ public interface SMPPConstant {
      * Predefined Message Invalid or Not Found.
      */
     public static final int STAT_ESME_RINVDFTMSGID = 0x00000063;
+    /**
+     * ESME Receiver Temporary App Error Code
+     */
     public static final int STAT_ESME_RX_T_APPN = 0x00000064;
+    /**
+     * ESME Receiver Permanent App Error Code
+     */
     public static final int STAT_ESME_RX_P_APPN = 0x00000065;
+    /**
+     * ESME Receiver Reject App Error Code
+     */
     public static final int STAT_ESME_RX_R_APPN = 0x00000066;
     public static final int STAT_ESME_RQUERYFAIL = 0x00000067;
     public static final int STAT_ESME_RINVTLVSTREAM = 0x000000C0;

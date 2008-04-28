@@ -4,11 +4,13 @@ import java.io.IOException;
 
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
+import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.extra.SessionState;
+import org.jsmpp.session.QuerySmResult;
 import org.jsmpp.session.ServerResponseHandler;
 import org.jsmpp.util.MessageId;
 import org.slf4j.Logger;
@@ -51,7 +53,23 @@ class SMPPServerSessionBoundTX extends SMPPServerSessionBound implements
             ServerResponseHandler responseHandler) throws IOException {
         try {
             QuerySm querySm = pduDecomposer.querySm(pdu);
-            responseHandler.processQuerySm(querySm);
+            QuerySmResult result = responseHandler.processQuerySm(querySm);
+            responseHandler.sendQuerySmResp(querySm.getMessageId(), 
+                    result.getFinalDate(), result.getMessageState(), 
+                    result.getErrorCode(), pduHeader.getSequenceNumber());
+        } catch (PDUStringException e) {
+            responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
+        } catch (ProcessRequestException e) {
+            responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
+        }
+    }
+    
+    public void processCancelSm(Command pduHeader, byte[] pdu,
+            ServerResponseHandler responseHandler) throws IOException {
+        try {
+            CancelSm cancelSm = pduDecomposer.cancelSm(pdu);
+            responseHandler.processCancelSm(cancelSm);
+            responseHandler.sendCancelSmResp(pduHeader.getSequenceNumber());
         } catch (PDUStringException e) {
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
         } catch (ProcessRequestException e) {

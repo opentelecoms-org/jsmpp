@@ -45,4 +45,15 @@ public interface SMPPServerSessionState extends GenericSMPPSessionState {
     void processDeliverSmResp(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException;
     
+    /**
+     * Process the cancel short message request command.
+     * 
+     * @param pduHeader is the PDU header.
+     * @param pdu is the complete PDU.
+     * @param responseHandler is the session handler.
+     * @throws IOException throw if there is an IO error occur.
+     */
+    void processCancelSm(Command pduHeader, byte[] pdu,
+            ServerResponseHandler responseHandler) throws IOException;
+    
 }

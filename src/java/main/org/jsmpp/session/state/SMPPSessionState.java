@@ -28,11 +28,11 @@ public interface SMPPSessionState extends GenericSMPPSessionState {
      * 
      * @param pduHeader is the PDU header.
      * @param pdu is the complete PDU.
-     * @param sessionHandler is the session handler.
+     * @param responseHandler is the session handler.
      * @throws IOException throw if there is an IO error occur.
      */
     void processBindResp(Command pduHeader, byte[] pdu,
-            ResponseHandler sessionHandler) throws IOException;
+            ResponseHandler responseHandler) throws IOException;
 
 
     /**
@@ -40,32 +40,35 @@ public interface SMPPSessionState extends GenericSMPPSessionState {
      * 
      * @param pduHeader is the PDU header.
      * @param pdu is the complete PDU.
-     * @param sessionHandler is the session handler.
+     * @param responseHandler is the session handler.
      * @throws IOException throw if there is an IO error occur.
      */
     void processSubmitSmResp(Command pduHeader, byte[] pdu,
-            ResponseHandler sessionHandler) throws IOException;
+            ResponseHandler responseHandler) throws IOException;
 
     /**
      * Process the query short message response command.
      * 
      * @param pduHeader is the PDU header.
      * @param pdu is the complete PDU.
-     * @param sessionHandler is the session handler.
+     * @param responseHandler is the session handler.
      * @throws IOException throw if there is an IO error occur.
      */
     void processQuerySmResp(Command pduHeader, byte[] pdu,
-            ResponseHandler sessionHandler) throws IOException;
+            ResponseHandler responseHandler) throws IOException;
 
     /**
      * Process the deliver short message request command.
      * 
      * @param pduHeader is the PDU header.
      * @param pdu is the complete PDU.
-     * @param sessionHandler is the session handler.
+     * @param responseHandler is the session handler.
      * @throws IOException throw if there is an IO error occur.
      */
     void processDeliverSm(Command pduHeader, byte[] pdu,
-            ResponseHandler sessionHandler) throws IOException;
+            ResponseHandler responseHandler) throws IOException;
+    
+    void processCancelSmResp(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException;
 
 }

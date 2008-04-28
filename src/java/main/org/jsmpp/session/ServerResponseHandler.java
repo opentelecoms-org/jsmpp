@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.jsmpp.BindType;
 import org.jsmpp.bean.Bind;
+import org.jsmpp.bean.CancelSm;
+import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.extra.ProcessRequestException;
@@ -22,4 +24,10 @@ public interface ServerResponseHandler extends BaseResponseHandler {
     MessageId processSubmitSm(SubmitSm submitSm) throws ProcessRequestException;
     
     QuerySmResult processQuerySm(QuerySm querySm) throws ProcessRequestException;
+    
+    void sendQuerySmResp(String messageId, String finalDate,
+            MessageState messageState, byte errorCode, int sequenceNumber) throws IOException;
+    
+    void processCancelSm(CancelSm cancelSm) throws ProcessRequestException;
+    void sendCancelSmResp(int sequenceNumber) throws IOException;
 }

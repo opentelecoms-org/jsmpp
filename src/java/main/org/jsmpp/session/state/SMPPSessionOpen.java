@@ -175,4 +175,14 @@ class SMPPSessionOpen implements SMPPSessionState {
                     "Receive unexpected data_sm_resp"));
         }
     }
+    
+    public void processCancelSmResp(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
+                .removeSentItem(1);
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                    "Receive unexpected cancel_sm_resp"));
+}
+    }
 }

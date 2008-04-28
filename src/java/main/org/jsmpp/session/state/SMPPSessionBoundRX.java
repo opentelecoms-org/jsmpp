@@ -49,7 +49,14 @@ class SMPPSessionBoundRX extends SMPPSessionBound implements SMPPSessionState {
                 SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
                         .getSequenceNumber());
     }
-
+    
+    public void processCancelSmResp(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException {
+        responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
+                SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
+                        .getSequenceNumber());
+    }
+    
     static void processDeliverSm0(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         try {

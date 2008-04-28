@@ -11,6 +11,7 @@ import org.jsmpp.NumberingPlanIndicator;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.TypeOfNumber;
+import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliveryReceipt;
@@ -88,6 +89,11 @@ public class SMPPServerSimulator implements Runnable, ServerMessageReceiverListe
             throws ProcessRequestException {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    public void onAcceptCancelSm(CancelSm cancelSm, SMPPServerSession source)
+            throws ProcessRequestException {
+        // TODO Auto-generated method stub
     }
     
     private class WaitBindTask implements Runnable {

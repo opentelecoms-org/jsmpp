@@ -22,10 +22,12 @@ import org.jsmpp.SMPPConstant;
 import org.jsmpp.SynchronizedPDUSender;
 import org.jsmpp.TypeOfNumber;
 import org.jsmpp.bean.Bind;
+import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.ESMClass;
+import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.RegisteredDelivery;
@@ -145,7 +147,14 @@ public class SMPPServerSession extends AbstractSession {
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptQuerySm(querySm, this);
         }
-        throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RINVDFTMSGID);
+        throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
+    }
+    
+    private void fireAcceptCancelSm(CancelSm cancelSm) throws ProcessRequestException {
+        if (messageReceiverListener != null) {
+            messageReceiverListener.onAcceptCancelSm(cancelSm, this);
+        }
+        throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
     }
     
     @Override
@@ -173,7 +182,6 @@ public class SMPPServerSession extends AbstractSession {
     }
     
     private class ResponseHandlerImpl implements ServerResponseHandler {
-        
         @SuppressWarnings("unchecked")
         public PendingResponse<Command> removeSentItem(int sequenceNumber) {
             return removePendingResponse(sequenceNumber);
@@ -239,6 +247,20 @@ public class SMPPServerSession extends AbstractSession {
             return fireAcceptQuerySm(querySm);
         }
         
+        public void sendQuerySmResp(String messageId, String finalDate,
+                MessageState messageState, byte errorCode, int sequenceNumber) throws IOException {
+            try {
+                pduSender().sendQuerySmResp(out, sequenceNumber, messageId,
+                        finalDate, messageState, errorCode);
+            } catch (PDUStringException e) {
+                /*
+                 * There should be no PDUStringException thrown since creation
+                 * of parsed messageId has been validated.
+                 */
+                logger.error("SYSTEM ERROR. Failed sending cancelSmResp", e);
+            }
+        }
+        
         public DataSmResult processDataSm(DataSm dataSm)
                 throws ProcessRequestException {
             return fireAcceptDataSm(dataSm);
@@ -259,6 +281,16 @@ public class SMPPServerSession extends AbstractSession {
                 logger.error("SYSTEM ERROR. Failed sending dataSmResp", e);
             }
         }
+        
+        public void processCancelSm(CancelSm cancelSm)
+                throws ProcessRequestException {
+            fireAcceptCancelSm(cancelSm);
+        }
+        
+        public void sendCancelSmResp(int sequenceNumber) throws IOException {
+            pduSender().sendCancelSmResp(out, sequenceNumber);
+        }
+        
     }
     
     private class PDUReaderWorker extends Thread {

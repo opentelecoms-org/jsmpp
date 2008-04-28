@@ -460,8 +460,8 @@ public class DefaultDecomposer implements PDUDecomposer {
         
         req.setDestAddrTon(reader.readByte());
         req.setDestAddrNpi(reader.readByte());
-        req.setDestAddress(reader.readCString());
-        StringValidator.validateString(req.getDestAddress(),
+        req.setDestinationAddress(reader.readCString());
+        StringValidator.validateString(req.getDestinationAddress(),
                 StringParameter.DESTINATION_ADDR);
         
         return req;

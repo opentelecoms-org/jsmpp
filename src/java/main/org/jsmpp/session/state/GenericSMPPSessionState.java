@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.jsmpp.bean.Command;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BaseResponseHandler;
-import org.jsmpp.session.ResponseHandler;
 
 /**
  * @author uudashr

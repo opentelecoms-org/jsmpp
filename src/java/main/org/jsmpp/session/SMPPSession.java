@@ -330,6 +330,19 @@ public class SMPPSession extends AbstractSession {
     	}
     }
     
+    public void cancelShortMessage(String serviceType, String messageId,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
+            String sourceAddr, TypeOfNumber destAddrTon,
+            NumberingPlanIndicator destAddrNpi, String destinationAddress)
+            throws PDUStringException, ResponseTimeoutException,
+            InvalidResponseException, NegativeResponseException, IOException {
+        CancelSmCommandTask task = new CancelSmCommandTask(out, pduSender(),
+                serviceType, messageId, sourceAddrTon, sourceAddrNpi,
+                sourceAddr, destAddrTon, destAddrNpi, destinationAddress);
+        
+        executeSendCommand(task, getTransactionTimer());
+    }
+    
     public MessageReceiverListener getMessageReceiverListener() {
         return messageReceiverListener;
     }

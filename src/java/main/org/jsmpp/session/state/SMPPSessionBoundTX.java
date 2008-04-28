@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
+import org.jsmpp.bean.CancelSmResp;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.QuerySmResp;
 import org.jsmpp.bean.SubmitSmResp;
@@ -70,6 +71,19 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
             responseHandler.sendGenerickNack(
                     SMPPConstant.STAT_ESME_RINVDFTMSGID, pduHeader
                             .getSequenceNumber());
+        }
+    }
+    
+    public void processCancelSmResp(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
+                .removeSentItem(pduHeader.getSequenceNumber());
+        if (pendingResp != null) {
+            CancelSmResp resp = pduDecomposer.cancelSmResp(pdu);
+            pendingResp.done(resp);
+        } else {
+            logger.error("No request find for sequence number "
+                    + pduHeader.getSequenceNumber());
         }
     }
 

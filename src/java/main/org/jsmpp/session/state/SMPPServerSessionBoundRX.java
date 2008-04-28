@@ -42,6 +42,13 @@ class SMPPServerSessionBoundRX extends SMPPServerSessionBound implements
                         .getSequenceNumber());
     }
     
+    public void processCancelSm(Command pduHeader, byte[] pdu,
+            ServerResponseHandler responseHandler) throws IOException {
+        responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
+                SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
+                        .getSequenceNumber());
+    }
+    
     static final void processDeliverSmResp0(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException {
         PendingResponse<Command> pendingResp = responseHandler.removeSentItem(pduHeader.getSequenceNumber());
@@ -53,4 +60,5 @@ class SMPPServerSessionBoundRX extends SMPPServerSessionBound implements
                     + pduHeader.getSequenceNumber() + " found");
         }
     }
+    
 }

@@ -82,4 +82,9 @@ class SMPPSessionClosed implements SMPPSessionState {
             BaseResponseHandler responseHandler) throws IOException {
         throw new IOException("Invalid process for closed session state");
     }
+    
+    public void processCancelSmResp(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException {
+        throw new IOException("Invalid process for closed session state");
+    }
 }

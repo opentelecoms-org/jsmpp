@@ -20,7 +20,7 @@ public class QuerySmResult {
 		this.messageState = messageState;
 		this.errorCode = errorCode;
 	}
-
+	
 	/**
 	 * @return the errorCode
 	 */

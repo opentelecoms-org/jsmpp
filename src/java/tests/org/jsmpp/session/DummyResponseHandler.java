@@ -4,8 +4,10 @@ import java.io.IOException;
 
 import org.jsmpp.BindType;
 import org.jsmpp.bean.Bind;
+import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
+import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.extra.PendingResponse;
@@ -89,6 +91,24 @@ class DummyResponseHandler implements ServerResponseHandler {
     }
     
     public void sendDataSmResp(DataSmResult dataSmResult, int sequenceNumber)
+            throws IOException {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    public void processCancelSm(CancelSm cancelSm)
+            throws ProcessRequestException {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    public void sendCancelSmResp(int sequenceNumber) throws IOException {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    public void sendQuerySmResp(String messageId, String finalDate,
+            MessageState messageState, byte errorCode, int sequenceNumber)
             throws IOException {
         // TODO Auto-generated method stub
         

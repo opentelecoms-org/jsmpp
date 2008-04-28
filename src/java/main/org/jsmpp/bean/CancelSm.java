@@ -12,7 +12,7 @@ public class CancelSm extends Command {
     private String sourceAddr;
     private byte destAddrTon;
     private byte destAddrNpi;
-    private String destAddress;
+    private String destinationAddress;
     
     public CancelSm() {
         super();
@@ -74,11 +74,11 @@ public class CancelSm extends Command {
         this.destAddrNpi = destAddrNpi;
     }
 
-    public String getDestAddress() {
-        return destAddress;
+    public String getDestinationAddress() {
+        return destinationAddress;
     }
 
-    public void setDestAddress(String destAddress) {
-        this.destAddress = destAddress;
+    public void setDestinationAddress(String destAddress) {
+        this.destinationAddress = destAddress;
     }
 }
