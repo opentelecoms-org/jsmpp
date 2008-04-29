@@ -284,14 +284,16 @@ public class DefaultDecomposer implements PDUDecomposer {
         QuerySmResp resp = new QuerySmResp();
         SequentialBytesReader reader = new SequentialBytesReader(b);
         assignHeader(resp, reader);
-        resp.setMessageId(reader.readCString());
-        StringValidator.validateString(resp.getMessageId(),
-                StringParameter.MESSAGE_ID);
-        resp.setFinalDate(reader.readCString());
-        StringValidator.validateString(resp.getFinalDate(),
-                StringParameter.FINAL_DATE);
-        resp.setMessageState(MessageState.valueOf(reader.readByte()));
-        resp.setErrorCode(reader.readByte());
+        if (resp.getCommandLength() > 16 && resp.getCommandStatus() == 0) {
+            resp.setMessageId(reader.readCString());
+            StringValidator.validateString(resp.getMessageId(),
+                    StringParameter.MESSAGE_ID);
+            resp.setFinalDate(reader.readCString());
+            StringValidator.validateString(resp.getFinalDate(),
+                    StringParameter.FINAL_DATE);
+            resp.setMessageState(MessageState.valueOf(reader.readByte()));
+            resp.setErrorCode(reader.readByte());
+        }
         return resp;
     }
 
@@ -344,15 +346,19 @@ public class DefaultDecomposer implements PDUDecomposer {
         return req;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /* (non-Javadoc)
      * @see org.jsmpp.util.PDUDecomposer#deliverSmResp(byte[])
      */
-    public DeliverSmResp deliverSmResp(byte[] b) {
+    public DeliverSmResp deliverSmResp(byte[] b) throws PDUStringException{
         DeliverSmResp resp = new DeliverSmResp();
         SequentialBytesReader reader = new SequentialBytesReader(b);
         assignHeader(resp, reader);
+        if (resp.getCommandLength() > 16 && resp.getCommandStatus() == 0) {
+            // message_id should be null
+            resp.setMessageId(reader.readCString());
+            StringValidator.validateString(resp.getMessageId(),
+                    StringParameter.MESSAGE_ID);
+        }
         return resp;
     }
 

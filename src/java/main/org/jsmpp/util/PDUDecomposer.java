@@ -172,8 +172,10 @@ public interface PDUDecomposer {
      * 
      * @param b is the PDU.
      * @return the deliver short message response command object.
+     * @throws PDUStringException if there is an invalid constraint of string
+     *         parameter found.
      */
-    DeliverSmResp deliverSmResp(byte[] b);
+    DeliverSmResp deliverSmResp(byte[] b) throws PDUStringException;
 
     /**
      * Decompose the SMPP PDU delivery receipt content.
