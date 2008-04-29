@@ -20,8 +20,8 @@ public interface PDUComposer {
             byte addrTon, byte addrNpi, String addressRange)
             throws PDUStringException;
 
-    byte[] bindResp(int commandId, int sequenceNumber, String systemId)
-            throws PDUStringException;
+    byte[] bindResp(int commandId, int sequenceNumber, String systemId,
+            OptionalParameter... optionalParameters) throws PDUStringException;
 
     byte[] bindResp(int commandId, int sequenceNumber, String systemId,
             byte scInterfaceVersion) throws PDUStringException;

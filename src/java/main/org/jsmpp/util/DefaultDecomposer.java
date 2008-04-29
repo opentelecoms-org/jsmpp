@@ -107,6 +107,8 @@ public class DefaultDecomposer implements PDUDecomposer {
             resp.setSystemId(reader.readCString());
             StringValidator.validateString(resp.getSystemId(),
                     StringParameter.SYSTEM_ID);
+            
+            resp.setOptionalParameters(readOptionalParameters(reader));
         }
         return resp;
     }
@@ -435,7 +437,7 @@ public class DefaultDecomposer implements PDUDecomposer {
             StringValidator.validateString(resp.getMessageId(),
                     StringParameter.MESSAGE_ID);
         }
-        resp.setOptionalParameters(readOptionalParameters(reader));
+        
         return resp;
     }
     

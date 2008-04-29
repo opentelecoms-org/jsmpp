@@ -9,7 +9,8 @@ package org.jsmpp.bean;
  */
 public class BindResp extends Command {
     private String systemId;
-
+    private OptionalParameter[] optionalParameters;
+    
     /**
      * Default constructor.
      */
@@ -34,5 +35,12 @@ public class BindResp extends Command {
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
-
+    
+    public OptionalParameter[] getOptionalParameters() {
+        return optionalParameters;
+    }
+    
+    public void setOptionalParameters(OptionalParameter[] optionalParameters) {
+        this.optionalParameters = optionalParameters;
+    }
 }

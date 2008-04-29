@@ -54,13 +54,14 @@ public class DefaultComposer implements PDUComposer {
     }
 
     /* (non-Javadoc)
-     * @see org.jsmpp.util.PDUComposer#bindResp(int, int, java.lang.String)
+     * @see org.jsmpp.util.PDUComposer#bindResp(int, int, java.lang.String, org.jsmpp.bean.OptionalParameter[])
      */
-    public byte[] bindResp(int commandId, int sequenceNumber, String systemId)
-            throws PDUStringException {
+    public byte[] bindResp(int commandId, int sequenceNumber, String systemId,
+            OptionalParameter... optionalParameters) throws PDUStringException {
         StringValidator.validateString(systemId, StringParameter.SYSTEM_ID);
         PDUByteBuffer buf = new PDUByteBuffer(commandId, 0, sequenceNumber);
         buf.append(systemId);
+        buf.appendAll(optionalParameters);
         return buf.getBytes();
     }
 
