@@ -420,12 +420,8 @@ public class SMPPSession extends AbstractSession {
 		}
 		
 		public void sendDeliverSmResp(int sequenceNumber) throws IOException {
-			try {
-				pduSender().sendDeliverSmResp(out, sequenceNumber);
-				logger.debug("deliver_sm_resp with seq_number " + sequenceNumber + " has been sent");
-			} catch (PDUStringException e) {
-				logger.error("Failed sending deliver_sm_resp", e);
-			}
+			pduSender().sendDeliverSmResp(out, sequenceNumber);
+			logger.debug("deliver_sm_resp with seq_number " + sequenceNumber + " has been sent");
 		}
 		
 		public void sendEnquireLinkResp(int sequenceNumber) throws IOException {

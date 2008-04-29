@@ -32,7 +32,6 @@ import org.jsmpp.bean.UnbindResp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Default implementation of SMPP PDU PDUDecomposer.
  * 
@@ -42,13 +41,14 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class DefaultDecomposer implements PDUDecomposer {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultDecomposer.class);
+    private static final Logger logger = LoggerFactory
+            .getLogger(DefaultDecomposer.class);
     private static final PDUDecomposer instance = new DefaultDecomposer();
-    
+
     public static final PDUDecomposer getInstance() {
         return instance;
     }
-    
+
     /**
      * Default constructor.
      */
@@ -107,7 +107,7 @@ public class DefaultDecomposer implements PDUDecomposer {
             resp.setSystemId(reader.readCString());
             StringValidator.validateString(resp.getSystemId(),
                     StringParameter.SYSTEM_ID);
-            
+
             resp.setOptionalParameters(readOptionalParameters(reader));
         }
         return resp;
@@ -201,19 +201,19 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setServiceType(reader.readCString());
         StringValidator.validateString(req.getServiceType(),
                 StringParameter.SERVICE_TYPE);
-        
+
         req.setSourceAddrTon(reader.readByte());
         req.setSourceAddrNpi(reader.readByte());
         req.setSourceAddr(reader.readCString());
         StringValidator.validateString(req.getSourceAddr(),
                 StringParameter.SOURCE_ADDR);
-        
+
         req.setDestAddrTon(reader.readByte());
         req.setDestAddrNpi(reader.readByte());
         req.setDestAddress(reader.readCString());
         StringValidator.validateString(req.getDestAddress(),
                 StringParameter.DESTINATION_ADDR);
-        
+
         req.setEsmClass(reader.readByte());
         req.setProtocolId(reader.readByte());
         req.setPriorityFlag(reader.readByte());
@@ -271,7 +271,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setSourceAddr(reader.readCString());
         StringValidator.validateString(req.getSourceAddr(),
                 StringParameter.SOURCE_ADDR);
-        
+
         return req;
     }
 
@@ -298,7 +298,9 @@ public class DefaultDecomposer implements PDUDecomposer {
     }
 
     // DELIVER_SM OPERATION
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jsmpp.util.PDUDecomposer#deliverSm(byte[])
      */
     public DeliverSm deliverSm(byte[] b) throws PDUStringException {
@@ -308,28 +310,28 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setServiceType(reader.readCString());
         StringValidator.validateString(req.getServiceType(),
                 StringParameter.SERVICE_TYPE);
-        
+
         req.setSourceAddrTon(reader.readByte());
         req.setSourceAddrNpi(reader.readByte());
         req.setSourceAddr(reader.readCString());
         StringValidator.validateString(req.getSourceAddr(),
                 StringParameter.SOURCE_ADDR);
-        
+
         req.setDestAddrTon(reader.readByte());
         req.setDestAddrNpi(reader.readByte());
         req.setDestAddress(reader.readCString());
         StringValidator.validateString(req.getDestAddress(),
                 StringParameter.DESTINATION_ADDR);
-        
+
         req.setEsmClass(reader.readByte());
         req.setProtocolId(reader.readByte());
         req.setPriorityFlag(reader.readByte());
         // scheduleDeliveryTime should be null of c-octet string
-        req.setScheduleDeliveryTime(reader.readCString()); 
+        req.setScheduleDeliveryTime(reader.readCString());
         StringValidator.validateString(req.getScheduleDeliveryTime(),
                 StringParameter.SCHEDULE_DELIVERY_TIME);
         // validityPeriod should be null of c-octet string
-        req.setValidityPeriod(reader.readCString()); 
+        req.setValidityPeriod(reader.readCString());
         StringValidator.validateString(req.getValidityPeriod(),
                 StringParameter.VALIDITY_PERIOD);
         req.setRegisteredDelivery(reader.readByte());
@@ -349,16 +351,11 @@ public class DefaultDecomposer implements PDUDecomposer {
     /* (non-Javadoc)
      * @see org.jsmpp.util.PDUDecomposer#deliverSmResp(byte[])
      */
-    public DeliverSmResp deliverSmResp(byte[] b) throws PDUStringException{
+    public DeliverSmResp deliverSmResp(byte[] b) {
         DeliverSmResp resp = new DeliverSmResp();
         SequentialBytesReader reader = new SequentialBytesReader(b);
         assignHeader(resp, reader);
-        if (resp.getCommandLength() > 16 && resp.getCommandStatus() == 0) {
-            // message_id should be null
-            resp.setMessageId(reader.readCString());
-            StringValidator.validateString(resp.getMessageId(),
-                    StringParameter.MESSAGE_ID);
-        }
+        // ignore the message_id, because it unused.
         return resp;
     }
 
@@ -375,7 +372,8 @@ public class DefaultDecomposer implements PDUDecomposer {
          */
         try {
             DeliveryReceipt delRec = new DeliveryReceipt();
-            delRec.setId(getDeliveryReceiptValue(DeliveryReceipt.DELREC_ID,data));
+            delRec.setId(getDeliveryReceiptValue(DeliveryReceipt.DELREC_ID,
+                    data));
             delRec.setSubmitted(Integer.parseInt(getDeliveryReceiptValue(
                     DeliveryReceipt.DELREC_SUB, data)));
             delRec.setDelivered(Integer.parseInt(getDeliveryReceiptValue(
@@ -396,7 +394,7 @@ public class DefaultDecomposer implements PDUDecomposer {
                     "There is an error found when parsing delivery receipt", e);
         }
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -406,7 +404,7 @@ public class DefaultDecomposer implements PDUDecomposer {
             throws InvalidDeliveryReceiptException {
         return deliveryReceipt(new String(data));
     }
-    
+
     public DataSm dataSm(byte[] data) throws PDUStringException {
         DataSm req = new DataSm();
         SequentialBytesReader reader = new SequentialBytesReader(data);
@@ -414,26 +412,26 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setServiceType(reader.readCString());
         StringValidator.validateString(req.getServiceType(),
                 StringParameter.SERVICE_TYPE);
-        
+
         req.setSourceAddrTon(reader.readByte());
         req.setSourceAddrNpi(reader.readByte());
         req.setSourceAddr(reader.readCString());
         StringValidator.validateString(req.getSourceAddr(),
                 StringParameter.SOURCE_ADDR);
-        
+
         req.setDestAddrTon(reader.readByte());
         req.setDestAddrNpi(reader.readByte());
         req.setDestAddress(reader.readCString());
         StringValidator.validateString(req.getDestAddress(),
                 StringParameter.DESTINATION_ADDR);
-        
+
         req.setEsmClass(reader.readByte());
         req.setRegisteredDelivery(reader.readByte());
         req.setDataCoding(reader.readByte());
         req.setOptionalParametes(readOptionalParameters(reader));
         return req;
     }
-    
+
     public DataSmResp dataSmResp(byte[] data) throws PDUStringException {
         DataSmResp resp = new DataSmResp();
         SequentialBytesReader reader = new SequentialBytesReader(data);
@@ -443,10 +441,10 @@ public class DefaultDecomposer implements PDUDecomposer {
             StringValidator.validateString(resp.getMessageId(),
                     StringParameter.MESSAGE_ID);
         }
-        
+
         return resp;
     }
-    
+
     public CancelSm cancelSm(byte[] data) throws PDUStringException {
         CancelSm req = new CancelSm();
         SequentialBytesReader reader = new SequentialBytesReader(data);
@@ -454,32 +452,32 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setServiceType(reader.readCString());
         StringValidator.validateString(req.getServiceType(),
                 StringParameter.SERVICE_TYPE);
-        
+
         req.setMessageId(reader.readCString());
         StringValidator.validateString(req.getMessageId(),
                 StringParameter.MESSAGE_ID);
-        
+
         req.setSourceAddrTon(reader.readByte());
         req.setSourceAddrNpi(reader.readByte());
         req.setSourceAddr(reader.readCString());
         StringValidator.validateString(req.getSourceAddr(),
                 StringParameter.SOURCE_ADDR);
-        
+
         req.setDestAddrTon(reader.readByte());
         req.setDestAddrNpi(reader.readByte());
         req.setDestinationAddress(reader.readCString());
         StringValidator.validateString(req.getDestinationAddress(),
                 StringParameter.DESTINATION_ADDR);
-        
+
         return req;
     }
-    
+
     public CancelSmResp cancelSmResp(byte[] data) {
         CancelSmResp resp = new CancelSmResp();
         assignHeader(resp, data);
         return resp;
     }
-    
+
     private OptionalParameter[] readOptionalParameters(
             SequentialBytesReader reader) {
         if (!reader.hasMoreBytes())
@@ -493,7 +491,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         }
         return params.toArray(new OptionalParameter[params.size()]);
     }
-    
+
     /**
      * YYMMDDhhmm where:
      * <ul>
@@ -547,7 +545,7 @@ public class DefaultDecomposer implements PDUDecomposer {
             return source.substring(startIndex, endIndex);
         return source.substring(startIndex);
     }
-    
+
     /**
      * @param source
      * @return
@@ -578,7 +576,7 @@ public class DefaultDecomposer implements PDUDecomposer {
     private static void assignHeader(Command pdu, byte[] bytes) {
         assignHeader(pdu, new SequentialBytesReader(bytes));
     }
-    
+
     /**
      * Utility to read value from bytes sequentially.
      * 
@@ -662,13 +660,13 @@ public class DefaultDecomposer implements PDUDecomposer {
             cursor += length;
             return val;
         }
-        
+
         public short readShort() {
             short value = OctetUtil.bytesToShort(bytes, cursor);
             cursor += 2;
             return value;
         }
-        
+
         /**
          * @param length
          * @return <tt>String</tt> value. Nullable.
@@ -678,8 +676,8 @@ public class DefaultDecomposer implements PDUDecomposer {
              * if (length == 0) return null;
              */
             /*
-             * you have to convert the signed byte into unsigned byte (in integer
-             * representation) with & operand by 0xff
+             * you have to convert the signed byte into unsigned byte (in
+             * integer representation) with & operand by 0xff
              */
             return readString(length & 0xff);
             /*
@@ -687,11 +685,11 @@ public class DefaultDecomposer implements PDUDecomposer {
              * length; return val;
              */
         }
-        
+
         public boolean hasMoreBytes() {
             return cursor < (bytes.length - 1);
         }
-        
+
         public void resetCursor() {
             cursor = 0;
         }

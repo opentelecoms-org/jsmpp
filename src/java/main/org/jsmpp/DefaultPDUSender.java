@@ -229,7 +229,7 @@ public class DefaultPDUSender implements PDUSender {
      * @see org.jsmpp.PDUSender#sendDeliverSmResp(java.io.OutputStream, int)
      */
     public byte[] sendDeliverSmResp(OutputStream os, int sequenceNumber)
-            throws PDUStringException, IOException {
+            throws IOException {
         byte[] b = pduComposer.deliverSmResp(sequenceNumber);
         os.write(b);
         os.flush();

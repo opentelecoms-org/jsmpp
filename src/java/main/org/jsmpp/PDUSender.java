@@ -252,11 +252,10 @@ public interface PDUSender {
      * @param os is the {@link OutputStream}.
      * @param sequenceNumber is the sequence_number.
      * @return the composed bytes.
-     * @throws PDUStringException if there is an invalid string constraint found.
      * @throws IOException if there is an IO error occur.
      */
     byte[] sendDeliverSmResp(OutputStream os, int sequenceNumber)
-            throws PDUStringException, IOException;
+            throws IOException;
     
     /**
      * Send the data short message command.

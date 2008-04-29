@@ -2,7 +2,6 @@ package org.jsmpp.session.state;
 
 import java.io.IOException;
 
-import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DeliverSmResp;
@@ -54,15 +53,8 @@ class SMPPServerSessionBoundRX extends SMPPServerSessionBound implements
             ServerResponseHandler responseHandler) throws IOException {
         PendingResponse<Command> pendingResp = responseHandler.removeSentItem(pduHeader.getSequenceNumber());
         if (pendingResp != null) {
-            
-            try {
-                DeliverSmResp resp = pduDecomposer.deliverSmResp(pdu);
-                pendingResp.done(resp);
-            } catch (PDUStringException e) {
-                logger.error("Failed decomposing deliver_sm_resp", e);
-                responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
-                        .getSequenceNumber());
-            }
+            DeliverSmResp resp = pduDecomposer.deliverSmResp(pdu);
+            pendingResp.done(resp);
         } else {
             logger.warn("No request with sequence number "
                     + pduHeader.getSequenceNumber() + " found");
