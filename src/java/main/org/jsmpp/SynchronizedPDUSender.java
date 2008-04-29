@@ -196,11 +196,8 @@ public class SynchronizedPDUSender implements PDUSender {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.jsmpp.PDUSender#sendDeliverSmResp(java.io.OutputStream, int)
-     */
     public byte[] sendDeliverSmResp(OutputStream os, int sequenceNumber)
-            throws PDUStringException, IOException {
+            throws IOException {
         synchronized (os) {
             return pduSender.sendDeliverSmResp(os, sequenceNumber);
         }
