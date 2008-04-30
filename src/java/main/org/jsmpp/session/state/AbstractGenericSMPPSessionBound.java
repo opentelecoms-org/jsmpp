@@ -2,17 +2,13 @@ package org.jsmpp.session.state;
 
 import java.io.IOException;
 
-import org.jsmpp.InvalidResponseException;
+import org.jsmpp.GenericNackResponseException;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DataSmResp;
-import org.jsmpp.bean.DeliverSm;
-import org.jsmpp.bean.DeliverSmResp;
 import org.jsmpp.bean.EnquireLinkResp;
-import org.jsmpp.bean.SubmitSm;
-import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.bean.UnbindResp;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ProcessRequestException;
@@ -20,12 +16,9 @@ import org.jsmpp.session.BaseResponseHandler;
 import org.jsmpp.session.DataSmResult;
 import org.jsmpp.util.DefaultDecomposer;
 import org.jsmpp.util.IntUtil;
-import org.jsmpp.util.MessageId;
 import org.jsmpp.util.PDUDecomposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import sun.print.resources.serviceui;
 
 /**
  * @author uudashr
@@ -85,11 +78,10 @@ abstract class AbstractGenericSMPPSessionBound implements GenericSMPPSessionStat
         PendingResponse<Command> pendingResp = responseHandler
                 .removeSentItem(pduHeader.getSequenceNumber());
         if (pendingResp != null) {
-            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+            pendingResp.doneWithInvalidResponse(new GenericNackResponseException(
                     "Receive generic_nack with command_status "
-                            + pduHeader.getCommandStatusAsHex()));
-            logger.error("Receive generick_nack for ("
-                    + pendingResp.getResponse().getCommandIdAsHex() + "). "
+                            + pduHeader.getCommandStatusAsHex(), pduHeader.getCommandStatus()));
+            logger.error("Receive generick_nack. "
                     + "command_status=" + pduHeader.getCommandStatusAsHex()
                     + ", sequence_number="
                     + IntUtil.toHexString(pduHeader.getSequenceNumber()));

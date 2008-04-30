@@ -10,16 +10,9 @@ package org.jsmpp;
  * 
  */
 public class InvalidResponseException extends Exception {
-	private static final long serialVersionUID = -1143300950975646034L;
+    private static final long serialVersionUID = -7149393390064407238L;
 
-	/**
-	 * Default constructor.
-	 */
-	public InvalidResponseException() {
-		super();
-	}
-
-	/**
+    /**
      * Construct with specified message and cause.
      * 
 	 * @param message is the detail message.
@@ -37,14 +30,4 @@ public class InvalidResponseException extends Exception {
 	public InvalidResponseException(String message) {
 		super(message);
 	}
-
-	/**
-     * Construct with specified cause.
-     * 
-	 * @param cause is the parent cause.
-	 */
-	public InvalidResponseException(Throwable cause) {
-		super(cause);
-	}
-	
 }
