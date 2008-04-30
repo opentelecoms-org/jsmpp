@@ -6,7 +6,7 @@
 	<property name="tests.dir" value="build/tests" />
 
 	<property name="lib.dir" value="lib" />
-	<property name="project.version" value="2.0b" />
+	<property name="project.version" value="2.0b1" />
 	<property name="dist.jar.filename" value="jsmpp-${project.version}.jar" />
 	<property name="testng.jar" value="${lib.dir}/testng-5.7-jdk15.jar" />
 
