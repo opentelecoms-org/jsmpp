@@ -36,18 +36,17 @@ public class SendSubmitSmCommandTask extends AbstractSendCommandTask {
     private final byte[] shortMessage;
     private final OptionalParameter[] optionalParameters;
     
-    public SendSubmitSmCommandTask(OutputStream out, PDUSender pduSender,
-            String serviceType, TypeOfNumber sourceAddrTon,
-            NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
-            TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
-            String destinationAddr, ESMClass esmClass, byte protocoId,
-            byte priorityFlag, String scheduleDeliveryTime,
-            String validityPeriod, RegisteredDelivery registeredDelivery,
-            byte replaceIfPresentFlag, DataCoding dataCoding,
-            byte smDefaultMsgId, byte[] shortMessage,
+    public SendSubmitSmCommandTask(PDUSender pduSender, String serviceType,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
+            String sourceAddr, TypeOfNumber destAddrTon,
+            NumberingPlanIndicator destAddrNpi, String destinationAddr,
+            ESMClass esmClass, byte protocoId, byte priorityFlag,
+            String scheduleDeliveryTime, String validityPeriod,
+            RegisteredDelivery registeredDelivery, byte replaceIfPresentFlag,
+            DataCoding dataCoding, byte smDefaultMsgId, byte[] shortMessage,
             OptionalParameter... optionalParameters) {
         
-        super(out, pduSender);
+        super(pduSender);
         this.serviceType = serviceType;
         this.sourceAddrTon = sourceAddrTon;
         this.sourceAddrNpi = sourceAddrNpi;

@@ -11,8 +11,8 @@ import org.jsmpp.PDUSender;
  */
 public class EnquireLinkCommandTask extends AbstractSendCommandTask {
     
-    public EnquireLinkCommandTask(OutputStream out, PDUSender pduSender) {
-        super(out, pduSender);
+    public EnquireLinkCommandTask(PDUSender pduSender) {
+        super(pduSender);
     }
 
     public void executeTask(OutputStream out, int sequenceNumber)

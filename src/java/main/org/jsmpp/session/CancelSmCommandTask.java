@@ -22,12 +22,12 @@ public class CancelSmCommandTask extends AbstractSendCommandTask {
     private NumberingPlanIndicator destAddrNpi;
     private String destinationAddress;
     
-    public CancelSmCommandTask(OutputStream out, PDUSender pduSender,
+    public CancelSmCommandTask(PDUSender pduSender,
             String serviceType, String messageId, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
             String destinationAddress) {
-        super(out, pduSender);
+        super(pduSender);
         this.serviceType = serviceType;
         this.messageId = messageId;
         this.sourceAddrTon = sourceAddrTon;

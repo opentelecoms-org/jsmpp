@@ -127,7 +127,7 @@ public class SMPPServerSession extends AbstractSession {
             throws PDUStringException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException {
         
-        DeliverSmCommandTask task = new DeliverSmCommandTask(out, pduSender(),
+        DeliverSmCommandTask task = new DeliverSmCommandTask(pduSender(),
                 serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr,
                 destAddrTon, destAddrNpi, destinationAddr, esmClass, protocoId,
                 protocoId, registeredDelivery, dataCoding, shortMessage,

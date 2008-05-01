@@ -32,7 +32,7 @@ public class DeliverSmCommandTask extends AbstractSendCommandTask {
     private final byte[] shortMessage;
     private final OptionalParameter[] optionalParameters;
     
-    public DeliverSmCommandTask(OutputStream out, PDUSender pduSender,
+    public DeliverSmCommandTask(PDUSender pduSender,
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
@@ -41,7 +41,7 @@ public class DeliverSmCommandTask extends AbstractSendCommandTask {
             DataCoding dataCoding, byte[] shortMessage,
             OptionalParameter[] optionalParameters) {
         
-        super(out, pduSender);
+        super(pduSender);
         this.serviceType = serviceType;
         this.sourceAddrTon = sourceAddrTon;
         this.sourceAddrNpi = sourceAddrNpi;

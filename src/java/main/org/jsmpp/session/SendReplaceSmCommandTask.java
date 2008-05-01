@@ -20,13 +20,12 @@ public class SendReplaceSmCommandTask extends AbstractSendCommandTask {
     private byte smDefaultMsgId;
     private byte[] shortMessage;
     
-    public SendReplaceSmCommandTask(OutputStream out, PDUSender pduSender,
-            String messageId, TypeOfNumber sourceAddrTon,
-            NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
-            String scheduleDeliveryTime, String validityPeriod,
-            RegisteredDelivery registeredDelivery, byte smDefaultMsgId,
-            byte[] shortMessage) {
-        super(out, pduSender);
+    public SendReplaceSmCommandTask(PDUSender pduSender, String messageId,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
+            String sourceAddr, String scheduleDeliveryTime,
+            String validityPeriod, RegisteredDelivery registeredDelivery,
+            byte smDefaultMsgId, byte[] shortMessage) {
+        super(pduSender);
         this.messageId = messageId;
         this.sourceAddrTon = sourceAddrTon;
         this.sourceAddrNpi = sourceAddrNpi;

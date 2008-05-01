@@ -238,8 +238,9 @@ public class SMPPSession extends AbstractSession {
 			throws PDUStringException, ResponseTimeoutException,
 			InvalidResponseException, NegativeResponseException, IOException {
 	    
-	    BindCommandTask task = new BindCommandTask(out, pduSender(), bindType, systemId, password, 
-	            systemType, interfaceVersion, addrTon, addrNpi, addressRange);
+	    BindCommandTask task = new BindCommandTask(pduSender(), bindType,
+                systemId, password, systemType, interfaceVersion, addrTon,
+                addrNpi, addressRange);
 	    
 	    BindResp resp = (BindResp)executeSendCommand(task, timeout);
 		return resp.getSystemId();
@@ -286,7 +287,7 @@ public class SMPPSession extends AbstractSession {
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException {
     	
-        SendSubmitSmCommandTask submitSmTask = new SendSubmitSmCommandTask(out,
+        SendSubmitSmCommandTask submitSmTask = new SendSubmitSmCommandTask(
                 pduSender(), serviceType, sourceAddrTon, sourceAddrNpi,
                 sourceAddr, destAddrTon, destAddrNpi, destinationAddr,
                 esmClass, protocolId, priorityFlag, scheduleDeliveryTime,
@@ -316,9 +317,8 @@ public class SMPPSession extends AbstractSession {
     		throws PDUStringException, ResponseTimeoutException,
     		InvalidResponseException, NegativeResponseException, IOException {
     	
-        QuerySmCommandTask task = new QuerySmCommandTask(out, pduSender(), messageId, 
-                sourceAddrTon, sourceAddrNpi, sourceAddr);
-        
+        QuerySmCommandTask task = new QuerySmCommandTask(pduSender(),
+                messageId, sourceAddrTon, sourceAddrNpi, sourceAddr);
         
     	QuerySmResp resp = (QuerySmResp)executeSendCommand(task, getTransactionTimer());
     	
@@ -336,7 +336,7 @@ public class SMPPSession extends AbstractSession {
             NumberingPlanIndicator destAddrNpi, String destinationAddress)
             throws PDUStringException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException {
-        CancelSmCommandTask task = new CancelSmCommandTask(out, pduSender(),
+        CancelSmCommandTask task = new CancelSmCommandTask(pduSender(),
                 serviceType, messageId, sourceAddrTon, sourceAddrNpi,
                 sourceAddr, destAddrTon, destAddrNpi, destinationAddress);
         

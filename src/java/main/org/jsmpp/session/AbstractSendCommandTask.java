@@ -1,7 +1,5 @@
 package org.jsmpp.session;
 
-import java.io.OutputStream;
-
 import org.jsmpp.PDUSender;
 
 /**
@@ -11,11 +9,9 @@ import org.jsmpp.PDUSender;
  *
  */
 public abstract class AbstractSendCommandTask implements SendCommandTask {
-    protected final OutputStream out;
     protected final PDUSender pduSender;
     
-    public AbstractSendCommandTask(OutputStream out, PDUSender pduSender) {
-        this.out = out;
+    public AbstractSendCommandTask(PDUSender pduSender) {
         this.pduSender = pduSender;
     }
 }

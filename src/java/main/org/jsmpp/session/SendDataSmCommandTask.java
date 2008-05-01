@@ -29,14 +29,14 @@ public class SendDataSmCommandTask extends AbstractSendCommandTask {
     private final DataCoding dataCoding;
     private final OptionalParameter[] optionalParameters;
     
-    public SendDataSmCommandTask(OutputStream out, PDUSender pduSender,
-            String serviceType, TypeOfNumber sourceAddrTon,
-            NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
-            TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
-            String destinationAddr, ESMClass esmClass,
-            RegisteredDelivery registeredDelivery, DataCoding dataCoding,
-            OptionalParameter[] optionalParameters) {
-        super(out, pduSender);
+    public SendDataSmCommandTask(PDUSender pduSender, String serviceType,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
+            String sourceAddr, TypeOfNumber destAddrTon,
+            NumberingPlanIndicator destAddrNpi, String destinationAddr,
+            ESMClass esmClass, RegisteredDelivery registeredDelivery,
+            DataCoding dataCoding, OptionalParameter[] optionalParameters) {
+        
+        super(pduSender);
         this.serviceType = serviceType;
         this.sourceAddrTon = sourceAddrTon;
         this.sourceAddrNpi = sourceAddrNpi;

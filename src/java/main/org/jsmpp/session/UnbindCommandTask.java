@@ -11,8 +11,8 @@ import org.jsmpp.PDUSender;
  */
 public class UnbindCommandTask extends AbstractSendCommandTask {
     
-    public UnbindCommandTask(OutputStream out, PDUSender pduSender) {
-        super(out, pduSender);
+    public UnbindCommandTask(PDUSender pduSender) {
+        super(pduSender);
     }
     
     public void executeTask(OutputStream out, int sequenceNumber)

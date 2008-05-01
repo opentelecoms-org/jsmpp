@@ -24,12 +24,12 @@ public class BindCommandTask extends AbstractSendCommandTask {
     private final NumberingPlanIndicator addrNpi;
     private final String addressRange;
     
-    public BindCommandTask(OutputStream out, PDUSender pduSender,
+    public BindCommandTask(PDUSender pduSender,
             BindType bindType, String systemId, String password,
             String systemType, InterfaceVersion interfaceVersion,
             TypeOfNumber addrTon, NumberingPlanIndicator addrNpi,
             String addressRange) {
-        super(out, pduSender);
+        super(pduSender);
         this.bindType = bindType;
         this.systemId = systemId;
         this.password = password;

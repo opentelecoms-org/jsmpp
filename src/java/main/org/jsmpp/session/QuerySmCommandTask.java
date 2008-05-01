@@ -18,10 +18,10 @@ public class QuerySmCommandTask extends AbstractSendCommandTask {
     private final NumberingPlanIndicator sourceAddrNpi;
     private final String sourceAddr;
     
-    public QuerySmCommandTask(OutputStream out, PDUSender pduSender,
+    public QuerySmCommandTask(PDUSender pduSender,
             String messageId, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr) {
-        super(out, pduSender);
+        super(pduSender);
         this.messageId = messageId;
         this.sourceAddrTon = sourceAddrTon;
         this.sourceAddrNpi = sourceAddrNpi;

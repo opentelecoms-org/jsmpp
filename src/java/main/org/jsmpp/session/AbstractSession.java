@@ -151,10 +151,10 @@ public abstract class AbstractSession implements Session {
             InvalidResponseException, NegativeResponseException, IOException {
         
         
-        SendDataSmCommandTask task = new SendDataSmCommandTask(connection().getOutputStream(), 
-                pduSender, serviceType, sourceAddrTon, sourceAddrNpi, 
-                sourceAddr, destAddrTon, destAddrNpi, destinationAddr, 
-                esmClass, registeredDelivery, dataCoding, optionalParameters);
+        SendDataSmCommandTask task = new SendDataSmCommandTask(pduSender,
+                serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr,
+                destAddrTon, destAddrNpi, destinationAddr, esmClass,
+                registeredDelivery, dataCoding, optionalParameters);
         
         DataSmResp resp = (DataSmResp)executeSendCommand(task, getTransactionTimer());
         
@@ -249,7 +249,7 @@ public abstract class AbstractSession implements Session {
      * @throws IOException if there is an IO error found.
      */
     protected void sendEnquireLink() throws ResponseTimeoutException, InvalidResponseException, IOException {
-        EnquireLinkCommandTask task = new EnquireLinkCommandTask(connection().getOutputStream(), pduSender);
+        EnquireLinkCommandTask task = new EnquireLinkCommandTask(pduSender);
         try {
             executeSendCommand(task, getTransactionTimer());
         } catch (PDUStringException e) {
@@ -263,7 +263,7 @@ public abstract class AbstractSession implements Session {
     
     private void unbind() throws ResponseTimeoutException,
             InvalidResponseException, IOException {
-        UnbindCommandTask task = new UnbindCommandTask(connection().getOutputStream(), pduSender);
+        UnbindCommandTask task = new UnbindCommandTask(pduSender);
         
         try {
             executeSendCommand(task, transactionTimer);
