@@ -106,7 +106,7 @@ class PDUByteBuffer {
     }
 
     /**
-     * Append C-Octet String / null terminated Stirng value.
+     * Append C-Octet String / null terminated String value.
      * 
      * @param stringValue is the value to append.
      * @return the latest length of the buffer.

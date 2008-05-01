@@ -334,4 +334,15 @@ public interface PDUSender {
      */
     byte[] sendCancelSmResp(OutputStream os, int sequenceNumber)
             throws IOException;
+    
+    byte[] sendReplaceSm(OutputStream os, int sequenceNumber, String messageId,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
+            String sourceAddr, String scheduleDeliveryTime,
+            String validityPeriod, RegisteredDelivery registeredDelivery,
+            byte smDefaultMsgId, byte[] shortMessage)
+            throws PDUStringException, IOException;
+    
+    byte[] sendReplaceSmResp(OutputStream os, int sequenceNumber)
+            throws IOException;
+    
 }

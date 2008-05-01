@@ -250,4 +250,25 @@ public class SynchronizedPDUSender implements PDUSender {
             return pduSender.sendCancelSmResp(os, sequenceNumber);
         }
     }
+    
+    public byte[] sendReplaceSm(OutputStream os, int sequenceNumber,
+            String messageId, TypeOfNumber sourceAddrTon,
+            NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            String scheduleDeliveryTime, String validityPeriod,
+            RegisteredDelivery registeredDelivery, byte smDefaultMsgId,
+            byte[] shortMessage) throws PDUStringException, IOException {
+        synchronized (os) {
+            return pduSender.sendReplaceSm(os, sequenceNumber, messageId,
+                    sourceAddrTon, sourceAddrNpi, sourceAddr,
+                    scheduleDeliveryTime, validityPeriod, registeredDelivery,
+                    smDefaultMsgId, shortMessage);
+        }
+    }
+    
+    public byte[] sendReplaceSmResp(OutputStream os, int sequenceNumber)
+            throws IOException {
+        synchronized (os) {
+            return pduSender.sendReplaceSmResp(os, sequenceNumber);
+        }
+    }
 }

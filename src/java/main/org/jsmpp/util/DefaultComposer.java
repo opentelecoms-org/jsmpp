@@ -92,9 +92,8 @@ public class DefaultComposer implements PDUComposer {
      * @see org.jsmpp.util.PDUComposer#unbindResp(int, int)
      */
     public byte[] unbindResp(int commandStatus, int sequenceNumber) {
-        PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_UNBIND_RESP,
-                commandStatus, sequenceNumber);
-        return buf.getBytes();
+        return composeHeader(SMPPConstant.CID_UNBIND_RESP, commandStatus,
+                sequenceNumber);
     }
 
     /* (non-Javadoc)
@@ -117,18 +116,14 @@ public class DefaultComposer implements PDUComposer {
      * @see org.jsmpp.util.PDUComposer#enquireLink(int)
      */
     public byte[] enquireLink(int sequenceNumber) {
-        PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_ENQUIRE_LINK, 0,
-                sequenceNumber);
-        return buf.getBytes();
+        return composeHeader(SMPPConstant.CID_ENQUIRE_LINK, 0, sequenceNumber);
     }
 
     /* (non-Javadoc)
      * @see org.jsmpp.util.PDUComposer#enquireLinkResp(int)
      */
     public byte[] enquireLinkResp(int sequenceNumber) {
-        byte[] b = composeHeader(SMPPConstant.CID_ENQUIRE_LINK_RESP,
-                SMPPConstant.STAT_ESME_ROK, sequenceNumber);
-        return b;
+        return composeHeader(SMPPConstant.CID_ENQUIRE_LINK_RESP, 0, sequenceNumber);
     }
 
     // GENEICK_NACK OPERATION
@@ -369,5 +364,40 @@ public class DefaultComposer implements PDUComposer {
         byte[] b = composeHeader(SMPPConstant.CID_CANCEL_SM_RESP,
                 SMPPConstant.STAT_ESME_ROK, sequenceNumber);
         return b;
+    }
+    
+    public byte[] replaceSm(int sequenceNumber, String messageId,
+            byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
+            String scheduleDeliveryTime, String validityPeriod,
+            byte registeredDelivery, byte smDefaultMsgId, byte[] shortMessage)
+            throws PDUStringException {
+
+        StringValidator.validateString(sourceAddr, StringParameter.SOURCE_ADDR);
+        StringValidator.validateString(scheduleDeliveryTime,
+                StringParameter.SCHEDULE_DELIVERY_TIME);
+        StringValidator.validateString(validityPeriod,
+                StringParameter.VALIDITY_PERIOD);
+        StringValidator.validateString(shortMessage,
+                StringParameter.SHORT_MESSAGE);
+
+        PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_REPLACE_SM, 0,
+                sequenceNumber);
+        buf.append(messageId);
+        buf.append(sourceAddrTon);
+        buf.append(sourceAddrNpi);
+        buf.append(sourceAddr);
+        buf.append(scheduleDeliveryTime);
+        buf.append(validityPeriod);
+        buf.append(registeredDelivery);
+        buf.append(smDefaultMsgId);
+        buf.append((byte)shortMessage.length);
+        buf.append(shortMessage);
+        
+        return buf.getBytes();
+    }
+    
+    public byte[] replaceSmResp(int sequenceNumber) {
+        return composeHeader(SMPPConstant.CID_REPLACE_SM_RESP, 0,
+                sequenceNumber);
     }
 }

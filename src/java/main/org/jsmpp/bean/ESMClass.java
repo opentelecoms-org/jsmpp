@@ -1,7 +1,6 @@
 package org.jsmpp.bean;
 
 /**
- * FIXME uud: create ESMClass support for Server module. 
  * @author uudashr
  * 
  */

@@ -171,4 +171,11 @@ public interface PDUComposer {
      * @return the composed byte values.
      */
     byte[] cancelSmResp(int sequenceNumber);
+    
+    byte[] replaceSm(int sequenceNumber, String messageId, byte sourceAddrTon,
+            byte sourceAddrNpi, String sourceAddr, String scheduleDeliveryTime,
+            String validityPeriod, byte registeredDelivery,
+            byte smDefaultMsgId, byte[] shortMessage) throws PDUStringException;
+    
+    byte[] replaceSmResp(int sequenceNumber);
 }

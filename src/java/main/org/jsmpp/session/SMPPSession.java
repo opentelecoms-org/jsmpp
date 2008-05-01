@@ -512,11 +512,6 @@ public class SMPPSession extends AbstractSession {
 	}
 	
 	
-	/**
-	 * FIXME uud: we can create general class for SMPPServerSession and SMPPSession
-	 * @author uudashr
-	 *
-	 */
 	private class EnquireLinkSender extends Thread {
         private final AtomicBoolean sendingEnquireLink = new AtomicBoolean(false);
         

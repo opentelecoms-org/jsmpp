@@ -288,4 +288,27 @@ public class DefaultPDUSender implements PDUSender {
         os.flush();
         return b;
     }
+    
+    public byte[] sendReplaceSm(OutputStream os, int sequenceNumber,
+            String messageId, TypeOfNumber sourceAddrTon,
+            NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            String scheduleDeliveryTime, String validityPeriod,
+            RegisteredDelivery registeredDelivery, byte smDefaultMsgId,
+            byte[] shortMessage) throws PDUStringException, IOException {
+        byte[] b = pduComposer.replaceSm(sequenceNumber, messageId,
+                sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr,
+                scheduleDeliveryTime, validityPeriod, registeredDelivery
+                        .value(), smDefaultMsgId, shortMessage);
+        os.write(b);
+        os.flush();
+        return b;
+    }
+    
+    public byte[] sendReplaceSmResp(OutputStream os, int sequenceNumber)
+            throws IOException {
+        byte[] b = pduComposer.replaceSmResp(sequenceNumber);
+        os.write(b);
+        os.flush();
+        return b;
+    }
 }
