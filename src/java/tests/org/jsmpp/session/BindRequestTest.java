@@ -4,8 +4,8 @@ import static org.testng.Assert.fail;
 
 import java.io.IOException;
 
-import org.jsmpp.BindType;
 import org.jsmpp.PDUStringException;
+import org.jsmpp.bean.BindType;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

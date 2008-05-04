@@ -12,7 +12,6 @@ public class MessageRequest extends AbstractSmCommand {
     protected String validityPeriod;
     protected byte replaceIfPresent;
     protected byte smDefaultMsgId;
-    protected byte smLength;
     protected byte[] shortMessage;
     
     public MessageRequest() {
@@ -102,20 +101,6 @@ public class MessageRequest extends AbstractSmCommand {
      */
     public void setSmDefaultMsgId(byte smDefaultMsgId) {
         this.smDefaultMsgId = smDefaultMsgId;
-    }
-
-    /**
-     * @return the smLength
-     */
-    public byte getSmLength() {
-        return smLength;
-    }
-
-    /**
-     * @param smLength the smLength to set
-     */
-    public void setSmLength(byte smLength) {
-        this.smLength = smLength;
     }
 
     /**

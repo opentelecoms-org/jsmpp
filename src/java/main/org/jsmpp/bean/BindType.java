@@ -1,4 +1,6 @@
-package org.jsmpp;
+package org.jsmpp.bean;
+
+import org.jsmpp.SMPPConstant;
 
 /**
  * Enum represent bind type of SMPP. There is 3 bind type provide by SMPP:

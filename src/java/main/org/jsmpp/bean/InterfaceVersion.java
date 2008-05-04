@@ -1,4 +1,6 @@
-package org.jsmpp;
+package org.jsmpp.bean;
+
+import org.jsmpp.SMPPConstant;
 
 /**
  * Enum represent the interface version of SMPP.

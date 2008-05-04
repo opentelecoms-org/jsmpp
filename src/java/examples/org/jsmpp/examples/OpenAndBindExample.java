@@ -3,9 +3,9 @@ package org.jsmpp.examples;
 import java.io.IOException;
 
 import org.apache.log4j.BasicConfigurator;
-import org.jsmpp.BindType;
-import org.jsmpp.NumberingPlanIndicator;
-import org.jsmpp.TypeOfNumber;
+import org.jsmpp.bean.BindType;
+import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.SMPPSession;
 

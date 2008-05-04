@@ -17,6 +17,8 @@ import org.jsmpp.bean.GenericNack;
 import org.jsmpp.bean.Outbind;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.QuerySmResp;
+import org.jsmpp.bean.SubmitMulti;
+import org.jsmpp.bean.SubmitMultiResp;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.bean.Unbind;
@@ -235,4 +237,8 @@ public interface PDUDecomposer {
      * @return the cancel short message command object.
      */
     CancelSmResp cancelSmResp(byte[] data);
+    
+    SubmitMulti submitMulti(byte[] data) throws PDUStringException;
+    
+    SubmitMultiResp submitMultiResp(byte[] data) throws PDUStringException;
 }

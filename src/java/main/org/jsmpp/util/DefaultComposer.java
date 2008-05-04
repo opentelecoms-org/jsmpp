@@ -2,7 +2,9 @@ package org.jsmpp.util;
 
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
+import org.jsmpp.bean.Address;
 import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.bean.OptionalParameter.Tag;
 
 /**
@@ -144,7 +146,7 @@ public class DefaultComposer implements PDUComposer {
             byte destAddrTon, byte destAddrNpi, String destinationAddr,
             byte esmClass, byte protocolId, byte priorityFlag,
             String scheduleDeliveryTime, String validityPeriod,
-            byte registeredDelivery, byte replaceIfPresent, byte dataCoding,
+            byte registeredDelivery, byte replaceIfPresentFlag, byte dataCoding,
             byte smDefaultMsgId, byte[] shortMessage,
             OptionalParameter... optionalParameters) throws PDUStringException {
 
@@ -175,7 +177,7 @@ public class DefaultComposer implements PDUComposer {
         buf.append(scheduleDeliveryTime);
         buf.append(validityPeriod);
         buf.append(registeredDelivery);
-        buf.append(replaceIfPresent);
+        buf.append(replaceIfPresentFlag);
         buf.append(dataCoding);
         buf.append(smDefaultMsgId);
         buf.append((byte)shortMessage.length);
@@ -399,5 +401,62 @@ public class DefaultComposer implements PDUComposer {
     public byte[] replaceSmResp(int sequenceNumber) {
         return composeHeader(SMPPConstant.CID_REPLACE_SM_RESP, 0,
                 sequenceNumber);
+    }
+    
+    public byte[] submitMulti(int sequenceNumber, String serviceType,
+            byte sourceAddrTon, byte sourceAddrNpi,
+            String sourceAddr, Address[] destinationAddresses,
+            byte esmClass, byte protocolId, byte priorityFlag,
+            String scheduleDeliveryTime, String validityPeriod,
+            byte registeredDelivery,
+            byte replaceIfPresentFlag, byte dataCoding,
+            byte smDefaultMsgId, byte[] shortMessage,
+            OptionalParameter... optionalParameters) throws PDUStringException {
+        
+        StringValidator.validateString(serviceType,
+                StringParameter.SERVICE_TYPE);
+        StringValidator.validateString(sourceAddr, StringParameter.SOURCE_ADDR);
+        for (Address destAddr : destinationAddresses) {
+            StringValidator.validateString(destAddr.getAddress(), StringParameter.DESTINATION_ADDR);
+        }
+        StringValidator.validateString(scheduleDeliveryTime,
+                StringParameter.SCHEDULE_DELIVERY_TIME);
+        StringValidator.validateString(validityPeriod,
+                StringParameter.VALIDITY_PERIOD);
+        StringValidator.validateString(shortMessage,
+                StringParameter.SHORT_MESSAGE);
+
+        PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_SUBMIT_MULTI, 0,
+                sequenceNumber);
+        buf.append(serviceType);
+        buf.append(sourceAddrTon);
+        buf.append(sourceAddrNpi);
+        buf.append(sourceAddr);
+        for (Address destAddr : destinationAddresses) {
+            buf.append(destAddr.getTon());
+            buf.append(destAddr.getNpi());
+            buf.append(destAddr.getAddress());
+        }
+        
+        buf.append(esmClass);
+        buf.append(protocolId);
+        buf.append(priorityFlag);
+        buf.append(scheduleDeliveryTime);
+        buf.append(validityPeriod);
+        buf.append(registeredDelivery);
+        buf.append(replaceIfPresentFlag);
+        buf.append(dataCoding);
+        buf.append(smDefaultMsgId);
+        buf.append((byte)shortMessage.length);
+        buf.append(shortMessage);
+        buf.appendAll(optionalParameters);
+        return buf.getBytes();
+    }
+    
+    public byte[] submitMultiResp(int sequenceNumber, String messageId,
+            UnsuccessDelivery... unsuccessDeliveries) throws PDUStringException {
+        StringValidator.validateString(messageId, StringParameter.MESSAGE_ID);
+        // TODO uudashr: SUBMIT MULTI RESP
+        return null;
     }
 }

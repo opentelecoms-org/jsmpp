@@ -1,8 +1,8 @@
 package org.jsmpp.session;
 
-import org.jsmpp.BindType;
-import org.jsmpp.NumberingPlanIndicator;
-import org.jsmpp.TypeOfNumber;
+import org.jsmpp.bean.BindType;
+import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.TypeOfNumber;
 
 /**
  * This class is wraps all bind parameter that will be send as PDU.

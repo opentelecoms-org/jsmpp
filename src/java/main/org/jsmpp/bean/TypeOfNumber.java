@@ -1,4 +1,6 @@
-package org.jsmpp;
+package org.jsmpp.bean;
+
+import org.jsmpp.SMPPConstant;
 
 /**
  * Type of Number based on SMPP version 3.4.

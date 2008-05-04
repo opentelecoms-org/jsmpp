@@ -3,7 +3,7 @@ package org.jsmpp.session;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jsmpp.BindType;
+import org.jsmpp.bean.BindType;
 import org.jsmpp.extra.SessionState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

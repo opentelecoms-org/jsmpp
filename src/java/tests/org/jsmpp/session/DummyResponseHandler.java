@@ -2,8 +2,8 @@ package org.jsmpp.session;
 
 import java.io.IOException;
 
-import org.jsmpp.BindType;
 import org.jsmpp.bean.Bind;
+import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;

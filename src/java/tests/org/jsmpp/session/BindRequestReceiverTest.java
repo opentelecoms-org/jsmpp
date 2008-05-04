@@ -2,8 +2,9 @@ package org.jsmpp.session;
 
 import java.util.concurrent.TimeoutException;
 
-import org.jsmpp.BindType;
 import org.jsmpp.bean.Bind;
+import org.jsmpp.bean.BindType;
+
 import static org.testng.Assert.*;
 
 import org.testng.annotations.BeforeMethod;

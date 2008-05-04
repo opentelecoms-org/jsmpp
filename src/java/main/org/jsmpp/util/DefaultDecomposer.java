@@ -25,6 +25,8 @@ import org.jsmpp.bean.OptionalParameters;
 import org.jsmpp.bean.Outbind;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.QuerySmResp;
+import org.jsmpp.bean.SubmitMulti;
+import org.jsmpp.bean.SubmitMultiResp;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.bean.Unbind;
@@ -227,9 +229,9 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setReplaceIfPresent(reader.readByte());
         req.setDataCoding(reader.readByte());
         req.setSmDefaultMsgId(reader.readByte());
-        req.setSmLength(reader.readByte());
+        byte smLength = reader.readByte();
         // req.setShortMessage(reader.readString(req.getSmLength()));
-        req.setShortMessage(reader.readBytes(req.getSmLength()));
+        req.setShortMessage(reader.readBytes(smLength));
         StringValidator.validateString(req.getShortMessage(),
                 StringParameter.SHORT_MESSAGE);
         req.setOptionalParametes(readOptionalParameters(reader));
@@ -340,8 +342,8 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setDataCoding(reader.readByte());
         // smDefaultMsgId should be null
         req.setSmDefaultMsgId(reader.readByte());
-        req.setSmLength(reader.readByte());
-        req.setShortMessage(reader.readBytes(req.getSmLength()));
+        byte smLength = reader.readByte();
+        req.setShortMessage(reader.readBytes(smLength));
         StringValidator.validateString(req.getShortMessage(),
                 StringParameter.SHORT_MESSAGE);
         req.setOptionalParametes(readOptionalParameters(reader));
@@ -477,7 +479,18 @@ public class DefaultDecomposer implements PDUDecomposer {
         assignHeader(resp, data);
         return resp;
     }
-
+    
+    public SubmitMulti submitMulti(byte[] data) throws PDUStringException {
+        // TODO uudashr: DECOMPOSE SUBMIT_MULTI
+        return null;
+    }
+    
+    public SubmitMultiResp submitMultiResp(byte[] data)
+            throws PDUStringException {
+        // TODO uudashr: DECOMPOSE SUBMIT_MULTI_RESP
+        return null;
+    }
+    
     private OptionalParameter[] readOptionalParameters(
             SequentialBytesReader reader) {
         if (!reader.hasMoreBytes())

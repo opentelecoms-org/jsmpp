@@ -1,7 +1,9 @@
 package org.jsmpp.util;
 
 import org.jsmpp.PDUStringException;
+import org.jsmpp.bean.Address;
 import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.UnsuccessDelivery;
 
 /**
  * This is utility to compose the PDU from parameter values to byte.
@@ -59,7 +61,7 @@ public interface PDUComposer {
      * @param scheduleDeliveryTime
      * @param validityPeriod
      * @param registeredDelivery
-     * @param replaceIfPresent
+     * @param replaceIfPresentFlag
      * @param dataCoding
      * @param smDefaultMsgId
      * @param shortMessage
@@ -72,7 +74,7 @@ public interface PDUComposer {
             byte destAddrTon, byte destAddrNpi, String destinationAddr,
             byte esmClass, byte protocolId, byte priorityFlag,
             String scheduleDeliveryTime, String validityPeriod,
-            byte registeredDelivery, byte replaceIfPresent, byte dataCoding,
+            byte registeredDelivery, byte replaceIfPresentFlag, byte dataCoding,
             byte smDefaultMsgId, byte[] shortMessage,
             OptionalParameter... optionalParameters) throws PDUStringException;
 
@@ -178,4 +180,17 @@ public interface PDUComposer {
             byte smDefaultMsgId, byte[] shortMessage) throws PDUStringException;
     
     byte[] replaceSmResp(int sequenceNumber);
+    
+    byte[] submitMulti(int sequenceNumber, String serviceType,
+            byte sourceAddrTon, byte sourceAddrNpi,
+            String sourceAddr, Address[] destinationAddresses,
+            byte esmClass, byte protocolId, byte priorityFlag,
+            String scheduleDeliveryTime, String validityPeriod,
+            byte registeredDelivery,
+            byte replaceIfPresentFlag, byte dataCoding,
+            byte smDefaultMsgId, byte[] shortMessage,
+            OptionalParameter... optionalParameters) throws PDUStringException;
+    
+    byte[] submitMultiResp(int sequenceNumber, String messageId,
+            UnsuccessDelivery... unsuccessDeliveries) throws PDUStringException;
 }

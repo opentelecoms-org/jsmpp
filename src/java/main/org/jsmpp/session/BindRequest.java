@@ -5,11 +5,11 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.jsmpp.BindType;
-import org.jsmpp.NumberingPlanIndicator;
 import org.jsmpp.PDUStringException;
-import org.jsmpp.TypeOfNumber;
 import org.jsmpp.bean.Bind;
+import org.jsmpp.bean.BindType;
+import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.util.StringParameter;
 import org.jsmpp.util.StringValidator;

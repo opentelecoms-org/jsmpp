@@ -1,6 +1,6 @@
 package org.jsmpp.session;
 
-import org.jsmpp.BindType;
+import org.jsmpp.bean.BindType;
 import org.jsmpp.extra.SessionState;
 
 /**
