@@ -16,6 +16,7 @@ import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.QuerySmResp;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceIfPresentFlag;
+import org.jsmpp.bean.SubmitMultiResp;
 import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.bean.TypeOfNumber;
@@ -84,14 +85,19 @@ public class DefaultSMPPClientOperation extends AbstractSMPPOperation implements
             OptionalParameter[] optionalParameters) throws PDUStringException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException {
-        
-        SubmitMultiCommandTask task = new SubmitMultiCommandTask(pduSender(), serviceType, sourceAddrTon, 
-                sourceAddrNpi, sourceAddr, destinationAddresses, esmClass, protocolId, priorityFlag, 
-                scheduleDeliveryTime, validityPeriod, registeredDelivery, replaceIfPresentFlag, dataCoding, 
-                smDefaultMsgId, shortMessage, optionalParameters);
-        
-        // TODO uudashr: SUBMIT MULTI
-        return null;
+
+        SubmitMultiCommandTask task = new SubmitMultiCommandTask(pduSender(),
+                serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr,
+                destinationAddresses, esmClass, protocolId, priorityFlag,
+                scheduleDeliveryTime, validityPeriod, registeredDelivery,
+                replaceIfPresentFlag, dataCoding, smDefaultMsgId, shortMessage,
+                optionalParameters);
+
+        SubmitMultiResp resp = (SubmitMultiResp)executeSendCommand(task,
+                getTransactionTimer());
+
+        return new SubmitMultiResult(resp.getMessageId(), resp
+                .getUnsuccessSmes());
     }
 
     public QuerySmResult querySm(String messageId, TypeOfNumber sourceAddrTon,

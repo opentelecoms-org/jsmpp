@@ -13,21 +13,27 @@ import org.jsmpp.util.MessageId;
 
 /**
  * @author uudashr
- *
+ * 
  */
 public interface ServerResponseHandler extends BaseResponseHandler {
-    void sendBindResp(String systemId, BindType bindType, int sequenceNumber) throws IOException;
-    void sendSubmitSmResponse(MessageId messageId, int sequenceNumber) throws IOException;
-    
+    void sendBindResp(String systemId, BindType bindType, int sequenceNumber)
+            throws IOException;
+
+    void sendSubmitSmResponse(MessageId messageId, int sequenceNumber)
+            throws IOException;
+
     void processBind(Bind bind);
-    
+
     MessageId processSubmitSm(SubmitSm submitSm) throws ProcessRequestException;
-    
-    QuerySmResult processQuerySm(QuerySm querySm) throws ProcessRequestException;
-    
+
+    QuerySmResult processQuerySm(QuerySm querySm)
+            throws ProcessRequestException;
+
     void sendQuerySmResp(String messageId, String finalDate,
-            MessageState messageState, byte errorCode, int sequenceNumber) throws IOException;
-    
+            MessageState messageState, byte errorCode, int sequenceNumber)
+            throws IOException;
+
     void processCancelSm(CancelSm cancelSm) throws ProcessRequestException;
+
     void sendCancelSmResp(int sequenceNumber) throws IOException;
 }

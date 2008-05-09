@@ -216,7 +216,7 @@ public class SMPPServerSession extends AbstractSession {
                 pduSender().sendBindResp(out, bindType.commandId() | SMPPConstant.MASK_CID_RESP, sequenceNumber, systemId);
             } catch (PDUStringException e) {
                 logger.error("Failed sending bind response", e);
-                // TODO uudashr: validate the systemId when the setting up the value, so it never throws PDUStringException on above block
+                // TODO uudashr: we have double checking when accept the bind request
             }
         }
         

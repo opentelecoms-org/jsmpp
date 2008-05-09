@@ -11,6 +11,7 @@ import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.util.MessageId;
@@ -31,12 +32,19 @@ public interface SMPPServerOperation extends SMPPOperation {
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException;
 
-    void alertNotification();
+    void alertNotification(int sequenceNumber, TypeOfNumber sourceAddrTon,
+            NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            TypeOfNumber esmeAddrTon, NumberingPlanIndicator esmeAddrNpi,
+            String esmeAddr, OptionalParameter... optionalParameters)
+            throws PDUStringException, ResponseTimeoutException,
+            InvalidResponseException, NegativeResponseException, IOException;
 
     void submitSmResp(MessageId messageId, int sequenceNumber)
             throws PDUStringException, IOException;
 
-    void submitMultiResp();
+    void submitMultiResp(int sequenceNumber, String messageId,
+            UnsuccessDelivery... unsuccessDeliveries)
+            throws PDUStringException, IOException;
 
     void querySmResp(String messageId, String finalDate,
             MessageState messageState, byte errorCode, int sequenceNumber)

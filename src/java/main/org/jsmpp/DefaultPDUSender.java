@@ -387,7 +387,19 @@ public class DefaultPDUSender implements PDUSender {
         writeAndFlush(os, b);
         return b;
     }
-
+    
+    public byte[] sendAlertNotification(OutputStream os, int sequenceNumber,
+            byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
+            byte esmeAddrTon, byte esmeAddrNpi, String esmeAddr,
+            OptionalParameter... optionalParameters) throws PDUStringException,
+            IOException {
+        byte[] b = pduComposer.alertNotification(sequenceNumber, sourceAddrTon,
+                sourceAddrNpi, sourceAddr, esmeAddrTon, esmeAddrNpi, esmeAddr,
+                optionalParameters);
+        writeAndFlush(os, b);
+        return b;
+    }
+    
     private static void writeAndFlush(OutputStream out, byte[] b)
             throws IOException {
         out.write(b);

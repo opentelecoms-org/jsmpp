@@ -41,7 +41,12 @@ public enum StringParameter {
 	FINAL_DATE(StringType.C_OCTEC_STRING, 0, 17, false, SMPPConstant.STAT_ESME_RINVDFTMSGID),
 	SHORT_MESSAGE(StringType.OCTET_STRING, 0, 255, true, SMPPConstant.STAT_ESME_RINVMSGLEN), // the SMPP v3.4 max is 254  
 	MESSAGE_ID(StringType.C_OCTEC_STRING, 0, 65, true, SMPPConstant.STAT_ESME_RINVMSGID), 
-	DEL_MESSAGE_ID(StringType.C_OCTEC_STRING, 0, 0, true, SMPPConstant.STAT_ESME_RINVMSGID);
+	DEL_MESSAGE_ID(StringType.C_OCTEC_STRING, 0, 0, true, SMPPConstant.STAT_ESME_RINVMSGID), 
+	/**
+	 * ESME_ADDR has error code OK because there is not response to alert_notification
+	 * (ESME_ADDR only use on alert_notification), so there is no error code to return.
+	 */
+	ESME_ADDR(StringType.C_OCTEC_STRING, 0, 65, true, SMPPConstant.STAT_ESME_ROK);
 	
 	private StringType type;
 	private final int min;

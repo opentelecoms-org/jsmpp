@@ -12,6 +12,7 @@ import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.session.connection.Connection;
@@ -47,8 +48,17 @@ public class DefaultSMPPServerOperation extends AbstractSMPPOperation implements
         executeSendCommand(task, getTransactionTimer());
     }
 
-    public void alertNotification() {
-        // TODO uudashr: alert_notification not yet supported
+    public void alertNotification(int sequenceNumber,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
+            String sourceAddr, TypeOfNumber esmeAddrTon,
+            NumberingPlanIndicator esmeAddrNpi, String esmeAddr,
+            OptionalParameter... optionalParameters) throws PDUStringException,
+            ResponseTimeoutException, InvalidResponseException,
+            NegativeResponseException, IOException {
+        pduSender().sendAlertNotification(connection().getOutputStream(),
+                sequenceNumber, sourceAddrTon.value(), sourceAddrNpi.value(),
+                sourceAddr, esmeAddrTon.value(), esmeAddrNpi.value(), esmeAddr,
+                optionalParameters);
     }
 
     public void querySmResp(String messageId, String finalDate,
@@ -63,8 +73,11 @@ public class DefaultSMPPServerOperation extends AbstractSMPPOperation implements
                 sequenceNumber);
     }
 
-    public void submitMultiResp() {
-        // TODO uudashr: submit_multi_resp not yet supported
+    public void submitMultiResp(int sequenceNumber, String messageId,
+            UnsuccessDelivery... unsuccessDeliveries)
+            throws PDUStringException, IOException {
+        pduSender().sendSubmitMultiResp(connection().getOutputStream(), 
+                sequenceNumber, messageId, unsuccessDeliveries);
     }
 
     public void submitSmResp(MessageId messageId, int sequenceNumber)

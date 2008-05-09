@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.jsmpp.PDUStringException;
+import org.jsmpp.bean.Address;
+import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.CancelSm;
@@ -31,6 +33,7 @@ import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.bean.Unbind;
 import org.jsmpp.bean.UnbindResp;
+import org.jsmpp.bean.UnsuccessDelivery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -350,7 +353,9 @@ public class DefaultDecomposer implements PDUDecomposer {
         return req;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jsmpp.util.PDUDecomposer#deliverSmResp(byte[])
      */
     public DeliverSmResp deliverSmResp(byte[] b) {
@@ -479,16 +484,96 @@ public class DefaultDecomposer implements PDUDecomposer {
         assignHeader(resp, data);
         return resp;
     }
-    
+
     public SubmitMulti submitMulti(byte[] data) throws PDUStringException {
-        // TODO uudashr: DECOMPOSE SUBMIT_MULTI
-        return null;
+        SubmitMulti req = new SubmitMulti();
+        SequentialBytesReader reader = new SequentialBytesReader(data);
+        assignHeader(req, reader);
+        req.setServiceType(reader.readCString());
+        StringValidator.validateString(req.getServiceType(),
+                StringParameter.SERVICE_TYPE);
+
+        req.setSourceAddrTon(reader.readByte());
+        req.setSourceAddrNpi(reader.readByte());
+        req.setSourceAddr(reader.readCString());
+        StringValidator.validateString(req.getSourceAddr(),
+                StringParameter.SOURCE_ADDR);
+
+        int totalDest = 0xff & reader.readByte();
+        Address[] destAddresses = new Address[totalDest];
+        for (int i = 0; i < totalDest; i++) {
+            byte ton = reader.readByte();
+            byte npi = reader.readByte();
+            String addr = reader.readCString();
+            StringValidator.validateString(addr,
+                    StringParameter.DESTINATION_ADDR);
+            Address destAddr = new Address(ton, npi, addr);
+            destAddresses[i] = destAddr;
+        }
+        req.setDestAddresses(destAddresses);
+
+        req.setEsmClass(reader.readByte());
+        req.setProtocolId(reader.readByte());
+        req.setPriorityFlag(reader.readByte());
+        req.setScheduleDeliveryTime(reader.readCString());
+        StringValidator.validateString(req.getScheduleDeliveryTime(),
+                StringParameter.SCHEDULE_DELIVERY_TIME);
+        req.setValidityPeriod(reader.readCString());
+        StringValidator.validateString(req.getValidityPeriod(),
+                StringParameter.VALIDITY_PERIOD);
+        req.setRegisteredDelivery(reader.readByte());
+        req.setReplaceIfPresentFlag(reader.readByte());
+        req.setDataCoding(reader.readByte());
+        req.setSmDefaultMsgId(reader.readByte());
+        byte smLength = reader.readByte();
+        req.setShortMessage(reader.readBytes(smLength));
+        req.setOptionalParameters(readOptionalParameters(reader));
+        return req;
     }
-    
+
     public SubmitMultiResp submitMultiResp(byte[] data)
             throws PDUStringException {
-        // TODO uudashr: DECOMPOSE SUBMIT_MULTI_RESP
-        return null;
+        SubmitMultiResp resp = new SubmitMultiResp();
+        SequentialBytesReader reader = new SequentialBytesReader(data);
+        assignHeader(resp, reader);
+        resp.setMessageId(reader.readCString());
+        StringValidator.validateString(resp.getMessageId(),
+                StringParameter.MESSAGE_ID);
+
+        int noUnsuccess = 0xff & reader.readByte();
+        UnsuccessDelivery[] unsuccessSmes = new UnsuccessDelivery[noUnsuccess];
+        for (int i = 0; i < noUnsuccess; i++) {
+            byte ton = reader.readByte();
+            byte npi = reader.readByte();
+            String addr = reader.readCString();
+            StringValidator.validateString(addr,
+                    StringParameter.DESTINATION_ADDR);
+            int errorStatusCode = reader.readInt();
+            unsuccessSmes[i] = new UnsuccessDelivery(ton, npi, addr,
+                    errorStatusCode);
+        }
+        resp.setUnsuccessSmes(unsuccessSmes);
+        return resp;
+    }
+    
+    public AlertNotification alertNotification(byte[] data) throws PDUStringException {
+        AlertNotification req = new AlertNotification();
+        SequentialBytesReader reader = new SequentialBytesReader(data);
+        assignHeader(req, reader);
+        req.setSourceAddrTon(reader.readByte());
+        req.setSourceAddrNpi(reader.readByte());
+        req.setSourceAddr(reader.readCString());
+        StringValidator.validateString(req.getSourceAddr(), StringParameter.SOURCE_ADDR);
+        req.setEsmeAddrTon(reader.readByte());
+        req.setEsmeAddrNpi(reader.readByte());
+        /*
+         * No validation on esme_addr.
+         * There is no response to alert_notificaion command, so error will be 
+         * ignored.
+         */
+        req.setEsmeAddr(reader.readCString());
+        req.setOptionalParameters(readOptionalParameters(reader));
+        return req;
     }
     
     private OptionalParameter[] readOptionalParameters(

@@ -9,12 +9,11 @@ import org.jsmpp.bean.UnsuccessDelivery;
  * This is utility to compose the PDU from parameter values to byte.
  * 
  * @author uudashr
- *
+ * 
  */
 public interface PDUComposer {
 
-    byte[] composeHeader(int commandId, int commandStatus,
-            int sequenceNumber);
+    byte[] composeHeader(int commandId, int commandStatus, int sequenceNumber);
 
     // GENERAL BIND OPERATION
     byte[] bind(int commandId, int sequenceNumber, String systemId,
@@ -27,7 +26,7 @@ public interface PDUComposer {
 
     byte[] bindResp(int commandId, int sequenceNumber, String systemId,
             byte scInterfaceVersion) throws PDUStringException;
-    
+
     byte[] unbind(int sequenceNumber);
 
     byte[] unbindResp(int commandStatus, int sequenceNumber);
@@ -69,14 +68,14 @@ public interface PDUComposer {
      * @return the composed byte values.
      * @throws PDUStringException
      */
-    byte[] submitSm(int sequenceNumber, String serviceType,
-            byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
-            byte destAddrTon, byte destAddrNpi, String destinationAddr,
-            byte esmClass, byte protocolId, byte priorityFlag,
-            String scheduleDeliveryTime, String validityPeriod,
-            byte registeredDelivery, byte replaceIfPresentFlag, byte dataCoding,
-            byte smDefaultMsgId, byte[] shortMessage,
-            OptionalParameter... optionalParameters) throws PDUStringException;
+    byte[] submitSm(int sequenceNumber, String serviceType, byte sourceAddrTon,
+            byte sourceAddrNpi, String sourceAddr, byte destAddrTon,
+            byte destAddrNpi, String destinationAddr, byte esmClass,
+            byte protocolId, byte priorityFlag, String scheduleDeliveryTime,
+            String validityPeriod, byte registeredDelivery,
+            byte replaceIfPresentFlag, byte dataCoding, byte smDefaultMsgId,
+            byte[] shortMessage, OptionalParameter... optionalParameters)
+            throws PDUStringException;
 
     /**
      * Submit short message response (submit_sm_resp).
@@ -90,13 +89,11 @@ public interface PDUComposer {
             throws PDUStringException;
 
     // QUERY_SM OPERATION
-    byte[] querySm(int sequenceNumber, String messageId,
-            byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr)
-            throws PDUStringException;
+    byte[] querySm(int sequenceNumber, String messageId, byte sourceAddrTon,
+            byte sourceAddrNpi, String sourceAddr) throws PDUStringException;
 
-    byte[] querySmResp(int sequenceNumber, String messageId,
-            String finalDate, byte messageState, byte errorCode)
-            throws PDUStringException;
+    byte[] querySmResp(int sequenceNumber, String messageId, String finalDate,
+            byte messageState, byte errorCode) throws PDUStringException;
 
     // DELIVER_SM OPERATION
     byte[] deliverSm(int sequenceNumber, String serviceType,
@@ -107,8 +104,7 @@ public interface PDUComposer {
             OptionalParameter... optionalParameters) throws PDUStringException;
 
     byte[] deliverSmResp(int sequenceNumber);
-    
-    
+
     /**
      * Compose data short message (data_sm) PDU.
      * 
@@ -127,10 +123,10 @@ public interface PDUComposer {
      * @return
      * @throws PDUStringException
      */
-    byte[] dataSm(int sequenceNumber, String serviceType,
-            byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
-            byte destAddrTon, byte destAddrNpi, String destinationAddr,
-            byte esmClass, byte registeredDelivery, byte dataCoding,
+    byte[] dataSm(int sequenceNumber, String serviceType, byte sourceAddrTon,
+            byte sourceAddrNpi, String sourceAddr, byte destAddrTon,
+            byte destAddrNpi, String destinationAddr, byte esmClass,
+            byte registeredDelivery, byte dataCoding,
             OptionalParameter... optionalParameters) throws PDUStringException;
 
     /**
@@ -143,9 +139,8 @@ public interface PDUComposer {
      * @throws PDUStringException
      */
     byte[] dataSmResp(int sequenceNumber, String messageId,
-            OptionalParameter... optionalParameters)
-            throws PDUStringException;
-    
+            OptionalParameter... optionalParameters) throws PDUStringException;
+
     /**
      * Compose cancel short message (cancel_sm) PDU.
      * 
@@ -165,7 +160,7 @@ public interface PDUComposer {
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
             byte destAddrTon, byte destAddrNpi, String destinationAddr)
             throws PDUStringException;
-    
+
     /**
      * Compose cancel short message response (cancel_sm_resp) PDU.
      * 
@@ -173,24 +168,28 @@ public interface PDUComposer {
      * @return the composed byte values.
      */
     byte[] cancelSmResp(int sequenceNumber);
-    
+
     byte[] replaceSm(int sequenceNumber, String messageId, byte sourceAddrTon,
             byte sourceAddrNpi, String sourceAddr, String scheduleDeliveryTime,
             String validityPeriod, byte registeredDelivery,
             byte smDefaultMsgId, byte[] shortMessage) throws PDUStringException;
-    
+
     byte[] replaceSmResp(int sequenceNumber);
-    
+
     byte[] submitMulti(int sequenceNumber, String serviceType,
-            byte sourceAddrTon, byte sourceAddrNpi,
-            String sourceAddr, Address[] destinationAddresses,
-            byte esmClass, byte protocolId, byte priorityFlag,
-            String scheduleDeliveryTime, String validityPeriod,
-            byte registeredDelivery,
-            byte replaceIfPresentFlag, byte dataCoding,
-            byte smDefaultMsgId, byte[] shortMessage,
-            OptionalParameter... optionalParameters) throws PDUStringException;
-    
+            byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
+            Address[] destinationAddresses, byte esmClass, byte protocolId,
+            byte priorityFlag, String scheduleDeliveryTime,
+            String validityPeriod, byte registeredDelivery,
+            byte replaceIfPresentFlag, byte dataCoding, byte smDefaultMsgId,
+            byte[] shortMessage, OptionalParameter... optionalParameters)
+            throws PDUStringException;
+
     byte[] submitMultiResp(int sequenceNumber, String messageId,
             UnsuccessDelivery... unsuccessDeliveries) throws PDUStringException;
+
+    byte[] alertNotification(int sequenceNumber, byte sourceAddrTon,
+            byte sourceAddrNpi, String sourceAddr, byte esmeAddrTon,
+            byte esmeAddrNpi, String esmeAddr,
+            OptionalParameter... optionalParameters) throws PDUStringException;
 }

@@ -375,4 +375,16 @@ public class SynchronizedPDUSender implements PDUSender {
                     unsuccessDeliveries);
         }
     }
+    
+    public byte[] sendAlertNotification(OutputStream os, int sequenceNumber,
+            byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
+            byte esmeAddrTon, byte esmeAddrNpi, String esmeAddr,
+            OptionalParameter... optionalParameters) throws PDUStringException,
+            IOException {
+        synchronized (os) {
+            return pduSender.sendAlertNotification(os, sequenceNumber,
+                    sourceAddrTon, sourceAddrNpi, sourceAddr, esmeAddrTon,
+                    esmeAddrNpi, esmeAddr, optionalParameters);
+        }
+    }
 }

@@ -19,7 +19,9 @@ public class DefaultComposer implements PDUComposer {
     public DefaultComposer() {
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jsmpp.util.PDUComposer#composeHeader(int, int, int)
      */
     public byte[] composeHeader(int commandId, int commandStatus,
@@ -30,8 +32,12 @@ public class DefaultComposer implements PDUComposer {
     }
 
     // GENERAL BIND OPERATION
-    /* (non-Javadoc)
-     * @see org.jsmpp.util.PDUComposer#bind(int, int, java.lang.String, java.lang.String, java.lang.String, byte, byte, byte, java.lang.String)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jsmpp.util.PDUComposer#bind(int, int, java.lang.String,
+     *      java.lang.String, java.lang.String, byte, byte, byte,
+     *      java.lang.String)
      */
     public byte[] bind(int commandId, int sequenceNumber, String systemId,
             String password, String systemType, byte interfaceVersion,
@@ -55,8 +61,11 @@ public class DefaultComposer implements PDUComposer {
         return buf.getBytes();
     }
 
-    /* (non-Javadoc)
-     * @see org.jsmpp.util.PDUComposer#bindResp(int, int, java.lang.String, org.jsmpp.bean.OptionalParameter[])
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jsmpp.util.PDUComposer#bindResp(int, int, java.lang.String,
+     *      org.jsmpp.bean.OptionalParameter[])
      */
     public byte[] bindResp(int commandId, int sequenceNumber, String systemId,
             OptionalParameter... optionalParameters) throws PDUStringException {
@@ -67,8 +76,11 @@ public class DefaultComposer implements PDUComposer {
         return buf.getBytes();
     }
 
-    /* (non-Javadoc)
-     * @see org.jsmpp.util.PDUComposer#bindResp(int, int, java.lang.String, byte)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jsmpp.util.PDUComposer#bindResp(int, int, java.lang.String,
+     *      byte)
      */
     public byte[] bindResp(int commandId, int sequenceNumber, String systemId,
             byte scInterfaceVersion) throws PDUStringException {
@@ -76,12 +88,15 @@ public class DefaultComposer implements PDUComposer {
         PDUByteBuffer buf = new PDUByteBuffer(commandId, 0, sequenceNumber);
         buf.append(systemId);
 
-        OptionalParameter optParam = new OptionalParameter.Byte(Tag.SC_INTERFACE_VERSION, scInterfaceVersion);
+        OptionalParameter optParam = new OptionalParameter.Byte(
+                Tag.SC_INTERFACE_VERSION, scInterfaceVersion);
         buf.append(optParam.serialize());
         return buf.getBytes();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jsmpp.util.PDUComposer#unbind(int)
      */
     public byte[] unbind(int sequenceNumber) {
@@ -90,7 +105,9 @@ public class DefaultComposer implements PDUComposer {
         return buf.getBytes();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jsmpp.util.PDUComposer#unbindResp(int, int)
      */
     public byte[] unbindResp(int commandStatus, int sequenceNumber) {
@@ -98,8 +115,11 @@ public class DefaultComposer implements PDUComposer {
                 sequenceNumber);
     }
 
-    /* (non-Javadoc)
-     * @see org.jsmpp.util.PDUComposer#outbind(int, java.lang.String, java.lang.String)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jsmpp.util.PDUComposer#outbind(int, java.lang.String,
+     *      java.lang.String)
      */
     public byte[] outbind(int sequenceNumber, String systemId, String password)
             throws PDUStringException {
@@ -114,22 +134,29 @@ public class DefaultComposer implements PDUComposer {
     }
 
     // ENQUIRE_LINK OPERATION
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jsmpp.util.PDUComposer#enquireLink(int)
      */
     public byte[] enquireLink(int sequenceNumber) {
         return composeHeader(SMPPConstant.CID_ENQUIRE_LINK, 0, sequenceNumber);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jsmpp.util.PDUComposer#enquireLinkResp(int)
      */
     public byte[] enquireLinkResp(int sequenceNumber) {
-        return composeHeader(SMPPConstant.CID_ENQUIRE_LINK_RESP, 0, sequenceNumber);
+        return composeHeader(SMPPConstant.CID_ENQUIRE_LINK_RESP, 0,
+                sequenceNumber);
     }
 
     // GENEICK_NACK OPERATION
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jsmpp.util.PDUComposer#genericNack(int, int)
      */
     public byte[] genericNack(int commandStatus, int sequenceNumber) {
@@ -138,16 +165,21 @@ public class DefaultComposer implements PDUComposer {
     }
 
     // SUBMIT_SM OPERATION
-    /* (non-Javadoc)
-     * @see org.jsmpp.util.PDUComposer#submitSm(int, java.lang.String, byte, byte, java.lang.String, byte, byte, java.lang.String, byte, byte, byte, java.lang.String, java.lang.String, byte, byte, byte, byte, byte[], org.jsmpp.bean.OptionalParameter[])
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jsmpp.util.PDUComposer#submitSm(int, java.lang.String, byte,
+     *      byte, java.lang.String, byte, byte, java.lang.String, byte, byte,
+     *      byte, java.lang.String, java.lang.String, byte, byte, byte, byte,
+     *      byte[], org.jsmpp.bean.OptionalParameter[])
      */
     public byte[] submitSm(int sequenceNumber, String serviceType,
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
             byte destAddrTon, byte destAddrNpi, String destinationAddr,
             byte esmClass, byte protocolId, byte priorityFlag,
             String scheduleDeliveryTime, String validityPeriod,
-            byte registeredDelivery, byte replaceIfPresentFlag, byte dataCoding,
-            byte smDefaultMsgId, byte[] shortMessage,
+            byte registeredDelivery, byte replaceIfPresentFlag,
+            byte dataCoding, byte smDefaultMsgId, byte[] shortMessage,
             OptionalParameter... optionalParameters) throws PDUStringException {
 
         StringValidator.validateString(serviceType,
@@ -186,7 +218,9 @@ public class DefaultComposer implements PDUComposer {
         return buf.getBytes();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jsmpp.util.PDUComposer#submitSmResp(int, java.lang.String)
      */
     public byte[] submitSmResp(int sequenceNumber, String messageId)
@@ -200,8 +234,11 @@ public class DefaultComposer implements PDUComposer {
     }
 
     // QUERY_SM OPERATION
-    /* (non-Javadoc)
-     * @see org.jsmpp.util.PDUComposer#querySm(int, java.lang.String, byte, byte, java.lang.String)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jsmpp.util.PDUComposer#querySm(int, java.lang.String, byte,
+     *      byte, java.lang.String)
      */
     public byte[] querySm(int sequenceNumber, String messageId,
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr)
@@ -218,8 +255,11 @@ public class DefaultComposer implements PDUComposer {
         return buf.getBytes();
     }
 
-    /* (non-Javadoc)
-     * @see org.jsmpp.util.PDUComposer#querySmResp(int, java.lang.String, java.lang.String, byte, byte)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jsmpp.util.PDUComposer#querySmResp(int, java.lang.String,
+     *      java.lang.String, byte, byte)
      */
     public byte[] querySmResp(int sequenceNumber, String messageId,
             String finalDate, byte messageState, byte errorCode)
@@ -237,8 +277,12 @@ public class DefaultComposer implements PDUComposer {
     }
 
     // DELIVER_SM OPERATION
-    /* (non-Javadoc)
-     * @see org.jsmpp.util.PDUComposer#deliverSm(int, java.lang.String, byte, byte, java.lang.String, byte, byte, java.lang.String, byte, byte, byte, byte, byte, byte[], org.jsmpp.bean.OptionalParameter[])
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jsmpp.util.PDUComposer#deliverSm(int, java.lang.String, byte,
+     *      byte, java.lang.String, byte, byte, java.lang.String, byte, byte,
+     *      byte, byte, byte, byte[], org.jsmpp.bean.OptionalParameter[])
      */
     public byte[] deliverSm(int sequenceNumber, String serviceType,
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
@@ -279,11 +323,14 @@ public class DefaultComposer implements PDUComposer {
         buf.append((byte)0); // sm default msg id
         buf.append((byte)shortMessage.length);
         buf.append(shortMessage);
-        buf.appendAll(optionalParameters);;
+        buf.appendAll(optionalParameters);
+        ;
         return buf.getBytes();
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jsmpp.util.PDUComposer#deliverSmResp(int)
      */
     public byte[] deliverSmResp(int sequenceNumber) {
@@ -292,16 +339,20 @@ public class DefaultComposer implements PDUComposer {
         buf.append((String)null);
         return buf.getBytes();
     }
-    
-    /* (non-Javadoc)
-     * @see org.jsmpp.util.PDUComposer#dataSm(int, java.lang.String, byte, byte, java.lang.String, byte, byte, java.lang.String, byte, byte, byte, org.jsmpp.bean.OptionalParameter[])
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jsmpp.util.PDUComposer#dataSm(int, java.lang.String, byte, byte,
+     *      java.lang.String, byte, byte, java.lang.String, byte, byte, byte,
+     *      org.jsmpp.bean.OptionalParameter[])
      */
     public byte[] dataSm(int sequenceNumber, String serviceType,
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
             byte destAddrTon, byte destAddrNpi, String destinationAddr,
             byte esmClass, byte registeredDelivery, byte dataCoding,
             OptionalParameter... optionalParameters) throws PDUStringException {
-        
+
         StringValidator.validateString(serviceType,
                 StringParameter.SERVICE_TYPE);
         StringValidator.validateString(sourceAddr, StringParameter.SOURCE_ADDR);
@@ -323,31 +374,36 @@ public class DefaultComposer implements PDUComposer {
         buf.appendAll(optionalParameters);
         return buf.getBytes();
     }
-    
-    /* (non-Javadoc)
-     * @see org.jsmpp.util.PDUComposer#dataSmResp(int, java.lang.String, org.jsmpp.bean.OptionalParameter[])
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jsmpp.util.PDUComposer#dataSmResp(int, java.lang.String,
+     *      org.jsmpp.bean.OptionalParameter[])
      */
-    public byte[] dataSmResp(int sequenceNumber, String messageId, OptionalParameter... optionalParameters)
-            throws PDUStringException {
+    public byte[] dataSmResp(int sequenceNumber, String messageId,
+            OptionalParameter... optionalParameters) throws PDUStringException {
         StringValidator.validateString(messageId, StringParameter.MESSAGE_ID);
 
-        PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_DATA_SM_RESP,
-                0, sequenceNumber);
+        PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_DATA_SM_RESP, 0,
+                sequenceNumber);
         buf.append(messageId);
-        
+
         return buf.getBytes();
     }
-    
+
     public byte[] cancelSm(int sequenceNumber, String serviceType,
             String messageId, byte sourceAddrTon, byte sourceAddrNpi,
             String sourceAddr, byte destAddrTon, byte destAddrNpi,
             String destinationAddr) throws PDUStringException {
-        
-        StringValidator.validateString(serviceType, StringParameter.SERVICE_TYPE);
+
+        StringValidator.validateString(serviceType,
+                StringParameter.SERVICE_TYPE);
         StringValidator.validateString(messageId, StringParameter.MESSAGE_ID);
         StringValidator.validateString(sourceAddr, StringParameter.SOURCE_ADDR);
-        StringValidator.validateString(destinationAddr, StringParameter.DESTINATION_ADDR);
-        
+        StringValidator.validateString(destinationAddr,
+                StringParameter.DESTINATION_ADDR);
+
         PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_CANCEL_SM, 0,
                 sequenceNumber);
         buf.append(serviceType);
@@ -358,16 +414,16 @@ public class DefaultComposer implements PDUComposer {
         buf.append(destAddrTon);
         buf.append(destAddrNpi);
         buf.append(destinationAddr);
-        
+
         return buf.getBytes();
     }
-    
+
     public byte[] cancelSmResp(int sequenceNumber) {
         byte[] b = composeHeader(SMPPConstant.CID_CANCEL_SM_RESP,
                 SMPPConstant.STAT_ESME_ROK, sequenceNumber);
         return b;
     }
-    
+
     public byte[] replaceSm(int sequenceNumber, String messageId,
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
             String scheduleDeliveryTime, String validityPeriod,
@@ -394,31 +450,27 @@ public class DefaultComposer implements PDUComposer {
         buf.append(smDefaultMsgId);
         buf.append((byte)shortMessage.length);
         buf.append(shortMessage);
-        
+
         return buf.getBytes();
     }
-    
+
     public byte[] replaceSmResp(int sequenceNumber) {
         return composeHeader(SMPPConstant.CID_REPLACE_SM_RESP, 0,
                 sequenceNumber);
     }
-    
+
     public byte[] submitMulti(int sequenceNumber, String serviceType,
-            byte sourceAddrTon, byte sourceAddrNpi,
-            String sourceAddr, Address[] destinationAddresses,
-            byte esmClass, byte protocolId, byte priorityFlag,
-            String scheduleDeliveryTime, String validityPeriod,
-            byte registeredDelivery,
-            byte replaceIfPresentFlag, byte dataCoding,
-            byte smDefaultMsgId, byte[] shortMessage,
-            OptionalParameter... optionalParameters) throws PDUStringException {
-        
+            byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
+            Address[] destinationAddresses, byte esmClass, byte protocolId,
+            byte priorityFlag, String scheduleDeliveryTime,
+            String validityPeriod, byte registeredDelivery,
+            byte replaceIfPresentFlag, byte dataCoding, byte smDefaultMsgId,
+            byte[] shortMessage, OptionalParameter... optionalParameters)
+            throws PDUStringException {
+
         StringValidator.validateString(serviceType,
                 StringParameter.SERVICE_TYPE);
         StringValidator.validateString(sourceAddr, StringParameter.SOURCE_ADDR);
-        for (Address destAddr : destinationAddresses) {
-            StringValidator.validateString(destAddr.getAddress(), StringParameter.DESTINATION_ADDR);
-        }
         StringValidator.validateString(scheduleDeliveryTime,
                 StringParameter.SCHEDULE_DELIVERY_TIME);
         StringValidator.validateString(validityPeriod,
@@ -433,11 +485,13 @@ public class DefaultComposer implements PDUComposer {
         buf.append(sourceAddrNpi);
         buf.append(sourceAddr);
         for (Address destAddr : destinationAddresses) {
+            StringValidator.validateString(destAddr.getAddress(),
+                    StringParameter.DESTINATION_ADDR);
             buf.append(destAddr.getTon());
             buf.append(destAddr.getNpi());
             buf.append(destAddr.getAddress());
         }
-        
+
         buf.append(esmClass);
         buf.append(protocolId);
         buf.append(priorityFlag);
@@ -452,11 +506,41 @@ public class DefaultComposer implements PDUComposer {
         buf.appendAll(optionalParameters);
         return buf.getBytes();
     }
-    
+
     public byte[] submitMultiResp(int sequenceNumber, String messageId,
             UnsuccessDelivery... unsuccessDeliveries) throws PDUStringException {
         StringValidator.validateString(messageId, StringParameter.MESSAGE_ID);
-        // TODO uudashr: SUBMIT MULTI RESP
-        return null;
+
+        PDUByteBuffer buf = new PDUByteBuffer(
+                SMPPConstant.CID_SUBMIT_MULTI_RESP, 0, sequenceNumber);
+        buf.append(messageId);
+        buf.append((byte)unsuccessDeliveries.length); // no_unsuccess
+        for (UnsuccessDelivery delivery : unsuccessDeliveries) {
+            StringValidator.validateString(delivery.getDestinationAddress()
+                    .getAddress(), StringParameter.DESTINATION_ADDR);
+            Address destAddr = delivery.getDestinationAddress();
+            buf.append(destAddr.getTon());
+            buf.append(destAddr.getNpi());
+            buf.append(destAddr.getAddress());
+            buf.append(delivery.getErrorStatusCode());
+        }
+        return buf.getBytes();
+    }
+    
+    public byte[] alertNotification(int sequenceNumber, byte sourceAddrTon,
+            byte sourceAddrNpi, String sourceAddr, byte esmeAddrTon,
+            byte esmeAddrNpi, String esmeAddr,
+            OptionalParameter... optionalParameters) throws PDUStringException {
+        StringValidator.validateString(sourceAddr, StringParameter.SOURCE_ADDR);
+        StringValidator.validateString(esmeAddr, StringParameter.ESME_ADDR);
+        PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_ALERT_NOTIFICATION, 0, sequenceNumber);
+        buf.append(sourceAddrTon);
+        buf.append(sourceAddrNpi);
+        buf.append(sourceAddr);
+        buf.append(esmeAddrTon);
+        buf.append(esmeAddrNpi);
+        buf.append(esmeAddr);
+        buf.appendAll(optionalParameters);
+        return buf.getBytes();
     }
 }

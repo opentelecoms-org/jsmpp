@@ -1,6 +1,7 @@
 package org.jsmpp.util;
 
 import org.jsmpp.PDUStringException;
+import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.CancelSm;
@@ -241,4 +242,6 @@ public interface PDUDecomposer {
     SubmitMulti submitMulti(byte[] data) throws PDUStringException;
     
     SubmitMultiResp submitMultiResp(byte[] data) throws PDUStringException;
+    
+    AlertNotification alertNotification(byte[] data) throws PDUStringException;
 }

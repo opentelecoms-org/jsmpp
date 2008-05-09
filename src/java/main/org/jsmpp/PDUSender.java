@@ -369,4 +369,10 @@ public interface PDUSender {
     byte[] sendSubmitMultiResp(OutputStream os, int sequenceNumber,
             String messageId, UnsuccessDelivery... unsuccessDeliveries)
             throws PDUStringException, IOException;
+
+    byte[] sendAlertNotification(OutputStream os, int sequenceNumber,
+            byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
+            byte esmeAddrTon, byte esmeAddrNpi, String esmeAddr,
+            OptionalParameter... optionalParameters) throws PDUStringException,
+            IOException;
 }
