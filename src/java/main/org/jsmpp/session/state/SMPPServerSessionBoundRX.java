@@ -42,6 +42,13 @@ class SMPPServerSessionBoundRX extends SMPPServerSessionBound implements
                         .getSequenceNumber());
     }
     
+    public void processSubmitMulti(Command pduHeader, byte[] pdu,
+            ServerResponseHandler responseHandler) throws IOException {
+        responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
+                SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
+                        .getSequenceNumber());
+    }
+    
     public void processCancelSm(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException {
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),

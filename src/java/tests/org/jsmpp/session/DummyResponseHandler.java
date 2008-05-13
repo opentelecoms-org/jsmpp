@@ -9,6 +9,8 @@ import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.QuerySm;
+import org.jsmpp.bean.SubmitMulti;
+import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ProcessRequestException;
@@ -52,7 +54,16 @@ class DummyResponseHandler implements ServerResponseHandler {
             throws ProcessRequestException {
         return null;
     }
-
+    
+    public SubmitMultiResult processSubmitMulti(SubmitMulti submitMulti)
+            throws ProcessRequestException {
+        return null;
+    }
+    
+    public void sendSubmitMultiResponse(SubmitMultiResult submiitMultiResult,
+            int sequenceNumber) throws IOException {
+    }
+    
     public MessageId processSubmitSm(SubmitSm submitSm)
             throws ProcessRequestException {
         return null;

@@ -17,6 +17,7 @@ import org.jsmpp.PDUSender;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.SynchronizedPDUSender;
+import org.jsmpp.bean.Address;
 import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.Command;
@@ -29,6 +30,9 @@ import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.QuerySmResp;
 import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.bean.ReplaceIfPresentFlag;
+import org.jsmpp.bean.SubmitMultiResp;
+import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.NegativeResponseException;
@@ -45,11 +49,31 @@ import org.slf4j.LoggerFactory;
 
 
 /**
+ * This is an object that used to communicate with SMPP Server or SMSC. It hide
+ * all un-needed SMPP operation that might harm if the user code use it such as :
+ * <ul>
+ * <li>DELIVER_SM_RESP, should be called only as response to DELIVER_SM</li>
+ * <li>UNBIND_RESP, should be called only as response to UNBIND_RESP</li>
+ * <li>DATA_SM_RESP, should be called only as response to DATA_SM</li>
+ * <li>ENQUIRE_LINK_RESP, should be called only as response to ENQUIRE_LINK</li>
+ * <li>GENERIC_NACK, should be called only as response to GENERIC_NACK</li>
+ * </ul>
+ * 
+ * All SMPP operation (request-response) is blocking, for an example: SUBMIT_SM
+ * will be blocked until SUBMIT_SM_RESP received or timeout. This looks like
+ * synchronous communication, but the {@link SMPPClient} implementation give
+ * ability to the asynchronous way by executing the SUBMIT_SM operation parallel
+ * on a different thread. The very simple implementation by using Thread pool,
+ * {@link ExecutorService} will do.
+ * 
+ * To receive the incoming message such as DELIVER_SM or DATA_SM will be managed
+ * by internal thread. User code only have to set listener
+ * {@link MessageReceiverListener}.
+ * 
  * @author uudashr
- * @version 2.0
- *
+ * 
  */
-public class SMPPSession extends AbstractSession {
+public class SMPPSession extends AbstractSession implements ClientSession {
 	private static final Logger logger = LoggerFactory.getLogger(SMPPSession.class);
 
 	/* Utility */
@@ -67,6 +91,12 @@ public class SMPPSession extends AbstractSession {
     private SMPPSessionContext sessionContext = new SMPPSessionContext(this, sessionStateListener);
 	private EnquireLinkSender enquireLinkSender;
 	
+	/**
+     * Default constructor of {@link SMPPSession}. The next action might be
+     * connect and bind to a destination message center.
+     * 
+     * @see #connectAndBind(String, int, BindType, String, String, String, TypeOfNumber, NumberingPlanIndicator, String)
+     */
 	public SMPPSession() {
         this(new SynchronizedPDUSender(new DefaultPDUSender(new DefaultComposer())), 
                 new DefaultPDUReader(), 
@@ -116,20 +146,21 @@ public class SMPPSession extends AbstractSession {
     }
 	
 	/**
-	 * Open connection and bind immediately.
-	 * 
-	 * @param host is the SMSC host address.
-	 * @param port is the SMSC listen port.
-	 * @param bindType is the bind type.
-	 * @param systemId is the system id.
-	 * @param password is the password.
-	 * @param systemType is the system type.
-	 * @param addrTon is the address TON.
-	 * @param addrNpi is the address NPI.
-	 * @param addressRange is the address range.
-	 * @param timeout is the timeout.
-	 * @throws IOException if there is an IO error found.
-	 */
+     * Open connection and bind immediately with specified timeout. The default
+     * timeout is 1 minutes.
+     * 
+     * @param host is the SMSC host address.
+     * @param port is the SMSC listen port.
+     * @param bindType is the bind type.
+     * @param systemId is the system id.
+     * @param password is the password.
+     * @param systemType is the system type.
+     * @param addrTon is the address TON.
+     * @param addrNpi is the address NPI.
+     * @param addressRange is the address range.
+     * @param timeout is the timeout.
+     * @throws IOException if there is an IO error found.
+     */
 	public void connectAndBind(String host, int port, BindType bindType,
             String systemId, String password, String systemType,
             TypeOfNumber addrTon, NumberingPlanIndicator addrNpi,
@@ -246,34 +277,8 @@ public class SMPPSession extends AbstractSession {
 		return resp.getSystemId();
 	}
 	
-	
-	/**
-	 * Submit short message with specified parameter.
-	 * 
-     * @param serviceType is the service_type parameter.
-     * @param sourceAddrTon is the source_addr_ton parameter.
-     * @param sourceAddrNpi is the source_addr_npi parameter.
-     * @param sourceAddr is the source_addr parameter.
-     * @param destAddrTon is the dest_addr_ton parameter.
-     * @param destAddrNpi is the dest_addr_npi parameter.
-     * @param destinationAddr is the destination_addr parameter.
-     * @param esmClass is the esm_class parameter.
-     * @param protocolId is the protocol_id parameter.
-     * @param priorityFlag is the priority_flag parameter.
-     * @param scheduleDeliveryTime is the schedule_delivery_time parameter. (It is time in string format).
-     * @param validityPeriod is the validity_period parameter (It is time in string format).
-     * @param registeredDelivery is the registered_delivery parameter.
-     * @param replaceIfPresentFlag is the replace_if_present_flag parameter
-     * @param dataCoding is the data_coding parameter.
-     * @param smDefaultMsgId is the sm_default_message_id parameter.
-     * @param shortMessage is the short message.
-     * @param optionalParameters is the optional parameters.
-     * @return the message id from SMSC.
-     * @throws PDUStringException if we enter invalid bind parameter(s).
-     * @throws ResponseTimeoutException if there is no valid response after defined millisecond.
-     * @throws InvalidResponseException if there is invalid response found.
-     * @throws NegativeResponseException if we receive negative response.
-     * @throws IOException if there is an IO error found.
+    /* (non-Javadoc)
+     * @see org.jsmpp.session.ClientSession#submitShortMessage(java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.ESMClass, byte, byte, java.lang.String, java.lang.String, org.jsmpp.bean.RegisteredDelivery, byte, org.jsmpp.bean.DataCoding, byte, byte[], org.jsmpp.bean.OptionalParameter[])
      */
     public String submitShortMessage(String serviceType,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
@@ -298,38 +303,80 @@ public class SMPPSession extends AbstractSession {
     	return resp.getMessageId();
     }
     
-    /**
-     * Query short message.
-     * 
-     * @param messageId is the message_id parameter.
-     * @param sourceAddrTon is the source_addr_ton parameter.
-     * @param sourceAddrNpi is the source_addr_npi parameter.
-     * @param sourceAddr is the source_addr parameter.
-     * @return the query_sm response (query_sm_resp).
-     * @throws PDUStringException if there is an invalid PDU String found.
-     * @throws ResponseTimeoutException if the response take time too long.
-     * @throws InvalidResponseException if the response is invalid.
-     * @throws NegativeResponseException if the response contains non-ok command_status.
-     * @throws IOException if there is an IO error found.
+    /* (non-Javadoc)
+     * @see org.jsmpp.session.ClientSession#submitMultiple(java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.Address[], org.jsmpp.bean.ESMClass, byte, byte, java.lang.String, java.lang.String, org.jsmpp.bean.RegisteredDelivery, org.jsmpp.bean.ReplaceIfPresentFlag, org.jsmpp.bean.DataCoding, byte, byte[], org.jsmpp.bean.OptionalParameter[])
      */
-    public QuerySmResult queryShortMessage(String messageId, TypeOfNumber sourceAddrTon,
-    		NumberingPlanIndicator sourceAddrNpi, String sourceAddr)
-    		throws PDUStringException, ResponseTimeoutException,
-    		InvalidResponseException, NegativeResponseException, IOException {
-    	
-        QuerySmCommandTask task = new QuerySmCommandTask(pduSender(),
-                messageId, sourceAddrTon, sourceAddrNpi, sourceAddr);
-        
-    	QuerySmResp resp = (QuerySmResp)executeSendCommand(task, getTransactionTimer());
-    	
-    	if (resp.getMessageId().equals(messageId)) {
-    		return new QuerySmResult(resp.getFinalDate(), resp.getMessageState(), resp.getErrorCode());
-    	} else {
-    		// message id requested not same as the returned
-    		throw new InvalidResponseException("Requested message_id doesn't match with the result");
-    	}
+    public SubmitMultiResult submitMultiple(String serviceType,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
+            String sourceAddr, Address[] destinationAddresses,
+            ESMClass esmClass, byte protocolId, byte priorityFlag,
+            String scheduleDeliveryTime, String validityPeriod,
+            RegisteredDelivery registeredDelivery,
+            ReplaceIfPresentFlag replaceIfPresentFlag, DataCoding dataCoding,
+            byte smDefaultMsgId, byte[] shortMessage,
+            OptionalParameter[] optionalParameters) throws PDUStringException,
+            ResponseTimeoutException, InvalidResponseException,
+            NegativeResponseException, IOException {
+        SubmitMultiCommandTask task = new SubmitMultiCommandTask(pduSender(),
+                serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr,
+                destinationAddresses, esmClass, protocolId, priorityFlag,
+                scheduleDeliveryTime, validityPeriod, registeredDelivery,
+                replaceIfPresentFlag, dataCoding, smDefaultMsgId, shortMessage,
+                optionalParameters);
+
+        SubmitMultiResp resp = (SubmitMultiResp)executeSendCommand(task,
+                getTransactionTimer());
+
+        return new SubmitMultiResult(resp.getMessageId(), resp
+                .getUnsuccessSmes());
     }
     
+    /* (non-Javadoc)
+     * @see org.jsmpp.session.ClientSession#queryShortMessage(java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String)
+     */
+    public QuerySmResult queryShortMessage(String messageId,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
+            String sourceAddr) throws PDUStringException,
+            ResponseTimeoutException, InvalidResponseException,
+            NegativeResponseException, IOException {
+
+        QuerySmCommandTask task = new QuerySmCommandTask(pduSender(),
+                messageId, sourceAddrTon, sourceAddrNpi, sourceAddr);
+
+        QuerySmResp resp = (QuerySmResp)executeSendCommand(task,
+                getTransactionTimer());
+
+        if (resp.getMessageId().equals(messageId)) {
+            return new QuerySmResult(resp.getFinalDate(), resp
+                    .getMessageState(), resp.getErrorCode());
+        } else {
+            // message id requested not same as the returned
+            throw new InvalidResponseException(
+                    "Requested message_id doesn't match with the result");
+        }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jsmpp.session.ClientSession#replaceShortMessage(java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, java.lang.String, java.lang.String, org.jsmpp.bean.RegisteredDelivery, byte, byte[])
+     */
+    public void replaceShortMessage(String messageId,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
+            String sourceAddr, String scheduleDeliveryTime,
+            String validityPeriod, RegisteredDelivery registeredDelivery,
+            byte smDefaultMsgId, byte[] shortMessage)
+            throws PDUStringException, ResponseTimeoutException,
+            InvalidResponseException, NegativeResponseException, IOException {
+        SendReplaceSmCommandTask replaceSmTask = new SendReplaceSmCommandTask(
+                pduSender(), messageId, sourceAddrTon, sourceAddrNpi,
+                sourceAddr, scheduleDeliveryTime, validityPeriod,
+                registeredDelivery, smDefaultMsgId, shortMessage);
+
+        executeSendCommand(replaceSmTask, getTransactionTimer());
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jsmpp.session.ClientSession#cancelShortMessage(java.lang.String, java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String)
+     */
     public void cancelShortMessage(String serviceType, String messageId,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, TypeOfNumber destAddrTon,
@@ -342,6 +389,7 @@ public class SMPPSession extends AbstractSession {
         
         executeSendCommand(task, getTransactionTimer());
     }
+    
     
     public MessageReceiverListener getMessageReceiverListener() {
         return messageReceiverListener;

@@ -39,6 +39,9 @@ public interface SMPPServerSessionState extends GenericSMPPSessionState {
     void processSubmitSm(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException;
     
+    void processSubmitMulti(Command pduHeader, byte[] pdu,
+            ServerResponseHandler responseHandler) throws IOException;
+    
     void processQuerySm(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException;
     

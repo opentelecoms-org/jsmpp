@@ -7,6 +7,8 @@ import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.QuerySm;
+import org.jsmpp.bean.SubmitMulti;
+import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.util.MessageId;
@@ -25,7 +27,12 @@ public interface ServerResponseHandler extends BaseResponseHandler {
     void processBind(Bind bind);
 
     MessageId processSubmitSm(SubmitSm submitSm) throws ProcessRequestException;
-
+    
+    SubmitMultiResult processSubmitMulti(SubmitMulti submitMulti) throws ProcessRequestException;
+    
+    void sendSubmitMultiResponse(SubmitMultiResult submiitMultiResult,
+            int sequenceNumber) throws IOException;
+    
     QuerySmResult processQuerySm(QuerySm querySm)
             throws ProcessRequestException;
 

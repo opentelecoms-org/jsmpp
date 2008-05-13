@@ -9,6 +9,8 @@ import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.QuerySm;
+import org.jsmpp.bean.SubmitMulti;
+import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.session.BindRequest;
@@ -47,6 +49,12 @@ public class ReceiveSubmittedMessageExample {
                 
                 public QuerySmResult onAcceptQuerySm(QuerySm querySm,
                         SMPPServerSession source)
+                        throws ProcessRequestException {
+                    return null;
+                }
+                
+                public SubmitMultiResult onAcceptSubmitMulti(
+                        SubmitMulti submitMulti, SMPPServerSession source)
                         throws ProcessRequestException {
                     return null;
                 }

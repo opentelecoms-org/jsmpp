@@ -7,6 +7,7 @@ import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.CancelSmResp;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.QuerySmResp;
+import org.jsmpp.bean.SubmitMultiResp;
 import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.SessionState;
@@ -42,6 +43,25 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
                 logger.error("Failed decomposing submit_sm_resp", e);
+                responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
+                        .getSequenceNumber());
+            }
+        } else {
+            logger.warn("No request with sequence number "
+                    + pduHeader.getSequenceNumber() + " found");
+        }
+    }
+    
+    public void processSubmitMultiResp(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
+                .removeSentItem(pduHeader.getSequenceNumber());
+        if (pendingResp != null) {
+            try {
+                SubmitMultiResp resp = pduDecomposer.submitMultiResp(pdu);
+                pendingResp.done(resp);
+            } catch (PDUStringException e) {
+                logger.error("Failed decomposing submit_multi_resp", e);
                 responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
                         .getSequenceNumber());
             }

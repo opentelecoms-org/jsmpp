@@ -7,6 +7,8 @@ import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.QuerySm;
+import org.jsmpp.bean.SubmitMulti;
+import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.extra.SessionState;
@@ -42,6 +44,20 @@ class SMPPServerSessionBoundTX extends SMPPServerSessionBound implements
             MessageId messageId = responseHandler.processSubmitSm(submitSm);
             logger.debug("Sending response with message_id " + messageId + " for request with sequence_number " + pduHeader.getSequenceNumber());
             responseHandler.sendSubmitSmResponse(messageId, pduHeader.getSequenceNumber());
+        } catch (PDUStringException e) {
+            responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
+        } catch (ProcessRequestException e) {
+            responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
+        }
+    }
+    
+    public void processSubmitMulti(Command pduHeader, byte[] pdu,
+            ServerResponseHandler responseHandler) throws IOException {
+        try {
+            SubmitMulti submitMulti = pduDecomposer.submitMulti(pdu);
+            SubmitMultiResult result = responseHandler.processSubmitMulti(submitMulti);
+            logger.debug("Sending response with message_id " + result.getMessageId() + " for request with sequence_number " + pduHeader.getSequenceNumber());
+            responseHandler.sendSubmitMultiResponse(result, pduHeader.getSequenceNumber());
         } catch (PDUStringException e) {
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
         } catch (ProcessRequestException e) {

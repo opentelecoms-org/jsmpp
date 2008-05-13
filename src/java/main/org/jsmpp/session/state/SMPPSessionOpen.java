@@ -114,6 +114,16 @@ class SMPPSessionOpen implements SMPPSessionState {
                     "Receive unexpected submit_sm_resp"));
         }
     }
+    
+    public void processSubmitMultiResp(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
+                .removeSentItem(1);
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                    "Receive unexpected submit_multi_resp"));
+        }
+    }
 
     public void processUnbind(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {

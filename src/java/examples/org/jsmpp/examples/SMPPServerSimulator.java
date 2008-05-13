@@ -21,6 +21,8 @@ import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
+import org.jsmpp.bean.SubmitMulti;
+import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.ProcessRequestException;
@@ -83,6 +85,11 @@ public class SMPPServerSimulator implements Runnable, ServerMessageReceiverListe
             execServiceDelReciept.execute(new DeliveryReceiptTask(source, submitSm, messageId));
         }
         return messageId;
+    }
+    
+    public SubmitMultiResult onAcceptSubmitMulti(SubmitMulti submitMulti,
+            SMPPServerSession source) throws ProcessRequestException {
+        return null;
     }
     
     public DataSmResult onAcceptDataSm(DataSm dataSm)

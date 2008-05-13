@@ -54,6 +54,11 @@ class SMPPServerSessionOpen implements SMPPServerSessionState {
             throws IOException {
         throw new IOException("Invalid process for open session state");
     }
+    
+    public void processSubmitMulti(Command pduHeader, byte[] pdu,
+            ServerResponseHandler responseHandler) throws IOException {
+        throw new IOException("Invalid process for open session state");
+    }
 
     public void processEnquireLink(Command pduHeader, byte[] pdu,
             BaseResponseHandler sessionHandler) throws IOException {

@@ -52,7 +52,12 @@ class SMPPSessionUnbound implements SMPPSessionState {
             ResponseHandler responseHandler) throws IOException {
         throw new IOException("Invalid process for unbound session state");
     }
-
+    
+    public void processSubmitMultiResp(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException {
+        throw new IOException("Invalid process for unbound session state");
+    }
+    
     public void processUnbind(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         throw new IOException("Invalid process for unbound session state");

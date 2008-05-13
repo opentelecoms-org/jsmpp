@@ -40,12 +40,23 @@ public interface SMPPSessionState extends GenericSMPPSessionState {
      * 
      * @param pduHeader is the PDU header.
      * @param pdu is the complete PDU.
-     * @param responseHandler is the session handler.
-     * @throws IOException throw if there is an IO error occur.
+     * @param responseHandler is the response handler.
+     * @throws IOException if there is an I/O error found.
      */
     void processSubmitSmResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException;
-
+    
+    /**
+     * Process a submit multiple message response.
+     * 
+     * @param pduHeader is the PDU header.
+     * @param pdu is the complete PDU.
+     * @param responseHandler is the response handler.
+     * @throws IOException if there is an I/O error found.
+     */
+    void processSubmitMultiResp(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException;
+    
     /**
      * Process the query short message response command.
      * 
