@@ -30,6 +30,8 @@ import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.bean.SubmitMulti;
+import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.NegativeResponseException;
@@ -143,6 +145,13 @@ public class SMPPServerSession extends AbstractSession {
         throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
     }
     
+    private SubmitMultiResult fireAcceptSubmitMulti(SubmitMulti submitMulti) throws ProcessRequestException {
+        if (messageReceiverListener != null) {
+            return messageReceiverListener.onAcceptSubmitMulti(submitMulti, this);
+        }
+        throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
+    }
+    
     private QuerySmResult fireAcceptQuerySm(QuerySm querySm) throws ProcessRequestException {
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptQuerySm(querySm, this);
@@ -220,10 +229,20 @@ public class SMPPServerSession extends AbstractSession {
             }
         }
         
+        public void processBind(Bind bind) {
+            bindRequestReceiver.notifyAcceptBind(bind);
+        }
+        
+        public MessageId processSubmitSm(SubmitSm submitSm)
+                throws ProcessRequestException {
+            return fireAcceptSubmitSm(submitSm);
+        }
+        
         public void sendSubmitSmResponse(MessageId messageId, int sequenceNumber)
                 throws IOException {
             try {
-                pduSender().sendSubmitSmResp(out, sequenceNumber, messageId.getValue());
+                pduSender().sendSubmitSmResp(out, sequenceNumber,
+                        messageId.getValue());
             } catch (PDUStringException e) {
                 /*
                  * There should be no PDUStringException thrown since creation
@@ -233,13 +252,25 @@ public class SMPPServerSession extends AbstractSession {
             }
         }
         
-        public void processBind(Bind bind) {
-            bindRequestReceiver.notifyAcceptBind(bind);
+        public SubmitMultiResult processSubmitMulti(SubmitMulti submitMulti)
+                throws ProcessRequestException {
+            return fireAcceptSubmitMulti(submitMulti);
         }
         
-        public MessageId processSubmitSm(SubmitSm submitSm)
-                throws ProcessRequestException {
-            return fireAcceptSubmitSm(submitSm);
+        public void sendSubmitMultiResponse(
+                SubmitMultiResult submiitMultiResult, int sequenceNumber)
+                throws IOException {
+            try {
+                pduSender().sendSubmitMultiResp(out, sequenceNumber,
+                        submiitMultiResult.getMessageId(),
+                        submiitMultiResult.getUnsuccessDeliveries());
+            } catch (PDUStringException e) {
+                /*
+                 * There should be no PDUStringException thrown since creation
+                 * of the response parameter has been validated.
+                 */
+                logger.error("SYSTEM ERROR. Failed sending submitMultiResp", e);
+            }
         }
         
         public QuerySmResult processQuerySm(QuerySm querySm)
