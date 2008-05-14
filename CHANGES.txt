@@ -5,3 +5,5 @@ Changes:
 - Handling PDU processing concurrently (performance improvement)
 - Add data_sm support
 - Add cancel_sm support
+- Add replace_sm support
+- Add alert_notification support
