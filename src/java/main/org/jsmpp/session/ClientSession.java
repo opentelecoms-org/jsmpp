@@ -17,7 +17,7 @@ import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.ResponseTimeoutException;
 
 /**
- * This interface provide all operation that the client session can do. It
+ * This interface provides all operation that the client session can do. It
  * doesn't distinct the operation of specific session type (Transmitter,
  * Receiver) it's just like Transceiver. The distinction might should be
  * recognized in a different way, such as by user code when they do a binding or
@@ -78,28 +78,28 @@ public interface ClientSession extends Session {
      * simplify operations of sending SUBMIT_MULTI and receiving
      * SUBMIT_MULTI_RESP.
      * 
-     * @param serviceType
-     * @param sourceAddrTon
-     * @param sourceAddrNpi
-     * @param sourceAddr
-     * @param destinationAddresses
-     * @param esmClass
-     * @param protocolId
-     * @param priorityFlag
-     * @param scheduleDeliveryTime
-     * @param validityPeriod
-     * @param registeredDelivery
-     * @param replaceIfPresentFlag
-     * @param dataCoding
-     * @param smDefaultMsgId
-     * @param shortMessage
-     * @param optionalParameters
-     * @return
-     * @throws PDUStringException
-     * @throws ResponseTimeoutException
-     * @throws InvalidResponseException
-     * @throws NegativeResponseException
-     * @throws IOException
+     * @param serviceType is the service_type.
+     * @param sourceAddrTon is the source_addr_ton.
+     * @param sourceAddrNpi is the source_addr_npi.
+     * @param sourceAddr is the source_addr.
+     * @param destinationAddresses is the destination addresses.
+     * @param esmClass is the esm_class.
+     * @param protocolId is the protocol_id.
+     * @param priorityFlag is the priority_flag.
+     * @param scheduleDeliveryTime is the schedule_delivery_time.
+     * @param validityPeriod is the validity_period.
+     * @param registeredDelivery is the registered_delivery.
+     * @param replaceIfPresentFlag is the replace_if_present_flag.
+     * @param dataCoding is the data_coding.
+     * @param smDefaultMsgId is the sm_default_msg_id.
+     * @param shortMessage is the short_message.
+     * @param optionalParameters is the optional parameters.
+     * @return the message_id and the un-success deliveries.
+     * @throws PDUStringException if there is invalid string found.
+     * @throws ResponseTimeoutException if timeout has been reach.
+     * @throws InvalidResponseException if response is invalid.
+     * @throws NegativeResponseException if negative response received.
+     * @throws IOException if there is an I/O error found.
      */
     SubmitMultiResult submitMultiple(String serviceType,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
@@ -113,11 +113,48 @@ public interface ClientSession extends Session {
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException;
 
+    /**
+     * Query previous submitted short message based on it's message_id and
+     * message_id. This method will blocks until response received or timeout
+     * reached. This method is simplify operations of sending QUERY_SM and
+     * receiving QUERY_SM_RESP.
+     * 
+     * @param messageId is the message_id.
+     * @param sourceAddrTon is the source_addr_ton.
+     * @param sourceAddrNpi is the source_addr_npi.
+     * @param sourceAddr is the source_addr.
+     * @return the result of query short message.
+     * @throws PDUStringException if there is invalid string found.
+     * @throws ResponseTimeoutException if timeout has been reach.
+     * @throws InvalidResponseException if response is invalid.
+     * @throws NegativeResponseException if negative response received.
+     * @throws IOException if there is an I/O error found.
+     */
     QuerySmResult queryShortMessage(String messageId, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr)
             throws PDUStringException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException;
 
+    /**
+     * 
+     * Cancel the previous submitted short message. This method will blocks
+     * until response received or timeout reached. This method is simplify
+     * operations of sending CANCEL_SM and receiving CANCEL_SM_RESP.
+     * 
+     * @param serviceType is the service_type.
+     * @param messageId is the message_id.
+     * @param sourceAddrTon is the source_addr_ton.
+     * @param sourceAddrNpi is the source_addr_npi.
+     * @param sourceAddr is the source_addr.
+     * @param destAddrTon is the dest_addr_ton.
+     * @param destAddrNpi is the dest_addr_npi.
+     * @param destinationAddress is destination_address.
+     * @throws PDUStringException if there is invalid string found.
+     * @throws ResponseTimeoutException if timeout has been reach.
+     * @throws InvalidResponseException if response is invalid.
+     * @throws NegativeResponseException if negative response received.
+     * @throws IOException if there is an I/O error found.
+     */
     void cancelShortMessage(String serviceType, String messageId,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, TypeOfNumber destAddrTon,
@@ -125,6 +162,26 @@ public interface ClientSession extends Session {
             throws PDUStringException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException;
 
+    /**
+     * Replace the previous submitted short message. This method will blocks
+     * until response received or timeout reached. This method is simplify
+     * operations of sending REPLACE_SM and receiving REPLACE_SM_RESP.
+     * 
+     * @param messageId is the message_id.
+     * @param sourceAddrTon is the source_addr_ton.
+     * @param sourceAddrNpi is the source_addr_npi.
+     * @param sourceAddr is the source_addr.
+     * @param scheduleDeliveryTime is the schedule_delivery_time.
+     * @param validityPeriod is the validity_period.
+     * @param registeredDelivery is the registered_delivery.
+     * @param smDefaultMsgId is the sm_default_msg_id.
+     * @param shortMessage is the short_message.
+     * @throws PDUStringException if there is invalid string found.
+     * @throws ResponseTimeoutException if timeout has been reach.
+     * @throws InvalidResponseException if response is invalid.
+     * @throws NegativeResponseException if negative response received.
+     * @throws IOException if there is an I/O error found.
+     */
     void replaceShortMessage(String messageId, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             String scheduleDeliveryTime, String validityPeriod,

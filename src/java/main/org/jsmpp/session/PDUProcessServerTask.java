@@ -80,6 +80,10 @@ public class PDUProcessServerTask implements Runnable {
                 activityNotifier.notifyActivity();
                 stateProcessor.processCancelSm(pduHeader, pdu, responseHandler);
                 break;
+            case SMPPConstant.CID_REPLACE_SM:
+                activityNotifier.notifyActivity();
+                stateProcessor.processReplaceSm(pduHeader, pdu, responseHandler);
+                break;
             case SMPPConstant.CID_UNBIND:
                 activityNotifier.notifyActivity();
                 stateProcessor.processUnbind(pduHeader, pdu, responseHandler);

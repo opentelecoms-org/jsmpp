@@ -18,6 +18,8 @@ import org.jsmpp.bean.GenericNack;
 import org.jsmpp.bean.Outbind;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.QuerySmResp;
+import org.jsmpp.bean.ReplaceSm;
+import org.jsmpp.bean.ReplaceSmResp;
 import org.jsmpp.bean.SubmitMulti;
 import org.jsmpp.bean.SubmitMultiResp;
 import org.jsmpp.bean.SubmitSm;
@@ -242,6 +244,10 @@ public interface PDUDecomposer {
     SubmitMulti submitMulti(byte[] data) throws PDUStringException;
     
     SubmitMultiResp submitMultiResp(byte[] data) throws PDUStringException;
+    
+    ReplaceSm replaceSm(byte[] data) throws PDUStringException;
+    
+    ReplaceSmResp replaceSmResp(byte[] data);
     
     AlertNotification alertNotification(byte[] data) throws PDUStringException;
 }

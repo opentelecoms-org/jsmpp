@@ -7,6 +7,7 @@ import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.QuerySm;
+import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SubmitMulti;
 import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
@@ -86,6 +87,19 @@ class SMPPServerSessionBoundTX extends SMPPServerSessionBound implements
             CancelSm cancelSm = pduDecomposer.cancelSm(pdu);
             responseHandler.processCancelSm(cancelSm);
             responseHandler.sendCancelSmResp(pduHeader.getSequenceNumber());
+        } catch (PDUStringException e) {
+            responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
+        } catch (ProcessRequestException e) {
+            responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
+        }
+    }
+    
+    public void processReplaceSm(Command pduHeader, byte[] pdu,
+            ServerResponseHandler responseHandler) throws IOException {
+        try {
+            ReplaceSm replaceSm = pduDecomposer.replaceSm(pdu);
+            responseHandler.processReplaceSm(replaceSm);
+            responseHandler.sendReplaceSmResp(pduHeader.getSequenceNumber());
         } catch (PDUStringException e) {
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
         } catch (ProcessRequestException e) {

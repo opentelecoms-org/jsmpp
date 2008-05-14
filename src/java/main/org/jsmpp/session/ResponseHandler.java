@@ -2,6 +2,7 @@ package org.jsmpp.session;
 
 import java.io.IOException;
 
+import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.extra.ProcessRequestException;
 
@@ -33,4 +34,5 @@ public interface ResponseHandler extends BaseResponseHandler {
      */
     void sendDeliverSmResp(int sequenceNumber) throws IOException;
     
+    void processAlertNotification(AlertNotification alertNotification);
 }

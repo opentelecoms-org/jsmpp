@@ -1,5 +1,6 @@
 package org.jsmpp.session;
 
+import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.extra.ProcessRequestException;
 
@@ -20,12 +21,19 @@ import org.jsmpp.extra.ProcessRequestException;
 public interface MessageReceiverListener {
 
     /**
-     * Event that called when an short message accepted.
+     * This event raised when a short message received.
      * 
-     * @param deliverSm is the deliver_sm command.
+     * @param deliverSm is the short message.
      * @throws ProcessRequestException throw if there should be return Non-OK
      *         command_status for the response.
      */
     void onAcceptDeliverSm(DeliverSm deliverSm)
             throws ProcessRequestException;
+    
+    /**
+     * This event raised when alert notification received.
+     * 
+     * @param alertNotification is the alert notification.
+     */
+    void onAcceptAlertNotification(AlertNotification alertNotification);
 }

@@ -27,6 +27,8 @@ import org.jsmpp.bean.OptionalParameters;
 import org.jsmpp.bean.Outbind;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.QuerySmResp;
+import org.jsmpp.bean.ReplaceSm;
+import org.jsmpp.bean.ReplaceSmResp;
 import org.jsmpp.bean.SubmitMulti;
 import org.jsmpp.bean.SubmitMultiResp;
 import org.jsmpp.bean.SubmitSm;
@@ -527,6 +529,8 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setSmDefaultMsgId(reader.readByte());
         byte smLength = reader.readByte();
         req.setShortMessage(reader.readBytes(smLength));
+        StringValidator.validateString(req.getShortMessage(),
+                StringParameter.SHORT_MESSAGE);
         req.setOptionalParameters(readOptionalParameters(reader));
         return req;
     }
@@ -553,6 +557,38 @@ public class DefaultDecomposer implements PDUDecomposer {
                     errorStatusCode);
         }
         resp.setUnsuccessSmes(unsuccessSmes);
+        return resp;
+    }
+    
+    public ReplaceSm replaceSm(byte[] data) throws PDUStringException {
+        ReplaceSm req = new ReplaceSm();
+        SequentialBytesReader reader = new SequentialBytesReader(data);
+        assignHeader(req, reader);
+        req.setMessageId(reader.readCString());
+        StringValidator.validateString(req.getMessageId(),
+                StringParameter.MESSAGE_ID);
+        req.setSourceAddrTon(reader.readByte());
+        req.setSourceAddrNpi(reader.readByte());
+        req.setSourceAddr(reader.readCString());
+        StringValidator.validateString(req.getSourceAddr(),
+                StringParameter.SOURCE_ADDR);
+        req.setScheduleDeliveryTime(reader.readCString());
+        StringValidator.validateString(req.getScheduleDeliveryTime(),
+                StringParameter.SCHEDULE_DELIVERY_TIME);
+        req.setValidityPeriod(reader.readCString());
+        StringValidator.validateString(req.getValidityPeriod(),
+                StringParameter.VALIDITY_PERIOD);
+        req.setSmDefaultMsgId(reader.readByte());
+        byte smLength = reader.readByte();
+        req.setShortMessage(reader.readBytes(smLength));
+        StringValidator.validateString(req.getShortMessage(),
+                StringParameter.SHORT_MESSAGE);
+        return req;
+    }
+    
+    public ReplaceSmResp replaceSmResp(byte[] data) {
+        ReplaceSmResp resp = new ReplaceSmResp();
+        assignHeader(resp, data);
         return resp;
     }
     

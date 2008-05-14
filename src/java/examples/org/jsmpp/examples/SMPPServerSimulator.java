@@ -20,6 +20,7 @@ import org.jsmpp.bean.MessageType;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.SubmitMulti;
 import org.jsmpp.bean.SubmitMultiResult;
@@ -98,6 +99,10 @@ public class SMPPServerSimulator implements Runnable, ServerMessageReceiverListe
     }
     
     public void onAcceptCancelSm(CancelSm cancelSm, SMPPServerSession source)
+            throws ProcessRequestException {
+    }
+    
+    public void onAcceptReplaceSm(ReplaceSm replaceSm, SMPPServerSession source)
             throws ProcessRequestException {
     }
     

@@ -18,6 +18,7 @@ import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.SynchronizedPDUSender;
 import org.jsmpp.bean.Address;
+import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.Command;
@@ -432,6 +433,14 @@ public class SMPPSession extends AbstractSession implements ClientSession {
         }
 	}
 	
+	private void fireAcceptAlertNotification(AlertNotification alertNotification) {
+	    if (messageReceiverListener != null) {
+	        messageReceiverListener.onAcceptAlertNotification(alertNotification);
+	    } else {
+	        logger.warn("Receive alert_notification but MessageReceiverListener is null");
+	    }
+	}
+	
 	private class ResponseHandlerImpl implements ResponseHandler {
 		
 		public void processDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
@@ -441,6 +450,10 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		public DataSmResult processDataSm(DataSm dataSm)
 		        throws ProcessRequestException {
 		    return fireAcceptDataSm(dataSm);
+		}
+		
+		public void processAlertNotification(AlertNotification alertNotification) {
+		    fireAcceptAlertNotification(alertNotification);
 		}
 		
 		public void sendDataSmResp(DataSmResult dataSmResult, int sequenceNumber)
@@ -488,7 +501,6 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		public void sendUnbindResp(int sequenceNumber) throws IOException {
 			pduSender().sendUnbindResp(out, SMPPConstant.STAT_ESME_ROK, sequenceNumber);
 		}
-		
 	}
 	
 	/**

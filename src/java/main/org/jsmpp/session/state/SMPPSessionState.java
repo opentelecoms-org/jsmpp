@@ -81,5 +81,10 @@ public interface SMPPSessionState extends GenericSMPPSessionState {
     
     void processCancelSmResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException;
-
+    
+    void processReplaceSmResp(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException;
+    
+    void processAlertNotification(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler);
 }

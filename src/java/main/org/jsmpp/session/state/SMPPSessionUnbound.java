@@ -6,6 +6,8 @@ import org.jsmpp.bean.Command;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BaseResponseHandler;
 import org.jsmpp.session.ResponseHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is unbound state implementation of {@link SMPPSessionState}. All
@@ -18,6 +20,7 @@ import org.jsmpp.session.ResponseHandler;
  * 
  */
 class SMPPSessionUnbound implements SMPPSessionState {
+    private static final Logger logger = LoggerFactory.getLogger(SMPPSessionUnbound.class);
     
     public SessionState getSessionState() {
         return SessionState.UNBOUND;
@@ -91,5 +94,15 @@ class SMPPSessionUnbound implements SMPPSessionState {
     public void processCancelSmResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         throw new IOException("Invalid process for unbound session state");
+    }
+    
+    public void processReplaceSmResp(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException {
+        throw new IOException("Invalid process for unbound session state");
+    }
+    
+    public void processAlertNotification(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) {
+        logger.error("SYSTEM ERROR. Receiving alert_notification while on unbound state");
     }
 }

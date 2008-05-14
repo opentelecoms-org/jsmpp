@@ -53,8 +53,7 @@ public class DefaultSMPPServerOperation extends AbstractSMPPOperation implements
             String sourceAddr, TypeOfNumber esmeAddrTon,
             NumberingPlanIndicator esmeAddrNpi, String esmeAddr,
             OptionalParameter... optionalParameters) throws PDUStringException,
-            ResponseTimeoutException, InvalidResponseException,
-            NegativeResponseException, IOException {
+            IOException {
         pduSender().sendAlertNotification(connection().getOutputStream(),
                 sequenceNumber, sourceAddrTon.value(), sourceAddrNpi.value(),
                 sourceAddr, esmeAddrTon.value(), esmeAddrNpi.value(), esmeAddr,

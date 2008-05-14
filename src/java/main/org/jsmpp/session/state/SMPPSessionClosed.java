@@ -6,10 +6,12 @@ import org.jsmpp.bean.Command;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BaseResponseHandler;
 import org.jsmpp.session.ResponseHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is closed state implementation of {@link SMPPSessionState}. This
- * sesion state on SMPP spesification context, implemented on since version 5.0,
+ * session state on SMPP specification context, implemented on since version 5.0,
  * but we can also use this.
  * 
  * @author uudashr
@@ -18,6 +20,7 @@ import org.jsmpp.session.ResponseHandler;
  * 
  */
 class SMPPSessionClosed implements SMPPSessionState {
+    private static final Logger logger = LoggerFactory.getLogger(SMPPSessionClosed.class);
     
     public SessionState getSessionState() {
         return SessionState.CLOSED;
@@ -91,5 +94,15 @@ class SMPPSessionClosed implements SMPPSessionState {
     public void processCancelSmResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         throw new IOException("Invalid process for closed session state");
+    }
+    
+    public void processReplaceSmResp(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException {
+        throw new IOException("Invalid process for closed session state");
+    }
+    
+    public void processAlertNotification(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) {
+        logger.error("SYSTEM ERROR. Receiving alert_notification while on invalid closed state");
     }
 }

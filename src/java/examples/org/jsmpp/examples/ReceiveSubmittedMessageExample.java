@@ -9,6 +9,7 @@ import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.QuerySm;
+import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SubmitMulti;
 import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
@@ -65,6 +66,11 @@ public class ReceiveSubmittedMessageExample {
                 }
                 
                 public void onAcceptCancelSm(CancelSm cancelSm,
+                        SMPPServerSession source)
+                        throws ProcessRequestException {
+                }
+                
+                public void onAcceptReplaceSm(ReplaceSm replaceSm,
                         SMPPServerSession source)
                         throws ProcessRequestException {
                 }

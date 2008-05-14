@@ -78,6 +78,14 @@ public class PDUProcessTask implements Runnable {
                 activityNotifier.notifyActivity();
                 stateProcessor.processCancelSmResp(pduHeader, pdu, responseHandler);
                 break;
+            case SMPPConstant.CID_REPLACE_SM_RESP:
+                activityNotifier.notifyActivity();
+                stateProcessor.processReplaceSmResp(pduHeader, pdu, responseHandler);
+                break;
+            case SMPPConstant.CID_ALERT_NOTIFICATION:
+                activityNotifier.notifyActivity();
+                stateProcessor.processAlertNotification(pduHeader, pdu, responseHandler);
+                break;
             case SMPPConstant.CID_UNBIND:
                 activityNotifier.notifyActivity();
                 stateProcessor.processUnbind(pduHeader, pdu, responseHandler);

@@ -7,6 +7,7 @@ import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.QuerySm;
+import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SubmitMulti;
 import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
@@ -41,6 +42,10 @@ public interface ServerResponseHandler extends BaseResponseHandler {
             throws IOException;
 
     void processCancelSm(CancelSm cancelSm) throws ProcessRequestException;
-
+    
     void sendCancelSmResp(int sequenceNumber) throws IOException;
+    
+    void processReplaceSm(ReplaceSm replaceSm) throws ProcessRequestException;
+    
+    void sendReplaceSmResp(int sequenceNumber) throws IOException;
 }

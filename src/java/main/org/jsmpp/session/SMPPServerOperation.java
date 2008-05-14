@@ -36,8 +36,7 @@ public interface SMPPServerOperation extends SMPPOperation {
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber esmeAddrTon, NumberingPlanIndicator esmeAddrNpi,
             String esmeAddr, OptionalParameter... optionalParameters)
-            throws PDUStringException, ResponseTimeoutException,
-            InvalidResponseException, NegativeResponseException, IOException;
+            throws PDUStringException, IOException;
 
     void submitSmResp(MessageId messageId, int sequenceNumber)
             throws PDUStringException, IOException;

@@ -9,6 +9,7 @@ import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.QuerySm;
+import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SubmitMulti;
 import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
@@ -102,6 +103,12 @@ class DummyResponseHandler implements ServerResponseHandler {
             throws IOException {
     }
     
+    public void processReplaceSm(ReplaceSm replaceSm)
+            throws ProcessRequestException {
+    }
+    
+    public void sendReplaceSmResp(int sequenceNumber) throws IOException {
+    }
     public void closeConnection() {
         connectionClosed = true;
     }

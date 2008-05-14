@@ -16,18 +16,18 @@ import org.jsmpp.extra.SessionState;
 
 
 /**
- * Session describe all abilities of the session. Each created session has
- * session id and has a state (open, bound, unbound, closed). Every changes of
- * state will be notified and the event can be captured by implementing
- * {@link SessionStateListener} and register it to a session
+ * Session describe all abilities of the session. Each created session will be
+ * identified with session id and has a state (open, bound, unbound, closed).
+ * Every changes of state will be notified and the event can be captured by
+ * implementing {@link SessionStateListener} and register it to a session
  * {@link #addSessionStateListener(SessionStateListener)}.
  * 
  * <p>
  * Commonly, every SMPP request has a response. The maximum waiting time can be
  * configured as transaction timer.
  * <ul>
- *  <li>{@link #setTransactionTimer(long)}</li>
- *  <li>{@link #getTransactionTimer()}</li>
+ * <li>{@link #setTransactionTimer(long)}</li>
+ * <li>{@link #getTransactionTimer()}</li>
  * </ul>
  * </p>
  * 
@@ -37,6 +37,8 @@ import org.jsmpp.extra.SessionState;
  * connection. This method will wait the UNIBIND_RESP but, negative response
  * will be acceptable and closing connection will be done immediately.
  * </p>
+ * 
+ * @see SessionState
  * 
  * @author uudashr
  * 
@@ -77,6 +79,7 @@ public interface Session {
     
     /**
      * Get session id.
+     * 
      * @return the session id.
      */
     String getSessionId();

@@ -192,6 +192,26 @@ class SMPPSessionOpen implements SMPPSessionState {
         if (pendingResp != null) {
             pendingResp.doneWithInvalidResponse(new InvalidResponseException(
                     "Receive unexpected cancel_sm_resp"));
-}
+        }
+    }
+    
+    public void processReplaceSmResp(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(1);
+        
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                    "Receive unexpected replace_sm_resp"));
+        }
+    }
+    
+    public void processAlertNotification(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) {
+        PendingResponse<Command> pendingResp = responseHandler
+                .removeSentItem(1);
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                    "Receive unexpected alert_notification"));
+        }
     }
 }

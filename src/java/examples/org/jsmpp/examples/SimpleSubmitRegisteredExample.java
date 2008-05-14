@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUStringException;
+import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.DeliverSm;
@@ -62,6 +63,10 @@ public class SimpleSubmitRegisteredExample {
                     // regular short message
                     System.out.println("Receiving message : " + new String(deliverSm.getShortMessage()));
                 }
+            }
+            
+            public void onAcceptAlertNotification(
+                    AlertNotification alertNotification) {
             }
         });
         

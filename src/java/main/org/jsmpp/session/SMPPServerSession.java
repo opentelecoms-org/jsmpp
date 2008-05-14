@@ -30,6 +30,7 @@ import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SubmitMulti;
 import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * @author uudashr
  *
  */
-public class SMPPServerSession extends AbstractSession {
+public class SMPPServerSession extends AbstractSession implements ServerSession {
     private static final Logger logger = LoggerFactory.getLogger(SMPPServerSession.class);
     
     private final Connection conn;
@@ -138,6 +139,21 @@ public class SMPPServerSession extends AbstractSession {
         executeSendCommand(task, getTransactionTimer());
     }
     
+    /* (non-Javadoc)
+     * @see org.jsmpp.session.ServerSession#alertNotification(int, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.OptionalParameter[])
+     */
+    public void alertNotification(int sequenceNumber,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
+            String sourceAddr, TypeOfNumber esmeAddrTon,
+            NumberingPlanIndicator esmeAddrNpi, String esmeAddr,
+            OptionalParameter... optionalParameters) throws PDUStringException,
+            IOException {
+        pduSender().sendAlertNotification(connection().getOutputStream(),
+                sequenceNumber, sourceAddrTon.value(), sourceAddrNpi.value(),
+                sourceAddr, esmeAddrTon.value(), esmeAddrNpi.value(), esmeAddr,
+                optionalParameters);
+    }
+    
     private MessageId fireAcceptSubmitSm(SubmitSm submitSm) throws ProcessRequestException {
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptSubmitSm(submitSm, this);
@@ -159,11 +175,20 @@ public class SMPPServerSession extends AbstractSession {
         throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
     }
     
+    private void fireAcceptReplaceSm(ReplaceSm replaceSm) throws ProcessRequestException {
+        if (messageReceiverListener != null) {
+            messageReceiverListener.onAcceptReplaceSm(replaceSm, this);
+        } else {
+            throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
+        }
+    }
+    
     private void fireAcceptCancelSm(CancelSm cancelSm) throws ProcessRequestException {
         if (messageReceiverListener != null) {
             messageReceiverListener.onAcceptCancelSm(cancelSm, this);
+        } else {
+            throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
         }
-        throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
     }
     
     @Override
@@ -322,6 +347,15 @@ public class SMPPServerSession extends AbstractSession {
             pduSender().sendCancelSmResp(out, sequenceNumber);
         }
         
+        
+        public void processReplaceSm(ReplaceSm replaceSm)
+                throws ProcessRequestException {
+            fireAcceptReplaceSm(replaceSm);
+        }
+        
+        public void sendReplaceSmResp(int sequenceNumber) throws IOException {
+            pduSender().sendReplaceSmResp(out, sequenceNumber);
+        }
     }
     
     private class PDUReaderWorker extends Thread {

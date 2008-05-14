@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
+import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.extra.ProcessRequestException;
@@ -62,6 +63,29 @@ class SMPPSessionBoundRX extends SMPPSessionBound implements SMPPSessionState {
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
                 SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
                         .getSequenceNumber());
+    }
+    
+    public void processReplaceSmResp(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException {
+        responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
+                SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
+                        .getSequenceNumber());
+    }
+    
+    public void processAlertNotification(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) {
+        processAlertNotification(pduHeader, pdu, responseHandler);
+    }
+    
+    static void processAlertNotification0(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException {
+        try {
+            AlertNotification alertNotification = pduDecomposer.alertNotification(pdu);
+            responseHandler.processAlertNotification(alertNotification);
+        } catch (PDUStringException e) {
+            logger.error("Failed decomposing alert_notification", e);
+            // there is no response for alert notification 
+        }
     }
     
     static void processDeliverSm0(Command pduHeader, byte[] pdu,

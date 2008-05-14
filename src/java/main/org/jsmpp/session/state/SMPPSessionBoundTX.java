@@ -7,6 +7,7 @@ import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.CancelSmResp;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.QuerySmResp;
+import org.jsmpp.bean.ReplaceSmResp;
 import org.jsmpp.bean.SubmitMultiResp;
 import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.extra.PendingResponse;
@@ -106,11 +107,29 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
                     + pduHeader.getSequenceNumber());
         }
     }
-
+    
+    public void processReplaceSmResp(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
+                .removeSentItem(pduHeader.getSequenceNumber());
+        if (pendingResp != null) {
+            ReplaceSmResp resp = pduDecomposer.replaceSmResp(pdu);
+            pendingResp.done(resp);
+        } else {
+            logger.error("No request find for sequence number "
+                    + pduHeader.getSequenceNumber());
+        }
+    }
+    
     public void processDeliverSm(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
                 SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
                         .getSequenceNumber());
+    }
+    
+    public void processAlertNotification(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) {
+        logger.error("Receiving alert_notification while on invalid bound state (transmitter)");
     }
 }
