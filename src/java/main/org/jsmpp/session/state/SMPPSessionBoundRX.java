@@ -74,11 +74,11 @@ class SMPPSessionBoundRX extends SMPPSessionBound implements SMPPSessionState {
     
     public void processAlertNotification(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) {
-        processAlertNotification(pduHeader, pdu, responseHandler);
+        processAlertNotification0(pduHeader, pdu, responseHandler);
     }
     
     static void processAlertNotification0(Command pduHeader, byte[] pdu,
-            ResponseHandler responseHandler) throws IOException {
+            ResponseHandler responseHandler) {
         try {
             AlertNotification alertNotification = pduDecomposer.alertNotification(pdu);
             responseHandler.processAlertNotification(alertNotification);
