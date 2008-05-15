@@ -8,10 +8,10 @@ import org.jsmpp.SMPPConstant;
  */
 public class SarMsgRefNumber {
     public static final int MAX_VALUE = 65535;
-    private short _value;
+    private short value;
 
     public SarMsgRefNumber(short value) {
-        _value = value;
+        this.value = value;
     }
 
     public SarMsgRefNumber(int value) {
@@ -27,6 +27,30 @@ public class SarMsgRefNumber {
     }
 
     public short getValue() {
-        return _value;
+        return value;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + value;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final SarMsgRefNumber other = (SarMsgRefNumber)obj;
+        if (value != other.value)
+            return false;
+        return true;
+    }
+    
+    
 }

@@ -26,4 +26,37 @@ public class UnsuccessDelivery {
     public int getErrorStatusCode() {
         return errorStatusCode;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime
+                * result
+                + ((destinationAddress == null) ? 0 : destinationAddress
+                        .hashCode());
+        result = prime * result + errorStatusCode;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final UnsuccessDelivery other = (UnsuccessDelivery)obj;
+        if (destinationAddress == null) {
+            if (other.destinationAddress != null)
+                return false;
+        } else if (!destinationAddress.equals(other.destinationAddress))
+            return false;
+        if (errorStatusCode != other.errorStatusCode)
+            return false;
+        return true;
+    }
+    
+    
 }

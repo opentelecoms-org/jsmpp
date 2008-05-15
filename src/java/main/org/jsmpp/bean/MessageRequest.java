@@ -1,5 +1,7 @@
 package org.jsmpp.bean;
 
+import java.util.Arrays;
+
 
 /**
  * @author uudashr
@@ -116,4 +118,53 @@ public class MessageRequest extends AbstractSmCommand {
     public void setValidityPeriod(String validityPeriod) {
         this.validityPeriod = validityPeriod;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime
+                * result
+                + ((scheduleDeliveryTime == null) ? 0 : scheduleDeliveryTime
+                        .hashCode());
+        result = prime * result + Arrays.hashCode(shortMessage);
+        result = prime * result
+                + ((validityPeriod == null) ? 0 : validityPeriod.hashCode());
+        return result;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final MessageRequest other = (MessageRequest)obj;
+        if (priorityFlag != other.priorityFlag)
+            return false;
+        if (protocolId != other.protocolId)
+            return false;
+        if (replaceIfPresent != other.replaceIfPresent)
+            return false;
+        if (scheduleDeliveryTime == null) {
+            if (other.scheduleDeliveryTime != null)
+                return false;
+        } else if (!scheduleDeliveryTime.equals(other.scheduleDeliveryTime))
+            return false;
+        if (!Arrays.equals(shortMessage, other.shortMessage))
+            return false;
+        if (smDefaultMsgId != other.smDefaultMsgId)
+            return false;
+        if (validityPeriod == null) {
+            if (other.validityPeriod != null)
+                return false;
+        } else if (!validityPeriod.equals(other.validityPeriod))
+            return false;
+        return true;
+    }
+    
+    
 }

@@ -79,10 +79,21 @@ public abstract class DataCoding {
     }
 
     @Override
+    public int hashCode() {
+        return 1;
+    }
+
+    @Override
     public boolean equals(Object obj) {
-        if ((obj instanceof DataCoding))
+        if (this == obj)
+            return true;
+        if (obj == null)
             return false;
-        DataCoding other = (DataCoding) obj;
-        return value == other.value;
+        if (getClass() != obj.getClass())
+            return false;
+        final DataCoding other = (DataCoding)obj;
+        if (value != other.value)
+            return false;
+        return true;
     }
 }

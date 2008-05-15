@@ -44,4 +44,47 @@ public class Address {
     public String getAddress() {
         return address;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((address == null) ? 0 : address.hashCode());
+        result = prime
+                * result
+                + ((numberingPlanIndicator == null) ? 0
+                        : numberingPlanIndicator.hashCode());
+        result = prime * result
+                + ((typeOfNumber == null) ? 0 : typeOfNumber.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final Address other = (Address)obj;
+        if (address == null) {
+            if (other.address != null)
+                return false;
+        } else if (!address.equals(other.address))
+            return false;
+        if (numberingPlanIndicator == null) {
+            if (other.numberingPlanIndicator != null)
+                return false;
+        } else if (!numberingPlanIndicator.equals(other.numberingPlanIndicator))
+            return false;
+        if (typeOfNumber == null) {
+            if (other.typeOfNumber != null)
+                return false;
+        } else if (!typeOfNumber.equals(other.typeOfNumber))
+            return false;
+        return true;
+    }
+    
+    
 }

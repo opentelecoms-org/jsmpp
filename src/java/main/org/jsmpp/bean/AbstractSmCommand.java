@@ -1,5 +1,7 @@
 package org.jsmpp.bean;
 
+import java.util.Arrays;
+
 import org.jsmpp.SMPPConstant;
 
 /**
@@ -446,4 +448,63 @@ public class AbstractSmCommand extends Command {
         // (registeredDelivery & 0x0c) will clean the bits 3 - 2.
         return (byte)(registeredDelivery & 0x0c);
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result
+                + ((destAddress == null) ? 0 : destAddress.hashCode());
+        result = prime * result + Arrays.hashCode(optionalParametes);
+        result = prime * result
+                + ((serviceType == null) ? 0 : serviceType.hashCode());
+        result = prime * result
+                + ((sourceAddr == null) ? 0 : sourceAddr.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final AbstractSmCommand other = (AbstractSmCommand)obj;
+        if (dataCoding != other.dataCoding)
+            return false;
+        if (destAddrNpi != other.destAddrNpi)
+            return false;
+        if (destAddrTon != other.destAddrTon)
+            return false;
+        if (destAddress == null) {
+            if (other.destAddress != null)
+                return false;
+        } else if (!destAddress.equals(other.destAddress))
+            return false;
+        if (esmClass != other.esmClass)
+            return false;
+        if (!Arrays.equals(optionalParametes, other.optionalParametes))
+            return false;
+        if (registeredDelivery != other.registeredDelivery)
+            return false;
+        if (serviceType == null) {
+            if (other.serviceType != null)
+                return false;
+        } else if (!serviceType.equals(other.serviceType))
+            return false;
+        if (sourceAddr == null) {
+            if (other.sourceAddr != null)
+                return false;
+        } else if (!sourceAddr.equals(other.sourceAddr))
+            return false;
+        if (sourceAddrNpi != other.sourceAddrNpi)
+            return false;
+        if (sourceAddrTon != other.sourceAddrTon)
+            return false;
+        return true;
+    }
+    
+    
 }

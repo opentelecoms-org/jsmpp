@@ -1,5 +1,7 @@
 package org.jsmpp.bean;
 
+import java.util.Arrays;
+
 /**
  * @author uudashr
  *
@@ -153,4 +155,82 @@ public class SubmitMulti extends Command {
     public void setOptionalParameters(OptionalParameter[] optionalParameters) {
         this.optionalParameters = optionalParameters;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + Arrays.hashCode(destAddresses);
+        result = prime * result + Arrays.hashCode(optionalParameters);
+        result = prime
+                * result
+                + ((scheduleDeliveryTime == null) ? 0 : scheduleDeliveryTime
+                        .hashCode());
+        result = prime * result
+                + ((serviceType == null) ? 0 : serviceType.hashCode());
+        result = prime * result + Arrays.hashCode(shortMessage);
+        result = prime * result
+                + ((sourceAddr == null) ? 0 : sourceAddr.hashCode());
+        result = prime * result
+                + ((validityPeriod == null) ? 0 : validityPeriod.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final SubmitMulti other = (SubmitMulti)obj;
+        if (dataCoding != other.dataCoding)
+            return false;
+        if (!Arrays.equals(destAddresses, other.destAddresses))
+            return false;
+        if (esmClass != other.esmClass)
+            return false;
+        if (!Arrays.equals(optionalParameters, other.optionalParameters))
+            return false;
+        if (priorityFlag != other.priorityFlag)
+            return false;
+        if (protocolId != other.protocolId)
+            return false;
+        if (registeredDelivery != other.registeredDelivery)
+            return false;
+        if (replaceIfPresentFlag != other.replaceIfPresentFlag)
+            return false;
+        if (scheduleDeliveryTime == null) {
+            if (other.scheduleDeliveryTime != null)
+                return false;
+        } else if (!scheduleDeliveryTime.equals(other.scheduleDeliveryTime))
+            return false;
+        if (serviceType == null) {
+            if (other.serviceType != null)
+                return false;
+        } else if (!serviceType.equals(other.serviceType))
+            return false;
+        if (!Arrays.equals(shortMessage, other.shortMessage))
+            return false;
+        if (smDefaultMsgId != other.smDefaultMsgId)
+            return false;
+        if (sourceAddr == null) {
+            if (other.sourceAddr != null)
+                return false;
+        } else if (!sourceAddr.equals(other.sourceAddr))
+            return false;
+        if (sourceAddrNpi != other.sourceAddrNpi)
+            return false;
+        if (sourceAddrTon != other.sourceAddrTon)
+            return false;
+        if (validityPeriod == null) {
+            if (other.validityPeriod != null)
+                return false;
+        } else if (!validityPeriod.equals(other.validityPeriod))
+            return false;
+        return true;
+    }
+    
+    
 }

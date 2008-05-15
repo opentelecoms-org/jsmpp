@@ -207,4 +207,77 @@ public class DeliveryReceipt {
         }
         return sBuf.toString();
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((dateFormat == null) ? 0 : dateFormat.hashCode());
+        result = prime * result + delivered;
+        result = prime * result
+                + ((doneDate == null) ? 0 : doneDate.hashCode());
+        result = prime * result + ((error == null) ? 0 : error.hashCode());
+        result = prime * result
+                + ((finalStatus == null) ? 0 : finalStatus.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result
+                + ((submitDate == null) ? 0 : submitDate.hashCode());
+        result = prime * result + submitted;
+        result = prime * result + ((text == null) ? 0 : text.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final DeliveryReceipt other = (DeliveryReceipt)obj;
+        if (dateFormat == null) {
+            if (other.dateFormat != null)
+                return false;
+        } else if (!dateFormat.equals(other.dateFormat))
+            return false;
+        if (delivered != other.delivered)
+            return false;
+        if (doneDate == null) {
+            if (other.doneDate != null)
+                return false;
+        } else if (!doneDate.equals(other.doneDate))
+            return false;
+        if (error == null) {
+            if (other.error != null)
+                return false;
+        } else if (!error.equals(other.error))
+            return false;
+        if (finalStatus == null) {
+            if (other.finalStatus != null)
+                return false;
+        } else if (!finalStatus.equals(other.finalStatus))
+            return false;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (submitDate == null) {
+            if (other.submitDate != null)
+                return false;
+        } else if (!submitDate.equals(other.submitDate))
+            return false;
+        if (submitted != other.submitted)
+            return false;
+        if (text == null) {
+            if (other.text != null)
+                return false;
+        } else if (!text.equals(other.text))
+            return false;
+        return true;
+    }
+    
+    
 }

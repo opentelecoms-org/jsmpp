@@ -69,4 +69,48 @@ public class QuerySmResp extends Command {
     public void setMessageState(MessageState messageState) {
         this.messageState = messageState;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result
+                + ((finalDate == null) ? 0 : finalDate.hashCode());
+        result = prime * result
+                + ((messageId == null) ? 0 : messageId.hashCode());
+        result = prime * result
+                + ((messageState == null) ? 0 : messageState.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final QuerySmResp other = (QuerySmResp)obj;
+        if (errorCode != other.errorCode)
+            return false;
+        if (finalDate == null) {
+            if (other.finalDate != null)
+                return false;
+        } else if (!finalDate.equals(other.finalDate))
+            return false;
+        if (messageId == null) {
+            if (other.messageId != null)
+                return false;
+        } else if (!messageId.equals(other.messageId))
+            return false;
+        if (messageState == null) {
+            if (other.messageState != null)
+                return false;
+        } else if (!messageState.equals(other.messageState))
+            return false;
+        return true;
+    }
+    
+    
 }

@@ -146,4 +146,57 @@ public class Bind extends Command {
         this.systemType = systemType;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result
+                + ((addressRange == null) ? 0 : addressRange.hashCode());
+        result = prime * result
+                + ((password == null) ? 0 : password.hashCode());
+        result = prime * result
+                + ((systemId == null) ? 0 : systemId.hashCode());
+        result = prime * result
+                + ((systemType == null) ? 0 : systemType.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final Bind other = (Bind)obj;
+        if (addrNpi != other.addrNpi)
+            return false;
+        if (addrTon != other.addrTon)
+            return false;
+        if (addressRange == null) {
+            if (other.addressRange != null)
+                return false;
+        } else if (!addressRange.equals(other.addressRange))
+            return false;
+        if (interfaceVersion != other.interfaceVersion)
+            return false;
+        if (password == null) {
+            if (other.password != null)
+                return false;
+        } else if (!password.equals(other.password))
+            return false;
+        if (systemId == null) {
+            if (other.systemId != null)
+                return false;
+        } else if (!systemId.equals(other.systemId))
+            return false;
+        if (systemType == null) {
+            if (other.systemType != null)
+                return false;
+        } else if (!systemType.equals(other.systemType))
+            return false;
+        return true;
+    }
+    
 }

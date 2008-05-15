@@ -1,5 +1,7 @@
 package org.jsmpp.bean;
 
+import java.util.Arrays;
+
 /**
  * This class represent SMPP bind response command.
  * 
@@ -43,4 +45,35 @@ public class BindResp extends Command {
     public void setOptionalParameters(OptionalParameter[] optionalParameters) {
         this.optionalParameters = optionalParameters;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + Arrays.hashCode(optionalParameters);
+        result = prime * result
+                + ((systemId == null) ? 0 : systemId.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final BindResp other = (BindResp)obj;
+        if (!Arrays.equals(optionalParameters, other.optionalParameters))
+            return false;
+        if (systemId == null) {
+            if (other.systemId != null)
+                return false;
+        } else if (!systemId.equals(other.systemId))
+            return false;
+        return true;
+    }
+    
+    
 }

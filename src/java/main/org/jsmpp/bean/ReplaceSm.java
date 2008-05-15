@@ -1,5 +1,7 @@
 package org.jsmpp.bean;
 
+import java.util.Arrays;
+
 /**
  * @author uudashr
  *
@@ -90,4 +92,66 @@ public class ReplaceSm extends Command {
     public void setShortMessage(byte[] shortMessage) {
         this.shortMessage = shortMessage;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result
+                + ((messageId == null) ? 0 : messageId.hashCode());
+        result = prime
+                * result
+                + ((scheduleDeliveryTime == null) ? 0 : scheduleDeliveryTime
+                        .hashCode());
+        result = prime * result + Arrays.hashCode(shortMessage);
+        result = prime * result
+                + ((sourceAddr == null) ? 0 : sourceAddr.hashCode());
+        result = prime * result
+                + ((validityPeriod == null) ? 0 : validityPeriod.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final ReplaceSm other = (ReplaceSm)obj;
+        if (messageId == null) {
+            if (other.messageId != null)
+                return false;
+        } else if (!messageId.equals(other.messageId))
+            return false;
+        if (registeredDelivery != other.registeredDelivery)
+            return false;
+        if (scheduleDeliveryTime == null) {
+            if (other.scheduleDeliveryTime != null)
+                return false;
+        } else if (!scheduleDeliveryTime.equals(other.scheduleDeliveryTime))
+            return false;
+        if (!Arrays.equals(shortMessage, other.shortMessage))
+            return false;
+        if (smDefaultMsgId != other.smDefaultMsgId)
+            return false;
+        if (sourceAddr == null) {
+            if (other.sourceAddr != null)
+                return false;
+        } else if (!sourceAddr.equals(other.sourceAddr))
+            return false;
+        if (sourceAddrNpi != other.sourceAddrNpi)
+            return false;
+        if (sourceAddrTon != other.sourceAddrTon)
+            return false;
+        if (validityPeriod == null) {
+            if (other.validityPeriod != null)
+                return false;
+        } else if (!validityPeriod.equals(other.validityPeriod))
+            return false;
+        return true;
+    }
+    
+    
 }

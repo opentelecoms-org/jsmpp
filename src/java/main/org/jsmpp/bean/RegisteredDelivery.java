@@ -48,12 +48,25 @@ public class RegisteredDelivery {
         value = IntermediateNotification.compose(value, intermediateNotification);
         return this;
     }
-    
+
+    @Override
+    public int hashCode() {
+        return 1;
+    }
+
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof RegisteredDelivery))
+        if (this == obj)
+            return true;
+        if (obj == null)
             return false;
-        RegisteredDelivery other = (RegisteredDelivery)obj;
-        return value == other.value;
+        if (getClass() != obj.getClass())
+            return false;
+        final RegisteredDelivery other = (RegisteredDelivery)obj;
+        if (value != other.value)
+            return false;
+        return true;
     }
+    
+    
 }

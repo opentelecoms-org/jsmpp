@@ -8,4 +8,5 @@ public class CancelSmResp extends Command {
     public CancelSmResp() {
         super();
     }
+    
 }
