@@ -247,7 +247,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         public void sendBindResp(String systemId, BindType bindType, int sequenceNumber) throws IOException {
             sessionContext.bound(bindType);
             try {
-                pduSender().sendBindResp(out, bindType.commandId() | SMPPConstant.MASK_CID_RESP, sequenceNumber, systemId);
+                pduSender().sendBindResp(out, bindType.responseCommandId(), sequenceNumber, systemId);
             } catch (PDUStringException e) {
                 logger.error("Failed sending bind response", e);
                 // TODO uudashr: we have double checking when accept the bind request
