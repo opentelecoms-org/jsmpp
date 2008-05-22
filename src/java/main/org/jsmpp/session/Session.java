@@ -91,6 +91,12 @@ public interface Session {
     SessionState getSessionState();
     void addSessionStateListener(SessionStateListener l);
     void removeSessionStateListener(SessionStateListener l);
+    
+    /**
+     * Get the last reading valid PDU from remote host.
+     * 
+     * @return the last reading valid PDU from remote host.
+     */
     long getLastActivityTimestamp();
     
     /**
