@@ -88,9 +88,10 @@ class PDUByteBuffer {
         if (newCapacity > bytes.length) {
             byte[] newB = new byte[newCapacity];
             System.arraycopy(bytes, 0, newB, 0, bytes.length); // copy current bytes to new bytes
-            System.arraycopy(b, offset, newB, oldLength, length); // assign value
+            //System.arraycopy(b, offset, newB, oldLength, length); // assign value
             bytes = newB;
         }
+        System.arraycopy(b, offset, bytes, oldLength, length); // assign value
         normalizeCommandLength();
         return bytesLength;
     }
@@ -170,7 +171,7 @@ class PDUByteBuffer {
     public int appendAll(OptionalParameter[] optionalParameters) {
         int length = 0;
         for (OptionalParameter optionalParamameter : optionalParameters) {
-            append(optionalParamameter);
+            length += append(optionalParamameter);
         }
         return length;
     }
@@ -191,5 +192,13 @@ class PDUByteBuffer {
         byte[] returnBytes = new byte[bytesLength];
         System.arraycopy(bytes, 0, returnBytes, 0, bytesLength);
         return returnBytes;
+    }
+    
+    int getCommandLengthValue() {
+        return OctetUtil.bytesToInt(bytes, 0);
+    }
+    
+    int getBytesLength() {
+        return bytesLength;
     }
 }

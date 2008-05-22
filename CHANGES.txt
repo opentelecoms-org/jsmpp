@@ -7,4 +7,5 @@ Changes:
 - Add cancel_sm support
 - Add replace_sm support
 - Add alert_notification support
-- Add CapacityPolicy to PDUByteBuffer
+- Add CapacityPolicy to PDUByteBuffer (performance improvement, minimize array 
+  of byte creation)

@@ -21,14 +21,20 @@ public class PDUByteBufferTest {
     
     @Test(groups="checkintest")
     public void initialLengthValidity() {
-        assertEquals(byteBuffer.toBytes().length, INITIAL_LENGTH);
+        byte[] pdu = byteBuffer.toBytes();
+        assertEquals(pdu.length, INITIAL_LENGTH);
+        assertEquals(pdu.length, byteBuffer.getCommandLengthValue());
+        assertEquals(pdu.length, byteBuffer.getBytesLength());
     }
     
     @Test(groups="checkintest", dependsOnMethods="initialLengthValidity")
     public void testLengthValidityForIntAppends() {
         for (int i = 0; i < 5; i++) {
             byteBuffer.append(10);
-            assertEquals(byteBuffer.toBytes().length, INITIAL_LENGTH + (INTEGER_LENGTH * (i + 1)), "Failed on iteration " + i);
+            byte[] pdu = byteBuffer.toBytes();
+            assertEquals(pdu.length, INITIAL_LENGTH + (INTEGER_LENGTH * (i + 1)), "Failed on iteration " + i);
+            assertEquals(pdu.length, byteBuffer.getCommandLengthValue());
+            assertEquals(pdu.length, byteBuffer.getBytesLength());
         }
     }
     
@@ -36,7 +42,10 @@ public class PDUByteBufferTest {
     public void testLengthValidityForByteAppends() {
         for (int i = 0; i < 5; i++) {
             byteBuffer.append((byte)10);
-            assertEquals(byteBuffer.toBytes().length, INITIAL_LENGTH + (BYTE_LENGTH * (i + 1)), "Failed on iteration " + i);
+            byte[] pdu = byteBuffer.toBytes();
+            assertEquals(pdu.length, INITIAL_LENGTH + (BYTE_LENGTH * (i + 1)), "Failed on iteration " + i);
+            assertEquals(pdu.length, byteBuffer.getCommandLengthValue(), "Failed on iteration " + i);
+            assertEquals(pdu.length, byteBuffer.getBytesLength(), "Failed on iteration " + i);
         }
     }
     
@@ -45,7 +54,10 @@ public class PDUByteBufferTest {
         String hello = "PDUByteBuffer integration test for JSMPP API";
         for (int i = 0; i < 5; i++) {
             byteBuffer.append(hello);
-            assertEquals(byteBuffer.toBytes().length, INITIAL_LENGTH + (hello.length() * (i + 1)) + (i + 1), "Failed on iteration " + i);
+            byte[] pdu = byteBuffer.toBytes();
+            assertEquals(pdu.length, INITIAL_LENGTH + (hello.length() * (i + 1)) + (i + 1), "Failed on iteration " + i);
+            assertEquals(pdu.length, byteBuffer.getCommandLengthValue(), "Failed on iteration " + i);
+            assertEquals(pdu.length, byteBuffer.getBytesLength(), "Failed on iteration " + i);
         }
     }
     
@@ -54,7 +66,10 @@ public class PDUByteBufferTest {
         String hello = "PDUByteBuffer integration test for JSMPP API";
         for (int i = 0; i < 5; i++) {
             byteBuffer.append(hello, false);
-            assertEquals(byteBuffer.toBytes().length, INITIAL_LENGTH + (hello.length() * (i + 1)), "Failed on iteration " + i);
+            byte[] pdu = byteBuffer.toBytes();
+            assertEquals(pdu.length, INITIAL_LENGTH + (hello.length() * (i + 1)), "Failed on iteration " + i);
+            assertEquals(pdu.length, byteBuffer.getCommandLengthValue(), "Failed on iteration " + i);
+            assertEquals(pdu.length, byteBuffer.getBytesLength(), "Failed on iteration " + i);
         }
     }
 }
