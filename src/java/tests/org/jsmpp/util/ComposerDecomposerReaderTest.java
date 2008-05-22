@@ -18,20 +18,8 @@ public class ComposerDecomposerReaderTest {
     
     @Test(groups="checkintest")
     public void lowLevel() {
-        PDUComposer composer = new DefaultComposer();
-        PDUDecomposer decomposer = new DefaultDecomposer();
-        
         byte[] b = null;
         String systemId = "smsc";
-        /*
-        try {
-            b = composer.bindResp(BindType.BIND_TRX.responseCommandId(), 1, systemId);
-            assertEquals(b.length, 16 + systemId.length() + 1);
-            printLog("Length of bytes : " + b.length);
-        } catch (PDUStringException e) {
-            fail("Failed composing bind response", e);
-        }
-        */
         
         PDUByteBuffer buf = new PDUByteBuffer(BindType.BIND_TRX.responseCommandId(), 0, 1);
         buf.append(systemId);
@@ -65,14 +53,6 @@ public class ComposerDecomposerReaderTest {
         
         String readedSystemId = reader.readCString();
         assertEquals(readedSystemId, systemId);
-        
-        /*
-        try {
-            BindResp resp = decomposer.bindResp(b);
-        } catch (PDUStringException e) {
-            fail("Failed decomposing bind response", e);
-        }
-        */
     }
     
     @Test(groups="checkintest")
