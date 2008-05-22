@@ -9,8 +9,29 @@ import org.jsmpp.session.connection.ServerConnectionFactory;
 import org.jsmpp.session.connection.socket.ServerSocketConnectionFactory;
 
 /**
+ * This object responsible to for new SMPP Session request from ESME. It will
+ * listen on specified port.
+ * 
+ * <pre>
+ * SMPPServerSession session = listener.accept();
+ * BindRequest bindReq = session.waitForBind(5000);
+ * 
+ * if (checkPassword(bindReq)) {
+ *     bindReq.accept(&quot;sys&quot;);
+ * } else {
+ *     bindReq.reject(SMPPConstant.STAT_ESME_RINVPASWD);
+ * }
+ * </pre>
+ * 
+ * <p>
+ * The listening trough getting the bind request should take less than session
+ * initiation timer, otherwise if there is network open has been requested, ESME
+ * will close the connection. Accepting the bind request should take less than
+ * transaction timer or ESME will issued timeout.
+ * </p>
+ * 
  * @author uudashr
- *
+ * 
  */
 public class SMPPServerSessionListener {
     private final int port;
@@ -89,11 +110,25 @@ public class SMPPServerSessionListener {
     }
     
     /**
-     * Accept session request from client.
+     * Accept session request from client. The session state is still OPEN. To
+     * communicate with ESME properly binding request should be accepted.
+     * 
+     * <pre>
+     * SMPPServerSession session = listener.accept();
+     * BindRequest bindReq = session.waitForBind(5000);
+     * 
+     * if (checkPassword(bindReq)) {
+     *     bindReq.accept(&quot;sys&quot;);
+     * } else {
+     *     bindReq.reject(SMPPConstant.STAT_ESME_RINVPASWD);
+     * }
+     * </pre>
      * 
      * @return the accepted {@link SMPPServerSession}.
      * @throws SocketTimeoutException if timeout reach with no session accepted.
      * @throws IOException if there is an IO error occur.
+     * @see SMPPServerSession
+     * @see BindRequest
      */
     public SMPPServerSession accept() throws IOException {
         Connection conn = serverConn.accept();
