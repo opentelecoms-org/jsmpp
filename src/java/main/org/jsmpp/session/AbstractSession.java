@@ -39,7 +39,7 @@ public abstract class AbstractSession implements Session {
     private final Hashtable<Integer, PendingResponse<Command>> pendingResponse = new Hashtable<Integer, PendingResponse<Command>>();
     private final Sequence sequence = new Sequence(1);
     private final PDUSender pduSender;
-    private int pduDispatcherThreadCount = 3;
+    private int pduProcessorDegree = 3;
     
     private String sessionId = generateSessionId();
     private int enquireLinkTimer = 5000;
@@ -108,16 +108,29 @@ public abstract class AbstractSession implements Session {
         return sessionContext().getLastActivityTimestamp();
     }
     
-    public void setPduDispatcherThreadCount(int pduDispatcherThreadCount) throws IllegalStateException {
+    /**
+     * Set total thread can read PDU and process it parallely.
+     * 
+     * @param pduProcessorDegree is the total thread can handle read and process
+     *        PDU parallely.
+     * @throws IllegalStateException if the PDU Reader has been started.
+     */
+    public void setPduProcessorDegree(int pduProcessorDegree) throws IllegalStateException {
         if (!getSessionState().equals(SessionState.CLOSED)) {
             throw new IllegalStateException(
-                    "Cannot set pdu distpatcher thread count since the pdu dispatcher thread already created.");
+                    "Cannot set pdu processor degree since the pdu dispatcher thread already created.");
         }
-        this.pduDispatcherThreadCount = pduDispatcherThreadCount;
+        this.pduProcessorDegree = pduProcessorDegree;
     }
     
-    public int getPduDispatcherThreadCount() {
-        return pduDispatcherThreadCount;
+    /**
+     * Get the total of thread that can handle read and process PDU parallely.
+     * 
+     * @return the total of thread that can handle read and process PDU
+     *         parallely.
+     */
+    public int getPduProcessorDegree() {
+        return pduProcessorDegree;
     }
     
     /**
