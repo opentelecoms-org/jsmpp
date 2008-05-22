@@ -109,7 +109,8 @@ public abstract class AbstractSession implements Session {
     }
     
     /**
-     * Set total thread can read PDU and process it parallely.
+     * Set total thread can read PDU and process it parallely. It's defaulted to
+     * 3.
      * 
      * @param pduProcessorDegree is the total thread can handle read and process
      *        PDU parallely.
