@@ -13,8 +13,11 @@ import org.jsmpp.bean.OptionalParameter;
  * 
  */
 class PDUByteBuffer {
+    private static CapacityPolicy DEFAULT_CAPACITY_POLICY = new SimpleCapacityPolicy();
+    private CapacityPolicy capacityPolicy;
     private byte[] bytes;
-
+    private int bytesLength;
+    
     /**
      * Construct with specified command_id, command_status, and sequence_number.
      * 
@@ -23,7 +26,20 @@ class PDUByteBuffer {
      * @param sequenceNumber is the sequence_number.
      */
     public PDUByteBuffer(int commandId, int commandStatus, int sequenceNumber) {
-        this();
+        this(commandId, commandStatus, sequenceNumber, DEFAULT_CAPACITY_POLICY);
+    }
+    
+    /**
+     * Construct with specified command_id, command_status, sequence_number and
+     * capacity policy.
+     * 
+     * @param commandId is the command_id.
+     * @param commandStatus is the command_status.
+     * @param sequenceNumber is the sequence_number.
+     * @param capacityPolicy is the capacity policy.
+     */
+    public PDUByteBuffer(int commandId, int commandStatus, int sequenceNumber, CapacityPolicy capacityPolicy) {
+        this(capacityPolicy);
         append(commandId);
         append(commandStatus);
         append(sequenceNumber);
@@ -31,18 +47,29 @@ class PDUByteBuffer {
     }
 
     /**
-     * Default constuctor.
+     * Default constructor.
      */
     public PDUByteBuffer() {
+        this(DEFAULT_CAPACITY_POLICY);
+    }
+    
+    /**
+     * Construct with specified capacity policy.
+     * 
+     * @param capacityPolicy is the capacity policy.
+     */
+    public PDUByteBuffer(CapacityPolicy capacityPolicy) {
         /*
          * the initial is 4 byte, just for the command_length
          */
         bytes = new byte[4];
+        this.capacityPolicy = capacityPolicy;
+        bytesLength = 4;
         normalizeCommandLength();
     }
-
+    
     /**
-     * Append byets to specified offset and length.
+     * Append bytes to specified offset and length.
      * 
      * @param b is the bytes to append.
      * @param offset is the offset where the bytes will be placed.
@@ -51,14 +78,23 @@ class PDUByteBuffer {
      * @return the latest length of the byte buffer.
      */
     public int append(byte[] b, int offset, int length) {
-        byte[] newB = new byte[bytes.length + length];
-        System.arraycopy(bytes, 0, newB, 0, bytes.length);
-        System.arraycopy(b, offset, newB, bytes.length, length);
-        bytes = newB;
+        /*
+         * TODO uudashr: create new bytes length larger than "bytes.length + length", or it's better to use a heuristic method
+         * based on statistical report of length of the PDU, and get the quartile 3
+         */
+        int oldLength = bytesLength;
+        bytesLength += length;
+        int newCapacity = capacityPolicy.ensureCapacity(bytesLength, bytes.length);
+        if (newCapacity > bytes.length) {
+            byte[] newB = new byte[newCapacity];
+            System.arraycopy(bytes, 0, newB, 0, bytes.length); // copy current bytes to new bytes
+            System.arraycopy(b, offset, newB, oldLength, length); // assign value
+            bytes = newB;
+        }
         normalizeCommandLength();
-        return bytes.length;
+        return bytesLength;
     }
-
+    
     /**
      * Append all bytes.
      * 
@@ -102,7 +138,7 @@ class PDUByteBuffer {
             append(stringValue.getBytes());
         if (nullTerminated)
             append((byte)0);
-        return bytes.length;
+        return bytesLength;
     }
 
     /**
@@ -140,10 +176,10 @@ class PDUByteBuffer {
     }
     
     /**
-     * Normalize the command_length parameter.
+     * Assign the proper command length to the first 4 octet.
      */
     private void normalizeCommandLength() {
-        System.arraycopy(OctetUtil.intToBytes(bytes.length), 0, bytes, 0, 4);
+        System.arraycopy(OctetUtil.intToBytes(bytesLength), 0, bytes, 0, 4);
     }
 
     /**
@@ -151,7 +187,9 @@ class PDUByteBuffer {
      * 
      * @return the composed bytes.
      */
-    public byte[] getBytes() {
-        return bytes;
+    public byte[] toBytes() {
+        byte[] returnBytes = new byte[bytesLength];
+        System.arraycopy(bytes, 0, returnBytes, 0, bytesLength);
+        return returnBytes;
     }
 }

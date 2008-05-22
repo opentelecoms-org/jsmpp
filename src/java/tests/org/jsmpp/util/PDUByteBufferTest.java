@@ -16,7 +16,7 @@ public class PDUByteBufferTest {
     
     @BeforeMethod
     public void setUp() {
-        byteBuffer = new PDUByteBuffer(new DumbCapacityPolicy());
+        byteBuffer = new PDUByteBuffer(new SimpleCapacityPolicy());
     }
     
     @Test(groups="checkintest")

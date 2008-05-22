@@ -1,9 +1,24 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
-<suite name="BeanSuite" verbose="1" >
-	<test name="AllBeanTest">
+<suite name="MainSuite" verbose="1" >
+	<test name="AllBeansTest">
 		<packages>
-			<package name="org.jsmpp.*"></package>
+			<package name="org.jsmpp.bean.*"></package>
 		</packages>
 	</test>
+    <test name="AllUtilitiesTest">
+        <packages>
+            <package name="org.jsmpp.util.*"></package>
+        </packages>
+    </test>
+    <test name="AllSessionTest">
+        <packages>
+            <package name="org.jsmpp.session.*"></package>
+        </packages>
+    </test>
+    <test name="AllExtraTest">
+        <packages>
+            <package name="org.jsmpp.extra.*"></package>
+        </packages>
+    </test>
 </suite>
