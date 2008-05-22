@@ -510,7 +510,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	 *
 	 */
 	private class PDUReaderWorker extends Thread {
-	    private ExecutorService executorService = Executors.newFixedThreadPool(getPduDispatcherThreadCount());
+	    private ExecutorService executorService = Executors.newFixedThreadPool(getPduProcessorDegree());
 		
 	    private Runnable onIOExceptionTask = new Runnable() {
 		    public void run() {
