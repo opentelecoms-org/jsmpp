@@ -4,7 +4,7 @@ import org.jsmpp.bean.OptionalParameter;
 
 
 /**
- * Utility to compose the pdu bytes. The size of the buffer is depends to the
+ * Utility to compose the PDU bytes. The size of the buffer is depends to the
  * entities appended to the buffer.
  * 
  * @author uudashr
