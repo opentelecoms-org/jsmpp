@@ -20,7 +20,6 @@ import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.session.SMPPSession;
-import org.omg.PortableServer.POA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +28,10 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class StressClient implements Runnable {
+    private static final String DEFAULT_PASSWORD = "jpwd";
+    private static final String DEFAULT_SYSID = "j";
+    private static final String DEFAULT_DESTADDR = "62161616";
+    private static final String DEFAULT_SOURCEADDR = "1616";
     private static final Logger logger = LoggerFactory.getLogger(StressClient.class);
     private static final String DEFAULT_LOG4J_PATH = "stress/client-log4j.properties";
     private static final String DEFAULT_HOST = "localhost";
@@ -48,12 +51,22 @@ public class StressClient implements Runnable {
     private SMPPSession smppSession = new SMPPSession();
     private AtomicBoolean exit = new AtomicBoolean();
     private int id;
+    private String systemId;
+    private String password;
+    private String sourceAddr;
+    private String destinationAddr;
     
-    public StressClient(int id, String host, int port, int bulkSize, int pduProcessorDegree, int maxOutstanding) {
+    public StressClient(int id, String host, int port, int bulkSize,
+            String systemId, String password, String sourceAddr,
+            String destinationAddr, int pduProcessorDegree, int maxOutstanding) {
         this.id = id;
         this.host = host;
         this.port = port;
         this.bulkSize = bulkSize;
+        this.systemId = systemId;
+        this.password = password;
+        this.sourceAddr = sourceAddr;
+        this.destinationAddr = destinationAddr;
         smppSession.setPduProcessorDegree(pduProcessorDegree);
         
         execService = Executors.newFixedThreadPool(maxOutstanding);
@@ -66,8 +79,8 @@ public class StressClient implements Runnable {
     
     public void run() {
         try {
-            smppSession.connectAndBind(host, port, BindType.BIND_TRX, "sc",
-                    "scpwd", "cln", TypeOfNumber.UNKNOWN,
+            smppSession.connectAndBind(host, port, BindType.BIND_TRX, systemId,
+                    password, "cln", TypeOfNumber.UNKNOWN,
                     NumberingPlanIndicator.UNKNOWN, null);
             logger.info("Bound to " + host + ":" + port);
         } catch (IOException e) {
@@ -78,7 +91,8 @@ public class StressClient implements Runnable {
         
         logger.info("Starting send " + bulkSize + " bulk message...");
         for (int i = 0; i < bulkSize && !exit.get(); i++) {
-            execService.execute(newSendTask("Hello " + id + " idx=" + i));
+            //execService.execute(newSendTask("Hello " + id + " idx=" + i));
+            newSendTask("Hello " + id + " idx=" + i).run();
         }
         
         while (!exit.get()) {
@@ -96,8 +110,8 @@ public class StressClient implements Runnable {
             public void run() {
                 try {
                     requestCounter.incrementAndGet();
-                    smppSession.submitShortMessage(null, TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1616", 
-                            TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "62161616", 
+                    smppSession.submitShortMessage(null, TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, sourceAddr, 
+                            TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, destinationAddr, 
                             new ESMClass(), (byte)0, (byte)0, 
                             null, null, new RegisteredDelivery(0), 
                             (byte)0, 
@@ -147,6 +161,11 @@ public class StressClient implements Runnable {
     
     public static void main(String[] args) {
         String host = System.getProperty("jsmpp.client.host", DEFAULT_HOST);
+        String systemId = System.getProperty("jsmpp.client.systemId", DEFAULT_SYSID);
+        String password = System.getProperty("jsmpp.client.password", DEFAULT_PASSWORD);
+        String sourceAddr = System.getProperty("jsmpp.client.sourceAddr", DEFAULT_SOURCEADDR);
+        String destinationAddr = System.getProperty("jsmpp.client.destinationAddr", DEFAULT_DESTADDR);
+        
         
         int port;
         try {
@@ -179,16 +198,19 @@ public class StressClient implements Runnable {
         String log4jPath = System.getProperty("jsmpp.log4j.path", DEFAULT_LOG4J_PATH);
         PropertyConfigurator.configure(log4jPath);
         
-        /*
-        for (int i = 0; i < 4; i++) {
-            StressClient stressClient = new StressClient(i, host, port, bulkSize, maxOutstanding);
-            new Thread(stressClient).start();
-        }
-        */
+        
         logger.info("Target server {}:{}", host, port);
-        logger.info("Max outstanding: " + maxOutstanding);
-        logger.info("Processor degree: " + processorDegree);
-        StressClient stressClient = new StressClient(0, host, port, bulkSize, processorDegree, maxOutstanding);
+        logger.info("System ID: {}", systemId);
+        logger.info("Password: {}", password);
+        logger.info("Source address: " + sourceAddr);
+        logger.info("Destination address: " + destinationAddr);
+        logger.info("Bulk size: {}", bulkSize);
+        logger.info("Max outstanding: {}", maxOutstanding);
+        logger.info("Processor degree: {}", processorDegree);
+        
+        StressClient stressClient = new StressClient(0, host, port, bulkSize,
+                systemId, password, sourceAddr, destinationAddr,
+                processorDegree, maxOutstanding);
         stressClient.run();
     }
 }
