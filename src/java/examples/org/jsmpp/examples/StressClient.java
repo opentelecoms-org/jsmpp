@@ -20,6 +20,7 @@ import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.session.SMPPSession;
+import org.omg.PortableServer.POA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,7 +146,7 @@ public class StressClient implements Runnable {
     }
     
     public static void main(String[] args) {
-        String host = System.getProperty(System.getProperty("jsmpp.client.host", DEFAULT_HOST));
+        String host = System.getProperty("jsmpp.client.host", DEFAULT_HOST);
         
         int port;
         try {
@@ -184,6 +185,7 @@ public class StressClient implements Runnable {
             new Thread(stressClient).start();
         }
         */
+        logger.info("Target server {}:{}", host, port);
         logger.info("Max outstanding: " + maxOutstanding);
         logger.info("Processor degree: " + processorDegree);
         StressClient stressClient = new StressClient(0, host, port, bulkSize, processorDegree, maxOutstanding);
