@@ -2,12 +2,15 @@
 	
 	<property name="src.dir" value="src/java/main" />
 	<property name="src.tests.dir" value="src/java/tests" />
+    <property name="src.examples.dir" value="src/java/examples" />
 	<property name="classes.dir" value="build/classes" />
 	<property name="tests.dir" value="build/tests" />
+    <property name="examples.dir" value="build/examples" />
 
 	<property name="lib.dir" value="lib" />
 	<property name="project.version" value="2.0b1" />
 	<property name="dist.jar.filename" value="jsmpp-${project.version}.jar" />
+    <property name="dist.examples.jar.filename" value="jsmpp-examples.jar" />
 	<property name="testng.jar" value="${lib.dir}/testng-5.7-jdk15.jar" />
 
 	<path id="compile.path">
@@ -20,7 +23,7 @@
 		<pathelement path="${lib.dir}/log4j-1.2.14.jar" />
 		<pathelement path="${lib.dir}/slf4j-log4j12-1.4.3.jar" />
 	</path>
-
+    
 	<path id="test.path">
 		<path refid="run.path" />
 		<pathelement path="${testng.jar}" />
@@ -31,20 +34,30 @@
 		<path refid="test.path" />
 	</path>
 	
+    <path id="example.path">
+        <path refid="run.path" />
+        <pathelement path="${examples.dir}" />
+    </path>
+
 	<target name="clean">
 		<delete dir="${classes.dir}" />
 		<delete dir="${tests.dir}" />
+	    <delete dir="${examples.dir}" />
 	</target>
 	
 	<target name="prepare">
 		<mkdir dir="${classes.dir}" />
 		<mkdir dir="${tests.dir}" />
+	    <mkdir dir="${examples.dir}" />
 	</target>
 	
 	<target name="compile" depends="prepare">
 		<javac destdir="${classes.dir}" srcdir="${src.dir}" 
 				classpathref="compile.path" debug="on" 
 				source="1.5" target="1.5"/>
+	    <javac destdir="${examples.dir}" srcdir="${src.examples.dir}" 
+                classpathref="example.path" debug="on" 
+                source="1.5" target="1.5"/>
 		<javac destdir="${tests.dir}" srcdir="${src.tests.dir}" 
 				classpathref="test.path" debug="on" 
 		 		source="1.5" target="1.5"/>
@@ -58,12 +71,16 @@
 
 	<target name="cleanjar">
 		<delete file="${dist.jar.filename}" />
+	    <delete file="${dist.examples.jar.filename}" />
 	</target>
 
 	<target name="jar" depends="compile">
 		<jar destfile="${dist.jar.filename}">
 			<fileset dir="${classes.dir}" />
 		</jar>
+	    <jar destfile="${dist.examples.jar.filename}">
+            <fileset dir="${examples.dir}" />
+        </jar>
 	</target>
 	
 	<target name="cleanall" depends="cleanjar,clean" />
