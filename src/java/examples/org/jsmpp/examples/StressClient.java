@@ -36,6 +36,7 @@ public class StressClient implements Runnable {
     private static final String DEFAULT_LOG4J_PATH = "stress/client-log4j.properties";
     private static final String DEFAULT_HOST = "localhost";
     private static final Integer DEFAULT_PORT = 8056;
+    private static final Long DEFAULT_TRANSACTIONTIMER = 2000L;
     private static final Integer DEFAULT_BULK_SIZE = 100000;
     private static final Integer DEFAULT_PROCESSOR_DEGREE = 3;
     private static final Integer DEFAULT_MAX_OUTSTANDING = 1000;
@@ -58,7 +59,8 @@ public class StressClient implements Runnable {
     
     public StressClient(int id, String host, int port, int bulkSize,
             String systemId, String password, String sourceAddr,
-            String destinationAddr, int pduProcessorDegree, int maxOutstanding) {
+            String destinationAddr, long transactionTimer,
+            int pduProcessorDegree, int maxOutstanding) {
         this.id = id;
         this.host = host;
         this.port = port;
@@ -68,7 +70,7 @@ public class StressClient implements Runnable {
         this.sourceAddr = sourceAddr;
         this.destinationAddr = destinationAddr;
         smppSession.setPduProcessorDegree(pduProcessorDegree);
-        
+        smppSession.setTransactionTimer(transactionTimer);
         execService = Executors.newFixedThreadPool(maxOutstanding);
     }
 
@@ -173,6 +175,13 @@ public class StressClient implements Runnable {
             port = DEFAULT_PORT;
         }
         
+        long transactionTimer;
+        try {
+            transactionTimer = Integer.parseInt(System.getProperty("jsmpp.client.transactionTimer", DEFAULT_TRANSACTIONTIMER.toString()));
+        } catch (NumberFormatException e) {
+            transactionTimer = DEFAULT_TRANSACTIONTIMER;
+        }
+        
         int bulkSize;
         try {
             bulkSize = Integer.parseInt(System.getProperty("jsmpp.client.bulksize", DEFAULT_BULK_SIZE.toString()));
@@ -201,15 +210,16 @@ public class StressClient implements Runnable {
         logger.info("Target server {}:{}", host, port);
         logger.info("System ID: {}", systemId);
         logger.info("Password: {}", password);
-        logger.info("Source address: " + sourceAddr);
-        logger.info("Destination address: " + destinationAddr);
+        logger.info("Source address: {}", sourceAddr);
+        logger.info("Destination address: {}", destinationAddr);
+        logger.info("Transaction timer: {}", transactionTimer);
         logger.info("Bulk size: {}", bulkSize);
         logger.info("Max outstanding: {}", maxOutstanding);
         logger.info("Processor degree: {}", processorDegree);
         
         StressClient stressClient = new StressClient(0, host, port, bulkSize,
                 systemId, password, sourceAddr, destinationAddr,
-                processorDegree, maxOutstanding);
+                transactionTimer, processorDegree, maxOutstanding);
         stressClient.run();
     }
 }
