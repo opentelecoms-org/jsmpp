@@ -91,8 +91,7 @@ public class StressClient implements Runnable {
         
         logger.info("Starting send " + bulkSize + " bulk message...");
         for (int i = 0; i < bulkSize && !exit.get(); i++) {
-            //execService.execute(newSendTask("Hello " + id + " idx=" + i));
-            newSendTask("Hello " + id + " idx=" + i).run();
+            execService.execute(newSendTask("Hello " + id + " idx=" + i));
         }
         
         while (!exit.get()) {
