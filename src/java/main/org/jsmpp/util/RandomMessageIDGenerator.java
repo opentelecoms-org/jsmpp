@@ -24,7 +24,9 @@ public class RandomMessageIDGenerator implements MessageIDGenerator {
          * database using random
          */
         try {
-            return new MessageId(Integer.toString(random.nextInt(Integer.MAX_VALUE), 16));
+            synchronized (random) {
+                return new MessageId(Integer.toString(random.nextInt(Integer.MAX_VALUE), 16));
+            }
         } catch (PDUStringException e) {
             throw new RuntimeException("Failed creating message id", e);
         }
