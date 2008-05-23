@@ -16,7 +16,7 @@ import org.jsmpp.bean.TypeOfNumber;
  * @author uudashr
  *
  */
-public class SendDataSmCommandTask extends AbstractSendCommandTask {
+public class DataSmCommandTask extends AbstractSendCommandTask {
     private final String serviceType; 
     private final TypeOfNumber sourceAddrTon;
     private final NumberingPlanIndicator sourceAddrNpi; 
@@ -29,7 +29,7 @@ public class SendDataSmCommandTask extends AbstractSendCommandTask {
     private final DataCoding dataCoding;
     private final OptionalParameter[] optionalParameters;
     
-    public SendDataSmCommandTask(PDUSender pduSender, String serviceType,
+    public DataSmCommandTask(PDUSender pduSender, String serviceType,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, TypeOfNumber destAddrTon,
             NumberingPlanIndicator destAddrNpi, String destinationAddr,

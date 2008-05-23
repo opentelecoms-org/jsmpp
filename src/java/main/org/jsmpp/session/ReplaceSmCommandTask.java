@@ -9,7 +9,7 @@ import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.TypeOfNumber;
 
-public class SendReplaceSmCommandTask extends AbstractSendCommandTask {
+public class ReplaceSmCommandTask extends AbstractSendCommandTask {
     private String messageId;
     private TypeOfNumber sourceAddrTon;
     private NumberingPlanIndicator sourceAddrNpi;
@@ -20,7 +20,7 @@ public class SendReplaceSmCommandTask extends AbstractSendCommandTask {
     private byte smDefaultMsgId;
     private byte[] shortMessage;
     
-    public SendReplaceSmCommandTask(PDUSender pduSender, String messageId,
+    public ReplaceSmCommandTask(PDUSender pduSender, String messageId,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, String scheduleDeliveryTime,
             String validityPeriod, RegisteredDelivery registeredDelivery,

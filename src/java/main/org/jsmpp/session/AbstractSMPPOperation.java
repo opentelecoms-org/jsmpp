@@ -143,7 +143,7 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
             InvalidResponseException, NegativeResponseException, IOException {
         
         
-        SendDataSmCommandTask task = new SendDataSmCommandTask(pduSender,
+        DataSmCommandTask task = new DataSmCommandTask(pduSender,
                 serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr,
                 destAddrTon, destAddrNpi, destinationAddr, esmClass,
                 registeredDelivery, dataCoding, optionalParameters);

@@ -165,7 +165,7 @@ public abstract class AbstractSession implements Session {
             InvalidResponseException, NegativeResponseException, IOException {
         
         
-        SendDataSmCommandTask task = new SendDataSmCommandTask(pduSender,
+        DataSmCommandTask task = new DataSmCommandTask(pduSender,
                 serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr,
                 destAddrTon, destAddrNpi, destinationAddr, esmClass,
                 registeredDelivery, dataCoding, optionalParameters);
@@ -238,8 +238,10 @@ public abstract class AbstractSession implements Session {
             logger.debug(task.getCommandName() + " response received");
         } catch (ResponseTimeoutException e) {
             pendingResponse.remove(seqNum);
-            logger.debug("Response timeout for " + task.getCommandName() + " with sessionIdSequence number " + seqNum);
-            throw e;
+            throw new ResponseTimeoutException("No response after waiting for "
+                    + timeout + " millis when executing "
+                    + task.getCommandName() + " with sessionId " + sessionId
+                    + " and sequenceNumber " + seqNum, e);
         } catch (InvalidResponseException e) {
             pendingResponse.remove(seqNum);
             throw e;

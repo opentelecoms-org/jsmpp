@@ -293,7 +293,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException {
     	
-        SendSubmitSmCommandTask submitSmTask = new SendSubmitSmCommandTask(
+        SubmitSmCommandTask submitSmTask = new SubmitSmCommandTask(
                 pduSender(), serviceType, sourceAddrTon, sourceAddrNpi,
                 sourceAddr, destAddrTon, destAddrNpi, destinationAddr,
                 esmClass, protocolId, priorityFlag, scheduleDeliveryTime,
@@ -367,7 +367,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
             byte smDefaultMsgId, byte[] shortMessage)
             throws PDUStringException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException {
-        SendReplaceSmCommandTask replaceSmTask = new SendReplaceSmCommandTask(
+        ReplaceSmCommandTask replaceSmTask = new ReplaceSmCommandTask(
                 pduSender(), messageId, sourceAddrTon, sourceAddrNpi,
                 sourceAddr, scheduleDeliveryTime, validityPeriod,
                 registeredDelivery, smDefaultMsgId, shortMessage);
@@ -520,12 +520,12 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		
 	    @Override
 		public void run() {
-			logger.info("Starting PDUReaderWorker");
+	        logger.info("Starting PDUReaderWorker with processor degree:{} ...", getPduProcessorDegree());
 			while (isReadPdu()) {
                 readPDU();
 			}
-			executorService.shutdownNow();
 			close();
+			executorService.shutdown();
 			logger.info("PDUReaderWorker stop");
 		}
 		

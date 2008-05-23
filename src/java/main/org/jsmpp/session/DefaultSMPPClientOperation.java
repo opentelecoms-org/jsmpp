@@ -62,7 +62,7 @@ public class DefaultSMPPClientOperation extends AbstractSMPPOperation implements
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException {
 
-        SendSubmitSmCommandTask submitSmTask = new SendSubmitSmCommandTask(
+        SubmitSmCommandTask submitSmTask = new SubmitSmCommandTask(
                 pduSender(), serviceType, sourceAddrTon, sourceAddrNpi,
                 sourceAddr, destAddrTon, destAddrNpi, destinationAddr,
                 esmClass, protocolId, priorityFlag, scheduleDeliveryTime,
@@ -141,7 +141,7 @@ public class DefaultSMPPClientOperation extends AbstractSMPPOperation implements
             byte[] shortMessage) throws PDUStringException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException {
-        SendReplaceSmCommandTask replaceSmTask = new SendReplaceSmCommandTask(
+        ReplaceSmCommandTask replaceSmTask = new ReplaceSmCommandTask(
                 pduSender(), messageId, sourceAddrTon, sourceAddrNpi,
                 sourceAddr, scheduleDeliveryTime, validityPeriod,
                 registeredDelivery, smDefaultMsgId, shortMessage);
