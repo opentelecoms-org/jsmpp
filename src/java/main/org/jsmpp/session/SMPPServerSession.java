@@ -67,25 +67,28 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     
     public SMPPServerSession(Connection conn,
             SessionStateListener sessionStateListener,
-            ServerMessageReceiverListener messageReceiverListener) {
-        this(conn, sessionStateListener, messageReceiverListener, 
-                new SynchronizedPDUSender(new DefaultPDUSender()), 
-                new DefaultPDUReader());
+            ServerMessageReceiverListener messageReceiverListener,
+            int pduProcessorDegree) {
+        this(conn, sessionStateListener, messageReceiverListener,
+                pduProcessorDegree, new SynchronizedPDUSender(
+                        new DefaultPDUSender()), new DefaultPDUReader());
     }
     
     public SMPPServerSession(Connection conn,
             SessionStateListener sessionStateListener,
             ServerMessageReceiverListener messageReceiverListener,
-            PDUSender pduSender, PDUReader pduReader) {
+            int pduProcessorDegree, PDUSender pduSender, PDUReader pduReader) {
         super(pduSender);
-        sessionContext.open();
         this.conn = conn;
         this.messageReceiverListener = messageReceiverListener;
         this.pduReader = pduReader;
         this.in = new DataInputStream(conn.getInputStream());
         this.out = conn.getOutputStream();
         enquireLinkSender = new EnquireLinkSender();
-        addSessionStateListener(new SessionStateListenerDecorator());
+        addSessionStateListener(new BoundStateListener());
+        addSessionStateListener(sessionStateListener);
+        setPduProcessorDegree(pduProcessorDegree);
+        sessionContext.open();
     }
     
     /**
@@ -368,11 +371,12 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         
         @Override
         public void run() {
-            logger.info("Starting PDUReaderWorker");
+            logger.info("Starting PDUReaderWorker with processor degree:{} ...", getPduProcessorDegree());
             while (isReadPdu()) {
                 readPDU();
             }
             close();
+            executorService.shutdown();
             logger.info("PDUReaderWorker stop");
         }
         
@@ -457,7 +461,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         }
     }
     
-    private class SessionStateListenerDecorator implements SessionStateListener {
+    private class BoundStateListener implements SessionStateListener {
         public void onStateChange(SessionState newState, SessionState oldState,
                 Object source) {
             if (newState.isBound()) {

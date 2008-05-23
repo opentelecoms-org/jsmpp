@@ -37,6 +37,7 @@ public class SMPPServerSessionListener {
     private final int port;
     private final ServerConnection serverConn;
     private int initiationTimer = 5000;
+    private int pduProcessorDegree = 3;
     private SessionStateListener sessionStateListener;
     private ServerMessageReceiverListener messageReceiverListener;
     
@@ -77,6 +78,14 @@ public class SMPPServerSessionListener {
      */
     public void setTimeout(int timeout) throws IOException {
         serverConn.setSoTimeout(timeout);
+    }
+    
+    public void setPduProcessorDegree(int pduProcessorDegree) {
+        this.pduProcessorDegree = pduProcessorDegree;
+    }
+    
+    public int getPduProcessorDegree() {
+        return pduProcessorDegree;
     }
     
     public int getPort() {
@@ -133,7 +142,8 @@ public class SMPPServerSessionListener {
     public SMPPServerSession accept() throws IOException {
         Connection conn = serverConn.accept();
         conn.setSoTimeout(initiationTimer);
-        return new SMPPServerSession(conn, sessionStateListener, messageReceiverListener);
+        return new SMPPServerSession(conn, sessionStateListener,
+                messageReceiverListener, pduProcessorDegree);
     }
     
     public void close() throws IOException {
