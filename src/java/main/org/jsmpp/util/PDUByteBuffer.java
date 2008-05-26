@@ -78,17 +78,12 @@ class PDUByteBuffer {
      * @return the latest length of the byte buffer.
      */
     public int append(byte[] b, int offset, int length) {
-        /*
-         * TODO uudashr: create new bytes length larger than "bytes.length + length", or it's better to use a heuristic method
-         * based on statistical report of length of the PDU, and get the quartile 3
-         */
         int oldLength = bytesLength;
         bytesLength += length;
         int newCapacity = capacityPolicy.ensureCapacity(bytesLength, bytes.length);
         if (newCapacity > bytes.length) {
             byte[] newB = new byte[newCapacity];
             System.arraycopy(bytes, 0, newB, 0, bytes.length); // copy current bytes to new bytes
-            //System.arraycopy(b, offset, newB, oldLength, length); // assign value
             bytes = newB;
         }
         System.arraycopy(b, offset, bytes, oldLength, length); // assign value
