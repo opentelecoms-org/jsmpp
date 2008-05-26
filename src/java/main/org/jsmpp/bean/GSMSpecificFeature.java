@@ -52,7 +52,7 @@ public enum GSMSpecificFeature {
      * @return <tt>true</tt> if the GSM specific feature is contained in ESM class.
      */
     public boolean containedIn(byte esmClass) {
-        return this.value == clear(esmClass);
+        return this.value == (byte)(esmClass & MASK_BYTE);
     }
     
     /**
