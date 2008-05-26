@@ -8,7 +8,7 @@
     <property name="examples.dir" value="build/examples" />
 
 	<property name="lib.dir" value="lib" />
-	<property name="project.version" value="2.0b1" />
+	<property name="project.version" value="2.0b2" />
 	<property name="dist.jar.filename" value="jsmpp-${project.version}.jar" />
     <property name="dist.examples.jar.filename" value="jsmpp-examples.jar" />
 	<property name="testng.jar" value="${lib.dir}/testng-5.7-jdk15.jar" />
