@@ -12,7 +12,9 @@
 	<property name="dist.jar.filename" value="jsmpp-${project.version}.jar" />
     <property name="dist.examples.jar.filename" value="jsmpp-examples.jar" />
 	<property name="testng.jar" value="${lib.dir}/testng-5.7-jdk15.jar" />
-
+    
+    <taskdef resource="testngtasks" classpath="${testng.jar}" />
+    
 	<path id="compile.path">
 		<pathelement path="${lib.dir}/slf4j-api-1.4.3.jar" />
 	</path>
