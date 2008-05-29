@@ -1,9 +1,9 @@
 package org.jsmpp.session;
 
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUSender;
@@ -37,7 +37,7 @@ public abstract class AbstractSession implements Session {
     private static final Logger logger = LoggerFactory.getLogger(AbstractSession.class);
     private static final Random random = new Random();
     
-    private final Map<Integer, PendingResponse<Command>> pendingResponse = new Hashtable<Integer, PendingResponse<Command>>();
+    private final Map<Integer, PendingResponse<Command>> pendingResponse = new ConcurrentHashMap<Integer, PendingResponse<Command>>();
     private final Sequence sequence = new Sequence(1);
     private final PDUSender pduSender;
     private int pduProcessorDegree = 3;
