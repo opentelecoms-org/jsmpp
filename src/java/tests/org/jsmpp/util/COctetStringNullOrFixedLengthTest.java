@@ -2,7 +2,6 @@ package org.jsmpp.util;
 
 import static org.testng.Assert.*;
 
-import org.jsmpp.PDUStringException;
 import org.testng.annotations.Test;
 
 /**

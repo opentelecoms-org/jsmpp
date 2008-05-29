@@ -24,6 +24,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * This stress client is an example of submit bulk messages asynchronously.
+ * 
+ * <table border="1">
+ *     <tr><td><strong>Name</strong></td><td><strong>Description</strong></td><td><strong>Default value</strong></td></tr>
+ *     <tr><td>jsmpp.client.host</td><td>Server host address</td><td>localhost</td></tr>
+ *     <tr><td>jsmpp.client.port</td><td>Server port</td><td>8056</td></tr>
+ *     <tr><td>jsmpp.client.systemId</td><td>System Identifier</td><td>j</td></tr>
+ *     <tr><td>jsmpp.client.password</td><td>Password</td><td>jpwd</td></tr>
+ *     <tr><td>jsmpp.client.sourceAddr</td><td>Submit Source Address</td><td>1616</td></tr>
+ *     <tr><td>jsmpp.client.destinationAddr</td><td>Submit Destination Address</td><td>62161616</td>
+ *     <tr><td>jsmpp.client.transactionTimer</td><td>Transaction timer</td><td>2000</td></tr>
+ *     <tr><td>jsmpp.client.bulkSize</td><td>Amount of bulk messages</td><td>100000</td></tr>
+ *     <tr><td>jsmpp.client.procDegree</td><td>Max parallel processor for PDU reading</td><td>3</td></tr>
+ *     <tr><td>jsmpp.client.maxOutstanding</td><td>Maximum outstanding messages</td><td>10</td></tr>
+ *     <tr><td>jsmpp.client.log4jPath</td><td>Log4j configuration</td><td>conf/client-log4j.properties</td></tr>
+ * </table>
  * @author uudashr
  *
  */
@@ -39,7 +55,7 @@ public class StressClient implements Runnable {
     private static final Long DEFAULT_TRANSACTIONTIMER = 2000L;
     private static final Integer DEFAULT_BULK_SIZE = 100000;
     private static final Integer DEFAULT_PROCESSOR_DEGREE = 3;
-    private static final Integer DEFAULT_MAX_OUTSTANDING = 1000;
+    private static final Integer DEFAULT_MAX_OUTSTANDING = 10;
     
     private AtomicInteger requestCounter = new AtomicInteger();
     private AtomicInteger totalRequestCounter = new AtomicInteger();
@@ -184,26 +200,26 @@ public class StressClient implements Runnable {
         
         int bulkSize;
         try {
-            bulkSize = Integer.parseInt(System.getProperty("jsmpp.client.bulksize", DEFAULT_BULK_SIZE.toString()));
+            bulkSize = Integer.parseInt(System.getProperty("jsmpp.client.bulkSize", DEFAULT_BULK_SIZE.toString()));
         } catch (NumberFormatException e) {
             bulkSize = DEFAULT_BULK_SIZE;
         }
         
         int processorDegree;
         try {
-            processorDegree = Integer.parseInt(System.getProperty("jsmpp.client.procdegree", DEFAULT_PROCESSOR_DEGREE.toString()));
+            processorDegree = Integer.parseInt(System.getProperty("jsmpp.client.procDegree", DEFAULT_PROCESSOR_DEGREE.toString()));
         } catch (NumberFormatException e) {
             processorDegree = DEFAULT_PROCESSOR_DEGREE;
         }
         
         int maxOutstanding;
         try {
-            maxOutstanding = Integer.parseInt(System.getProperty("jsmpp.client.maxoutstanding", DEFAULT_MAX_OUTSTANDING.toString()));
+            maxOutstanding = Integer.parseInt(System.getProperty("jsmpp.client.maxOutstanding", DEFAULT_MAX_OUTSTANDING.toString()));
         } catch (NumberFormatException e) {
             maxOutstanding = DEFAULT_MAX_OUTSTANDING;
         }
         
-        String log4jPath = System.getProperty("jsmpp.log4j.path", DEFAULT_LOG4J_PATH);
+        String log4jPath = System.getProperty("jsmpp.client.log4jPath", DEFAULT_LOG4J_PATH);
         PropertyConfigurator.configure(log4jPath);
         
         

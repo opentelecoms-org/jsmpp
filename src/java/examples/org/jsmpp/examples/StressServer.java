@@ -216,12 +216,12 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
         
         int processorDegree;
         try {
-            processorDegree = Integer.parseInt(System.getProperty("jsmpp.server.procdegree", DEFAULT_PROCESSOR_DEGREE.toString()));
+            processorDegree = Integer.parseInt(System.getProperty("jsmpp.server.procDegree", DEFAULT_PROCESSOR_DEGREE.toString()));
         } catch (NumberFormatException e) {
             processorDegree = DEFAULT_PROCESSOR_DEGREE;
         }
         
-        String log4jPath = System.getProperty("jsmpp.log4j.path", DEFAULT_LOG4J_PATH);
+        String log4jPath = System.getProperty("jsmpp.server.log4jPath", DEFAULT_LOG4J_PATH);
         PropertyConfigurator.configure(log4jPath);
         
         logger.info("Processor degree: " + processorDegree);
