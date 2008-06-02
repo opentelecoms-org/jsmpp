@@ -54,7 +54,7 @@ public interface PDUSender {
      * @param addrNpi is the addr_npi.
      * @param addressRange is the address_range.
      * @return the composed bytes.
-     * @throws PDUStringException if there is an invalid string constaint found.
+     * @throws PDUStringException if there is an invalid string constraint found.
      * @throws IOException if an I/O error occur.
      */
     byte[] sendBind(OutputStream os, BindType bindType, int sequenceNumber,
@@ -88,7 +88,7 @@ public interface PDUSender {
     byte[] sendUnbind(OutputStream os, int sequenceNumber) throws IOException;
 
     /**
-     * Send generick non-acknowledge command.
+     * Send generic non-acknowledge command.
      * 
      * @param os is the {@link OutputStream}
      * @param commandStatus is the command_status.
