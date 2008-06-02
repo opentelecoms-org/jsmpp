@@ -363,7 +363,6 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     }
     
     private class PDUReaderWorker extends Thread {
-        private StopWatch stopWatch = new StopWatch();
         private ExecutorService executorService = Executors.newFixedThreadPool(getPduProcessorDegree());
         private Runnable onIOExceptionTask = new Runnable() {
             public void run() {
@@ -390,15 +389,10 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 pduHeader = pduReader.readPDUHeader(in);
                 pdu = pduReader.readPDU(in, pduHeader);
                 
-                stopWatch.start();
                 PDUProcessServerTask task = new PDUProcessServerTask(pduHeader,
                         pdu, sessionContext.getStateProcessor(),
                         sessionContext, responseHandler, onIOExceptionTask);
                 executorService.execute(task);
-                long delay = stopWatch.done();
-                if (delay > 1000) {
-                    logger.warn("Delay of processing PDU {} is to long: {}", pduHeader.getCommandIdAsHex(), delay);
-                }
             } catch (InvalidCommandLengthException e) {
                 logger.warn("Receive invalid command length", e);
                 try {
