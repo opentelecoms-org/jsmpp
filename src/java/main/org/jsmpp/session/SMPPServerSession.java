@@ -42,7 +42,6 @@ import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.connection.Connection;
 import org.jsmpp.util.MessageId;
-import org.jsmpp.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
