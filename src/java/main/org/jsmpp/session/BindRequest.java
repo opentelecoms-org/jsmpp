@@ -21,8 +21,15 @@ import org.jsmpp.util.StringValidator;
 public class BindRequest {
     private final Lock lock = new ReentrantLock();
     private final Condition condition = lock.newCondition();
+
+    private final BindType bindType;
+    private final String systemId;
+    private final String password;
+    private final String systemType;
+    private final TypeOfNumber addrTon;
+    private final NumberingPlanIndicator addrNpi;
+    private final String addressRange;
     
-    private final BindParameter bindParam;
     private final int originalSequenceNumber;
     private boolean done;
     
@@ -31,8 +38,15 @@ public class BindRequest {
             String systemType, TypeOfNumber addrTon, NumberingPlanIndicator addrNpi, 
             String addressRange, ServerResponseHandler responseHandler) {
         this.originalSequenceNumber = sequenceNumber;
-        bindParam = new BindParameter(bindType, systemId, password, systemType, addrTon, addrNpi, addressRange);
         this.responseHandler = responseHandler;
+        
+        this.bindType = bindType;
+        this.systemId = systemId;
+        this.password = password;
+        this.systemType = systemType;
+        this.addrTon = addrTon;
+        this.addrNpi = addrNpi;
+        this.addressRange = addressRange;
     }
     
     public BindRequest(Bind bind, ServerResponseHandler responseHandler) {
@@ -43,8 +57,37 @@ public class BindRequest {
                 bind.getAddressRange(), responseHandler);
     }
     
+    @Deprecated
     public BindParameter getBindParameter() {
-        return bindParam;
+        return new BindParameter(bindType, systemId, password, systemType, addrTon, addrNpi, addressRange);
+    }
+    
+    public BindType getBindType() {
+        return bindType;
+    }
+    
+    public String getSystemId() {
+        return systemId;
+    }
+    
+    public String getPassword() {
+        return password;
+    }
+    
+    public String getSystemType() {
+        return systemType;
+    }
+    
+    public TypeOfNumber getAddrTon() {
+        return addrTon;
+    }
+    
+    public NumberingPlanIndicator getAddrNpi() {
+        return addrNpi;
+    }
+    
+    public String getAddressRange() {
+        return addressRange;
     }
     
     /**
@@ -63,7 +106,7 @@ public class BindRequest {
             if (!done) {
                 done = true;
                 try {
-                    responseHandler.sendBindResp(systemId, bindParam.getBindType(), originalSequenceNumber);
+                    responseHandler.sendBindResp(systemId, bindType, originalSequenceNumber);
                 } finally {
                     condition.signal();
                 }
@@ -92,7 +135,7 @@ public class BindRequest {
             } else {
                 done = true;
                 try {
-                    responseHandler.sendNegativeResponse(bindParam.getBindType().commandId(), errorCode, originalSequenceNumber);
+                    responseHandler.sendNegativeResponse(bindType.commandId(), errorCode, originalSequenceNumber);
                 } finally {
                     condition.signal();
                 }
