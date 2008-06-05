@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.jsmpp.InvalidResponseException;
@@ -61,6 +62,7 @@ public class StressClient implements Runnable {
     private AtomicInteger totalRequestCounter = new AtomicInteger();
     private AtomicInteger responseCounter = new AtomicInteger();
     private AtomicInteger totalResponseCounter = new AtomicInteger();
+    private AtomicLong maxDelay = new AtomicLong();
     private ExecutorService execService;
     private String host;
     private int port;
@@ -127,6 +129,7 @@ public class StressClient implements Runnable {
             public void run() {
                 try {
                     requestCounter.incrementAndGet();
+                    long startTime = System.currentTimeMillis();
                     smppSession.submitShortMessage(null, TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, sourceAddr, 
                             TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, destinationAddr, 
                             new ESMClass(), (byte)0, (byte)0, 
@@ -134,7 +137,11 @@ public class StressClient implements Runnable {
                             (byte)0, 
                             new GeneralDataCoding(true, true, MessageClass.CLASS1, Alphabet.ALPHA_DEFAULT), 
                             (byte)0, message.getBytes());
+                    long delay = System.currentTimeMillis() - startTime;
                     responseCounter.incrementAndGet();
+                    if (maxDelay.get() < delay) {
+                        maxDelay.set(delay);
+                    }
                 } catch (PDUStringException e) {
                     logger.error("Failed submit short message '" + message + "'", e);
                     shutdown();
@@ -166,9 +173,10 @@ public class StressClient implements Runnable {
                 }
                 int requestPerSecond = requestCounter.getAndSet(0);
                 int responsePerSecond = responseCounter.getAndSet(0);
+                long maxDelayPerSecond = maxDelay.getAndSet(0);
                 totalRequestCounter.addAndGet(requestPerSecond);
                 int total = totalResponseCounter.addAndGet(responsePerSecond);
-                logger.info("Request/Response per second : " + requestPerSecond + "/" + responsePerSecond + " of " + total);
+                logger.info("Request/Response per second : " + requestPerSecond + "/" + responsePerSecond + " of " + total + " maxDelay=" + maxDelayPerSecond);
                 if (total == bulkSize) {
                     shutdown();
                 }
