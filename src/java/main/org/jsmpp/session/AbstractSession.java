@@ -280,6 +280,10 @@ public abstract class AbstractSession implements Session {
     
     private void unbind() throws ResponseTimeoutException,
             InvalidResponseException, IOException {
+        if (sessionContext().getSessionState().equals(SessionState.CLOSED)) {
+            throw new IOException("Session is closed");
+        }
+        
         UnbindCommandTask task = new UnbindCommandTask(pduSender);
         
         try {
@@ -295,14 +299,16 @@ public abstract class AbstractSession implements Session {
     }
     
     public void unbindAndClose() {
-        try {
-            unbind();
-        } catch (ResponseTimeoutException e) {
-            logger.error("Timeout waiting unbind response", e);
-        } catch (InvalidResponseException e) {
-            logger.error("Receive invalid unbind response", e);
-        } catch (IOException e) {
-            logger.error("IO error found ", e);
+        if (sessionContext().getSessionState().isBound()) {
+            try {
+                unbind();
+            } catch (ResponseTimeoutException e) {
+                logger.error("Timeout waiting unbind response", e);
+            } catch (InvalidResponseException e) {
+                logger.error("Receive invalid unbind response", e);
+            } catch (IOException e) {
+                logger.error("IO error found ", e);
+            }
         }
         close();
     }
