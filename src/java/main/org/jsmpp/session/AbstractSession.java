@@ -177,10 +177,13 @@ public abstract class AbstractSession implements Session {
     }
     
     public void close() {
-        sessionContext().close();
-        try {
-            connection().close();
-        } catch (IOException e) {
+        SessionContext ctx = sessionContext();
+        if (!ctx.getSessionState().equals(SessionState.CLOSED)) {
+            ctx.close();
+            try {
+                connection().close();
+            } catch (IOException e) {
+            }
         }
     }
     
