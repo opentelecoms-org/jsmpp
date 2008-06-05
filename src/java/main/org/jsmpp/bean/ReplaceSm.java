@@ -16,7 +16,7 @@ public class ReplaceSm extends Command {
     private byte registeredDelivery;
     private byte smDefaultMsgId;
     private byte[] shortMessage;
-    
+
     public ReplaceSm() {
         super();
     }
@@ -111,6 +111,38 @@ public class ReplaceSm extends Command {
         return result;
     }
 
+    private boolean hasEqualMessageId(ReplaceSm other) {
+        if (messageId == null) {
+            if (other.messageId != null)
+                return false;
+        }
+        return messageId.equals(other.messageId);
+    }
+
+    private boolean hasEqualScheduleDeliveryTime(ReplaceSm other) {
+        if (scheduleDeliveryTime == null) {
+            if (other.scheduleDeliveryTime != null)
+                return false;
+        }
+        return scheduleDeliveryTime.equals(other.scheduleDeliveryTime);
+    }
+
+    private boolean hasEqualSourceAddr(ReplaceSm other) {
+        if (sourceAddr == null) {
+            if (other.sourceAddr != null)
+                return false;
+        }
+        return sourceAddr.equals(other.sourceAddr);
+    }
+
+    private boolean hasEqualValidityPeriod(ReplaceSm other) {
+        if (validityPeriod == null) {
+            if (other.validityPeriod != null)
+                return false;
+        }
+        return validityPeriod.equals(other.validityPeriod);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -120,38 +152,28 @@ public class ReplaceSm extends Command {
         if (getClass() != obj.getClass())
             return false;
         final ReplaceSm other = (ReplaceSm)obj;
-        if (messageId == null) {
-            if (other.messageId != null)
-                return false;
-        } else if (!messageId.equals(other.messageId))
+        if (!hasEqualMessageId(other)) {
             return false;
+        }
         if (registeredDelivery != other.registeredDelivery)
             return false;
-        if (scheduleDeliveryTime == null) {
-            if (other.scheduleDeliveryTime != null)
-                return false;
-        } else if (!scheduleDeliveryTime.equals(other.scheduleDeliveryTime))
+        if (!hasEqualScheduleDeliveryTime(other)) {
             return false;
+        }
         if (!Arrays.equals(shortMessage, other.shortMessage))
             return false;
         if (smDefaultMsgId != other.smDefaultMsgId)
             return false;
-        if (sourceAddr == null) {
-            if (other.sourceAddr != null)
-                return false;
-        } else if (!sourceAddr.equals(other.sourceAddr))
+        if (!hasEqualSourceAddr(other)) {
             return false;
+        }
         if (sourceAddrNpi != other.sourceAddrNpi)
             return false;
         if (sourceAddrTon != other.sourceAddrTon)
             return false;
-        if (validityPeriod == null) {
-            if (other.validityPeriod != null)
-                return false;
-        } else if (!validityPeriod.equals(other.validityPeriod))
+        if (!hasEqualValidityPeriod(other)) {
             return false;
+        }
         return true;
     }
-    
-    
 }

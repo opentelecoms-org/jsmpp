@@ -1,5 +1,6 @@
 package org.jsmpp.bean;
 
+
 /**
  * @author uudashr
  *
@@ -98,7 +99,41 @@ public class CancelSm extends Command {
                 + ((sourceAddr == null) ? 0 : sourceAddr.hashCode());
         return result;
     }
-
+    
+    private boolean hasEqualDestAddress(CancelSm other) {
+        if (destinationAddress == null) {
+            if (other.destinationAddress != null)
+                return false;
+        } 
+        return destinationAddress.equals(other.destinationAddress);
+    }
+    
+    private boolean hasEqualServiceType(CancelSm other) {
+        if (serviceType == null) {
+            if (other.serviceType != null) {
+                return false;
+            }
+        }
+        return serviceType.equals(other.serviceType);
+    }
+    
+    private boolean hasEqualSourceAddr(CancelSm other) {
+        if (sourceAddr == null) {
+            if (other.sourceAddr != null) {
+                return false;
+            }
+        }
+        return sourceAddr.equals(other.sourceAddr);
+    }
+    
+    private boolean hasEqualMessageId(CancelSm other) {
+        if (messageId == null) {
+            if (other.messageId != null)
+                return false;
+        } 
+        return messageId.equals(other.messageId);
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -112,30 +147,22 @@ public class CancelSm extends Command {
             return false;
         if (destAddrTon != other.destAddrTon)
             return false;
-        if (destinationAddress == null) {
-            if (other.destinationAddress != null)
-                return false;
-        } else if (!destinationAddress.equals(other.destinationAddress))
+        if (!hasEqualDestAddress(other)) {
             return false;
-        if (messageId == null) {
-            if (other.messageId != null)
-                return false;
-        } else if (!messageId.equals(other.messageId))
+        }
+        if (!hasEqualMessageId(other)) { 
             return false;
-        if (serviceType == null) {
-            if (other.serviceType != null)
-                return false;
-        } else if (!serviceType.equals(other.serviceType))
+        }
+        if (!hasEqualServiceType(other)) {
             return false;
-        if (sourceAddr == null) {
-            if (other.sourceAddr != null)
-                return false;
-        } else if (!sourceAddr.equals(other.sourceAddr))
-            return false;
+        }
         if (sourceAddrNpi != other.sourceAddrNpi)
             return false;
         if (sourceAddrTon != other.sourceAddrTon)
             return false;
+        if (!hasEqualSourceAddr(other)) {
+            return false;
+        }
         return true;
     }
     

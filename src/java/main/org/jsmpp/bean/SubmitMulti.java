@@ -23,7 +23,7 @@ public class SubmitMulti extends Command {
     private byte smDefaultMsgId;
     private byte[] shortMessage;
     private OptionalParameter[] optionalParameters;
-    
+
     public SubmitMulti() {
         super();
     }
@@ -176,6 +176,40 @@ public class SubmitMulti extends Command {
         return result;
     }
 
+    private boolean hasEqualSourceAddr(SubmitMulti other) {
+        if (sourceAddr == null) {
+            if (other.sourceAddr != null) {
+                return false;
+            }
+        }
+        return sourceAddr.equals(other.sourceAddr);
+    }
+
+    private boolean hasEqualScheduleDeliveryTime(SubmitMulti other) {
+        if (scheduleDeliveryTime == null) {
+            if (other.scheduleDeliveryTime != null)
+                return false;
+        }
+        return scheduleDeliveryTime.equals(other.scheduleDeliveryTime);
+    }
+
+    private boolean hasEqualValidityPeriod(SubmitMulti other) {
+        if (validityPeriod == null) {
+            if (other.validityPeriod != null) {
+                return false;
+            }
+        }
+        return validityPeriod.equals(other.validityPeriod);
+    }
+
+    private boolean hasEqualSystemType(SubmitMulti other) {
+        if (serviceType == null) {
+            if (other.serviceType != null)
+                return false;
+        }
+        return serviceType.equals(other.serviceType);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -185,9 +219,19 @@ public class SubmitMulti extends Command {
         if (getClass() != obj.getClass())
             return false;
         final SubmitMulti other = (SubmitMulti)obj;
-        if (dataCoding != other.dataCoding)
+        if (!Arrays.equals(destAddresses, other.destAddresses)) {
             return false;
-        if (!Arrays.equals(destAddresses, other.destAddresses))
+        }
+        if (!hasEqualSourceAddr(other)) {
+            return false;
+        }
+        if (sourceAddrNpi != other.sourceAddrNpi) {
+            return false;
+        }
+        if (sourceAddrTon != other.sourceAddrTon) {
+            return false;
+        }
+        if (dataCoding != other.dataCoding)
             return false;
         if (esmClass != other.esmClass)
             return false;
@@ -201,36 +245,19 @@ public class SubmitMulti extends Command {
             return false;
         if (replaceIfPresentFlag != other.replaceIfPresentFlag)
             return false;
-        if (scheduleDeliveryTime == null) {
-            if (other.scheduleDeliveryTime != null)
-                return false;
-        } else if (!scheduleDeliveryTime.equals(other.scheduleDeliveryTime))
+        if (!hasEqualScheduleDeliveryTime(other)) {
             return false;
-        if (serviceType == null) {
-            if (other.serviceType != null)
-                return false;
-        } else if (!serviceType.equals(other.serviceType))
+        }
+        if (!hasEqualValidityPeriod(other)) {
             return false;
+        }
+        if (!hasEqualSystemType(other)) {
+            return false;
+        }
         if (!Arrays.equals(shortMessage, other.shortMessage))
             return false;
         if (smDefaultMsgId != other.smDefaultMsgId)
             return false;
-        if (sourceAddr == null) {
-            if (other.sourceAddr != null)
-                return false;
-        } else if (!sourceAddr.equals(other.sourceAddr))
-            return false;
-        if (sourceAddrNpi != other.sourceAddrNpi)
-            return false;
-        if (sourceAddrTon != other.sourceAddrTon)
-            return false;
-        if (validityPeriod == null) {
-            if (other.validityPeriod != null)
-                return false;
-        } else if (!validityPeriod.equals(other.validityPeriod))
-            return false;
         return true;
     }
-    
-    
 }

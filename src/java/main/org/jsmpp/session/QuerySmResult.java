@@ -53,7 +53,25 @@ public class QuerySmResult {
 		result = PRIME * result + ((messageState == null) ? 0 : messageState.hashCode());
 		return result;
 	}
-
+	
+	private boolean hasEqualFinalDate(QuerySmResult other) {
+	    if (finalDate == null) {
+            if (other.finalDate != null) {
+                return false;
+            }
+        }
+	    return finalDate.equals(other.finalDate);
+	}
+	
+	private boolean hasEqualMessageState(QuerySmResult other) {
+	    if (messageState == null) {
+            if (other.messageState != null) {
+                return false;
+            }
+        }
+	    return messageState.equals(other.messageState);
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -68,16 +86,12 @@ public class QuerySmResult {
 		final QuerySmResult other = (QuerySmResult) obj;
 		if (errorCode != other.errorCode)
 			return false;
-		if (finalDate == null) {
-			if (other.finalDate != null)
-				return false;
-		} else if (!finalDate.equals(other.finalDate))
-			return false;
-		if (messageState == null) {
-			if (other.messageState != null)
-				return false;
-		} else if (!messageState.equals(other.messageState))
-			return false;
+		if (!hasEqualFinalDate(other)) {
+		    return false;
+		}
+		if (!hasEqualMessageState(other)) {
+		    return false;
+		}
 		return true;
 	}
 	

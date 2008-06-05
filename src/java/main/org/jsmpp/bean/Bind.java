@@ -160,7 +160,43 @@ public class Bind extends Command {
                 + ((systemType == null) ? 0 : systemType.hashCode());
         return result;
     }
-
+    
+    private boolean hasEqualAddressRange(Bind other) {
+        if (addressRange == null) {
+            if (other.addressRange != null) {
+                return false;
+            }
+        }
+        return addressRange.equals(other.addressRange);
+    }
+    
+    private boolean hasEqualPassword(Bind other) {
+        if (password == null) {
+            if (other.password != null) {
+                return false;
+            }
+        }
+        return password.equals(other.password);
+    }
+    
+    private boolean hasEqualSystemId(Bind other) {
+        if (systemId == null) {
+            if (other.systemId != null) {
+                return false;
+            }
+        }
+        return systemId.equals(other.systemId);
+    }
+    
+    private boolean hasEqualSystemType(Bind other) {
+        if (systemType == null) {
+            if (other.systemType != null) {
+                return false;
+            }
+        }
+        return systemType.equals(other.systemType);
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -174,28 +210,20 @@ public class Bind extends Command {
             return false;
         if (addrTon != other.addrTon)
             return false;
-        if (addressRange == null) {
-            if (other.addressRange != null)
-                return false;
-        } else if (!addressRange.equals(other.addressRange))
+        if (!hasEqualAddressRange(other)) {
             return false;
+        }
         if (interfaceVersion != other.interfaceVersion)
             return false;
-        if (password == null) {
-            if (other.password != null)
-                return false;
-        } else if (!password.equals(other.password))
+        if (!hasEqualPassword(other)) {
             return false;
-        if (systemId == null) {
-            if (other.systemId != null)
-                return false;
-        } else if (!systemId.equals(other.systemId))
+        }
+        if (!hasEqualSystemId(other)) {
             return false;
-        if (systemType == null) {
-            if (other.systemType != null)
-                return false;
-        } else if (!systemType.equals(other.systemType))
+        }
+        if (!hasEqualSystemType(other)) {
             return false;
+        }
         return true;
     }
     

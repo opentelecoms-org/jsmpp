@@ -82,7 +82,34 @@ public class QuerySmResp extends Command {
                 + ((messageState == null) ? 0 : messageState.hashCode());
         return result;
     }
-
+    
+    private boolean hasEqualFinalDate(QuerySmResp other) {
+        if (finalDate == null) {
+            if (other.finalDate != null) {
+                return false;
+            }
+        }
+        return finalDate.equals(other.finalDate);
+    }
+    
+    private boolean hasEqualMessageId(QuerySmResp other) {
+        if (messageId == null) {
+            if (other.messageId != null) {
+                return false;
+            }
+        }
+        return messageId.equals(other.messageId);
+    }
+    
+    private boolean hasEqualMessageState(QuerySmResp other) {
+        if (messageState == null) {
+            if (other.messageState != null) {
+                return false;
+            }
+        }
+        return messageState.equals(other.messageState);
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -94,21 +121,15 @@ public class QuerySmResp extends Command {
         final QuerySmResp other = (QuerySmResp)obj;
         if (errorCode != other.errorCode)
             return false;
-        if (finalDate == null) {
-            if (other.finalDate != null)
-                return false;
-        } else if (!finalDate.equals(other.finalDate))
+        if (!hasEqualFinalDate(other)) {
             return false;
-        if (messageId == null) {
-            if (other.messageId != null)
-                return false;
-        } else if (!messageId.equals(other.messageId))
+        }
+        if (!hasEqualMessageId(other)) {
             return false;
-        if (messageState == null) {
-            if (other.messageState != null)
-                return false;
-        } else if (!messageState.equals(other.messageState))
+        }
+        if (!hasEqualMessageState(other)) {
             return false;
+        }
         return true;
     }
     

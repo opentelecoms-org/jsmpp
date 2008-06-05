@@ -86,7 +86,24 @@ public class AlertNotification extends Command {
                 + ((sourceAddr == null) ? 0 : sourceAddr.hashCode());
         return result;
     }
-
+    
+    private boolean hasEqualSourceAddr(AlertNotification other) {
+        if (sourceAddr == null) {
+            if (other.sourceAddr != null) {
+                return false;
+            }
+        }
+        return sourceAddr.equals(other.sourceAddr);
+    }
+    
+    private boolean hasEqualEsmeAddr(AlertNotification other) {
+        if (esmeAddr == null) {
+            if (other.esmeAddr != null) {
+                return false;
+            }
+        }
+        return esmeAddr.equals(other.esmeAddr);
+    }
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -96,22 +113,18 @@ public class AlertNotification extends Command {
         if (getClass() != obj.getClass())
             return false;
         final AlertNotification other = (AlertNotification)obj;
-        if (esmeAddr == null) {
-            if (other.esmeAddr != null)
-                return false;
-        } else if (!esmeAddr.equals(other.esmeAddr))
+        if (!hasEqualEsmeAddr(other)) {
             return false;
+        }
         if (esmeAddrNpi != other.esmeAddrNpi)
             return false;
         if (esmeAddrTon != other.esmeAddrTon)
             return false;
         if (!Arrays.equals(optionalParameters, other.optionalParameters))
             return false;
-        if (sourceAddr == null) {
-            if (other.sourceAddr != null)
-                return false;
-        } else if (!sourceAddr.equals(other.sourceAddr))
+        if (!hasEqualSourceAddr(other)) {
             return false;
+        }
         if (sourceAddrNpi != other.sourceAddrNpi)
             return false;
         if (sourceAddrTon != other.sourceAddrTon)

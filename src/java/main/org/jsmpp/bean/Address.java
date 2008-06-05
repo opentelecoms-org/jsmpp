@@ -58,7 +58,34 @@ public class Address {
                 + ((typeOfNumber == null) ? 0 : typeOfNumber.hashCode());
         return result;
     }
-
+    
+    private boolean hasEqualAddress(Address other) {
+        if (address == null) {
+            if (other.address != null) {
+                return false;
+            }
+        }
+        return address.equals(other.address);
+    }
+    
+    private boolean hasEqualNumberingPlanIndicator(Address other) {
+        if (numberingPlanIndicator == null) {
+            if (other.numberingPlanIndicator != null) {
+                return false;
+            }
+        }
+        return numberingPlanIndicator.equals(other.numberingPlanIndicator);
+    }
+    
+    private boolean hasEqualTypeOfNumber(Address other) {
+        if (typeOfNumber == null) {
+            if (other.typeOfNumber != null) {
+                return false;
+            }
+        }
+        return typeOfNumber.equals(other.typeOfNumber);
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -68,21 +95,15 @@ public class Address {
         if (getClass() != obj.getClass())
             return false;
         final Address other = (Address)obj;
-        if (address == null) {
-            if (other.address != null)
-                return false;
-        } else if (!address.equals(other.address))
+        if (!hasEqualAddress(other)) {
             return false;
-        if (numberingPlanIndicator == null) {
-            if (other.numberingPlanIndicator != null)
-                return false;
-        } else if (!numberingPlanIndicator.equals(other.numberingPlanIndicator))
+        }
+        if (!hasEqualNumberingPlanIndicator(other)) {
             return false;
-        if (typeOfNumber == null) {
-            if (other.typeOfNumber != null)
-                return false;
-        } else if (!typeOfNumber.equals(other.typeOfNumber))
+        }
+        if (!hasEqualTypeOfNumber(other)) {
             return false;
+        }
         return true;
     }
     

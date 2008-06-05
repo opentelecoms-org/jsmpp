@@ -63,7 +63,25 @@ public class QuerySm extends Command {
                 + ((sourceAddr == null) ? 0 : sourceAddr.hashCode());
         return result;
     }
-
+    
+    private boolean hasEqualMessageId(QuerySm other) {
+        if (messageId == null) {
+            if (other.messageId != null) {
+                return false;
+            }
+        }
+        return messageId.equals(other.messageId);
+    }
+    
+    private boolean hasEqualSourceAddr(QuerySm other) {
+        if (sourceAddr == null) {
+            if (other.sourceAddr != null) {
+                return false;
+            }
+        }
+        return sourceAddr.equals(other.sourceAddr);
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -73,16 +91,12 @@ public class QuerySm extends Command {
         if (getClass() != obj.getClass())
             return false;
         final QuerySm other = (QuerySm)obj;
-        if (messageId == null) {
-            if (other.messageId != null)
-                return false;
-        } else if (!messageId.equals(other.messageId))
+        if (!hasEqualMessageId(other)) {
             return false;
-        if (sourceAddr == null) {
-            if (other.sourceAddr != null)
-                return false;
-        } else if (!sourceAddr.equals(other.sourceAddr))
+        }
+        if (!hasEqualSourceAddr(other)) {
             return false;
+        }
         if (sourceAddrNpi != other.sourceAddrNpi)
             return false;
         if (sourceAddrTon != other.sourceAddrTon)

@@ -132,8 +132,25 @@ public class MessageRequest extends AbstractSmCommand {
                 + ((validityPeriod == null) ? 0 : validityPeriod.hashCode());
         return result;
     }
-
-
+    
+    private boolean hasEqualScheduleDeliveryTime(MessageRequest other) {
+        if (scheduleDeliveryTime == null) {
+            if (other.scheduleDeliveryTime != null) {
+                return false;
+            }
+        }
+        return scheduleDeliveryTime.equals(other.scheduleDeliveryTime);
+    }
+    
+    private boolean hasEqualValidityPeriod(MessageRequest other) {
+        if (validityPeriod == null) {
+            if (other.validityPeriod != null) {
+                return false;
+            }
+        }
+        return validityPeriod.equals(other.validityPeriod);
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -149,20 +166,16 @@ public class MessageRequest extends AbstractSmCommand {
             return false;
         if (replaceIfPresent != other.replaceIfPresent)
             return false;
-        if (scheduleDeliveryTime == null) {
-            if (other.scheduleDeliveryTime != null)
-                return false;
-        } else if (!scheduleDeliveryTime.equals(other.scheduleDeliveryTime))
+        if (!hasEqualScheduleDeliveryTime(other)) {
             return false;
+        }
         if (!Arrays.equals(shortMessage, other.shortMessage))
             return false;
         if (smDefaultMsgId != other.smDefaultMsgId)
             return false;
-        if (validityPeriod == null) {
-            if (other.validityPeriod != null)
-                return false;
-        } else if (!validityPeriod.equals(other.validityPeriod))
+        if (!hasEqualValidityPeriod(other)) {
             return false;
+        }
         return true;
     }
     

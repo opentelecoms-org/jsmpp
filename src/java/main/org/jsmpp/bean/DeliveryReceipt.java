@@ -8,7 +8,7 @@ import org.jsmpp.util.DeliveryReceiptState;
 
 /**
  * @author uudashr
- * 
+ *
  */
 public class DeliveryReceipt {
     // attribute of delivery receipt
@@ -164,7 +164,7 @@ public class DeliveryReceipt {
 
     /**
      * Set the text of delivery receipt. Text more than 20 characters will be trim automatically.
-     * 
+     *
      * @param text the text to set.
      */
     public void setText(String text) {
@@ -228,6 +228,60 @@ public class DeliveryReceipt {
         return result;
     }
 
+    private boolean hasEqualId(DeliveryReceipt other) {
+        if (id == null) {
+            if (other.id != null) {
+                return false;
+            }
+        }
+        return id.equals(other.id);
+    }
+
+    private boolean hasEqualDoneDate(DeliveryReceipt other) {
+        if (doneDate == null) {
+            if (other.doneDate != null) {
+                return false;
+            }
+        }
+        return doneDate.equals(other.doneDate);
+    }
+
+    private boolean hasEqualError(DeliveryReceipt other) {
+        if (error == null) {
+            if (other.error != null) {
+                return false;
+            }
+        }
+        return error.equals(other.error);
+    }
+
+    private boolean hasEqualFinalStatus(DeliveryReceipt other) {
+        if (finalStatus == null) {
+            if (other.finalStatus != null) {
+                return false;
+            }
+        }
+        return finalStatus.equals(other.finalStatus);
+    }
+
+    private boolean hasEqualSubmitDate(DeliveryReceipt other) {
+        if (submitDate == null) {
+            if (other.submitDate != null) {
+                return false;
+            }
+        }
+        return submitDate.equals(other.submitDate);
+    }
+
+    private boolean hasEqualText(DeliveryReceipt other) {
+        if (text == null) {
+            if (other.text != null) {
+                return false;
+            }
+        }
+        return text.equals(other.text);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -237,47 +291,30 @@ public class DeliveryReceipt {
         if (getClass() != obj.getClass())
             return false;
         final DeliveryReceipt other = (DeliveryReceipt)obj;
-        if (dateFormat == null) {
-            if (other.dateFormat != null)
-                return false;
-        } else if (!dateFormat.equals(other.dateFormat))
+        if (!hasEqualId(other)) {
             return false;
-        if (delivered != other.delivered)
+        }
+        if (submitted != other.submitted) {
             return false;
-        if (doneDate == null) {
-            if (other.doneDate != null)
-                return false;
-        } else if (!doneDate.equals(other.doneDate))
+        }
+        if (delivered != other.delivered) {
             return false;
-        if (error == null) {
-            if (other.error != null)
-                return false;
-        } else if (!error.equals(other.error))
+        }
+        if (!hasEqualSubmitDate(other)) {
             return false;
-        if (finalStatus == null) {
-            if (other.finalStatus != null)
-                return false;
-        } else if (!finalStatus.equals(other.finalStatus))
+        }
+        if (!hasEqualDoneDate(other)) {
             return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
+        }
+        if (!hasEqualFinalStatus(other)) {
             return false;
-        if (submitDate == null) {
-            if (other.submitDate != null)
-                return false;
-        } else if (!submitDate.equals(other.submitDate))
+        }
+        if (!hasEqualError(other)) {
             return false;
-        if (submitted != other.submitted)
+        }
+        if (!hasEqualText(other)) {
             return false;
-        if (text == null) {
-            if (other.text != null)
-                return false;
-        } else if (!text.equals(other.text))
-            return false;
+        }
         return true;
     }
-    
-    
 }

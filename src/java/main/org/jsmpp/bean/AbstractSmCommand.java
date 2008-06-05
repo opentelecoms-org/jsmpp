@@ -6,7 +6,7 @@ import org.jsmpp.SMPPConstant;
 
 /**
  * @author uudashr
- * 
+ *
  */
 public class AbstractSmCommand extends Command {
     protected String serviceType;
@@ -20,14 +20,14 @@ public class AbstractSmCommand extends Command {
     protected byte registeredDelivery;
     protected byte dataCoding;
     protected OptionalParameter[] optionalParametes;
-    
+
     public AbstractSmCommand() {
         super();
     }
 
     /**
      * Message Type.
-     * 
+     *
      * @return
      */
     public boolean isDefaultMessageType() {
@@ -43,7 +43,7 @@ public class AbstractSmCommand extends Command {
 
     /**
      * Specific Features.
-     * 
+     *
      * @return
      */
     public boolean isUdhi() {
@@ -59,7 +59,7 @@ public class AbstractSmCommand extends Command {
 
     /**
      * Specific Features.
-     * 
+     *
      * @return
      */
     public boolean isReplyPath() {
@@ -75,7 +75,7 @@ public class AbstractSmCommand extends Command {
 
     /**
      * Specific Features.
-     * 
+     *
      * @return
      */
     public boolean isUdhiAndReplyPath() {
@@ -106,23 +106,23 @@ public class AbstractSmCommand extends Command {
     public byte getDestAddrTon() {
         return destAddrTon;
     }
-    
+
     public void setDestAddrTon(byte destAddrTon) {
         this.destAddrTon = destAddrTon;
     }
-    
+
     public byte getDestAddrNpi() {
         return destAddrNpi;
     }
-    
+
     public void setDestAddrNpi(byte destAddrNpi) {
         this.destAddrNpi = destAddrNpi;
     }
-    
+
     public String getDestAddress() {
         return destAddress;
     }
-    
+
     public void setDestAddress(String destAddress) {
         this.destAddress = destAddress;
     }
@@ -169,42 +169,42 @@ public class AbstractSmCommand extends Command {
         this.serviceType = serviceType;
     }
 
-    
+
     public OptionalParameter[] getOptionalParametes() {
         return optionalParametes;
     }
-    
+
     public void setOptionalParametes(OptionalParameter... optionalParametes) {
         this.optionalParametes = optionalParametes;
     }
-    
+
     public byte getSourceAddrTon() {
         return sourceAddrTon;
     }
-    
+
     public void setSourceAddrTon(byte sourceAddrTon) {
         this.sourceAddrTon = sourceAddrTon;
     }
-    
+
     public byte getSourceAddrNpi() {
         return sourceAddrNpi;
     }
-    
+
     public void setSourceAddrNpi(byte sourceAddrNpi) {
         this.sourceAddrNpi = sourceAddrNpi;
     }
-    
+
     public String getSourceAddr() {
         return sourceAddr;
     }
-    
+
     public void setSourceAddr(String sourceAddr) {
         this.sourceAddr = sourceAddr;
     }
-    
+
     /**
      * Message Type. Default message Type.
-     * 
+     *
      * @param esmClass
      * @return <tt>true</tt> if esmClass indicate delivery receipt
      */
@@ -214,7 +214,7 @@ public class AbstractSmCommand extends Command {
 
     /**
      * Message Type. Compose the esm_class as with default message Type.
-     * 
+     *
      * @param esmClass
      * @return
      */
@@ -224,7 +224,7 @@ public class AbstractSmCommand extends Command {
 
     /**
      * Specific Features.
-     * 
+     *
      * @param esmClass
      * @return
      */
@@ -235,7 +235,7 @@ public class AbstractSmCommand extends Command {
 
     /**
      * Specific Features.
-     * 
+     *
      * @param esmClass
      * @return
      */
@@ -246,7 +246,7 @@ public class AbstractSmCommand extends Command {
 
     /**
      * Specific Features.
-     * 
+     *
      * @param esmClass
      * @return
      */
@@ -256,7 +256,7 @@ public class AbstractSmCommand extends Command {
 
     /**
      * Specific Features.
-     * 
+     *
      * @param esmClass
      * @return
      */
@@ -266,7 +266,7 @@ public class AbstractSmCommand extends Command {
 
     /**
      * Specific Features.
-     * 
+     *
      * @param esmClass
      * @return
      */
@@ -276,7 +276,7 @@ public class AbstractSmCommand extends Command {
 
     /**
      * Specific Features.
-     * 
+     *
      * @param esmClass
      * @return
      */
@@ -297,7 +297,7 @@ public class AbstractSmCommand extends Command {
     /**
      * Compose the Messaging Mode. Messaging Mode encoded on ESM Class at bits 1 -
      * 0.
-     * 
+     *
      * @param esmClass current/old ESM class.
      * @param messagingModeValue
      * @return the encoded messaging mode at ESM class
@@ -309,14 +309,14 @@ public class AbstractSmCommand extends Command {
 
     /**
      * Clean the Messaging Mode or clean the ESM Class at bits 1 - 0.
-     * 
+     *
      * @param esmClass
      * @return
      */
     protected final static byte cleanMessagingMode(byte esmClass) {
         /*
          * 00000011 = 0x03
-         * 
+         *
          * esmClass & 0x03 -> will clear the bits 1 - 0
          */
         return (byte)(esmClass & 0x03);
@@ -334,7 +334,7 @@ public class AbstractSmCommand extends Command {
     /**
      * Compose the Message Type. Message Type encoded on ESM Class at bits 5 -
      * 2.
-     * 
+     *
      * @param esmClass
      * @param messageTypeValue
      * @return
@@ -346,14 +346,14 @@ public class AbstractSmCommand extends Command {
 
     /**
      * Clean the Message Type or clean the ESM Class at bits 5 - 2.
-     * 
+     *
      * @param esmClass
      * @return
      */
     protected final static byte cleanMessageType(byte esmClass) {
         /*
          * 11000011 = 0xc3
-         * 
+         *
          * esmClass & 0xc3 -> will clear the bits 5 - 2
          */
         return (byte)(esmClass & 0xc3);
@@ -371,7 +371,7 @@ public class AbstractSmCommand extends Command {
     /**
      * Compose Specific Features. Specific Features encoded on ESM Class at bits
      * 7 - 6.
-     * 
+     *
      * @param esmClass
      * @param specificFeaturesValue
      * @return
@@ -383,14 +383,14 @@ public class AbstractSmCommand extends Command {
 
     /**
      * Clean the Specific Features or ESM Class at bits 7 - 6.
-     * 
+     *
      * @param esmClass
      * @return
      */
     protected final static byte cleanSpecificFeatures(byte esmClass) {
         /*
          * 00111111 = 0x3f
-         * 
+         *
          * esmClass & 0x3f -> will clear the bits 7 -6
          */
         return (byte)(esmClass & 0x3f);
@@ -401,7 +401,7 @@ public class AbstractSmCommand extends Command {
      */
     /**
      * SMSC Delivery Receipt.
-     * 
+     *
      * @param registeredDelivery
      * @param smscDeliveryReceiptValue
      * @return
@@ -427,7 +427,7 @@ public class AbstractSmCommand extends Command {
      */
     /**
      * SME originated Acknowledgement.
-     * 
+     *
      * @param registeredDeliery
      * @param smeOriginatedAckValue
      * @return
@@ -463,6 +463,30 @@ public class AbstractSmCommand extends Command {
         return result;
     }
 
+    private boolean hasEqualDestAddress(AbstractSmCommand other) {
+        if (destAddress == null) {
+            if (other.destAddress != null)
+                return false;
+        }
+        return destAddress.equals(other.destAddress);
+    }
+
+    private boolean hasEqualSourceAddr(AbstractSmCommand other) {
+        if (sourceAddr == null) {
+            if (other.sourceAddr != null)
+                return false;
+        }
+        return sourceAddr.equals(other.sourceAddr);
+    }
+
+    private boolean hasEqualServiceType(AbstractSmCommand other) {
+        if (serviceType == null) {
+            if (other.serviceType != null)
+                return false;
+        }
+        return serviceType.equals(other.serviceType);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -472,16 +496,21 @@ public class AbstractSmCommand extends Command {
         if (getClass() != obj.getClass())
             return false;
         final AbstractSmCommand other = (AbstractSmCommand)obj;
-        if (dataCoding != other.dataCoding)
+        if (destAddrTon != other.destAddrTon)
             return false;
         if (destAddrNpi != other.destAddrNpi)
             return false;
-        if (destAddrTon != other.destAddrTon)
+        if (!hasEqualDestAddress(other)) {
             return false;
-        if (destAddress == null) {
-            if (other.destAddress != null)
-                return false;
-        } else if (!destAddress.equals(other.destAddress))
+        }
+        if (sourceAddrTon != other.sourceAddrTon)
+            return false;
+        if (sourceAddrNpi != other.sourceAddrNpi)
+            return false;
+        if (!hasEqualSourceAddr(other)) {
+            return false;
+        }
+        if (dataCoding != other.dataCoding)
             return false;
         if (esmClass != other.esmClass)
             return false;
@@ -489,22 +518,9 @@ public class AbstractSmCommand extends Command {
             return false;
         if (registeredDelivery != other.registeredDelivery)
             return false;
-        if (serviceType == null) {
-            if (other.serviceType != null)
-                return false;
-        } else if (!serviceType.equals(other.serviceType))
+        if (!hasEqualServiceType(other)) {
             return false;
-        if (sourceAddr == null) {
-            if (other.sourceAddr != null)
-                return false;
-        } else if (!sourceAddr.equals(other.sourceAddr))
-            return false;
-        if (sourceAddrNpi != other.sourceAddrNpi)
-            return false;
-        if (sourceAddrTon != other.sourceAddrTon)
-            return false;
+        }
         return true;
     }
-    
-    
 }
