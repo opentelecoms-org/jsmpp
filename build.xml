@@ -8,9 +8,13 @@
     <property name="examples.dir" value="build/examples" />
 
 	<property name="lib.dir" value="lib" />
-	<property name="project.version" value="2.0b3" />
-	<property name="dist.jar.filename" value="jsmpp-${project.version}.jar" />
+	<property name="project.version" value="2.0b_04" />
+    <property name="dist.versionname" value="jsmpp-${project.version}" />
+	<property name="dist.jar.filename" value="${dist.versionname}.jar" />
     <property name="dist.examples.jar.filename" value="jsmpp-examples.jar" />
+    <property name="dist.zipall.filename" value="${dist.versionname}-all.zip" />
+    <property name="dist.zipsrc.filename" value="${dist.versionname}-src.zip" />
+    <property name="dist.zipbin.filename" value="${dist.versionname}-bin.zip" />
 	<property name="testng.jar" value="${lib.dir}/testng-5.7-jdk15.jar" />
     
     <taskdef resource="testngtasks" classpath="${testng.jar}" />
@@ -40,7 +44,13 @@
         <path refid="run.path" />
         <pathelement path="${examples.dir}" />
     </path>
-
+    
+    <patternset id="eclipse.project.pattern">
+        <exclude name=".settings/**" />
+        <exclude name=".classpath" />
+        <exclude name=".project" />
+    </patternset>
+    
 	<target name="clean">
 		<delete dir="${classes.dir}" />
 		<delete dir="${tests.dir}" />
@@ -85,5 +95,46 @@
         </jar>
 	</target>
 	
-	<target name="cleanall" depends="cleanjar,clean" />
+    <target name="cleandist">
+        <delete file="${dist.zipall.filename}" />
+        <delete file="${dist.zipsrc.filename}" />
+        <delete file="${dist.zipbin.filename}" />
+    </target>
+
+	<target name="cleanall" depends="cleandist,cleanjar,clean" />
+    
+    <target name="distall" depends="jar">
+        <zip destfile="${dist.zipall.filename}">
+            <zipfileset dir="." prefix="${dist.versionname}">
+                <patternset refid="eclipse.project.pattern" />
+                <exclude name="build/**" />
+                <exclude name="test-output/**" />
+                <exclude name="*.zip"/>
+            </zipfileset>
+        </zip>
+    </target>
+    
+    <target name="distsrc">
+        <zip destfile="${dist.zipsrc.filename}">
+            <zipfileset dir="." prefix="${dist.versionname}">
+                <patternset refid="eclipse.project.pattern" />
+                <exclude name="build/**" />
+                <exclude name="test-output/**" />
+                <exclude name="*.jar" />
+                <exclude name="*.zip"/>
+            </zipfileset>
+        </zip>
+    </target>
+
+    <target name="distbin" depends="jar">
+        <zip destfile="${dist.zipbin.filename}">
+            <zipfileset dir="." prefix="${dist.versionname}">
+                <patternset refid="eclipse.project.pattern" />
+                <exclude name="build/**" />
+                <exclude name="src/**" />
+                <exclude name="test-output/**" />
+                <exclude name="*.zip"/>
+            </zipfileset>
+        </zip>
+    </target>
 </project>
