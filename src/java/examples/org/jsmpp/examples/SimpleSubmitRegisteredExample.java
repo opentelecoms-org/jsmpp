@@ -5,27 +5,20 @@ import java.util.Date;
 
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUStringException;
-import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.BindType;
-import org.jsmpp.bean.DeliverSm;
-import org.jsmpp.bean.DeliveryReceipt;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.GeneralDataCoding;
 import org.jsmpp.bean.MessageClass;
-import org.jsmpp.bean.MessageType;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.NegativeResponseException;
-import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.session.BindParameter;
-import org.jsmpp.session.MessageReceiverListener;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.util.AbsoluteTimeFormatter;
-import org.jsmpp.util.InvalidDeliveryReceiptException;
 import org.jsmpp.util.TimeFormatter;
 
 /**
@@ -45,33 +38,15 @@ public class SimpleSubmitRegisteredExample {
         }
         
         // Set listener to receive deliver_sm
-        session.setMessageReceiverListener(new MessageReceiverListener() {
-            public void onAcceptDeliverSm(DeliverSm deliverSm)
-                    throws ProcessRequestException {
-                if (MessageType.SMSC_DEL_RECEIPT.containedIn(deliverSm.getEsmClass())) {
-                    // delivery receipt
-                    try {
-                        DeliveryReceipt delReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
-                        long id = Long.parseLong(delReceipt.getId()) & 0xffffffff;
-                        String messageId = Long.toString(id, 16).toUpperCase();
-                        System.out.println("Receiving delivery receipt for message '" + messageId + "' : " + delReceipt);
-                    } catch (InvalidDeliveryReceiptException e) {
-                        System.err.println("Failed getting delivery receipt");
-                        e.printStackTrace();
-                    }
-                } else {
-                    // regular short message
-                    System.out.println("Receiving message : " + new String(deliverSm.getShortMessage()));
-                }
-            }
-            
-            public void onAcceptAlertNotification(
-                    AlertNotification alertNotification) {
-            }
-        });
+        session.setMessageReceiverListener(new MessageReceiverListenerImpl());
         
         try {
             String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "1616", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "628176504657", new ESMClass(), (byte)0, (byte)1,  timeFormatter.format(new Date()), null, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE), (byte)0, new GeneralDataCoding(false, true, MessageClass.CLASS1, Alphabet.ALPHA_DEFAULT), (byte)0, "jSMPP simplify SMPP on Java platform".getBytes());
+            
+            /*
+             * you can save the submitted message to database.
+             */
+            
             System.out.println("Message submitted, message_id is " + messageId);
         } catch (PDUStringException e) {
             // Invalid string parameter
