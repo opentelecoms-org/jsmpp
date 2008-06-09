@@ -1,5 +1,7 @@
 Changes:
 
+2.0 beta 3
+
 - Add SMPP Server component
 - Add Optional Parameter support (contribution from mikko.koponen@gmail.com)
 - Handling PDU processing concurrently (performance improvement)
@@ -9,3 +11,5 @@ Changes:
 - Add alert_notification support
 - Add CapacityPolicy to PDUByteBuffer (performance improvement, minimize array 
   of byte creation)
+  
+2.0 beta 4
