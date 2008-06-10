@@ -13,5 +13,5 @@ public interface SessionIDGenerator<S> {
     /**
      * @return
      */
-    public S newSessionId();
+    S newSessionId();
 }
