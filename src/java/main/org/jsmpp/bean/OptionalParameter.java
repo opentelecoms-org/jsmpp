@@ -43,15 +43,28 @@ public abstract class OptionalParameter {
     public static class Short extends OptionalParameter {
         public final short value;
 
+        /**
+         * Construct the Short optional parameter with specified short value.
+         * 
+         * @param tag
+         * @param value
+         */
         public Short(Tag tag, short value) {
             super(tag);
             this.value = value;
         }
 
-        public Short(Tag tag, byte[] content) {
-            this(tag, OctetUtil.bytesToShort(content));
+        /**
+         * Construct the Short optional parameters with specified bytes value.
+         * Only 2 bytes will be use as value.
+         * 
+         * @param tag is the tag.
+         * @param value is the value.
+         */
+        public Short(Tag tag, byte[] value) {
+            this(tag, OctetUtil.bytesToShort(value));
         }
-
+        
         @Override
         protected byte[] serializeValue() {
             return OctetUtil.shortToBytes(value);

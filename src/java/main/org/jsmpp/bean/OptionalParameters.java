@@ -14,6 +14,69 @@ import org.jsmpp.bean.OptionalParameter.Tag;
  */
 public class OptionalParameters {
     
+    /**
+     * Create SAR_MESSAGE_REF_NUM TLV instance.
+     * 
+     * @param value is the value.
+     * @return the optional parameter.
+     */
+    public static OptionalParameter.Short newSarMsgRefNum(short value) {
+        return new OptionalParameter.Short(Tag.SAR_MSG_REF_NUM, value);
+    }
+    
+    /**
+     * Create SAR_MESSAGE_REF_NUM TLV instance.
+     * The value will cast automatically into short type.
+     * 
+     * @param value is the value.
+     * @return the optional parameter.
+     */
+    public static OptionalParameter.Short newSarMsgRefNum(int value) {
+        return newSarMsgRefNum((byte)value);
+    }
+    
+    /**
+     * Create SAR_SEGMENT_SEQNUM TLV instance.
+     * 
+     * @param value is the value.
+     * @return the optional parameter.
+     */
+    public static OptionalParameter.Byte newSarSegmentSeqnum(byte value) {
+        return new OptionalParameter.Byte(Tag.SAR_SEGMENT_SEQNUM, value);
+    }
+    
+    /**
+     * Create SAR_SEGMENT_SEQNUM TLV instance.
+     * The value will cast automatically into byte type.
+     * 
+     * @param value is the value.
+     * @return the optional parameter.
+     */
+    public static OptionalParameter.Byte newSarSegmentSeqnum(int value) {
+        return newSarSegmentSeqnum((byte)value);
+    }
+    
+    /**
+     * Create SAR_TOTAL_SEGMENTS TLV instance.
+     * 
+     * @param value is the value.
+     * @return the optional parameter.
+     */
+    public static OptionalParameter.Byte newSarTotalSegments(byte value) {
+        return new OptionalParameter.Byte(Tag.SAR_TOTAL_SEGMENTS, value);
+    }
+    
+    /**
+     * Create SAR_TOTAL_SEGMENTS TLV instance.
+     * The value will cast automatically into byte type.
+     * 
+     * @param value is the value.
+     * @return the optional parameter.
+     */
+    public static OptionalParameter.Byte newSarTotalSegments(int value) {
+        return newSarSegmentSeqnum((byte)value);
+    }
+    
     public static OptionalParameter deserialize(short tagCode, byte[] content) {
         Tag tag = Tag.valueOf(tagCode);
         if (Null.class.equals(tag.type)) {

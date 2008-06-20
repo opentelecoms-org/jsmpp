@@ -13,3 +13,5 @@ Changes:
   of byte creation)
   
 2.0 beta 4
+
+- Modify Optional Parameter API (currently for TLV related to message concatenation case)
