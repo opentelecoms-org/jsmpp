@@ -6,6 +6,7 @@
 	<property name="classes.dir" value="build/classes" />
 	<property name="tests.dir" value="build/tests" />
     <property name="examples.dir" value="build/examples" />
+    <property name="javadoc.dir" value="javadoc"/>
 
 	<property name="lib.dir" value="lib" />
 	<property name="project.version" value="2.0b_04" />
@@ -95,13 +96,31 @@
         </jar>
 	</target>
 	
+    <target name="cleanjavadoc" description="Clean javadocs">
+        <delete dir="${javadoc.dir}" />
+    </target>
+    
+    <target name="javadoc" description="Generate javadocs" depends="prepare">
+        <mkdir dir="${javadoc.dir}" />
+        <javadoc destdir="${javadoc.dir}"
+                author="true"
+                protected="true"
+                windowtitle="jSMPP ${project.version} API">
+            <sourcepath>
+                <pathelement path="${src.dir}" />
+            </sourcepath>
+            <classpath refid="compile.path"></classpath>
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api" />
+        </javadoc>
+    </target>
+    
     <target name="cleandist">
         <delete file="${dist.zipall.filename}" />
         <delete file="${dist.zipsrc.filename}" />
         <delete file="${dist.zipbin.filename}" />
     </target>
 
-	<target name="cleanall" depends="cleandist,cleanjar,clean" />
+	<target name="cleanall" depends="cleandist,cleanjar,clean,cleanjavadoc" />
     
     <target name="distall" depends="jar">
         <zip destfile="${dist.zipall.filename}">
@@ -122,6 +141,7 @@
                 <exclude name="test-output/**" />
                 <exclude name="*.jar" />
                 <exclude name="*.zip"/>
+                <exclude name="javadoc"/>
             </zipfileset>
         </zip>
     </target>
