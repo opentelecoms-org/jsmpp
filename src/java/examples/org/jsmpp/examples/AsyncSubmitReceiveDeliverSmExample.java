@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.log4j.BasicConfigurator;
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.AlertNotification;
@@ -37,7 +39,9 @@ import org.jsmpp.util.TimeFormatter;
 public class AsyncSubmitReceiveDeliverSmExample {
     private static TimeFormatter timeFormatter = new AbsoluteTimeFormatter();;
     public static void main(String[] args) {
+        final AtomicInteger counter = new AtomicInteger();
         
+        BasicConfigurator.configure();
         final SMPPSession session = new SMPPSession();
         try {
             session.connectAndBind("localhost", 8056, new BindParameter(BindType.BIND_TRX, "test", "test", "cp", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
@@ -51,6 +55,7 @@ public class AsyncSubmitReceiveDeliverSmExample {
             public void onAcceptDeliverSm(DeliverSm deliverSm)
                     throws ProcessRequestException {
                 if (MessageType.SMSC_DEL_RECEIPT.containedIn(deliverSm.getEsmClass())) {
+                    counter.incrementAndGet();
                     // delivery receipt
                     try {
                         DeliveryReceipt delReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
@@ -78,8 +83,8 @@ public class AsyncSubmitReceiveDeliverSmExample {
         // requesting delivery report
         final RegisteredDelivery registeredDelivery = new RegisteredDelivery();
         registeredDelivery.setSMSCDeliveryReceipt(SMSCDeliveryReceipt.SUCCESS_FAILURE);
-        
-        for (int i = 0; i < 50; i++) {
+        final int maxMessage = 50;
+        for (int i = 0; i < maxMessage; i++) {
             
             execService.execute(new Runnable() {
                 public void run() {
@@ -89,27 +94,35 @@ public class AsyncSubmitReceiveDeliverSmExample {
                     } catch (PDUStringException e) {
                         System.err.println("Invalid string parameter");
                         e.printStackTrace();
+                        counter.incrementAndGet();
                     } catch (ResponseTimeoutException e) {
                         System.err.println("Response timeout");
                         e.printStackTrace();
+                        counter.incrementAndGet();
                     } catch (InvalidResponseException e) {
                         // Invalid response
                         System.err.println("Receive invalid respose");
                         e.printStackTrace();
+                        counter.incrementAndGet();
                     } catch (NegativeResponseException e) {
                         // Receiving negative response (non-zero command_status)
                         System.err.println("Receive negative response");
                         e.printStackTrace();
+                        counter.incrementAndGet();
                     } catch (IOException e) {
                         System.err.println("IO error occur");
                         e.printStackTrace();
+                        counter.incrementAndGet();
                     }
                 }
             });
         }
         
-        
+        while (counter.get() != maxMessage) {
+            try { Thread.sleep(1000); } catch (InterruptedException e) { }
+        }
         session.unbindAndClose();
+        execService.shutdown();
     }
     
 }
