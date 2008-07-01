@@ -17,10 +17,6 @@ public class SMPPSessionContext extends AbstractSessionContext {
         this.smppSession = smppSession;
     }
     
-    public SMPPSessionContext(SMPPSession smppSession) {
-        this(smppSession, null);
-    }
-    
     public synchronized SMPPSessionState getStateProcessor() {
         return stateProcessor;
     }
