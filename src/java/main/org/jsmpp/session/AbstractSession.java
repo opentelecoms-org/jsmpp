@@ -98,7 +98,9 @@ public abstract class AbstractSession implements Session {
     }
     
     public void addSessionStateListener(SessionStateListener l) {
-        sessionContext().addSessionStateListener(l);
+        if (l != null) {
+            sessionContext().addSessionStateListener(l);
+        }
     }
     
     public void removeSessionStateListener(SessionStateListener l) {
