@@ -14,7 +14,7 @@ public interface MessageIDGenerator {
 	
 	/**
 	 * Generate message-id, max 65 C-Octet String.
-	 * @return
+	 * @return the generated message id.
 	 */
-	public MessageId newMessageId();
+	MessageId newMessageId();
 }
