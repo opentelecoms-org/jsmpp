@@ -77,25 +77,31 @@ public class OptionalParameters {
         return newSarSegmentSeqnum((byte)value);
     }
     
-    public static OptionalParameter deserialize(short tagCode, byte[] content) {
-        Tag tag = Tag.valueOf(tagCode);
+    public static OptionalParameter deserialize(final short tagCode, byte[] content) {
+        Tag tag = null;
+        try {
+            tag = Tag.valueOf(tagCode);
+        } catch (IllegalArgumentException e) {
+            return new COctetString(tagCode, content);
+        }
+        
         if (Null.class.equals(tag.type)) {
-            return new Null(tag);
+            return new Null(tagCode);
         }
         if (Byte.class.equals(tag.type)) {
-            return new Byte(tag, content);
+            return new Byte(tagCode, content);
         }
         if (Short.class.equals(tag.type)) {
-            return new Short(tag, content);
+            return new Short(tagCode, content);
         }
         if (Int.class.equals(tag.type)) {
-            return new Int(tag, content);
+            return new Int(tagCode, content);
         }
         if (OctetString.class.equals(tag.type)) {
-            return new OctetString(tag, content);
+            return new OctetString(tagCode, content);
         }
         if (COctetString.class.equals(tag.type)) {
-            return new COctetString(tag, content);
+            return new COctetString(tagCode, content);
         }
         throw new IllegalArgumentException("Unsupported tag: " + tagCode);
     }

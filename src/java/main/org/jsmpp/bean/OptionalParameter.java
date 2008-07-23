@@ -1,5 +1,6 @@
 package org.jsmpp.bean;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
 import org.jsmpp.util.OctetUtil;
@@ -8,20 +9,21 @@ import org.jsmpp.util.OctetUtil;
  * The Optional Parameter class.
  * 
  * @author mikko.koponen
+ * @author uudashr
  * 
  */
 public abstract class OptionalParameter {
 
-    public final Tag tag;
+    public final short tag;
 
-    public OptionalParameter(Tag tag) {
+    public OptionalParameter(short tag) {
         this.tag = tag;
     }
 
     public byte[] serialize() {
         byte[] value = serializeValue();
         ByteBuffer buffer = ByteBuffer.allocate(value.length + 4);
-        buffer.putShort(tag.value());
+        buffer.putShort(tag);
         buffer.putShort((short)value.length);
         buffer.put(value);
         return buffer.array();
@@ -30,10 +32,14 @@ public abstract class OptionalParameter {
     protected abstract byte[] serializeValue();
     
     public static class Null extends OptionalParameter {
-        public Null(Tag tag) {
+        public Null(short tag) {
             super(tag);
         }
-
+        
+        public Null(Tag tag) {
+            this(tag.code());
+        }
+        
         @Override
         protected byte[] serializeValue() {
             return new byte[0];
@@ -41,7 +47,7 @@ public abstract class OptionalParameter {
     }
 
     public static class Short extends OptionalParameter {
-        public final short value;
+        private final short value;
 
         /**
          * Construct the Short optional parameter with specified short value.
@@ -49,11 +55,15 @@ public abstract class OptionalParameter {
          * @param tag
          * @param value
          */
-        public Short(Tag tag, short value) {
+        public Short(short tag, short value) {
             super(tag);
             this.value = value;
         }
-
+        
+        public Short(Tag tag, short value) {
+            this(tag.code(), value);
+        }
+        
         /**
          * Construct the Short optional parameters with specified bytes value.
          * Only 2 bytes will be use as value.
@@ -61,8 +71,12 @@ public abstract class OptionalParameter {
          * @param tag is the tag.
          * @param value is the value.
          */
-        public Short(Tag tag, byte[] value) {
+        public Short(short tag, byte[] value) {
             this(tag, OctetUtil.bytesToShort(value));
+        }
+        
+        public short getValue() {
+            return value;
         }
         
         @Override
@@ -72,17 +86,25 @@ public abstract class OptionalParameter {
     }
 
     public static class Int extends OptionalParameter {
-        public final int value;
+        private final int value;
 
-        public Int(Tag tag, int value) {
+        public Int(short tag, int value) {
             super(tag);
             this.value = value;
         }
-
-        public Int(Tag tag, byte[] content) {
-            this(tag, OctetUtil.bytesToInt(content));
+        
+        public Int(Tag tag, int value) {
+            this(tag.code(), value);
         }
 
+        public Int(short tag, byte[] content) {
+            this(tag, OctetUtil.bytesToInt(content));
+        }
+        
+        public int getValue() {
+            return value;
+        }
+        
         @Override
         protected byte[] serializeValue() {
             return OctetUtil.intToBytes(value);
@@ -90,17 +112,25 @@ public abstract class OptionalParameter {
     }
 
     public static class Byte extends OptionalParameter {
-        public final byte value;
+        private final byte value;
 
-        public Byte(Tag tag, byte value) {
+        public Byte(short tag, byte value) {
             super(tag);
             this.value = value;
         }
-
-        public Byte(Tag tag, byte[] content) {
+        
+        public Byte(Tag tag, byte value) {
+            this(tag.code(), value);
+        }
+        
+        public Byte(short tag, byte[] content) {
             this(tag, content[0]);
         }
-
+        
+        public byte getValue() {
+            return value;
+        }
+        
         @Override
         protected byte[] serializeValue() {
             return new byte[] { value };
@@ -108,52 +138,81 @@ public abstract class OptionalParameter {
     }
 
     public static class OctetString extends OptionalParameter {
-        public final String value;
-        private final boolean writeNull;
-
-        public OctetString(Tag tag, String value) {
-            this(tag, value, false);
+        private final byte[] value;
+        
+        public OctetString(short tag, String value) {
+            super(tag);
+            this.value = value.getBytes();
         }
-
-        public OctetString(Tag tag, String value, boolean withNull) {
+        
+        public OctetString(Tag tag, String value) {
+            this(tag.code(), value);
+        }
+        
+        
+        public OctetString(short tag, String value, String charsetName)
+                throws UnsupportedEncodingException {
+            super(tag);
+            this.value = value.getBytes(charsetName);
+        }
+        
+        public OctetString(short tag, byte[] value) {
             super(tag);
             this.value = value;
-            this.writeNull = withNull;
         }
 
-        public OctetString(Tag tag, byte[] content, int offset, int length) {
-            this(tag, new String(content, offset, length));
+        public OctetString(short tag, byte[] value, int offset, int length) {
+            super(tag);
+            this.value = new byte[length];
+            System.arraycopy(value, offset, this.value, offset, length);
         }
-
-        public OctetString(Tag tag, byte[] content) {
-            this(tag, content, 0, content.length);
+        
+        public byte[] getValue() {
+            return value;
         }
-
+        
+        public String getValueAsString() {
+            return new String(value);
+        }
+        
         @Override
         protected byte[] serializeValue() {
-            byte[] bytes = value.getBytes();
-            if (writeNull) {
-                ByteBuffer result = ByteBuffer.allocate(bytes.length + 1);
-                result.put(bytes);
-                result.put((byte)0);
-                return result.array();
-            } else {
-                return bytes;
-            }
+            return value;
         }
     }
 
     public static class COctetString extends OctetString {
-        public COctetString(Tag tag, String value) {
-            super(tag, value, true);
+
+        public COctetString(short tag, String value, String charsetName)
+                throws UnsupportedEncodingException {
+            super(tag, value, charsetName);
         }
 
-        public COctetString(Tag tag, byte[] content) {
-            super(tag, content, 0, content.length - 1);
+        public COctetString(short tag, String value) {
+            super(tag, value);
         }
+        
+        public COctetString(short tag, byte[] value) {
+            super(tag, value);
+        }
+        
+        @Override
+        public String getValueAsString() {
+            byte[] value = getValue();
+            return new String(value, 0, value.length - 1);
+        }
+        
     }
-
+    
+    /**
+     * Is all the defined SMPP Optional Parameters.
+     * 
+     * @author mikko.koponen
+     * @author uudashr
+     *
+     */
     public enum Tag {
+        
         DEST_ADDR_SUBUNIT(0x0005, Byte.class), 
         DEST_NETWORK_TYPE(0x0006, Byte.class),
         DEST_BEARER_TYPE(0x0007, Byte.class), 
@@ -195,37 +254,52 @@ public abstract class OptionalParameter {
         DISPLAY_TIME(0x1201, Byte.class), 
         SMS_SIGNAL(0x1203, Short.class), 
         MS_VALIDITY(0x1204, Byte.class), 
-        ALERT_ON_MESSAGE_DELIVERY(0x130C,Null.class), 
+        ALERT_ON_MESSAGE_DELIVERY(0x130C, Null.class), 
         ITS_REPLY_TYPE(0x1380, Byte.class), 
         ITS_SESSION_INFO(0x1383, Short.class);
 
-        private final short value;
+        private final short code;
         final Class<? extends OptionalParameter> type;
 
-        private Tag(int value, Class<? extends OptionalParameter> type) {
-            this.value = (short)value;
+        private Tag(int code, Class<? extends OptionalParameter> type) {
+            this.code = (short)code;
             this.type = type;
         }
-
+        
+        /**
+         * Get the tag code of the {@link Tag}.
+         * 
+         * @returns the tag code.
+         * @deprecated use {@link #code()}
+         */
+        @Deprecated
         public short value() {
-            return value;
+            return code;
         }
-
+        
+        /**
+         * Get the tag code of the {@link Tag}.
+         * 
+         * @returns the tag code.
+         */
+        public short code() {
+            return code;
+        }
+        
         public static Tag valueOf(short code) {
             for (Tag tag : Tag.values()) {
-                if (tag.value() == code)
+                if (tag.code == code)
                     return tag;
             }
             throw new IllegalArgumentException("No tag for: " + code);
         }
-
     }
-
+    
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((tag == null) ? 0 : tag.hashCode());
+        result = prime * result + tag;
         return result;
     }
 
@@ -237,13 +311,9 @@ public abstract class OptionalParameter {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final OptionalParameter other = (OptionalParameter)obj;
-        if (tag == null) {
-            if (other.tag != null)
-                return false;
-        } else if (!tag.equals(other.tag))
+        OptionalParameter other = (OptionalParameter)obj;
+        if (tag != other.tag)
             return false;
         return true;
     }
-
 }
