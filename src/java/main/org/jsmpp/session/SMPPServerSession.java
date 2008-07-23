@@ -219,7 +219,6 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     }
     
     private class ResponseHandlerImpl implements ServerResponseHandler {
-        @SuppressWarnings("unchecked")
         public PendingResponse<Command> removeSentItem(int sequenceNumber) {
             return removePendingResponse(sequenceNumber);
         }
@@ -271,6 +270,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             try {
                 pduSender().sendSubmitSmResp(out, sequenceNumber,
                         messageId.getValue());
+                // TODO uudashr: notify specified submit_sm has respond
             } catch (PDUStringException e) {
                 /*
                  * There should be no PDUStringException thrown since creation

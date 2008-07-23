@@ -471,7 +471,6 @@ public class SMPPSession extends AbstractSession implements ClientSession {
             }
 		}
 		
-		@SuppressWarnings("unchecked")
 		public PendingResponse<Command> removeSentItem(int sequenceNumber) {
 			return removePendingResponse(sequenceNumber);
 		}
