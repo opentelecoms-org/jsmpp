@@ -62,25 +62,30 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     private final ServerResponseHandler responseHandler = new ResponseHandlerImpl();
     
     private ServerMessageReceiverListener messageReceiverListener;
+    private ServerResponseDeliveryListener responseDeliveryListener;
     private final EnquireLinkSender enquireLinkSender;
     private BindRequestReceiver bindRequestReceiver = new BindRequestReceiver(responseHandler);
     
     public SMPPServerSession(Connection conn,
             SessionStateListener sessionStateListener,
             ServerMessageReceiverListener messageReceiverListener,
+            ServerResponseDeliveryListener responseDeliveryListener,
             int pduProcessorDegree) {
         this(conn, sessionStateListener, messageReceiverListener,
-                pduProcessorDegree, new SynchronizedPDUSender(
-                        new DefaultPDUSender()), new DefaultPDUReader());
+                responseDeliveryListener, pduProcessorDegree,
+                new SynchronizedPDUSender(new DefaultPDUSender()),
+                new DefaultPDUReader());
     }
     
     public SMPPServerSession(Connection conn,
             SessionStateListener sessionStateListener,
             ServerMessageReceiverListener messageReceiverListener,
+            ServerResponseDeliveryListener responseDeliveryListener,
             int pduProcessorDegree, PDUSender pduSender, PDUReader pduReader) {
         super(pduSender);
         this.conn = conn;
         this.messageReceiverListener = messageReceiverListener;
+        this.responseDeliveryListener = responseDeliveryListener;
         this.pduReader = pduReader;
         this.in = new DataInputStream(conn.getInputStream());
         this.out = conn.getOutputStream();
@@ -194,6 +199,34 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         }
     }
     
+    private void fireSubmitSmRespSent(MessageId messageId) {
+        if (responseDeliveryListener != null) {
+            responseDeliveryListener.onSubmitSmRespSent(messageId, this);
+        }
+    }
+    
+    private void fireSubmitSmRespFailed(MessageId messageId, Exception cause) {
+        if (responseDeliveryListener != null) {
+            responseDeliveryListener.onSubmitSmRespError(messageId, cause,
+                    this);
+        }
+    }
+    
+    private void fireSubmitMultiRespSent(SubmitMultiResult submitMultiResult) {
+        if (responseDeliveryListener != null) {
+            responseDeliveryListener.onSubmitMultiRespSent(
+                    submitMultiResult, this);
+        }
+    }
+    
+    private void fireSubmitMultiRespSentError(
+            SubmitMultiResult submitMultiResult, Exception cause) {
+        if (responseDeliveryListener != null) {
+            responseDeliveryListener.onSubmitMultiRespError(
+                    submitMultiResult, cause, this);
+        }
+    }
+    
     @Override
     protected Connection connection() {
         return conn;
@@ -216,6 +249,11 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     public void setMessageReceiverListener(
             ServerMessageReceiverListener messageReceiverListener) {
         this.messageReceiverListener = messageReceiverListener;
+    }
+    
+    public void setResponseDeliveryListener(
+            ServerResponseDeliveryListener responseDeliveryListener) {
+        this.responseDeliveryListener = responseDeliveryListener;
     }
     
     private class ResponseHandlerImpl implements ServerResponseHandler {
@@ -270,13 +308,20 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             try {
                 pduSender().sendSubmitSmResp(out, sequenceNumber,
                         messageId.getValue());
-                // TODO uudashr: notify specified submit_sm has respond
+                fireSubmitSmRespSent(messageId);
             } catch (PDUStringException e) {
                 /*
                  * There should be no PDUStringException thrown since creation
                  * of MessageId should be save.
                  */
                 logger.error("SYSTEM ERROR. Failed sending submitSmResp", e);
+                fireSubmitSmRespFailed(messageId, e);
+            } catch (IOException e) {
+                fireSubmitSmRespFailed(messageId, e);
+                throw e;
+            } catch (RuntimeException e) {
+                fireSubmitSmRespFailed(messageId, e);
+                throw e;
             }
         }
         
@@ -286,18 +331,26 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         }
         
         public void sendSubmitMultiResponse(
-                SubmitMultiResult submiitMultiResult, int sequenceNumber)
+                SubmitMultiResult submitMultiResult, int sequenceNumber)
                 throws IOException {
             try {
                 pduSender().sendSubmitMultiResp(out, sequenceNumber,
-                        submiitMultiResult.getMessageId(),
-                        submiitMultiResult.getUnsuccessDeliveries());
+                        submitMultiResult.getMessageId(),
+                        submitMultiResult.getUnsuccessDeliveries());
+                fireSubmitMultiRespSent(submitMultiResult);
             } catch (PDUStringException e) {
                 /*
                  * There should be no PDUStringException thrown since creation
                  * of the response parameter has been validated.
                  */
                 logger.error("SYSTEM ERROR. Failed sending submitMultiResp", e);
+                fireSubmitMultiRespSentError(submitMultiResult, e);
+            } catch (IOException e) {
+                fireSubmitMultiRespSentError(submitMultiResult, e);
+                throw e;
+            } catch (RuntimeException e) {
+                fireSubmitMultiRespSentError(submitMultiResult, e);
+                throw e;
             }
         }
         

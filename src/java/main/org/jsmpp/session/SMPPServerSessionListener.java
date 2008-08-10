@@ -40,6 +40,7 @@ public class SMPPServerSessionListener {
     private int pduProcessorDegree = 3;
     private SessionStateListener sessionStateListener;
     private ServerMessageReceiverListener messageReceiverListener;
+    private ServerResponseDeliveryListener responseDeliveryListener;
     
     public SMPPServerSessionListener(int port) throws IOException {
         this(port, new ServerSocketConnectionFactory());
@@ -118,6 +119,11 @@ public class SMPPServerSessionListener {
         this.messageReceiverListener = messageReceiverListener;
     }
     
+    public void setResponseDeliveryListener(
+            ServerResponseDeliveryListener responseDeliveryListener) {
+        this.responseDeliveryListener = responseDeliveryListener;
+    }
+    
     /**
      * Accept session request from client. The session state is still OPEN. To
      * communicate with ESME properly binding request should be accepted.
@@ -143,7 +149,8 @@ public class SMPPServerSessionListener {
         Connection conn = serverConn.accept();
         conn.setSoTimeout(initiationTimer);
         return new SMPPServerSession(conn, sessionStateListener,
-                messageReceiverListener, pduProcessorDegree);
+                messageReceiverListener, responseDeliveryListener,
+                pduProcessorDegree);
     }
     
     public void close() throws IOException {

@@ -33,6 +33,7 @@ import org.jsmpp.session.QuerySmResult;
 import org.jsmpp.session.SMPPServerSession;
 import org.jsmpp.session.SMPPServerSessionListener;
 import org.jsmpp.session.ServerMessageReceiverListener;
+import org.jsmpp.session.ServerResponseDeliveryAdapter;
 import org.jsmpp.util.DeliveryReceiptState;
 import org.jsmpp.util.MessageIDGenerator;
 import org.jsmpp.util.MessageId;
@@ -44,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * @author uudashr
  *
  */
-public class SMPPServerSimulator implements Runnable, ServerMessageReceiverListener {
+public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implements Runnable, ServerMessageReceiverListener {
     private static final Integer DEFAULT_PORT = 8056;
     private static final Logger logger = LoggerFactory.getLogger(SMPPServerSimulator.class);
     private final ExecutorService execService = Executors.newFixedThreadPool(5);
@@ -65,6 +66,7 @@ public class SMPPServerSimulator implements Runnable, ServerMessageReceiverListe
                 SMPPServerSession serverSession = sessionListener.accept();
                 logger.info("Accepting connection for session {}", serverSession.getSessionId());
                 serverSession.setMessageReceiverListener(this);
+                serverSession.setResponseDeliveryListener(this);
                 execService.execute(new WaitBindTask(serverSession));
             }
         } catch (IOException e) {
@@ -86,6 +88,11 @@ public class SMPPServerSimulator implements Runnable, ServerMessageReceiverListe
             execServiceDelReciept.execute(new DeliveryReceiptTask(source, submitSm, messageId));
         }
         return messageId;
+    }
+    
+    public void onSubmitSmRespSent(MessageId messageId,
+            SMPPServerSession source) {
+        logger.debug("submit_sm_resp with message_id {} has been sent", messageId);
     }
     
     public SubmitMultiResult onAcceptSubmitMulti(SubmitMulti submitMulti,
