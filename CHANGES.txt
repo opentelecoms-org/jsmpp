@@ -18,3 +18,5 @@ Changes:
   concatenation case)
 - Add ServerResponseDeliveryListener (listener to receive success or failure 
   event of submit_sm_resp/submit_multi_resp delivery)
+- Change license from LGPL to "Apache License, Version 2.0"
+- Add license notice on every sources.
