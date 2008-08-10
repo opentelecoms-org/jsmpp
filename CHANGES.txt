@@ -14,4 +14,7 @@ Changes:
   
 2.0 beta 4
 
-- Modify Optional Parameter API (currently for TLV related to message concatenation case)
+- Modify Optional Parameter API (currently for TLV related to message 
+  concatenation case)
+- Add ServerResponseDeliveryListener (listener to receive success or failure 
+  event of submit_sm_resp/submit_multi_resp delivery)
