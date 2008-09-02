@@ -207,7 +207,7 @@ public class DeliveryReceipt {
         sBuf.append(" ");
         sBuf.append(DELREC_STAT + ":" + finalStatus);
         sBuf.append(" ");
-        sBuf.append(DELREC_STAT + ":" + error);
+        sBuf.append(DELREC_ERR + ":" + error);
         sBuf.append(" ");
         sBuf.append(DELREC_TEXT.toLowerCase() + ":" + text);
         return sBuf.toString();
