@@ -14,6 +14,8 @@
  */
 package org.jsmpp.util;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Random;
 
 import org.jsmpp.PDUStringException;
@@ -27,8 +29,16 @@ import org.jsmpp.PDUStringException;
  * 
  */
 public class RandomMessageIDGenerator implements MessageIDGenerator {
-    private Random random = new Random();
-
+    private Random random;
+    
+    public RandomMessageIDGenerator() {
+        try {
+            random = SecureRandom.getInstance("SHA1PRNG");
+        } catch (NoSuchAlgorithmException e) {
+            random = new Random();
+        }
+    }
+    
     /* (non-Javadoc)
      * @see org.jsmpp.util.MessageIDGenerator#newMessageId()
      */
