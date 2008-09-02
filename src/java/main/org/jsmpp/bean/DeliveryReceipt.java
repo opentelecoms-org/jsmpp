@@ -182,7 +182,7 @@ public class DeliveryReceipt {
      * @param text the text to set.
      */
     public void setText(String text) {
-        if (text.length() > 20) {
+        if (text != null && text.length() > 20) {
             this.text = text.substring(0, 20);
         } else {
             this.text = text;
@@ -209,7 +209,7 @@ public class DeliveryReceipt {
         sBuf.append(" ");
         sBuf.append(DELREC_STAT + ":" + error);
         sBuf.append(" ");
-        sBuf.append(DELREC_TEXT + ":" + text);
+        sBuf.append(DELREC_TEXT.toLowerCase() + ":" + text);
         return sBuf.toString();
     }
 

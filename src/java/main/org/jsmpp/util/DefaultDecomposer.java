@@ -702,8 +702,13 @@ public class DefaultDecomposer implements PDUDecomposer {
     private static String getDeliveryReceiptTextValue(String source) {
         String tmpAttr = DeliveryReceipt.DELREC_TEXT + ":";
         int startIndex = source.indexOf(tmpAttr);
-        if (startIndex < 0)
+        if (startIndex < 0) {
+            tmpAttr = DeliveryReceipt.DELREC_TEXT.toLowerCase() + ":";
+            startIndex = source.indexOf(tmpAttr);
+        }
+        if (startIndex < 0) {
             return null;
+        }
         startIndex = startIndex + tmpAttr.length();
         return source.substring(startIndex);
     }
