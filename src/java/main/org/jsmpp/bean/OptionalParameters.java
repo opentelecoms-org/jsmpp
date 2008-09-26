@@ -88,7 +88,7 @@ public class OptionalParameters {
      * @return the optional parameter.
      */
     public static OptionalParameter.Byte newSarTotalSegments(int value) {
-        return newSarSegmentSeqnum((byte)value);
+        return newSarTotalSegments((byte)value);
     }
     
     public static OptionalParameter deserialize(final short tagCode, byte[] content) {
