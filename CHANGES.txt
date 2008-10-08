@@ -20,3 +20,13 @@ Changes:
   event of submit_sm_resp/submit_multi_resp delivery)
 - Change license from LGPL to "Apache License, Version 2.0"
 - Add license notice on every sources.
+
+2.0 beta 5
+- Bug fix for type on OptionalParameters class
+- Update the SessionState way to return the value from:
+  1. isBound()
+  2. isTransmittable()
+  3. isReceiveable()
+- Add examples for auto-reconnect gateway
+  it can be found on org.jsmpp.examples.gateway
+  
