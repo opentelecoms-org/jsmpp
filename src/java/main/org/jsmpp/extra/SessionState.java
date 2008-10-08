@@ -13,62 +13,47 @@ public enum SessionState {
     /**
      * Open, means connection has established but not bounded.
      */
-    OPEN(false),
+    OPEN,
 
     /**
      * Bound transmitter, means bound transmit has been initiated.
      */
-    BOUND_TX(true, true, false),
+    BOUND_TX,
 
     /**
      * Bound receiver, means bound receive has been initiated.
      */
-    BOUND_RX(true, false, true),
+    BOUND_RX,
 
     /**
      * Bound transceiver, means bound transceive has been initiated.
      */
-    BOUND_TRX(true, true, true),
+    BOUND_TRX,
 
     /**
      * Unbound, means unbound has been initiated but the connection hasn't been
      * closed.
      */
-    UNBOUND(false),
+    UNBOUND,
 
     /**
      * There is no connection at all.
      */
-    CLOSED(false),
+    CLOSED,
 
     /**
      * Outbound, means the session is in outbound state, ready to initiate
      * bound.
      */
-    OUTBOUND(false);
-
-    private boolean bound;
-    private boolean transmitable;
-    private boolean receiveable;
-
-    private SessionState(boolean bound, boolean transmitable,
-            boolean receiveable) {
-        this.bound = bound;
-        this.transmitable = transmitable;
-        this.receiveable = receiveable;
-    }
-
-    private SessionState(boolean bound) {
-        this(bound, false, false);
-    }
+    OUTBOUND;
 
     /**
-     * Check whether the session state is bound or not.
+     * Check whether the session state is bound.
      * 
      * @return <tt>true</tt> if session state is bound state
      */
     public boolean isBound() {
-        return bound;
+        return equals(BOUND_RX) || equals(BOUND_TX) || equals(BOUND_TRX);
     }
 
     /**
@@ -77,7 +62,7 @@ public enum SessionState {
      * @return <tt>true</tt> if session is transmittable.
      */
     public boolean isTransmittable() {
-        return transmitable;
+        return equals(BOUND_TX) || equals(BOUND_TRX);
     }
 
     /**
@@ -86,6 +71,6 @@ public enum SessionState {
      * @return <tt>true</tt> if session is receivable.
      */
     public boolean isReceivable() {
-        return receiveable;
+        return equals(BOUND_RX) || equals(BOUND_TRX);
     }
 }
