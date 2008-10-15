@@ -31,3 +31,4 @@ Changes:
   it can be found on org.jsmpp.examples.gateway
 - Fix the destination addresses on SMPPSession#submitMultiple
   Some classes and interfaces created to support the bug fixes.
+- Fix the date parsing on delivery receipt
