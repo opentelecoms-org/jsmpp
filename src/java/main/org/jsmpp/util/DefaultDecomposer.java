@@ -672,7 +672,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      * 
      * @param date in <tt>String</tt> format.
      * @return
-     * @throws NumberFormatException if there is containt non number on
+     * @throws NumberFormatException if there is contains non number on
      *         <code>date</code> parameter.
      * @throws IndexOutOfBoundsException if the date length in <tt>String</tt>
      *         format is less than 10.
@@ -685,10 +685,11 @@ public class DefaultDecomposer implements PDUDecomposer {
         int hour = Integer.parseInt(date.substring(6, 8));
         int minute = Integer.parseInt(date.substring(8, 10));
         Calendar cal = Calendar.getInstance();
-        cal.set(year, month - 1, day, hour, minute, 0);
+        cal.set(2000 + year, month - 1, day, hour, minute, 0);
+        cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
     }
-
+    
     /**
      * Get the delivery receipt attribute value.
      * 

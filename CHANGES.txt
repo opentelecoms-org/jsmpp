@@ -29,4 +29,5 @@ Changes:
   3. isReceiveable()
 - Add examples for auto-reconnect gateway
   it can be found on org.jsmpp.examples.gateway
-  
+- Fix the destination addresses on SMPPSession#submitMultiple
+  Some classes and interfaces created to support the bug fixes.

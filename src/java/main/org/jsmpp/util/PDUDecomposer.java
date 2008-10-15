@@ -15,7 +15,6 @@
 package org.jsmpp.util;
 
 import org.jsmpp.InvalidNumberOfDestinationsException;
-import org.jsmpp.PDUException;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.Bind;
