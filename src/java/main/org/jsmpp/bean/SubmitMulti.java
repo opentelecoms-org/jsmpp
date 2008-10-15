@@ -25,7 +25,7 @@ public class SubmitMulti extends Command {
     private byte sourceAddrTon;
     private byte sourceAddrNpi;
     private String sourceAddr;
-    private Address[] destAddresses;
+    private DestinationAddress[] destAddresses;
     private byte esmClass;
     private byte protocolId;
     private byte priorityFlag;
@@ -74,11 +74,11 @@ public class SubmitMulti extends Command {
         this.sourceAddr = sourceAddr;
     }
 
-    public Address[] getDestAddresses() {
+    public DestinationAddress[] getDestAddresses() {
         return destAddresses;
     }
 
-    public void setDestAddresses(Address[] destAddresses) {
+    public void setDestAddresses(DestinationAddress[] destAddresses) {
         this.destAddresses = destAddresses;
     }
 

@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.jsmpp.InvalidResponseException;
-import org.jsmpp.PDUStringException;
+import org.jsmpp.PDUException;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.ESMClass;
@@ -62,9 +62,9 @@ public class SimpleSubmitRegisteredExample {
              */
             
             System.out.println("Message submitted, message_id is " + messageId);
-        } catch (PDUStringException e) {
-            // Invalid string parameter
-            System.err.println("Invalid string parameter");
+        } catch (PDUException e) {
+            // Invalid PDU parameter
+            System.err.println("Invalid PDU parameter");
             e.printStackTrace();
         } catch (ResponseTimeoutException e) {
             // Response timeout

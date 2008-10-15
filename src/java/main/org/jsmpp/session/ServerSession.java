@@ -17,6 +17,7 @@ package org.jsmpp.session;
 import java.io.IOException;
 
 import org.jsmpp.InvalidResponseException;
+import org.jsmpp.PDUException;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
@@ -58,7 +59,7 @@ public interface ServerSession {
      * @param dataCoding is the data_coding.
      * @param shortMessage is the short_message.
      * @param optionalParameters is the optional parameters.
-     * @throws PDUStringException if there is invalid string found.
+     * @throws PDUException if there is invalid PDU parameter found.
      * @throws ResponseTimeoutException if timeout has been reach.
      * @throws InvalidResponseException if response is invalid.
      * @throws NegativeResponseException if negative response received.
@@ -70,7 +71,7 @@ public interface ServerSession {
             String destinationAddr, ESMClass esmClass, byte protocoId,
             byte priorityFlag, RegisteredDelivery registeredDelivery,
             DataCoding dataCoding, byte[] shortMessage,
-            OptionalParameter... optionalParameters) throws PDUStringException,
+            OptionalParameter... optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException;
 

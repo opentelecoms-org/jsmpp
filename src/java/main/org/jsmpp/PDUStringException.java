@@ -17,7 +17,7 @@ package org.jsmpp;
 import org.jsmpp.util.StringParameter;
 
 /**
- * Thrown if there is an invalid constaint for the PDU String parameter.
+ * Thrown if there is an invalid constraint for the PDU String parameter.
  * 
  * @author uudashr
  * @version 1.0

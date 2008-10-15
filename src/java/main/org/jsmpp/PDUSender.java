@@ -17,9 +17,9 @@ package org.jsmpp;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.jsmpp.bean.Address;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.DataCoding;
+import org.jsmpp.bean.DestinationAddress;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.MessageState;
@@ -372,13 +372,13 @@ public interface PDUSender {
     byte[] sendSubmiMulti(OutputStream os, int sequenceNumber,
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
-            Address[] destinationAddresses, ESMClass esmClass, byte protocolId,
-            byte priorityFlag, String scheduleDeliveryTime,
+            DestinationAddress[] destinationAddresses, ESMClass esmClass,
+            byte protocolId, byte priorityFlag, String scheduleDeliveryTime,
             String validityPeriod, RegisteredDelivery registeredDelivery,
             ReplaceIfPresentFlag replaceIfPresentFlag, DataCoding dataCoding,
             byte smDefaultMsgId, byte[] shortMessage,
             OptionalParameter... optionalParameters) throws PDUStringException,
-            IOException;
+            InvalidNumberOfDestinationsException, IOException;
 
     byte[] sendSubmitMultiResp(OutputStream os, int sequenceNumber,
             String messageId, UnsuccessDelivery... unsuccessDeliveries)

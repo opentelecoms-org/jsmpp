@@ -48,6 +48,12 @@ public enum StringParameter {
 	DESTINATION_ADDR(StringType.C_OCTEC_STRING, 0, 21, true, SMPPConstant.STAT_ESME_RINVSRCADR), 
 	SCHEDULE_DELIVERY_TIME(StringType.C_OCTEC_STRING, 0, 17, false, SMPPConstant.STAT_ESME_RINVSCHED), 
 	VALIDITY_PERIOD(StringType.C_OCTEC_STRING, 0, 17, false, SMPPConstant.STAT_ESME_RINVEXPIRY),
+	
+	/**
+	 * Validator for DL_NAME (Distribution List)
+	 */
+	DL_NAME(StringType.C_OCTEC_STRING, 0, 21, true, SMPPConstant.STAT_ESME_RINVDLNAME),
+	
 	/**
 	 * When validating final date is failed, then we should throw error with status 
 	 * STAT_ESME_RINVDFTMSGID, means that predefined message are not exist.

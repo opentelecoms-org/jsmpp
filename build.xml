@@ -9,7 +9,7 @@
     <property name="javadoc.dir" value="javadoc"/>
 
 	<property name="lib.dir" value="lib" />
-	<property name="project.version" value="2.0b_05" />
+	<property name="project.version" value="2.0b_06" />
     <property name="dist.versionname" value="jsmpp-${project.version}" />
 	<property name="dist.jar.filename" value="${dist.versionname}.jar" />
     <property name="dist.examples.jar.filename" value="jsmpp-examples.jar" />

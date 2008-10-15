@@ -17,6 +17,7 @@ package org.jsmpp.session;
 import java.io.IOException;
 
 import org.jsmpp.InvalidResponseException;
+import org.jsmpp.PDUException;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
@@ -37,14 +38,14 @@ public interface SMPPOperation {
     
     void unbindResp(int sequenceNumber) throws IOException;
     
-    DataSmResult dataSm(String serviceType,
-            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
-            String sourceAddr, TypeOfNumber destAddrTon,
-            NumberingPlanIndicator destAddrNpi, String destinationAddr,
-            ESMClass esmClass, RegisteredDelivery registeredDelivery,
-            DataCoding dataCoding, OptionalParameter... optionalParameters)
-            throws PDUStringException, ResponseTimeoutException,
-            InvalidResponseException, NegativeResponseException, IOException;
+    DataSmResult dataSm(String serviceType, TypeOfNumber sourceAddrTon,
+            NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
+            String destinationAddr, ESMClass esmClass,
+            RegisteredDelivery registeredDelivery, DataCoding dataCoding,
+            OptionalParameter... optionalParameters) throws PDUException,
+            ResponseTimeoutException, InvalidResponseException,
+            NegativeResponseException, IOException;
     
     void dataSmResp(int sequenceNumber, String messageId,
             OptionalParameter... optionalParameters) throws PDUStringException,

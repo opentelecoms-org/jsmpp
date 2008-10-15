@@ -18,7 +18,7 @@ import java.io.IOException;
 
 import org.apache.log4j.BasicConfigurator;
 import org.jsmpp.InvalidResponseException;
-import org.jsmpp.PDUStringException;
+import org.jsmpp.PDUException;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
@@ -78,7 +78,7 @@ public class AutoReconnectGateway implements Gateway {
             String scheduleDeliveryTime, String validityPeriod,
             RegisteredDelivery registeredDelivery, byte replaceIfPresentFlag,
             DataCoding dataCoding, byte smDefaultMsgId, byte[] shortMessage,
-            OptionalParameter... optionalParameters) throws PDUStringException,
+            OptionalParameter... optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException {
         

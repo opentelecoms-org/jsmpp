@@ -26,6 +26,7 @@ import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
 import org.jsmpp.InvalidCommandLengthException;
 import org.jsmpp.InvalidResponseException;
+import org.jsmpp.PDUException;
 import org.jsmpp.PDUReader;
 import org.jsmpp.PDUSender;
 import org.jsmpp.PDUStringException;
@@ -233,7 +234,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			enquireLinkSender = new EnquireLinkSender();
 			enquireLinkSender.start();
 			return smscSystemId;
-		} catch (PDUStringException e) {
+		} catch (PDUException e) {
 		    logger.error("Failed sending bind command", e);
 		    throw new IOException("Failed sending bind since some string parameter area invalid : " + e.getMessage());
 		} catch (NegativeResponseException e) {
@@ -271,7 +272,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	 * @param addressRange is the address range.
 	 * @param timeout is the max time waiting for bind response. 
 	 * @return SMSC system id.
-	 * @throws PDUStringException if we enter invalid bind parameter(s).
+	 * @throws PDUException if we enter invalid bind parameter(s).
 	 * @throws ResponseTimeoutException if there is no valid response after defined millisecond.
 	 * @throws InvalidResponseException if there is invalid response found.
 	 * @throws NegativeResponseException if we receive negative response.
@@ -281,7 +282,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			String password, String systemType,
 			InterfaceVersion interfaceVersion, TypeOfNumber addrTon,
 			NumberingPlanIndicator addrNpi, String addressRange, long timeout)
-			throws PDUStringException, ResponseTimeoutException,
+			throws PDUException, ResponseTimeoutException,
 			InvalidResponseException, NegativeResponseException, IOException {
 	    
 	    BindCommandTask task = new BindCommandTask(pduSender(), bindType,
@@ -303,7 +304,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
             String scheduleDeliveryTime, String validityPeriod,
             RegisteredDelivery registeredDelivery, byte replaceIfPresentFlag,
             DataCoding dataCoding, byte smDefaultMsgId, byte[] shortMessage,
-            OptionalParameter... optionalParameters) throws PDUStringException,
+            OptionalParameter... optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException {
     	
@@ -329,7 +330,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
             RegisteredDelivery registeredDelivery,
             ReplaceIfPresentFlag replaceIfPresentFlag, DataCoding dataCoding,
             byte smDefaultMsgId, byte[] shortMessage,
-            OptionalParameter[] optionalParameters) throws PDUStringException,
+            OptionalParameter[] optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException {
         SubmitMultiCommandTask task = new SubmitMultiCommandTask(pduSender(),
@@ -351,9 +352,8 @@ public class SMPPSession extends AbstractSession implements ClientSession {
      */
     public QuerySmResult queryShortMessage(String messageId,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
-            String sourceAddr) throws PDUStringException,
-            ResponseTimeoutException, InvalidResponseException,
-            NegativeResponseException, IOException {
+            String sourceAddr) throws PDUException, ResponseTimeoutException,
+            InvalidResponseException, NegativeResponseException, IOException {
 
         QuerySmCommandTask task = new QuerySmCommandTask(pduSender(),
                 messageId, sourceAddrTon, sourceAddrNpi, sourceAddr);
@@ -378,9 +378,9 @@ public class SMPPSession extends AbstractSession implements ClientSession {
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, String scheduleDeliveryTime,
             String validityPeriod, RegisteredDelivery registeredDelivery,
-            byte smDefaultMsgId, byte[] shortMessage)
-            throws PDUStringException, ResponseTimeoutException,
-            InvalidResponseException, NegativeResponseException, IOException {
+            byte smDefaultMsgId, byte[] shortMessage) throws PDUException,
+            ResponseTimeoutException, InvalidResponseException,
+            NegativeResponseException, IOException {
         ReplaceSmCommandTask replaceSmTask = new ReplaceSmCommandTask(
                 pduSender(), messageId, sourceAddrTon, sourceAddrNpi,
                 sourceAddr, scheduleDeliveryTime, validityPeriod,
@@ -396,7 +396,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, TypeOfNumber destAddrTon,
             NumberingPlanIndicator destAddrNpi, String destinationAddress)
-            throws PDUStringException, ResponseTimeoutException,
+            throws PDUException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException {
         CancelSmCommandTask task = new CancelSmCommandTask(pduSender(),
                 serviceType, messageId, sourceAddrTon, sourceAddrNpi,
@@ -404,7 +404,6 @@ public class SMPPSession extends AbstractSession implements ClientSession {
         
         executeSendCommand(task, getTransactionTimer());
     }
-    
     
     public MessageReceiverListener getMessageReceiverListener() {
         return messageReceiverListener;

@@ -17,7 +17,7 @@ package org.jsmpp.session;
 import java.io.IOException;
 
 import org.jsmpp.InvalidResponseException;
-import org.jsmpp.PDUStringException;
+import org.jsmpp.PDUException;
 import org.jsmpp.bean.Address;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
@@ -67,7 +67,7 @@ public interface ClientSession extends Session {
      * @param optionalParameters is the optional parameters.
      * @return the message_id to identified the submitted short message for
      *         later use (delivery receipt, QUERY_SM, CANCEL_SM, REPLACE_SM).
-     * @throws PDUStringException if there is invalid string found.
+     * @throws PDUException if there is invalid PDU parameter found..
      * @throws ResponseTimeoutException if timeout has been reach.
      * @throws InvalidResponseException if response is invalid.
      * @throws NegativeResponseException if negative response received.
@@ -81,7 +81,7 @@ public interface ClientSession extends Session {
             String validityPeriod, RegisteredDelivery registeredDelivery,
             byte replaceIfPresentFlag, DataCoding dataCoding,
             byte smDefaultMsgId, byte[] shortMessage,
-            OptionalParameter... optionalParameters) throws PDUStringException,
+            OptionalParameter... optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException;
 
@@ -109,7 +109,7 @@ public interface ClientSession extends Session {
      * @param shortMessage is the short_message.
      * @param optionalParameters is the optional parameters.
      * @return the message_id and the un-success deliveries.
-     * @throws PDUStringException if there is invalid string found.
+     * @throws PDUException if there is invalid PDU parameter found.
      * @throws ResponseTimeoutException if timeout has been reach.
      * @throws InvalidResponseException if response is invalid.
      * @throws NegativeResponseException if negative response received.
@@ -123,7 +123,7 @@ public interface ClientSession extends Session {
             RegisteredDelivery registeredDelivery,
             ReplaceIfPresentFlag replaceIfPresentFlag, DataCoding dataCoding,
             byte smDefaultMsgId, byte[] shortMessage,
-            OptionalParameter[] optionalParameters) throws PDUStringException,
+            OptionalParameter[] optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException;
 
@@ -138,19 +138,18 @@ public interface ClientSession extends Session {
      * @param sourceAddrNpi is the source_addr_npi.
      * @param sourceAddr is the source_addr.
      * @return the result of query short message.
-     * @throws PDUStringException if there is invalid string found.
+     * @throws PDUException if there is invalid PDU parameter found.
      * @throws ResponseTimeoutException if timeout has been reach.
      * @throws InvalidResponseException if response is invalid.
      * @throws NegativeResponseException if negative response received.
      * @throws IOException if there is an I/O error found.
      */
-    QuerySmResult queryShortMessage(String messageId, TypeOfNumber sourceAddrTon,
-            NumberingPlanIndicator sourceAddrNpi, String sourceAddr)
-            throws PDUStringException, ResponseTimeoutException,
+    QuerySmResult queryShortMessage(String messageId,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
+            String sourceAddr) throws PDUException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException;
 
     /**
-     * 
      * Cancel the previous submitted short message. This method will blocks
      * until response received or timeout reached. This method is simplify
      * operations of sending CANCEL_SM and receiving CANCEL_SM_RESP.
@@ -163,7 +162,7 @@ public interface ClientSession extends Session {
      * @param destAddrTon is the dest_addr_ton.
      * @param destAddrNpi is the dest_addr_npi.
      * @param destinationAddress is destination_address.
-     * @throws PDUStringException if there is invalid string found.
+     * @throws PDUException if there is invalid PDU parameter found.
      * @throws ResponseTimeoutException if timeout has been reach.
      * @throws InvalidResponseException if response is invalid.
      * @throws NegativeResponseException if negative response received.
@@ -173,7 +172,7 @@ public interface ClientSession extends Session {
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, TypeOfNumber destAddrTon,
             NumberingPlanIndicator destAddrNpi, String destinationAddress)
-            throws PDUStringException, ResponseTimeoutException,
+            throws PDUException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException;
 
     /**
@@ -190,7 +189,7 @@ public interface ClientSession extends Session {
      * @param registeredDelivery is the registered_delivery.
      * @param smDefaultMsgId is the sm_default_msg_id.
      * @param shortMessage is the short_message.
-     * @throws PDUStringException if there is invalid string found.
+     * @throws PDUException if there is invalid PDU parameter found.
      * @throws ResponseTimeoutException if timeout has been reach.
      * @throws InvalidResponseException if response is invalid.
      * @throws NegativeResponseException if negative response received.
@@ -200,7 +199,6 @@ public interface ClientSession extends Session {
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             String scheduleDeliveryTime, String validityPeriod,
             RegisteredDelivery registeredDelivery, byte smDefaultMsgId,
-            byte[] shortMessage) throws PDUStringException,
-            ResponseTimeoutException, InvalidResponseException,
-            NegativeResponseException, IOException;
+            byte[] shortMessage) throws PDUException, ResponseTimeoutException,
+            InvalidResponseException, NegativeResponseException, IOException;
 }

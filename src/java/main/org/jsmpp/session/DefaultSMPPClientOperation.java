@@ -17,6 +17,7 @@ package org.jsmpp.session;
 import java.io.IOException;
 
 import org.jsmpp.InvalidResponseException;
+import org.jsmpp.PDUException;
 import org.jsmpp.PDUSender;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.Address;
@@ -52,7 +53,7 @@ public class DefaultSMPPClientOperation extends AbstractSMPPOperation implements
     public BindResult bind(BindType bindType, String systemId, String password,
             String systemType, InterfaceVersion interfaceVersion,
             TypeOfNumber addrTon, NumberingPlanIndicator addrNpi,
-            String addressRange, long timeout) throws PDUStringException,
+            String addressRange, long timeout) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException {
 
@@ -72,7 +73,7 @@ public class DefaultSMPPClientOperation extends AbstractSMPPOperation implements
             String validityPeriod, RegisteredDelivery registeredDelivery,
             byte replaceIfPresentFlag, DataCoding dataCoding,
             byte smDefaultMsgId, byte[] shortMessage,
-            OptionalParameter... optionalParameters) throws PDUStringException,
+            OptionalParameter... optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException {
 
@@ -96,7 +97,7 @@ public class DefaultSMPPClientOperation extends AbstractSMPPOperation implements
             RegisteredDelivery registeredDelivery,
             ReplaceIfPresentFlag replaceIfPresentFlag, DataCoding dataCoding,
             byte smDefaultMsgId, byte[] shortMessage,
-            OptionalParameter[] optionalParameters) throws PDUStringException,
+            OptionalParameter[] optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException {
 
@@ -116,7 +117,7 @@ public class DefaultSMPPClientOperation extends AbstractSMPPOperation implements
 
     public QuerySmResult querySm(String messageId, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr)
-            throws PDUStringException, ResponseTimeoutException,
+            throws PDUException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException {
 
         QuerySmCommandTask task = new QuerySmCommandTask(pduSender(),
@@ -139,8 +140,9 @@ public class DefaultSMPPClientOperation extends AbstractSMPPOperation implements
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, TypeOfNumber destAddrTon,
             NumberingPlanIndicator destAddrNpi, String destinationAddress)
-            throws PDUStringException, ResponseTimeoutException,
+            throws PDUException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException {
+        
         CancelSmCommandTask task = new CancelSmCommandTask(pduSender(),
                 serviceType, messageId, sourceAddrTon, sourceAddrNpi,
                 sourceAddr, destAddrTon, destAddrNpi, destinationAddress);
@@ -152,9 +154,10 @@ public class DefaultSMPPClientOperation extends AbstractSMPPOperation implements
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             String scheduleDeliveryTime, String validityPeriod,
             RegisteredDelivery registeredDelivery, byte smDefaultMsgId,
-            byte[] shortMessage) throws PDUStringException,
+            byte[] shortMessage) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException {
+        
         ReplaceSmCommandTask replaceSmTask = new ReplaceSmCommandTask(
                 pduSender(), messageId, sourceAddrTon, sourceAddrNpi,
                 sourceAddr, scheduleDeliveryTime, validityPeriod,

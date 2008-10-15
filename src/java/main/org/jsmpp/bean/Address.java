@@ -18,10 +18,12 @@ package org.jsmpp.bean;
 
 
 /**
+ * This are SME (Short Message Entity) Address.
+ * 
  * @author uudashr
  *
  */
-public class Address {
+public class Address implements DestinationAddress {
     private TypeOfNumber typeOfNumber;
     private NumberingPlanIndicator numberingPlanIndicator;
     private String address;
@@ -37,6 +39,10 @@ public class Address {
         this(TypeOfNumber.valueOf(typeOfNumber), 
                 NumberingPlanIndicator.valueOf(numberingPlanIndicator), 
                 address);
+    }
+    
+    public Flag getFlag() {
+        return Flag.SME_ADDRESS;
     }
     
     public TypeOfNumber getTypeOfNumber() {

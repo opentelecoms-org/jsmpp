@@ -14,8 +14,9 @@
  */
 package org.jsmpp.util;
 
+import org.jsmpp.InvalidNumberOfDestinationsException;
 import org.jsmpp.PDUStringException;
-import org.jsmpp.bean.Address;
+import org.jsmpp.bean.DestinationAddress;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.UnsuccessDelivery;
 
@@ -192,12 +193,12 @@ public interface PDUComposer {
 
     byte[] submitMulti(int sequenceNumber, String serviceType,
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
-            Address[] destinationAddresses, byte esmClass, byte protocolId,
+            DestinationAddress[] destinationAddresses, byte esmClass, byte protocolId,
             byte priorityFlag, String scheduleDeliveryTime,
             String validityPeriod, byte registeredDelivery,
             byte replaceIfPresentFlag, byte dataCoding, byte smDefaultMsgId,
             byte[] shortMessage, OptionalParameter... optionalParameters)
-            throws PDUStringException;
+            throws PDUStringException, InvalidNumberOfDestinationsException;
 
     byte[] submitMultiResp(int sequenceNumber, String messageId,
             UnsuccessDelivery... unsuccessDeliveries) throws PDUStringException;

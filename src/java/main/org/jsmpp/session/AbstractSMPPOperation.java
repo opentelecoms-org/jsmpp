@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 
 import org.jsmpp.InvalidResponseException;
+import org.jsmpp.PDUException;
 import org.jsmpp.PDUSender;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
@@ -77,14 +78,14 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
      * @param task is the task.
      * @param timeout is the timeout in millisecond.
      * @return the command response.
-     * @throws PDUStringException if there is invalid PDU String found.
+     * @throws PDUException if there is invalid PDU parameter found.
      * @throws ResponseTimeoutException if the response has reach it timeout.
      * @throws InvalidResponseException if invalid response found.
      * @throws NegativeResponseException if the negative response found.
      * @throws IOException if there is an IO error found.
      */
     protected Command executeSendCommand(SendCommandTask task, long timeout)
-            throws PDUStringException, ResponseTimeoutException,
+            throws PDUException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException {
         
         int seqNum = sequence.nextValue();
@@ -134,7 +135,7 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
         
         try {
             executeSendCommand(task, transactionTimer);
-        } catch (PDUStringException e) {
+        } catch (PDUException e) {
             // exception should be never caught since we didn't send any string parameter.
             logger.warn("PDU String should be always valid", e);
         } catch (NegativeResponseException e) {
@@ -147,15 +148,14 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
         pduSender.sendUnbindResp(connection().getOutputStream(), SMPPConstant.STAT_ESME_ROK, sequenceNumber);
     }
     
-    public DataSmResult dataSm(String serviceType,
-            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
-            String sourceAddr, TypeOfNumber destAddrTon,
-            NumberingPlanIndicator destAddrNpi, String destinationAddr,
-            ESMClass esmClass, RegisteredDelivery registeredDelivery,
-            DataCoding dataCoding, OptionalParameter... optionalParameters)
-            throws PDUStringException, ResponseTimeoutException,
-            InvalidResponseException, NegativeResponseException, IOException {
-        
+    public DataSmResult dataSm(String serviceType, TypeOfNumber sourceAddrTon,
+            NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
+            String destinationAddr, ESMClass esmClass,
+            RegisteredDelivery registeredDelivery, DataCoding dataCoding,
+            OptionalParameter... optionalParameters) throws PDUException,
+            ResponseTimeoutException, InvalidResponseException,
+            NegativeResponseException, IOException {
         
         DataSmCommandTask task = new DataSmCommandTask(pduSender,
                 serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr,
@@ -177,7 +177,7 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
         EnquireLinkCommandTask task = new EnquireLinkCommandTask(pduSender);
         try {
             executeSendCommand(task, getTransactionTimer());
-        } catch (PDUStringException e) {
+        } catch (PDUException e) {
             // should never happen, since it doesn't have any String parameter.
             logger.warn("PDU String should be always valid", e);
         } catch (NegativeResponseException e) {

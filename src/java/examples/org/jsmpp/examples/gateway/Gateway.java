@@ -17,7 +17,7 @@ package org.jsmpp.examples.gateway;
 import java.io.IOException;
 
 import org.jsmpp.InvalidResponseException;
-import org.jsmpp.PDUStringException;
+import org.jsmpp.PDUException;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.NumberingPlanIndicator;
@@ -59,7 +59,7 @@ public interface Gateway {
      * @param shortMessage
      * @param optionalParameters
      * @return
-     * @throws PDUStringException
+     * @throws PDUException
      * @throws ResponseTimeoutException
      * @throws InvalidResponseException
      * @throws NegativeResponseException
@@ -73,7 +73,7 @@ public interface Gateway {
             String scheduleDeliveryTime, String validityPeriod,
             RegisteredDelivery registeredDelivery, byte replaceIfPresentFlag,
             DataCoding dataCoding, byte smDefaultMsgId, byte[] shortMessage,
-            OptionalParameter... optionalParameters) throws PDUStringException,
+            OptionalParameter... optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException;
 }

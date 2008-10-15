@@ -17,6 +17,7 @@ package org.jsmpp.session;
 import java.io.IOException;
 
 import org.jsmpp.InvalidResponseException;
+import org.jsmpp.PDUException;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.Address;
 import org.jsmpp.bean.BindType;
@@ -40,7 +41,7 @@ public interface SMPPClientOperation extends SMPPOperation {
     BindResult bind(BindType bindType, String systemId, String password,
             String systemType, InterfaceVersion interfaceVersion,
             TypeOfNumber addrTon, NumberingPlanIndicator addrNpi,
-            String addressRange, long timeout) throws PDUStringException,
+            String addressRange, long timeout) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException;
 
@@ -52,7 +53,7 @@ public interface SMPPClientOperation extends SMPPOperation {
             String validityPeriod, RegisteredDelivery registeredDelivery,
             byte replaceIfPresentFlag, DataCoding dataCoding,
             byte smDefaultMsgId, byte[] shortMessage,
-            OptionalParameter... optionalParameters) throws PDUStringException,
+            OptionalParameter... optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException;
 
@@ -64,29 +65,28 @@ public interface SMPPClientOperation extends SMPPOperation {
             RegisteredDelivery registeredDelivery,
             ReplaceIfPresentFlag replaceIfPresentFlag, DataCoding dataCoding,
             byte smDefaultMsgId, byte[] shortMessage,
-            OptionalParameter[] optionalParameters) throws PDUStringException,
+            OptionalParameter[] optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException;
 
     QuerySmResult querySm(String messageId, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr)
-            throws PDUStringException, ResponseTimeoutException,
+            throws PDUException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException;
 
     void cancelSm(String serviceType, String messageId,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, TypeOfNumber destAddrTon,
             NumberingPlanIndicator destAddrNpi, String destinationAddress)
-            throws PDUStringException, ResponseTimeoutException,
+            throws PDUException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException;
 
     void replaceSm(String messageId, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             String scheduleDeliveryTime, String validityPeriod,
             RegisteredDelivery registeredDelivery, byte smDefaultMsgId,
-            byte[] shortMessage) throws PDUStringException,
-            ResponseTimeoutException, InvalidResponseException,
-            NegativeResponseException, IOException;
+            byte[] shortMessage) throws PDUException, ResponseTimeoutException,
+            InvalidResponseException, NegativeResponseException, IOException;
 
     void deliverSmResp(int sequenceNumber) throws IOException;
 }

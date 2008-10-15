@@ -17,7 +17,7 @@ package org.jsmpp.session;
 import java.io.IOException;
 
 import org.jsmpp.InvalidResponseException;
-import org.jsmpp.PDUStringException;
+import org.jsmpp.PDUException;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.NumberingPlanIndicator;
@@ -76,7 +76,7 @@ public interface Session {
      * @param dataCoding is the data_coding.
      * @param optionalParameters is the optional parameters.
      * @return the response/result of DATA_SM.
-     * @throws PDUStringException if there is invalid string found.
+     * @throws PDUException if there is invalid PDU parameter found.
      * @throws ResponseTimeoutException if timeout has been reached.
      * @throws InvalidResponseException if response is invalid.
      * @throws NegativeResponseException if negative response received.
@@ -87,7 +87,7 @@ public interface Session {
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
             String destinationAddr, ESMClass esmClass,
             RegisteredDelivery registeredDelivery, DataCoding dataCoding,
-            OptionalParameter... optionalParameters) throws PDUStringException,
+            OptionalParameter... optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException;
     

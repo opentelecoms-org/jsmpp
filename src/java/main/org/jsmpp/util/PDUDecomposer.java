@@ -14,6 +14,8 @@
  */
 package org.jsmpp.util;
 
+import org.jsmpp.InvalidNumberOfDestinationsException;
+import org.jsmpp.PDUException;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.Bind;
@@ -255,7 +257,8 @@ public interface PDUDecomposer {
      */
     CancelSmResp cancelSmResp(byte[] data);
     
-    SubmitMulti submitMulti(byte[] data) throws PDUStringException;
+    SubmitMulti submitMulti(byte[] data) throws PDUStringException,
+            InvalidNumberOfDestinationsException;
     
     SubmitMultiResp submitMultiResp(byte[] data) throws PDUStringException;
     

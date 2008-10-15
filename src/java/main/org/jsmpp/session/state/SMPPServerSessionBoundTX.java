@@ -16,6 +16,7 @@ package org.jsmpp.session.state;
 
 import java.io.IOException;
 
+import org.jsmpp.InvalidNumberOfDestinationsException;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.CancelSm;
@@ -75,6 +76,8 @@ class SMPPServerSessionBoundTX extends SMPPServerSessionBound implements
             responseHandler.sendSubmitMultiResponse(result, pduHeader.getSequenceNumber());
         } catch (PDUStringException e) {
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
+        } catch (InvalidNumberOfDestinationsException e) {
+            responseHandler.sendNegativeResponse(pduHeader.getCommandId(), SMPPConstant.STAT_ESME_RINVNUMDESTS, pduHeader.getSequenceNumber());
         } catch (ProcessRequestException e) {
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
         }

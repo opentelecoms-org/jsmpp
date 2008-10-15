@@ -17,6 +17,7 @@ package org.jsmpp.session;
 import java.io.IOException;
 
 import org.jsmpp.InvalidResponseException;
+import org.jsmpp.PDUException;
 import org.jsmpp.PDUSender;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.DataCoding;
@@ -49,7 +50,7 @@ public class DefaultSMPPServerOperation extends AbstractSMPPOperation implements
             String destinationAddr, ESMClass esmClass, byte protocoId,
             byte priorityFlag, RegisteredDelivery registeredDelivery,
             DataCoding dataCoding, byte[] shortMessage,
-            OptionalParameter... optionalParameters) throws PDUStringException,
+            OptionalParameter... optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException {
 
@@ -66,7 +67,7 @@ public class DefaultSMPPServerOperation extends AbstractSMPPOperation implements
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, TypeOfNumber esmeAddrTon,
             NumberingPlanIndicator esmeAddrNpi, String esmeAddr,
-            OptionalParameter... optionalParameters) throws PDUStringException,
+            OptionalParameter... optionalParameters) throws PDUException,
             IOException {
         pduSender().sendAlertNotification(connection().getOutputStream(),
                 sequenceNumber, sourceAddrTon.value(), sourceAddrNpi.value(),
@@ -76,7 +77,7 @@ public class DefaultSMPPServerOperation extends AbstractSMPPOperation implements
 
     public void querySmResp(String messageId, String finalDate,
             MessageState messageState, byte errorCode, int sequenceNumber)
-            throws PDUStringException, IOException {
+            throws PDUException, IOException {
         pduSender().sendQuerySmResp(connection().getOutputStream(),
                 sequenceNumber, messageId, finalDate, messageState, errorCode);
     }
@@ -87,14 +88,14 @@ public class DefaultSMPPServerOperation extends AbstractSMPPOperation implements
     }
 
     public void submitMultiResp(int sequenceNumber, String messageId,
-            UnsuccessDelivery... unsuccessDeliveries)
-            throws PDUStringException, IOException {
-        pduSender().sendSubmitMultiResp(connection().getOutputStream(), 
+            UnsuccessDelivery... unsuccessDeliveries) throws PDUException,
+            IOException {
+        pduSender().sendSubmitMultiResp(connection().getOutputStream(),
                 sequenceNumber, messageId, unsuccessDeliveries);
     }
 
     public void submitSmResp(MessageId messageId, int sequenceNumber)
-            throws PDUStringException, IOException {
+            throws PDUException, IOException {
         pduSender().sendSubmitSmResp(connection().getOutputStream(),
                 sequenceNumber, messageId.getValue());
     }

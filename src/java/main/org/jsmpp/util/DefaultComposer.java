@@ -14,12 +14,17 @@
  */
 package org.jsmpp.util;
 
+import org.jsmpp.InvalidNumberOfDestinationsException;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Address;
+import org.jsmpp.bean.DestinationAddress;
+import org.jsmpp.bean.DistributionList;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.bean.OptionalParameter.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of {@link PDUComposer}.
@@ -30,6 +35,8 @@ import org.jsmpp.bean.OptionalParameter.Tag;
  * 
  */
 public class DefaultComposer implements PDUComposer {
+    private static final Logger logger = LoggerFactory.getLogger(DefaultComposer.class);
+    
     public DefaultComposer() {
     }
 
@@ -475,12 +482,12 @@ public class DefaultComposer implements PDUComposer {
 
     public byte[] submitMulti(int sequenceNumber, String serviceType,
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
-            Address[] destinationAddresses, byte esmClass, byte protocolId,
+            DestinationAddress[] destinationAddresses, byte esmClass, byte protocolId,
             byte priorityFlag, String scheduleDeliveryTime,
             String validityPeriod, byte registeredDelivery,
             byte replaceIfPresentFlag, byte dataCoding, byte smDefaultMsgId,
             byte[] shortMessage, OptionalParameter... optionalParameters)
-            throws PDUStringException {
+            throws PDUStringException, InvalidNumberOfDestinationsException {
 
         StringValidator.validateString(serviceType,
                 StringParameter.SERVICE_TYPE);
@@ -491,19 +498,37 @@ public class DefaultComposer implements PDUComposer {
                 StringParameter.VALIDITY_PERIOD);
         StringValidator.validateString(shortMessage,
                 StringParameter.SHORT_MESSAGE);
-
+        
+        if (destinationAddresses.length > 255) {
+            throw new InvalidNumberOfDestinationsException(
+                    "Number of destination is invalid. Should be no more than 255. Actual number is "
+                            + destinationAddresses, destinationAddresses.length);
+        }
+        
         PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_SUBMIT_MULTI, 0,
                 sequenceNumber);
         buf.append(serviceType);
         buf.append(sourceAddrTon);
         buf.append(sourceAddrNpi);
         buf.append(sourceAddr);
-        for (Address destAddr : destinationAddresses) {
-            StringValidator.validateString(destAddr.getAddress(),
-                    StringParameter.DESTINATION_ADDR);
-            buf.append(destAddr.getTon());
-            buf.append(destAddr.getNpi());
-            buf.append(destAddr.getAddress());
+        
+        buf.append((byte)destinationAddresses.length);
+        for (DestinationAddress destAddr : destinationAddresses) {
+            buf.append(destAddr.getFlag().getValue());
+            if (destAddr instanceof Address) {
+                Address addr = (Address)destAddr;
+                StringValidator.validateString(addr.getAddress(),
+                        StringParameter.DESTINATION_ADDR);
+                buf.append(addr.getTon());
+                buf.append(addr.getNpi());
+                buf.append(addr.getAddress());
+            } else if (destAddr instanceof DistributionList) {
+                DistributionList dl = (DistributionList)destAddr;
+                StringValidator.validateString(dl.getName(), StringParameter.DL_NAME);
+            } else {
+                logger.warn("Unknown destination address flag: " + destAddr.getClass());
+            }
+            
         }
 
         buf.append(esmClass);
@@ -520,7 +545,7 @@ public class DefaultComposer implements PDUComposer {
         buf.appendAll(optionalParameters);
         return buf.toBytes();
     }
-
+    
     public byte[] submitMultiResp(int sequenceNumber, String messageId,
             UnsuccessDelivery... unsuccessDeliveries) throws PDUStringException {
         StringValidator.validateString(messageId, StringParameter.MESSAGE_ID);

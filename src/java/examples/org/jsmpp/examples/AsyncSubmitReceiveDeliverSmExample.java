@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.BasicConfigurator;
 import org.jsmpp.InvalidResponseException;
-import org.jsmpp.PDUStringException;
+import org.jsmpp.PDUException;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.BindType;
@@ -105,8 +105,8 @@ public class AsyncSubmitReceiveDeliverSmExample {
                     try {
                         String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "1616", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "628176504657", new ESMClass(), (byte)0, (byte)1,  timeFormatter.format(new Date()), null, registeredDelivery, (byte)0, new GeneralDataCoding(false, true, MessageClass.CLASS1, Alphabet.ALPHA_DEFAULT), (byte)0, "jSMPP simplify SMPP on Java platform".getBytes());
                         System.out.println("Message submitted, message_id is " + messageId);
-                    } catch (PDUStringException e) {
-                        System.err.println("Invalid string parameter");
+                    } catch (PDUException e) {
+                        System.err.println("Invalid PDU parameter");
                         e.printStackTrace();
                         counter.incrementAndGet();
                     } catch (ResponseTimeoutException e) {

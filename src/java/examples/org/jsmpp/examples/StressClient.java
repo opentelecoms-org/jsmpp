@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.jsmpp.InvalidResponseException;
+import org.jsmpp.PDUException;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.BindType;
@@ -156,7 +157,7 @@ public class StressClient implements Runnable {
                     if (maxDelay.get() < delay) {
                         maxDelay.set(delay);
                     }
-                } catch (PDUStringException e) {
+                } catch (PDUException e) {
                     logger.error("Failed submit short message '" + message + "'", e);
                     shutdown();
                 } catch (ResponseTimeoutException e) {

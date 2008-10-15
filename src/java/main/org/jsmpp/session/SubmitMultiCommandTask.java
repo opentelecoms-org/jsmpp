@@ -17,10 +17,10 @@ package org.jsmpp.session;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.jsmpp.PDUException;
 import org.jsmpp.PDUSender;
-import org.jsmpp.PDUStringException;
-import org.jsmpp.bean.Address;
 import org.jsmpp.bean.DataCoding;
+import org.jsmpp.bean.DestinationAddress;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
@@ -37,7 +37,7 @@ public class SubmitMultiCommandTask extends AbstractSendCommandTask {
     private TypeOfNumber sourceAddrTon;
     private NumberingPlanIndicator sourceAddrNpi;
     private String sourceAddr;
-    private Address[] destinationAddresses;
+    private DestinationAddress[] destinationAddresses;
     private ESMClass esmClass;
     private byte protocolId;
     private byte priorityFlag;
@@ -52,7 +52,7 @@ public class SubmitMultiCommandTask extends AbstractSendCommandTask {
     
     public SubmitMultiCommandTask(PDUSender pduSender, String serviceType,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
-            String sourceAddr, Address[] destinationAddresses,
+            String sourceAddr, DestinationAddress[] destinationAddresses,
             ESMClass esmClass, byte protocolId, byte priorityFlag,
             String scheduleDeliveryTime, String validityPeriod,
             RegisteredDelivery registeredDelivery,
@@ -79,7 +79,7 @@ public class SubmitMultiCommandTask extends AbstractSendCommandTask {
     }
     
     public void executeTask(OutputStream out, int sequenceNumber)
-            throws PDUStringException, IOException {
+            throws PDUException, IOException {
         pduSender.sendSubmiMulti(out, sequenceNumber, serviceType,
                 sourceAddrTon, sourceAddrNpi, sourceAddr, destinationAddresses,
                 esmClass, protocolId, priorityFlag, scheduleDeliveryTime,

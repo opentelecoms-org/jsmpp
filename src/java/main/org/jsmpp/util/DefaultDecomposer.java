@@ -19,6 +19,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.jsmpp.InvalidNumberOfDestinationsException;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.Address;
 import org.jsmpp.bean.AlertNotification;
@@ -32,6 +33,8 @@ import org.jsmpp.bean.DataSmResp;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.DeliverSmResp;
 import org.jsmpp.bean.DeliveryReceipt;
+import org.jsmpp.bean.DestinationAddress;
+import org.jsmpp.bean.DistributionList;
 import org.jsmpp.bean.EnquireLink;
 import org.jsmpp.bean.EnquireLinkResp;
 import org.jsmpp.bean.GenericNack;
@@ -50,6 +53,7 @@ import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.bean.Unbind;
 import org.jsmpp.bean.UnbindResp;
 import org.jsmpp.bean.UnsuccessDelivery;
+import org.jsmpp.bean.DestinationAddress.Flag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -501,7 +505,8 @@ public class DefaultDecomposer implements PDUDecomposer {
         return resp;
     }
 
-    public SubmitMulti submitMulti(byte[] data) throws PDUStringException {
+    public SubmitMulti submitMulti(byte[] data) throws PDUStringException,
+            InvalidNumberOfDestinationsException {
         SubmitMulti req = new SubmitMulti();
         SequentialBytesReader reader = new SequentialBytesReader(data);
         assignHeader(req, reader);
@@ -516,15 +521,28 @@ public class DefaultDecomposer implements PDUDecomposer {
                 StringParameter.SOURCE_ADDR);
 
         int totalDest = 0xff & reader.readByte();
-        Address[] destAddresses = new Address[totalDest];
+        if (totalDest > 255) {
+            throw new InvalidNumberOfDestinationsException(
+                    "Number of destination is invalid. Should be no more than 255. Actual number is "
+                            + totalDest, totalDest);
+        }
+        
+        DestinationAddress[] destAddresses = new DestinationAddress[totalDest];
         for (int i = 0; i < totalDest; i++) {
-            byte ton = reader.readByte();
-            byte npi = reader.readByte();
-            String addr = reader.readCString();
-            StringValidator.validateString(addr,
-                    StringParameter.DESTINATION_ADDR);
-            Address destAddr = new Address(ton, npi, addr);
-            destAddresses[i] = destAddr;
+            byte flag = reader.readByte();
+            if (flag == Flag.SME_ADDRESS.getValue()) {
+                byte ton = reader.readByte();
+                byte npi = reader.readByte();
+                String addr = reader.readCString();
+                StringValidator.validateString(addr,
+                        StringParameter.DESTINATION_ADDR);
+                Address destAddr = new Address(ton, npi, addr);
+                destAddresses[i] = destAddr;
+            } else if (flag == Flag.DISTRIBUTION_LIST.getValue()) {
+                destAddresses[i] = new DistributionList(reader.readCString());
+            } else {
+                logger.warn("Unknown destination address flag: " + flag);
+            }
         }
         req.setDestAddresses(destAddresses);
 

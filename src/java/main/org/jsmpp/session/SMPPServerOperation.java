@@ -17,7 +17,7 @@ package org.jsmpp.session;
 import java.io.IOException;
 
 import org.jsmpp.InvalidResponseException;
-import org.jsmpp.PDUStringException;
+import org.jsmpp.PDUException;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.MessageState;
@@ -42,7 +42,7 @@ public interface SMPPServerOperation extends SMPPOperation {
             String destinationAddr, ESMClass esmClass, byte protocoId,
             byte priorityFlag, RegisteredDelivery registeredDelivery,
             DataCoding dataCoding, byte[] shortMessage,
-            OptionalParameter... optionalParameters) throws PDUStringException,
+            OptionalParameter... optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException;
 
@@ -50,18 +50,18 @@ public interface SMPPServerOperation extends SMPPOperation {
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber esmeAddrTon, NumberingPlanIndicator esmeAddrNpi,
             String esmeAddr, OptionalParameter... optionalParameters)
-            throws PDUStringException, IOException;
+            throws PDUException, IOException;
 
     void submitSmResp(MessageId messageId, int sequenceNumber)
-            throws PDUStringException, IOException;
+            throws PDUException, IOException;
 
     void submitMultiResp(int sequenceNumber, String messageId,
-            UnsuccessDelivery... unsuccessDeliveries)
-            throws PDUStringException, IOException;
+            UnsuccessDelivery... unsuccessDeliveries) throws PDUException,
+            IOException;
 
     void querySmResp(String messageId, String finalDate,
             MessageState messageState, byte errorCode, int sequenceNumber)
-            throws PDUStringException, IOException;
+            throws PDUException, IOException;
 
     void replaceSmResp(int sequenceNumber) throws IOException;
 }

@@ -27,6 +27,7 @@ import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
 import org.jsmpp.InvalidCommandLengthException;
 import org.jsmpp.InvalidResponseException;
+import org.jsmpp.PDUException;
 import org.jsmpp.PDUReader;
 import org.jsmpp.PDUSender;
 import org.jsmpp.PDUStringException;
@@ -149,7 +150,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             ESMClass esmClass, byte protocoId, byte priorityFlag,
             RegisteredDelivery registeredDelivery, DataCoding dataCoding,
             byte[] shortMessage, OptionalParameter... optionalParameters)
-            throws PDUStringException, ResponseTimeoutException,
+            throws PDUException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException {
         
         DeliverSmCommandTask task = new DeliverSmCommandTask(pduSender(),
