@@ -685,9 +685,20 @@ public class DefaultDecomposer implements PDUDecomposer {
         int hour = Integer.parseInt(date.substring(6, 8));
         int minute = Integer.parseInt(date.substring(8, 10));
         Calendar cal = Calendar.getInstance();
-        cal.set(2000 + year, month - 1, day, hour, minute, 0);
+        cal.set(convertTwoDigitYear(year), month - 1, day, hour, minute, 0);
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
+    }
+    
+    private static int convertTwoDigitYear(int year) {
+        if (year >=0 && year <= 37) {
+            return 2000 + year;
+        } else if (year >= 38 && year <= 99) {
+            return 1900 + year;
+        } else {
+            // should never happen
+            return year;
+        }
     }
     
     /**
