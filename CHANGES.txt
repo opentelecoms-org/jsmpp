@@ -32,3 +32,4 @@ Changes:
 - Fix the destination addresses on SMPPSession#submitMultiple
   Some classes and interfaces created to support the bug fixes.
 - Fix the date parsing on delivery receipt
+- Referring to Appendix C of SMPP 3.4 for year parsing rule
