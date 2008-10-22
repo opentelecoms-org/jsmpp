@@ -59,7 +59,7 @@ public enum StringParameter {
 	 * STAT_ESME_RINVDFTMSGID, means that predefined message are not exist.
 	 */
 	FINAL_DATE(StringType.C_OCTEC_STRING, 0, 17, false, SMPPConstant.STAT_ESME_RINVDFTMSGID),
-	SHORT_MESSAGE(StringType.OCTET_STRING, 0, 255, true, SMPPConstant.STAT_ESME_RINVMSGLEN), // the SMPP v3.4 max is 254  
+	SHORT_MESSAGE(StringType.OCTET_STRING, 0, 254, true, SMPPConstant.STAT_ESME_RINVMSGLEN),  
 	MESSAGE_ID(StringType.C_OCTEC_STRING, 0, 65, true, SMPPConstant.STAT_ESME_RINVMSGID), 
 	DEL_MESSAGE_ID(StringType.C_OCTEC_STRING, 0, 0, true, SMPPConstant.STAT_ESME_RINVMSGID), 
 	/**
