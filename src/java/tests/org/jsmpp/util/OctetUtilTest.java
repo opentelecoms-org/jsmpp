@@ -60,4 +60,23 @@ public class OctetUtilTest {
         short anotherShortVal = OctetUtil.bytesToShort(anotherByte);
         assertEquals(anotherShortVal, shortVal);
     }
+    
+    /**
+     * This is test from igor.skornyakov
+     */
+    @Test
+    public void testShortEncodeFromIgor() {
+        assertEquals(0x1D4, OctetUtil.bytesToShort(new byte[] {1, (byte)0xD4}, 0));
+    }
+    
+    /**
+     * Short encoded test from igor.skornyakov
+     */
+    @Test
+    public void testShortEncode() {
+        short val = (short)0x1d4;
+        byte[] bytes = OctetUtil.shortToBytes((short)0x1d4);
+        short anotherVal = OctetUtil.bytesToShort(bytes);
+        assertEquals(val, anotherVal);
+    }
 }
