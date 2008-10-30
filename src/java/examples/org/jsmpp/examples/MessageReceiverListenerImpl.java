@@ -44,7 +44,7 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
                  * database based on messageId
                  */
                 
-                System.out.println("Receiving delivery receipt for message '" + messageId + "' : " + delReceipt);
+                System.out.println("Receiving delivery receipt for message '" + messageId + " ' from " + deliverSm.getSourceAddr() + " to " + deliverSm.getDestAddress() + " : " + delReceipt);
             } catch (InvalidDeliveryReceiptException e) {
                 System.err.println("Failed getting delivery receipt");
                 e.printStackTrace();
