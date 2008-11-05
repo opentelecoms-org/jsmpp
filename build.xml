@@ -9,7 +9,7 @@
     <property name="javadoc.dir" value="javadoc"/>
 
 	<property name="lib.dir" value="lib" />
-	<property name="project.version" value="2.0b_06" />
+	<property name="project.version" value="2.0" />
     <property name="dist.versionname" value="jsmpp-${project.version}" />
 	<property name="dist.jar.filename" value="${dist.versionname}.jar" />
     <property name="dist.examples.jar.filename" value="jsmpp-examples.jar" />
@@ -126,7 +126,7 @@
 
 	<target name="cleanall" depends="cleandist,cleanjar,cleantest,clean,cleanjavadoc" />
     
-    <target name="distall" depends="jar">
+    <target name="distall" depends="jar,javadoc">
         <zip destfile="${dist.zipall.filename}">
             <zipfileset dir="." prefix="${dist.versionname}">
                 <patternset refid="eclipse.project.pattern" />
@@ -150,7 +150,7 @@
         </zip>
     </target>
 
-    <target name="distbin" depends="jar">
+    <target name="distbin" depends="jar,javadoc">
         <zip destfile="${dist.zipbin.filename}">
             <zipfileset dir="." prefix="${dist.versionname}">
                 <patternset refid="eclipse.project.pattern" />
