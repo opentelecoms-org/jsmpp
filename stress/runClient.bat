@@ -8,9 +8,9 @@ cd %APP_HOME%
 
 SET LIB_DIR=lib\*.jar
 
-@FOR %%V IN (%LIB_DIR%) DO call "lcp.bat" %%~fV
+@FOR %%V IN (%LIB_DIR%) DO call "stress\lcp.bat" %%~fV
 
-@FOR %%V IN (*.jar) DO call "lcp.bat" %%~fV
+@FOR %%V IN (*.jar) DO call "stress\lcp.bat" %%~fV
 
 SET CLASSPATH=%LOCALCLASSPATH%
 echo %CLASSPATH%
