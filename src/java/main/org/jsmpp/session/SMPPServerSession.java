@@ -122,19 +122,24 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
      *         {@link SMPPServerSession} are no more valid because the
      *         connection will be close automatically.
      */
-    public BindRequest waitForBind(long timeout) throws IllegalStateException, TimeoutException {
-        if (getSessionState().equals(SessionState.OPEN)) {
+    public BindRequest waitForBind(long timeout) throws IllegalStateException,
+            TimeoutException {
+        SessionState currentSessionState = getSessionState();
+        if (currentSessionState.equals(SessionState.OPEN)) {
             new PDUReaderWorker().start();
             try {
                 return bindRequestReceiver.waitForRequest(timeout);
             } catch (IllegalStateException e) {
-                throw new IllegalStateException("Invocation of waitForBind() has been made", e);
+                throw new IllegalStateException(
+                        "Invocation of waitForBind() has been made", e);
             } catch (TimeoutException e) {
                 close();
                 throw e;
             }
         } else {
-            throw new IllegalStateException("waitForBind() should be invoked on OPEN state, actual state is " + SessionState.OPEN);
+            throw new IllegalStateException(
+                    "waitForBind() should be invoked on OPEN state, actual state is "
+                            + currentSessionState);
         }
     }
     
