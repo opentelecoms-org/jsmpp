@@ -24,7 +24,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.CancelSm;
-import org.jsmpp.bean.DataCoding;
+import org.jsmpp.bean.DataCodings;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliveryReceipt;
 import org.jsmpp.bean.ESMClass;
@@ -188,7 +188,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
                         (byte)0, 
                         (byte)0, 
                         new RegisteredDelivery(0), 
-                        DataCoding.newInstance(0), 
+                        DataCodings.ZERO, 
                         delRec.toString().getBytes());
                 logger.debug("Sending delivery reciept for message id " + messageId + ":" + stringValue);
             } catch (Exception e) {

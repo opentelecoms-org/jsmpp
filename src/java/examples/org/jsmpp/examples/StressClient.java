@@ -24,12 +24,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.log4j.PropertyConfigurator;
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUException;
-import org.jsmpp.PDUStringException;
-import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.BindType;
+import org.jsmpp.bean.DataCodings;
 import org.jsmpp.bean.ESMClass;
-import org.jsmpp.bean.GeneralDataCoding;
-import org.jsmpp.bean.MessageClass;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.TypeOfNumber;
@@ -150,7 +147,7 @@ public class StressClient implements Runnable {
                             new ESMClass(), (byte)0, (byte)0, 
                             null, null, new RegisteredDelivery(0), 
                             (byte)0, 
-                            new GeneralDataCoding(true, true, MessageClass.CLASS1, Alphabet.ALPHA_DEFAULT), 
+                            DataCodings.ZERO, 
                             (byte)0, message.getBytes());
                     long delay = System.currentTimeMillis() - startTime;
                     responseCounter.incrementAndGet();

@@ -14,18 +14,23 @@
  */
 package org.jsmpp.bean;
 
+
 /**
- * All data coding should implement this.
- * 
  * @author uudashr
  *
  */
-public interface DataCoding {
+public interface DataCodingFactory {
+
+    /**
+     * @param dataCoding
+     * @return
+     */
+    boolean isRecognized(byte dataCoding);
     
     /**
-     * Get the byte representation of Data Coding.
-     * 
-     * @return the byte representation of DataCoding.
+     * @param dataCoding
+     * @return
      */
-    byte toByte();
+    DataCoding newInstance(byte dataCoding);
+
 }

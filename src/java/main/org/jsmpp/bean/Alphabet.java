@@ -85,5 +85,15 @@ public enum Alphabet {
         throw new IllegalArgumentException("No enum const Alphabet with value "
                 + value);
     }
+    
+    public static Alphabet parseDataCoding(byte dataCoding) throws IllegalArgumentException {
+        byte value = (byte)(dataCoding & MASK_ALPHABET);
+        for (Alphabet val : values()) {
+            if (val.value == value)
+                return val;
+        }
+        throw new IllegalArgumentException("No enum const Alphabet with value "
+                + value + " for dataCoding " + dataCoding);
+    }
 
 }

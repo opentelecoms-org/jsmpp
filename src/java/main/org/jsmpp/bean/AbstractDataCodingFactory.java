@@ -15,17 +15,20 @@
 package org.jsmpp.bean;
 
 /**
- * All data coding should implement this.
- * 
  * @author uudashr
  *
  */
-public interface DataCoding {
+public abstract class AbstractDataCodingFactory implements DataCodingFactory {
     
-    /**
-     * Get the byte representation of Data Coding.
-     * 
-     * @return the byte representation of DataCoding.
-     */
-    byte toByte();
+    protected final  byte group;
+    protected final byte mask;
+    
+    public AbstractDataCodingFactory(byte mask, byte group) {
+        this.mask = mask;
+        this.group = group;
+    }
+    
+    public boolean isRecognized(byte dataCoding) {
+        return (dataCoding & mask) == group;
+    }
 }
