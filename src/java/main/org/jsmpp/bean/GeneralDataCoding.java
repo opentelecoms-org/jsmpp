@@ -62,7 +62,19 @@ public class GeneralDataCoding implements DataCoding {
         this.messageClass = messageClass;
         this.compressed = compressed;
     }
-
+    
+    public Alphabet getAlphabet() {
+        return alphabet;
+    }
+    
+    public MessageClass getMessageClass() {
+        return messageClass;
+    }
+    
+    public boolean isCompressed() {
+        return compressed;
+    }
+    
     public byte toByte() {
         byte value = compressed ? DataCodingFactory00xx.MASK_COMPRESSED : 0;
         value |= alphabet.value();
