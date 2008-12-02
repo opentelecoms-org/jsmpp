@@ -6,10 +6,10 @@
 	<property name="classes.dir" value="build/classes" />
 	<property name="tests.dir" value="build/tests" />
     <property name="examples.dir" value="build/examples" />
-    <property name="javadoc.dir" value="javadoc"/>
+    <property name="javadoc.dir" value="docs/api"/>
 
 	<property name="lib.dir" value="lib" />
-	<property name="project.version" value="2.0" />
+	<property name="project.version" value="2.1b_01" />
     <property name="dist.versionname" value="jsmpp-${project.version}" />
 	<property name="dist.jar.filename" value="${dist.versionname}.jar" />
     <property name="dist.examples.jar.filename" value="jsmpp-examples.jar" />

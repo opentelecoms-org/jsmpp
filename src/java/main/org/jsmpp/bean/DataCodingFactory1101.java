@@ -32,7 +32,7 @@ public class DataCodingFactory1101 extends AbstractDataCodingFactory {
     /**
      * bin: 1101xxxx
      */
-    public static final byte GROUP = (byte)0xdf; 
+    public static final byte GROUP = (byte)0xd0; 
     
     public DataCodingFactory1101() {
         super(MASK, GROUP);

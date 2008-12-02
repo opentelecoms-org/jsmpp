@@ -20,8 +20,15 @@ package org.jsmpp.bean;
  *
  */
 public class DataCodingFactory1111 extends AbstractDataCodingFactory {
-    public static final byte MASK = (byte)0xf0; // 1111xxxx
-    public static final byte GROUP = (byte)0xe0; // 1110xxxx
+    /**
+     * bin: 1111xxxx
+     */
+    public static final byte MASK = (byte)0xf0;
+    
+    /**
+     * bin: 1111xxxx
+     */
+    public static final byte GROUP = (byte)0xf0;
     
     /**
      * bin: 11110111

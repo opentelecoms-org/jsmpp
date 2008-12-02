@@ -36,12 +36,12 @@ public class SimpleDataCoding implements DataCoding {
             throw new IllegalArgumentException(
                     "alphabet is mandatory, can't be null");
         }
-        if (!alphabet.equals(Alphabet.ALPHA_DEFAULT)
-                || !alphabet.equals(Alphabet.ALPHA_8_BIT)) {
+        if (alphabet.equals(Alphabet.ALPHA_UCS2)
+                || alphabet.equals(Alphabet.ALPHA_RESERVED)) {
             throw new IllegalArgumentException(
                     "Supported alphabet for SimpleDataCoding is "
                             + Alphabet.ALPHA_DEFAULT + " or "
-                            + Alphabet.ALPHA_8_BIT + " only");
+                            + Alphabet.ALPHA_8_BIT + " only. Current alphabet is " + alphabet);
         }
         if (messageClass == null) {
             throw new IllegalArgumentException(
@@ -65,5 +65,43 @@ public class SimpleDataCoding implements DataCoding {
         value |= alphabet.value();
         value |= messageClass.value();
         return value;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((alphabet == null) ? 0 : alphabet.hashCode());
+        result = prime * result
+                + ((messageClass == null) ? 0 : messageClass.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SimpleDataCoding other = (SimpleDataCoding)obj;
+        if (alphabet == null) {
+            if (other.alphabet != null)
+                return false;
+        } else if (!alphabet.equals(other.alphabet))
+            return false;
+        if (messageClass == null) {
+            if (other.messageClass != null)
+                return false;
+        } else if (!messageClass.equals(other.messageClass))
+            return false;
+        return true;
+    }
+    
+    @Override
+    public String toString() {
+        return "DataCoding:" + (0xff & toByte());
     }
 }

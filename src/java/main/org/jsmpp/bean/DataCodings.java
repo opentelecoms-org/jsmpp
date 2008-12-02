@@ -36,12 +36,13 @@ public final class DataCodings {
      * DataCoding with binary value 0000000.
      */
     public static final DataCoding ZERO = new GeneralDataCoding();
+    private static DataCoding[] dataCodingCache = new DataCoding[255];
     
     /**
      * Create new instance of {@link DataCoding}.
      * 
      * @param dataCoding in byte.
-     * @return the DataCoding object or <tt>null</tt> if cannot be parsed.
+     * @return the DataCoding.
      */
     public static DataCoding newInstance(byte dataCoding) {
         for (DataCodingFactory factory : factories) {
@@ -49,6 +50,6 @@ public final class DataCodings {
                 return factory.newInstance(dataCoding);
             }
         }
-        return null;
+        return new RawDataCoding(dataCoding);
     }
 }
