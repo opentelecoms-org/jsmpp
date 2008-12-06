@@ -33,7 +33,7 @@ public class AbstractSmCommand extends Command {
     protected byte esmClass;
     protected byte registeredDelivery;
     protected byte dataCoding;
-    protected OptionalParameter[] optionalParametes;
+    protected OptionalParameter[] optionalParameters;
 
     public AbstractSmCommand() {
         super();
@@ -184,12 +184,12 @@ public class AbstractSmCommand extends Command {
     }
 
 
-    public OptionalParameter[] getOptionalParametes() {
-        return optionalParametes;
+    public OptionalParameter[] getOptionalParameters() {
+        return optionalParameters;
     }
 
-    public void setOptionalParametes(OptionalParameter... optionalParametes) {
-        this.optionalParametes = optionalParametes;
+    public void setOptionalParameters(OptionalParameter... optionalParametes) {
+        this.optionalParameters = optionalParametes;
     }
 
     public byte getSourceAddrTon() {
@@ -469,7 +469,7 @@ public class AbstractSmCommand extends Command {
         int result = super.hashCode();
         result = prime * result
                 + ((destAddress == null) ? 0 : destAddress.hashCode());
-        result = prime * result + Arrays.hashCode(optionalParametes);
+        result = prime * result + Arrays.hashCode(optionalParameters);
         result = prime * result
                 + ((serviceType == null) ? 0 : serviceType.hashCode());
         result = prime * result
@@ -528,7 +528,7 @@ public class AbstractSmCommand extends Command {
             return false;
         if (esmClass != other.esmClass)
             return false;
-        if (!Arrays.equals(optionalParametes, other.optionalParametes))
+        if (!Arrays.equals(optionalParameters, other.optionalParameters))
             return false;
         if (registeredDelivery != other.registeredDelivery)
             return false;

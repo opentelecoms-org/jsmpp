@@ -257,7 +257,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setShortMessage(reader.readBytes(smLength));
         StringValidator.validateString(req.getShortMessage(),
                 StringParameter.SHORT_MESSAGE);
-        req.setOptionalParametes(readOptionalParameters(reader));
+        req.setOptionalParameters(readOptionalParameters(reader));
         return req;
     }
 
@@ -369,7 +369,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setShortMessage(reader.readBytes(smLength));
         StringValidator.validateString(req.getShortMessage(),
                 StringParameter.SHORT_MESSAGE);
-        req.setOptionalParametes(readOptionalParameters(reader));
+        req.setOptionalParameters(readOptionalParameters(reader));
         return req;
     }
 
@@ -455,7 +455,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setEsmClass(reader.readByte());
         req.setRegisteredDelivery(reader.readByte());
         req.setDataCoding(reader.readByte());
-        req.setOptionalParametes(readOptionalParameters(reader));
+        req.setOptionalParameters(readOptionalParameters(reader));
         return req;
     }
 
