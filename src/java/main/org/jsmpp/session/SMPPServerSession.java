@@ -335,7 +335,13 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         
         public MessageId processSubmitSm(SubmitSm submitSm)
                 throws ProcessRequestException {
-            return fireAcceptSubmitSm(submitSm);
+            MessageId messageId = fireAcceptSubmitSm(submitSm);
+            if (messageId == null) {
+                String msg = "Invalid message_id, shouldn't null value. " + ServerMessageReceiverListener.class + "#onAcceptSubmitSm(SubmitSm) return null value";
+                System.err.println(msg);
+                throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
+            }
+            return messageId;
         }
         
         public void sendSubmitSmResponse(MessageId messageId, int sequenceNumber)
