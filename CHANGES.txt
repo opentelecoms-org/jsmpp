@@ -44,3 +44,5 @@ Changes:
   Add some class:
   1. DataCodings
   2. DataCoding (GeneralDataCoding, MessageWatingDataCoding, SimpleDataCoding, RawDataCoding)
+- Expose remote InetAddress on server side API via SMPPServerSession
+  Add new method: InetAddress SMPPServerSession#getInetAddress()
