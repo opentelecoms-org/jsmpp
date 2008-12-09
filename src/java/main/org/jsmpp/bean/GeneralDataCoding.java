@@ -22,6 +22,7 @@ package org.jsmpp.bean;
  *
  */
 public class GeneralDataCoding implements DataCoding {
+    public static final GeneralDataCoding DEFAULT = new GeneralDataCoding();
     
     private final boolean compressed;
     private final Alphabet alphabet;
