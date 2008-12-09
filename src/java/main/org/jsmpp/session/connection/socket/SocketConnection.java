@@ -17,6 +17,7 @@ package org.jsmpp.session.connection.socket;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 
 import org.jsmpp.session.connection.Connection;
@@ -58,5 +59,9 @@ public class SocketConnection implements Connection {
     
     public OutputStream getOutputStream() {
         return out;
+    }
+    
+    public InetAddress getInetAddress() {
+        return socket.getInetAddress();
     }
 }

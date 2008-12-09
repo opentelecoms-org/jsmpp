@@ -17,6 +17,7 @@ package org.jsmpp.session;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -109,6 +110,10 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         addSessionStateListener(sessionStateListener);
         setPduProcessorDegree(pduProcessorDegree);
         sessionContext.open();
+    }
+    
+    public InetAddress getInetAddress() {
+        return connection().getInetAddress();
     }
     
     /**
