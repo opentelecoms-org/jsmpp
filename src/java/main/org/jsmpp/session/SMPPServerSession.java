@@ -186,28 +186,40 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptSubmitSm(submitSm, this);
         }
-        throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
+        String msg = "Receiving message but server hasn't " + ServerMessageReceiverListener.class + " yet";
+        logger.warn(msg);
+        System.err.println(msg);
+        throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
     }
     
     private SubmitMultiResult fireAcceptSubmitMulti(SubmitMulti submitMulti) throws ProcessRequestException {
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptSubmitMulti(submitMulti, this);
         }
-        throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
+        String msg = "Receiving message but server hasn't " + ServerMessageReceiverListener.class + " yet";
+        logger.warn(msg);
+        System.err.println(msg);
+        throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
     }
     
     private QuerySmResult fireAcceptQuerySm(QuerySm querySm) throws ProcessRequestException {
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptQuerySm(querySm, this);
         }
-        throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
+        String msg = "Receiving message but server hasn't " + ServerMessageReceiverListener.class + " yet";
+        logger.warn(msg);
+        System.err.println(msg);
+        throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
     }
     
     private void fireAcceptReplaceSm(ReplaceSm replaceSm) throws ProcessRequestException {
         if (messageReceiverListener != null) {
             messageReceiverListener.onAcceptReplaceSm(replaceSm, this);
         } else {
-            throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
+            String msg = "Receiving message but server hasn't " + ServerMessageReceiverListener.class + " yet";
+            logger.warn(msg);
+            System.err.println(msg);
+            throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
         }
     }
     
@@ -215,7 +227,10 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             messageReceiverListener.onAcceptCancelSm(cancelSm, this);
         } else {
-            throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
+            String msg = "Receiving message but server hasn't " + ServerMessageReceiverListener.class + " yet";
+            logger.warn(msg);
+            System.err.println(msg);
+            throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
         }
     }
     
