@@ -15,8 +15,6 @@
 package org.jsmpp.util;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.jsmpp.InvalidNumberOfDestinationsException;
@@ -393,33 +391,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      */
     public DeliveryReceipt deliveryReceipt(String data)
             throws InvalidDeliveryReceiptException {
-        /*
-         * id:IIIIIIIIII sub:SSS dlvrd:DDD submit date:YYMMDDhhmm done
-         * date:YYMMDDhhmm stat:DDDDDDD err:E Text: ..........
-         */
-        try {
-            DeliveryReceipt delRec = new DeliveryReceipt();
-            delRec.setId(getDeliveryReceiptValue(DeliveryReceipt.DELREC_ID,
-                    data));
-            delRec.setSubmitted(Integer.parseInt(getDeliveryReceiptValue(
-                    DeliveryReceipt.DELREC_SUB, data)));
-            delRec.setDelivered(Integer.parseInt(getDeliveryReceiptValue(
-                    DeliveryReceipt.DELREC_DLVRD, data)));
-            delRec.setSubmitDate(string2Date(getDeliveryReceiptValue(
-                    DeliveryReceipt.DELREC_SUBMIT_DATE, data)));
-            delRec.setDoneDate(string2Date(getDeliveryReceiptValue(
-                    DeliveryReceipt.DELREC_DONE_DATE, data)));
-            delRec.setFinalStatus(DeliveryReceiptState
-                    .getByName(getDeliveryReceiptValue(
-                            DeliveryReceipt.DELREC_STAT, data)));
-            delRec.setError(getDeliveryReceiptValue(DeliveryReceipt.DELREC_ERR,
-                    data));
-            delRec.setText(getDeliveryReceiptTextValue(data));
-            return delRec;
-        } catch (Exception e) {
-            throw new InvalidDeliveryReceiptException(
-                    "There is an error found when parsing delivery receipt", e);
-        }
+        return new DeliveryReceipt(data);
     }
 
     /*
@@ -656,91 +628,6 @@ public class DefaultDecomposer implements PDUDecomposer {
             params.add(OptionalParameters.deserialize(tag, content));
         }
         return params.toArray(new OptionalParameter[params.size()]);
-    }
-
-    /**
-     * YYMMDDhhmm where:
-     * <ul>
-     * <li>YY = last two digits of the year (00-99)</li>
-     * <li>MM = month (01-12)</li>
-     * <li>DD = day (01-31)</li>
-     * <li>hh = hour (00-23)</li>
-     * <li>mm = minute (00-59)</li>
-     * </ul>
-     * 
-     * Java format is (yyMMddHHmm).
-     * 
-     * @param date in <tt>String</tt> format.
-     * @return
-     * @throws NumberFormatException if there is contains non number on
-     *         <code>date</code> parameter.
-     * @throws IndexOutOfBoundsException if the date length in <tt>String</tt>
-     *         format is less than 10.
-     */
-    private static Date string2Date(String date) {
-
-        int year = Integer.parseInt(date.substring(0, 2));
-        int month = Integer.parseInt(date.substring(2, 4));
-        int day = Integer.parseInt(date.substring(4, 6));
-        int hour = Integer.parseInt(date.substring(6, 8));
-        int minute = Integer.parseInt(date.substring(8, 10));
-        Calendar cal = Calendar.getInstance();
-        cal.set(convertTwoDigitYear(year), month - 1, day, hour, minute, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return cal.getTime();
-    }
-    
-    private static int convertTwoDigitYear(int year) {
-        if (year >=0 && year <= 37) {
-            return 2000 + year;
-        } else if (year >= 38 && year <= 99) {
-            return 1900 + year;
-        } else {
-            // should never happen
-            return year;
-        }
-    }
-    
-    /**
-     * Get the delivery receipt attribute value.
-     * 
-     * @param attrName is the attribute name.
-     * @param source the original source id:IIIIIIIIII sub:SSS dlvrd:DDD submit
-     *        date:YYMMDDhhmm done date:YYMMDDhhmm stat:DDDDDDD err:E
-     *        Text:....................
-     * @return the value of specified attribute.
-     * @throws IndexOutOfBoundsException
-     */
-    private static String getDeliveryReceiptValue(String attrName, String source)
-            throws IndexOutOfBoundsException {
-        String tmpAttr = attrName + ":";
-        int startIndex = source.indexOf(tmpAttr);
-        if (startIndex < 0)
-            return null;
-        startIndex = startIndex + tmpAttr.length();
-        int endIndex = source.indexOf(" ", startIndex);
-        if (endIndex > 0)
-            return source.substring(startIndex, endIndex);
-        return source.substring(startIndex);
-    }
-
-    /**
-     * @param source
-     * @return
-     * @throws IndexOutOfBoundsException
-     */
-    private static String getDeliveryReceiptTextValue(String source) {
-        String tmpAttr = DeliveryReceipt.DELREC_TEXT + ":";
-        int startIndex = source.indexOf(tmpAttr);
-        if (startIndex < 0) {
-            tmpAttr = DeliveryReceipt.DELREC_TEXT.toLowerCase() + ":";
-            startIndex = source.indexOf(tmpAttr);
-        }
-        if (startIndex < 0) {
-            return null;
-        }
-        startIndex = startIndex + tmpAttr.length();
-        return source.substring(startIndex);
     }
 
     private static void assignHeader(Command pdu,

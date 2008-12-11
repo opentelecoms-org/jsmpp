@@ -15,9 +15,11 @@
 package org.jsmpp.bean;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.jsmpp.util.DeliveryReceiptState;
+import org.jsmpp.util.InvalidDeliveryReceiptException;
 
 
 /**
@@ -25,7 +27,7 @@ import org.jsmpp.util.DeliveryReceiptState;
  *
  */
 public class DeliveryReceipt {
-    // attribute of delivery receipt
+    // attributes of delivery receipt
     public static final String DELREC_ID = "id";
     public static final String DELREC_SUB = "sub";
     public static final String DELREC_DLVRD = "dlvrd";
@@ -51,9 +53,35 @@ public class DeliveryReceipt {
     private String text;
 
     public DeliveryReceipt() {
-
     }
 
+    public DeliveryReceipt(String formattedDelieryReceipt)
+            throws InvalidDeliveryReceiptException {
+        /*
+         * id:IIIIIIIIII sub:SSS dlvrd:DDD submit date:YYMMDDhhmm done
+         * date:YYMMDDhhmm stat:DDDDDDD err:E Text: ..........
+         */
+        try {
+            id = getDeliveryReceiptValue(DeliveryReceipt.DELREC_ID, formattedDelieryReceipt);
+            submitted = Integer.parseInt(getDeliveryReceiptValue(
+                    DeliveryReceipt.DELREC_SUB, formattedDelieryReceipt));
+            delivered = Integer.parseInt(getDeliveryReceiptValue(
+                    DeliveryReceipt.DELREC_DLVRD, formattedDelieryReceipt));
+            submitDate = string2Date(getDeliveryReceiptValue(
+                    DeliveryReceipt.DELREC_SUBMIT_DATE, formattedDelieryReceipt));
+            doneDate = string2Date(getDeliveryReceiptValue(
+                    DeliveryReceipt.DELREC_DONE_DATE, formattedDelieryReceipt));
+            finalStatus = DeliveryReceiptState
+                    .getByName(getDeliveryReceiptValue(
+                            DeliveryReceipt.DELREC_STAT, formattedDelieryReceipt));
+            error = getDeliveryReceiptValue(DeliveryReceipt.DELREC_ERR, formattedDelieryReceipt);
+            text = getDeliveryReceiptTextValue(formattedDelieryReceipt);
+        } catch (Exception e) {
+            throw new InvalidDeliveryReceiptException(
+                    "There is an error found when parsing delivery receipt", e);
+        }
+    }
+    
     public DeliveryReceipt(String id, int submitted, int delivered,
             Date submitDate, Date doneDate, DeliveryReceiptState finalStatus,
             String error, String text) {
@@ -213,15 +241,6 @@ public class DeliveryReceipt {
         return sBuf.toString();
     }
 
-    private static String intToString(int value, int digit) {
-        StringBuffer sBuf = new StringBuffer(digit);
-        sBuf.append(Integer.toString(value));
-        while (sBuf.length() < digit) {
-            sBuf.insert(0, "0");
-        }
-        return sBuf.toString();
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -240,6 +259,59 @@ public class DeliveryReceipt {
         result = prime * result + submitted;
         result = prime * result + ((text == null) ? 0 : text.hashCode());
         return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final DeliveryReceipt other = (DeliveryReceipt)obj;
+        if (!hasEqualId(other)) {
+            return false;
+        }
+        if (submitted != other.submitted) {
+            return false;
+        }
+        if (delivered != other.delivered) {
+            return false;
+        }
+        if (!hasEqualSubmitDate(other)) {
+            return false;
+        }
+        if (!hasEqualDoneDate(other)) {
+            return false;
+        }
+        if (!hasEqualFinalStatus(other)) {
+            return false;
+        }
+        if (!hasEqualError(other)) {
+            return false;
+        }
+        if (!hasEqualText(other)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Create String representation of integer. Preceding 0 will be add as
+     * needed.
+     * 
+     * @param value is the value.
+     * @param digit is the digit should be shown.
+     * @return the String representation of int value.
+     */
+    private static String intToString(int value, int digit) {
+        StringBuffer sBuf = new StringBuffer(digit);
+        sBuf.append(Integer.toString(value));
+        while (sBuf.length() < digit) {
+            sBuf.insert(0, "0");
+        }
+        return sBuf.toString();
     }
 
     private boolean hasEqualId(DeliveryReceipt other) {
@@ -295,40 +367,89 @@ public class DeliveryReceipt {
         }
         return text.equals(other.text);
     }
+    
+    /**
+     * Get the delivery receipt attribute value.
+     * 
+     * @param attrName is the attribute name.
+     * @param source the original source id:IIIIIIIIII sub:SSS dlvrd:DDD submit
+     *        date:YYMMDDhhmm done date:YYMMDDhhmm stat:DDDDDDD err:E
+     *        Text:....................
+     * @return the value of specified attribute.
+     * @throws IndexOutOfBoundsException
+     */
+    private static String getDeliveryReceiptValue(String attrName, String source)
+            throws IndexOutOfBoundsException {
+        String tmpAttr = attrName + ":";
+        int startIndex = source.indexOf(tmpAttr);
+        if (startIndex < 0)
+            return null;
+        startIndex = startIndex + tmpAttr.length();
+        int endIndex = source.indexOf(" ", startIndex);
+        if (endIndex > 0)
+            return source.substring(startIndex, endIndex);
+        return source.substring(startIndex);
+    }
+    
+    /**
+     * YYMMDDhhmm where:
+     * <ul>
+     * <li>YY = last two digits of the year (00-99)</li>
+     * <li>MM = month (01-12)</li>
+     * <li>DD = day (01-31)</li>
+     * <li>hh = hour (00-23)</li>
+     * <li>mm = minute (00-59)</li>
+     * </ul>
+     * 
+     * Java format is (yyMMddHHmm).
+     * 
+     * @param date in <tt>String</tt> format.
+     * @return
+     * @throws NumberFormatException if there is contains non number on
+     *         <code>date</code> parameter.
+     * @throws IndexOutOfBoundsException if the date length in <tt>String</tt>
+     *         format is less than 10.
+     */
+    private static Date string2Date(String date) {
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final DeliveryReceipt other = (DeliveryReceipt)obj;
-        if (!hasEqualId(other)) {
-            return false;
+        int year = Integer.parseInt(date.substring(0, 2));
+        int month = Integer.parseInt(date.substring(2, 4));
+        int day = Integer.parseInt(date.substring(4, 6));
+        int hour = Integer.parseInt(date.substring(6, 8));
+        int minute = Integer.parseInt(date.substring(8, 10));
+        Calendar cal = Calendar.getInstance();
+        cal.set(convertTwoDigitYear(year), month - 1, day, hour, minute, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
+    
+    private static int convertTwoDigitYear(int year) {
+        if (year >=0 && year <= 37) {
+            return 2000 + year;
+        } else if (year >= 38 && year <= 99) {
+            return 1900 + year;
+        } else {
+            // should never happen
+            return year;
         }
-        if (submitted != other.submitted) {
-            return false;
+    }
+    
+    /**
+     * @param source
+     * @return
+     * @throws IndexOutOfBoundsException
+     */
+    private static String getDeliveryReceiptTextValue(String source) {
+        String tmpAttr = DeliveryReceipt.DELREC_TEXT + ":";
+        int startIndex = source.indexOf(tmpAttr);
+        if (startIndex < 0) {
+            tmpAttr = DeliveryReceipt.DELREC_TEXT.toLowerCase() + ":";
+            startIndex = source.indexOf(tmpAttr);
         }
-        if (delivered != other.delivered) {
-            return false;
+        if (startIndex < 0) {
+            return null;
         }
-        if (!hasEqualSubmitDate(other)) {
-            return false;
-        }
-        if (!hasEqualDoneDate(other)) {
-            return false;
-        }
-        if (!hasEqualFinalStatus(other)) {
-            return false;
-        }
-        if (!hasEqualError(other)) {
-            return false;
-        }
-        if (!hasEqualText(other)) {
-            return false;
-        }
-        return true;
+        startIndex = startIndex + tmpAttr.length();
+        return source.substring(startIndex);
     }
 }
