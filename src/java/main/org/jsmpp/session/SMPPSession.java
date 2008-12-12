@@ -124,7 +124,6 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	    super(pduSender);
 	    this.pduReader = pduReader;
 	    this.connFactory = connFactory;
-	    addSessionStateListener(new BoundSessionStateListener());
     }
 	
 	public SMPPSession(String host, int port, BindParameter bindParam,
