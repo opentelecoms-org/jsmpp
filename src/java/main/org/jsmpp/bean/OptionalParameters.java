@@ -90,8 +90,16 @@ public class OptionalParameters {
     public static OptionalParameter.Byte newSarTotalSegments(int value) {
         return newSarTotalSegments((byte)value);
     }
-    
-    public static OptionalParameter deserialize(final short tagCode, byte[] content) {
+
+    /**
+     * Deserialize all recognized tag code to {@link OptionalParameter} object.
+     * Unrecognized will be classified as {@link COctetString}.
+     * 
+     * @param tagCode is the tag code.
+     * @param content is the content.
+     * @return the OptionalParameter object.
+     */
+    public static OptionalParameter deserialize(short tagCode, byte[] content) {
         Tag tag = null;
         try {
             tag = Tag.valueOf(tagCode);
