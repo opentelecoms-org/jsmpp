@@ -15,7 +15,7 @@
 package org.jsmpp.bean;
 
 /**
- * Raw data coding is intended to data coding for reserved coding groups.
+ * Raw data coding is intended for reserved coding groups.
  * 
  * @author uudashr
  * 

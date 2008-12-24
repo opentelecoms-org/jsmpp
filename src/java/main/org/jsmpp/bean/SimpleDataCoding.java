@@ -26,11 +26,26 @@ public class SimpleDataCoding implements DataCoding {
     
     private final Alphabet alphabet;
     private final MessageClass messageClass;
-    
+
+    /**
+     * Construct Data Coding using default Alphabet and
+     * {@link MessageClass#CLASS0} Message Class.
+     */
     public SimpleDataCoding() {
         this(Alphabet.ALPHA_DEFAULT, MessageClass.CLASS0);
     }
-    
+
+    /**
+     * Construct Data Coding using specified Alphabet and Message Class.
+     *  
+     * @param alphabet is the alphabet. Only support
+     *        {@link Alphabet#ALPHA_DEFAULT} and {@link Alphabet#ALPHA_8_BIT}.
+     * @param messageClass
+     * @throws IllegalArgumentException if alphabet is <tt>null</tt> or using
+     *         non {@link Alphabet#ALPHA_DEFAULT} and
+     *         {@link Alphabet#ALPHA_8_BIT} alphabet or
+     *         <code>messageClass</code> is null.
+     */
     public SimpleDataCoding(Alphabet alphabet, MessageClass messageClass) throws IllegalArgumentException {
         if (alphabet == null) {
             throw new IllegalArgumentException(

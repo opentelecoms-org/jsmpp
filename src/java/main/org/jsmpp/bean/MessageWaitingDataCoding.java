@@ -51,9 +51,13 @@ public class MessageWaitingDataCoding implements DataCoding {
      * @param indicationSense is the indication sense.
      * @param indicationType is the indication type.
      * @param alphabet
+     * @throws IllegalArgumentException if alphabet is null or alphabet non one
+     *         of {@link Alphabet#ALPHA_DEFAULT} and
+     *         {@link Alphabet#ALPHA_8_BIT}.
      */
     public MessageWaitingDataCoding(IndicationSense indicationSense,
-            IndicationType indicationType, Alphabet alphabet) {
+            IndicationType indicationType, Alphabet alphabet)
+            throws IllegalArgumentException {
         if (alphabet != null && (alphabet.equals(Alphabet.ALPHA_8_BIT)
                 || alphabet.equals(Alphabet.ALPHA_RESERVED))) {
             throw new IllegalArgumentException(
