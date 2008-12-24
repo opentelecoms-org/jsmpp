@@ -44,8 +44,8 @@ public class AcceptingConnectionAndBindExample {
                 BindRequest request = session.waitForBind(5000);
                 System.out.println("Receive bind request");
                 
-                if (request.getBindParameter().getSystemId().equals("test") && 
-                        request.getBindParameter().getPassword().equals("test")) {
+                if (request.getSystemId().equals("test") && 
+                        request.getPassword().equals("test")) {
                     
                     // accepting request and send bind response immediately
                     System.out.println("Accepting bind request");
