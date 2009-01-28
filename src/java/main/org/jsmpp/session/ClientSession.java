@@ -123,10 +123,10 @@ public interface ClientSession extends Session {
             RegisteredDelivery registeredDelivery,
             ReplaceIfPresentFlag replaceIfPresentFlag, DataCoding dataCoding,
             byte smDefaultMsgId, byte[] shortMessage,
-            OptionalParameter[] optionalParameters) throws PDUException,
+            OptionalParameter... optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException;
-
+    
     /**
      * Query previous submitted short message based on it's message_id and
      * message_id. This method will blocks until response received or timeout

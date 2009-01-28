@@ -329,7 +329,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
             RegisteredDelivery registeredDelivery,
             ReplaceIfPresentFlag replaceIfPresentFlag, DataCoding dataCoding,
             byte smDefaultMsgId, byte[] shortMessage,
-            OptionalParameter[] optionalParameters) throws PDUException,
+            OptionalParameter... optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException {
         SubmitMultiCommandTask task = new SubmitMultiCommandTask(pduSender(),
