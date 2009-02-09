@@ -33,11 +33,11 @@ public class GeneralDataCoding implements DataCoding {
     }
 
     public GeneralDataCoding(Alphabet alphabet) {
-        this(alphabet, false);
+        this(alphabet, null);
     }
     
-    public GeneralDataCoding(Alphabet alphabet, boolean compressed) {
-        this(alphabet, compressed, null);
+    public GeneralDataCoding(Alphabet alphabet, ESMClass esmClass) {
+        this(alphabet, null, false);
     }
 
     /**
@@ -45,16 +45,17 @@ public class GeneralDataCoding implements DataCoding {
      * compression flag.
      * 
      * @param alphabet is the alphabet.
-     * @param compressed is the compression flag. Value is
-     *        <code>true</tt> if the user message is compressed, otherwise set to <code>false</code>.
      * @param messageClass is the message class. This is nullable. If
      *        <code>null</code> means the DataCoding doesn't has meaning
      *        MessageClass.
+     * @param compressed is the compression flag. Value is
+     *        <code>true</tt> if the user message is compressed, otherwise set to <code>false</code>.
+     * 
      * @throws IllegalArgumentException if the alphabet is <code>null</code>,
      *         since Alphabet is mandatory.
      */
-    public GeneralDataCoding(Alphabet alphabet, boolean compressed, 
-            MessageClass messageClass) throws IllegalArgumentException {
+    public GeneralDataCoding(Alphabet alphabet, MessageClass messageClass,
+            boolean compressed) throws IllegalArgumentException {
         if (alphabet == null) {
             throw new IllegalArgumentException("alphabet is mandatory, can't be null");
         }
