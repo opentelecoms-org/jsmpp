@@ -26,6 +26,7 @@ import org.jsmpp.PDUException;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.DataCodings;
+import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.DeliveryReceipt;
 import org.jsmpp.bean.ESMClass;
@@ -38,6 +39,7 @@ import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.session.BindParameter;
+import org.jsmpp.session.DataSmResult;
 import org.jsmpp.session.MessageReceiverListener;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.util.AbsoluteTimeFormatter;
@@ -86,6 +88,13 @@ public class AsyncSubmitReceiveDeliverSmExample {
             
             public void onAcceptAlertNotification(
                     AlertNotification alertNotification) {
+            }
+            
+            @Override
+            public DataSmResult onAcceptDataSm(DataSm dataSm)
+                    throws ProcessRequestException {
+                // TODO Auto-generated method stub
+                return null;
             }
         });
         
