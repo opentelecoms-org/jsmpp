@@ -426,7 +426,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	
 	@Override
 	protected GenericMessageReceiverListener messageReceiverListener() {
-	    return null;
+	    return messageReceiverListener;
 	}
 	
     private synchronized boolean isReadPdu() {

@@ -15,10 +15,12 @@
 package org.jsmpp.examples;
 
 import org.jsmpp.bean.AlertNotification;
+import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.DeliveryReceipt;
 import org.jsmpp.bean.MessageType;
 import org.jsmpp.extra.ProcessRequestException;
+import org.jsmpp.session.DataSmResult;
 import org.jsmpp.session.MessageReceiverListener;
 import org.jsmpp.util.InvalidDeliveryReceiptException;
 
@@ -58,6 +60,11 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
             
             System.out.println("Receiving message : " + new String(deliverSm.getShortMessage()));
         }
+    }
+    
+    public DataSmResult onAcceptDataSm(DataSm dataSm)
+            throws ProcessRequestException {
+        return null;
     }
     
     public void onAcceptAlertNotification(AlertNotification alertNotification) {
