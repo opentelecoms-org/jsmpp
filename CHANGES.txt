@@ -38,6 +38,12 @@ Changes:
 - Change the max length of short message to 254, referring to SMPP 3.4
   Previously using  255 (taken from SMPP 5.0)
 
+2.0.1
+- Bug fix, MessageReceiverListener should be subclass of 
+  GenericMessageReceiverListener 
+2.0.2
+- set connection timeout when binding
+
 2.1 beta 1 
 - New DataCoding API.
   Remove the old class (since I can't make backward compatibility)

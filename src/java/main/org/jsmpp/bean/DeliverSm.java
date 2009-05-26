@@ -15,7 +15,6 @@
 package org.jsmpp.bean;
 
 import org.jsmpp.SMPPConstant;
-import org.jsmpp.util.DefaultDecomposer;
 import org.jsmpp.util.InvalidDeliveryReceiptException;
 
 /**
@@ -34,17 +33,24 @@ public class DeliverSm extends MessageRequest {
      * contains SMSC Delivery Receipt.
      * 
      * @return the {@link DeliveryReceipt}.
-     * @throws InvalidDeliveryReceiptException
+     * @throws InvalidDeliveryReceiptException if there is an error found while parsing delivery receipt.
      */
 	public DeliveryReceipt getShortMessageAsDeliveryReceipt()
             throws InvalidDeliveryReceiptException {
-	    if (MessageType.SMSC_DEL_RECEIPT.containedIn(getEsmClass())) {
-	        return DefaultDecomposer.getInstance().
-                    deliveryReceipt(getShortMessage());
-	    } else {
-	        throw new InvalidDeliveryReceiptException("deliver_sm is not a Delivery Receipt since ems_class value = " + getEsmClass());
-	    }
-	    
+	    return getDeliveryReceipt(DefaultDeliveryReceiptStripper.getInstance());
+	}
+	
+	/**
+	 * Get delivery receipt based on specified strategy/stripper.
+	 * 
+	 * @param <T>
+	 * @param stripper is the stripper.
+	 * @return the delivery receipt as an instance of T.
+	 * @throws InvalidDeliveryReceiptException if there is an error found while parsing delivery receipt.
+	 */
+	public <T> T getDeliveryReceipt(DeliveryReceiptStrip<T> stripper)
+            throws InvalidDeliveryReceiptException {
+	    return stripper.strip(this);
 	}
 	
 	/**

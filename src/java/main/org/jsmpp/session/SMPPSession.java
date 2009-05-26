@@ -220,6 +220,8 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		conn = connFactory.createConnection(host, port);
 		logger.info("Connected");
 		
+		conn.setSoTimeout(getEnquireLinkTimer());
+		
 		sessionContext.open();
 		try {
 			in = new DataInputStream(conn.getInputStream());
