@@ -90,7 +90,6 @@ public class AsyncSubmitReceiveDeliverSmExample {
                     AlertNotification alertNotification) {
             }
             
-            @Override
             public DataSmResult onAcceptDataSm(DataSm dataSm)
                     throws ProcessRequestException {
                 // TODO Auto-generated method stub

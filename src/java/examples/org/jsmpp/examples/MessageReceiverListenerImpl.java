@@ -65,7 +65,6 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
     public void onAcceptAlertNotification(AlertNotification alertNotification) {
     }
     
-    @Override
     public DataSmResult onAcceptDataSm(DataSm dataSm)
             throws ProcessRequestException {
         return null;
