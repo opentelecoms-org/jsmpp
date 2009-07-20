@@ -37,3 +37,6 @@ Changes:
 2.0 beta 6
 - Change the max length of short message to 254, referring to SMPP 3.4
   Previously using  255 (taken from SMPP 5.0)
+  
+2.0.2
+- set connection timeout when binding
