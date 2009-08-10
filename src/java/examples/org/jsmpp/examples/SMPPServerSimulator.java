@@ -23,23 +23,7 @@ import java.util.concurrent.TimeoutException;
 import org.apache.log4j.BasicConfigurator;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
-import org.jsmpp.bean.CancelSm;
-import org.jsmpp.bean.DataCodings;
-import org.jsmpp.bean.DataSm;
-import org.jsmpp.bean.DeliveryReceipt;
-import org.jsmpp.bean.ESMClass;
-import org.jsmpp.bean.GSMSpecificFeature;
-import org.jsmpp.bean.MessageMode;
-import org.jsmpp.bean.MessageType;
-import org.jsmpp.bean.NumberingPlanIndicator;
-import org.jsmpp.bean.QuerySm;
-import org.jsmpp.bean.RegisteredDelivery;
-import org.jsmpp.bean.ReplaceSm;
-import org.jsmpp.bean.SMSCDeliveryReceipt;
-import org.jsmpp.bean.SubmitMulti;
-import org.jsmpp.bean.SubmitMultiResult;
-import org.jsmpp.bean.SubmitSm;
-import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.bean.*;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.session.BindRequest;
 import org.jsmpp.session.DataSmResult;
@@ -111,7 +95,17 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
     
     public SubmitMultiResult onAcceptSubmitMulti(SubmitMulti submitMulti,
             SMPPServerSession source) throws ProcessRequestException {
-        return null;
+        MessageId messageId = messageIDGenerator.newMessageId();
+        logger.debug("Receiving submit_multi_sm {}, and return message id {}");
+        // TODO Ashish - Delivery Receipt is not supported
+        // UNable to decipher Spec - to sent single Delivery Receipt or
+        // multiple
+//        if (SMSCDeliveryReceipt.SUCCESS.containedIn(submitMulti.getRegisteredDelivery())
+//                || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitMulti.getRegisteredDelivery())) {
+//            execServiceDelReciept.execute(new DeliveryReceiptTask(source, submitMulti, messageId));
+//        }
+
+        return new SubmitMultiResult(messageId.getValue(), new UnsuccessDelivery[0]);
     }
     
     public DataSmResult onAcceptDataSm(DataSm dataSm)
