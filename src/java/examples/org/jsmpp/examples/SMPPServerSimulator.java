@@ -23,7 +23,24 @@ import java.util.concurrent.TimeoutException;
 import org.apache.log4j.BasicConfigurator;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
-import org.jsmpp.bean.*;
+import org.jsmpp.bean.CancelSm;
+import org.jsmpp.bean.DataCodings;
+import org.jsmpp.bean.DataSm;
+import org.jsmpp.bean.DeliveryReceipt;
+import org.jsmpp.bean.ESMClass;
+import org.jsmpp.bean.GSMSpecificFeature;
+import org.jsmpp.bean.MessageMode;
+import org.jsmpp.bean.MessageType;
+import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.QuerySm;
+import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.bean.ReplaceSm;
+import org.jsmpp.bean.SMSCDeliveryReceipt;
+import org.jsmpp.bean.SubmitMulti;
+import org.jsmpp.bean.SubmitMultiResult;
+import org.jsmpp.bean.SubmitSm;
+import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.session.BindRequest;
 import org.jsmpp.session.DataSmResult;
@@ -81,7 +98,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
     public MessageId onAcceptSubmitSm(SubmitSm submitSm,
             SMPPServerSession source) throws ProcessRequestException {
         MessageId messageId = messageIDGenerator.newMessageId();
-        logger.debug("Receiving submit_sm {}, and return message id {}", new String(submitSm.getShortMessage()), messageId.getValue());
+        logger.debug("Receiving submit_sm '{}', and return message id {}", new String(submitSm.getShortMessage()), messageId);
         if (SMSCDeliveryReceipt.SUCCESS.containedIn(submitSm.getRegisteredDelivery()) || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitSm.getRegisteredDelivery())) {
             execServiceDelReciept.execute(new DeliveryReceiptTask(source, submitSm, messageId));
         }
@@ -96,14 +113,13 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
     public SubmitMultiResult onAcceptSubmitMulti(SubmitMulti submitMulti,
             SMPPServerSession source) throws ProcessRequestException {
         MessageId messageId = messageIDGenerator.newMessageId();
-        logger.debug("Receiving submit_multi_sm {}, and return message id {}");
-        // TODO Ashish - Delivery Receipt is not supported
-        // UNable to decipher Spec - to sent single Delivery Receipt or
-        // multiple
-//        if (SMSCDeliveryReceipt.SUCCESS.containedIn(submitMulti.getRegisteredDelivery())
-//                || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitMulti.getRegisteredDelivery())) {
-//            execServiceDelReciept.execute(new DeliveryReceiptTask(source, submitMulti, messageId));
-//        }
+        logger.debug("Receiving submit_multi_sm '{}', and return message id {}", 
+                new String(submitMulti.getShortMessage()), 
+                messageId);
+        if (SMSCDeliveryReceipt.SUCCESS.containedIn(submitMulti.getRegisteredDelivery())
+                || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitMulti.getRegisteredDelivery())) {
+            execServiceDelReciept.execute(new DeliveryReceiptTask(source, submitMulti, messageId));
+        }
 
         return new SubmitMultiResult(messageId.getValue(), new UnsuccessDelivery[0]);
     }
@@ -121,7 +137,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
             throws ProcessRequestException {
     }
     
-    private class WaitBindTask implements Runnable {
+    private static class WaitBindTask implements Runnable {
         private final SMPPServerSession serverSession;
         
         public WaitBindTask(SMPPServerSession serverSession) {
@@ -149,17 +165,64 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
         }
     }
     
-    private class DeliveryReceiptTask implements Runnable {
+    private static class DeliveryReceiptTask implements Runnable {
         private final SMPPServerSession session;
-        private final SubmitSm submitSm;
-        private MessageId messageId;
+        private final MessageId messageId;
+        
+        private final TypeOfNumber sourceAddrTon;
+        private final NumberingPlanIndicator sourceAddrNpi;
+        private final String sourceAddress;
+        
+        private final TypeOfNumber destAddrTon;
+        private final NumberingPlanIndicator destAddrNpi;
+        private final String destAddress;
+        
+        private final int totalSubmitted;
+        private final int totalDelivered;
+        
+        private final byte[] shortMessage;
+        
         public DeliveryReceiptTask(SMPPServerSession session,
                 SubmitSm submitSm, MessageId messageId) {
             this.session = session;
-            this.submitSm = submitSm;
             this.messageId = messageId;
+            
+            // reversing destination to source
+            sourceAddrTon = TypeOfNumber.valueOf(submitSm.getDestAddrTon());
+            sourceAddrNpi = NumberingPlanIndicator.valueOf(submitSm.getDestAddrNpi());
+            sourceAddress = submitSm.getDestAddress();
+            
+            // reversing source to destination
+            destAddrTon = TypeOfNumber.valueOf(submitSm.getSourceAddrTon());
+            destAddrNpi = NumberingPlanIndicator.valueOf(submitSm.getSourceAddrNpi());
+            destAddress = submitSm.getSourceAddr();
+            
+            totalSubmitted = totalDelivered = 1;
+            
+            shortMessage = submitSm.getShortMessage();
         }
-
+        
+        public DeliveryReceiptTask(SMPPServerSession session,
+                SubmitMulti submitMulti, MessageId messageId) {
+            this.session = session;
+            this.messageId = messageId;
+            
+            // set to unknown and null, since it was submit_multi
+            sourceAddrTon = TypeOfNumber.UNKNOWN;
+            sourceAddrNpi = NumberingPlanIndicator.UNKNOWN;
+            sourceAddress = null;
+            
+            // reversing source to destination
+            destAddrTon = TypeOfNumber.valueOf(submitMulti.getSourceAddrTon());
+            destAddrNpi = NumberingPlanIndicator.valueOf(submitMulti.getSourceAddrNpi());
+            destAddress = submitMulti.getSourceAddr();
+            
+            // distribution list assumed only contains single address
+            totalSubmitted = totalDelivered = submitMulti.getDestAddresses().length;
+            
+            shortMessage = submitMulti.getShortMessage();
+        }
+        
         public void run() {
             try {
                 Thread.sleep(1000);
@@ -169,15 +232,15 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
             String stringValue = Integer.valueOf(messageId.getValue(), 16).toString();
             try {
                 
-                DeliveryReceipt delRec = new DeliveryReceipt(stringValue, 1, 1, new Date(), new Date(), DeliveryReceiptState.DELIVRD,  null, new String(submitSm.getShortMessage()));
+                DeliveryReceipt delRec = new DeliveryReceipt(stringValue, totalSubmitted, totalDelivered, new Date(), new Date(), DeliveryReceiptState.DELIVRD,  null, new String(shortMessage));
                 session.deliverShortMessage(
                         "mc", 
-                        TypeOfNumber.valueOf(submitSm.getDestAddrTon()), 
-                        NumberingPlanIndicator.valueOf(submitSm.getDestAddrNpi()), 
-                        submitSm.getDestAddress(), 
-                        TypeOfNumber.valueOf(submitSm.getSourceAddrTon()), 
-                        NumberingPlanIndicator.valueOf(submitSm.getSourceAddrNpi()), 
-                        submitSm.getSourceAddr(), 
+                        sourceAddrTon, 
+                        sourceAddrNpi, 
+                        sourceAddress, 
+                        destAddrTon, 
+                        destAddrNpi, 
+                        destAddress, 
                         new ESMClass(MessageMode.DEFAULT, MessageType.SMSC_DEL_RECEIPT, GSMSpecificFeature.DEFAULT), 
                         (byte)0, 
                         (byte)0, 
@@ -190,7 +253,6 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
             }
         }
     }
-    
     
     public static void main(String[] args) {
         int port;

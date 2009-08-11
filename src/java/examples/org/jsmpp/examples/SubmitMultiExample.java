@@ -19,7 +19,18 @@ import java.util.Date;
 
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUException;
-import org.jsmpp.bean.*;
+import org.jsmpp.bean.Address;
+import org.jsmpp.bean.Alphabet;
+import org.jsmpp.bean.BindType;
+import org.jsmpp.bean.ESMClass;
+import org.jsmpp.bean.GeneralDataCoding;
+import org.jsmpp.bean.MessageClass;
+import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.bean.ReplaceIfPresentFlag;
+import org.jsmpp.bean.SMSCDeliveryReceipt;
+import org.jsmpp.bean.SubmitMultiResult;
+import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.session.BindParameter;
@@ -41,13 +52,17 @@ public class SubmitMultiExample {
         // Create a new SMPP Session
         SMPPSession session = new SMPPSession();
         try {
+            
+            session.setMessageReceiverListener(new MessageReceiverListenerImpl());
+            
             // Bind to the Server
             session.connectAndBind("localhost", 8056,
-                                    new BindParameter(BindType.BIND_TX, "test",
+                                    new BindParameter(BindType.BIND_TRX, "test",
                                                         "test", "cp",
                                                         TypeOfNumber.UNKNOWN,
                                                         NumberingPlanIndicator.UNKNOWN,
                                                         null));
+            
         } catch (IOException e) {
             System.err.println("Failed connect and bind to host");
             e.printStackTrace();
@@ -59,10 +74,11 @@ public class SubmitMultiExample {
             Address[] addresses = new Address[] {address1, address2};
             SubmitMultiResult result = session.submitMultiple("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "1616",
                                                         addresses, new ESMClass(), (byte)0, (byte)1, timeFormatter.format(new Date()), null,
-                                                        new RegisteredDelivery(SMSCDeliveryReceipt.DEFAULT), ReplaceIfPresentFlag.REPLACE,
+                                                        new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS), ReplaceIfPresentFlag.REPLACE,
                                                         new GeneralDataCoding(Alphabet.ALPHA_DEFAULT, MessageClass.CLASS1, false), (byte)0,
                                                         "jSMPP simplify SMPP on Java platform".getBytes());
             System.out.println("Messages submitted, result is " + result);
+            Thread.sleep(2000);
         } catch (PDUException e) {
             // Invalid PDU parameter
             System.err.println("Invalid PDU parameter");
@@ -81,6 +97,9 @@ public class SubmitMultiExample {
             e.printStackTrace();
         } catch (IOException e) {
             System.err.println("IO error occur");
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            System.err.println("Thread interrupted");
             e.printStackTrace();
         }
 
