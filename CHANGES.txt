@@ -52,3 +52,4 @@ Changes:
   2. DataCoding (GeneralDataCoding, MessageWatingDataCoding, SimpleDataCoding, RawDataCoding)
 - Expose remote InetAddress on server side API via SMPPServerSession
   Add new method: InetAddress SMPPServerSession#getInetAddress()
+- Ensure command execution is in valid state. Checking done on local side (remote side do checking also).
