@@ -163,6 +163,8 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             throws PDUException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException {
         
+        ensureReceivable("deliverShortMessage");
+        
         DeliverSmCommandTask task = new DeliverSmCommandTask(pduSender(),
                 serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr,
                 destAddrTon, destAddrNpi, destinationAddr, esmClass, protocoId,
@@ -181,6 +183,9 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             NumberingPlanIndicator esmeAddrNpi, String esmeAddr,
             OptionalParameter... optionalParameters) throws PDUStringException,
             IOException {
+        
+        ensureReceivable("alertNotification");
+        
         pduSender().sendAlertNotification(connection().getOutputStream(),
                 sequenceNumber, sourceAddrTon.value(), sourceAddrNpi.value(),
                 sourceAddr, esmeAddrTon.value(), esmeAddrNpi.value(), esmeAddr,

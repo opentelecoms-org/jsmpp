@@ -331,4 +331,50 @@ public abstract class AbstractSession implements Session {
         }
         close();
     }
+
+    /**
+     * Ensure the session is receivable. If the session not receivable then an
+     * exception thrown.
+     * 
+     * @param activityName is the activity name.
+     * @throws IOException if the session not receivable.
+     */
+    protected void ensureReceivable(String activityName) throws IOException {
+        // TODO uudashr: do we have to use another exception for this checking?
+        SessionState currentState = getSessionState();
+        if (!currentState.isReceivable()) {
+            throw new IOException("Cannot " + activityName + " while in state " + currentState);
+        }
+    }
+
+    /**
+     * Ensure the session is transmittable. If the session not transmittable
+     * then an exception thrown.
+     * 
+     * @param activityName is the activity name.
+     * @throws IOException if the session not transmittable.
+     */
+    protected void ensureTransmittable(String activityName) throws IOException {
+        ensureTransmittable(activityName, false);
+    }
+
+    /**
+     * Ensure the session is transmittable. If the session not transmittable
+     * then an exception thrown.
+     * 
+     * @param activityName is the activity name.
+     * @param only set to <tt>true</tt> if you want to ensure transmittable only
+     *        (transceive will not pass), otherwise set to <tt>false</tt>.
+     * @throws IOException if the session not transmittable (by considering the
+     *         <code>only</code> parameter).
+     */
+    protected void ensureTransmittable(String activityName, boolean only) throws IOException {
+        // TODO uudashr: do we have to use another exception for this checking?
+        SessionState currentState = getSessionState();
+        if (!currentState.isTransmittable() || (only && currentState.isReceivable())) {
+            throw new IOException("Cannot " + activityName + " while in state " + currentState);
+        }
+    }
+    
+    
 }
