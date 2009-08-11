@@ -42,6 +42,7 @@ import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.extra.ProcessRequestException;
+import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BindRequest;
 import org.jsmpp.session.DataSmResult;
 import org.jsmpp.session.QuerySmResult;
@@ -228,6 +229,11 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
                 Thread.sleep(1000);
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
+            }
+            SessionState state = session.getSessionState();
+            if (!state.isReceivable()) {
+                logger.debug("Not sending delivery receipt for message id " + messageId + " since session state is " + state);
+                return;
             }
             String stringValue = Integer.valueOf(messageId.getValue(), 16).toString();
             try {
