@@ -6,6 +6,11 @@
 			<package name="org.jsmpp.bean.*"></package>
 		</packages>
 	</test>
+	<test name="AllComposingTest">
+        <packages>
+            <package name="org.jsmpp.composing.*"></package>
+        </packages>
+    </test>
     <test name="AllUtilitiesTest">
         <packages>
             <package name="org.jsmpp.util.*"></package>
