@@ -36,9 +36,10 @@ public interface GenericMessageReceiverListener {
      * Event that called when a data short message accepted.
      * 
      * @param dataSm is the data_sm command.
+     * @param source is the session receive the data_sm command.
      * @return the data_sm result.
      * @throws ProcessRequestException throw if there should be return non-ok
      *         command_status for the response.
      */
-    DataSmResult onAcceptDataSm(DataSm dataSm) throws ProcessRequestException;
+    DataSmResult onAcceptDataSm(DataSm dataSm, Session source) throws ProcessRequestException;
 }
