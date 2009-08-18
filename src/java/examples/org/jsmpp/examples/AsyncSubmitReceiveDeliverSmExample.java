@@ -42,6 +42,7 @@ import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.DataSmResult;
 import org.jsmpp.session.MessageReceiverListener;
 import org.jsmpp.session.SMPPSession;
+import org.jsmpp.session.Session;
 import org.jsmpp.util.AbsoluteTimeFormatter;
 import org.jsmpp.util.InvalidDeliveryReceiptException;
 import org.jsmpp.util.TimeFormatter;
@@ -90,7 +91,7 @@ public class AsyncSubmitReceiveDeliverSmExample {
                     AlertNotification alertNotification) {
             }
             
-            public DataSmResult onAcceptDataSm(DataSm dataSm)
+            public DataSmResult onAcceptDataSm(DataSm dataSm, Session source)
                     throws ProcessRequestException {
                 // TODO Auto-generated method stub
                 return null;

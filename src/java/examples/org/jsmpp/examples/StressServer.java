@@ -48,6 +48,7 @@ import org.jsmpp.session.QuerySmResult;
 import org.jsmpp.session.SMPPServerSession;
 import org.jsmpp.session.SMPPServerSessionListener;
 import org.jsmpp.session.ServerMessageReceiverListener;
+import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
 import org.jsmpp.util.DeliveryReceiptState;
 import org.jsmpp.util.MessageIDGenerator;
@@ -113,7 +114,7 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
         return null;
     }
     
-    public DataSmResult onAcceptDataSm(DataSm dataSm)
+    public DataSmResult onAcceptDataSm(DataSm dataSm, Session source)
             throws ProcessRequestException {
         return null;
     }
