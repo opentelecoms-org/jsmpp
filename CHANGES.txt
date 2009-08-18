@@ -43,6 +43,7 @@ Changes:
   GenericMessageReceiverListener 
 2.0.2
 - set connection timeout when binding
+- provide source (the session) for onAcceptDataSm
 
 2.1 beta 1 
 - New DataCoding API.
