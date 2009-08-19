@@ -48,6 +48,7 @@ import org.jsmpp.session.SMPPServerSession;
 import org.jsmpp.session.SMPPServerSessionListener;
 import org.jsmpp.session.ServerMessageReceiverListener;
 import org.jsmpp.session.ServerResponseDeliveryAdapter;
+import org.jsmpp.session.Session;
 import org.jsmpp.util.DeliveryReceiptState;
 import org.jsmpp.util.MessageIDGenerator;
 import org.jsmpp.util.MessageId;
@@ -114,7 +115,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
         return null;
     }
     
-    public DataSmResult onAcceptDataSm(DataSm dataSm)
+    public DataSmResult onAcceptDataSm(DataSm dataSm, Session source)
             throws ProcessRequestException {
         return null;
     }

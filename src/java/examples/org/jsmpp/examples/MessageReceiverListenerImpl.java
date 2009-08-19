@@ -22,6 +22,7 @@ import org.jsmpp.bean.MessageType;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.session.DataSmResult;
 import org.jsmpp.session.MessageReceiverListener;
+import org.jsmpp.session.Session;
 import org.jsmpp.util.InvalidDeliveryReceiptException;
 
 /**
@@ -62,10 +63,10 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
         }
     }
     
-    public DataSmResult onAcceptDataSm(DataSm dataSm)
-            throws ProcessRequestException {
+    public DataSmResult onAcceptDataSm(DataSm dataSm,
+            Session source) throws ProcessRequestException {
         return null;
-    }
+    };
     
     public void onAcceptAlertNotification(AlertNotification alertNotification) {
     }
