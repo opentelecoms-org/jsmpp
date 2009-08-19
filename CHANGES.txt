@@ -41,11 +41,14 @@ Changes:
 2.0.1
 - Bug fix, MessageReceiverListener should be subclass of 
   GenericMessageReceiverListener 
-2.0.2
+
+2.1.0
 - set connection timeout when binding
 - provide source (the session) for onAcceptDataSm
+- use StrictBufferedInputStream
 
-2.1 beta 1 
+
+2.2.x
 - New DataCoding API.
   Remove the old class (since I can't make backward compatibility)
   Add some class:

@@ -21,6 +21,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 import org.jsmpp.session.connection.Connection;
+import org.jsmpp.util.StrictBufferedInputStream;
 
 /**
  * @author uudashr
@@ -34,7 +35,7 @@ public class SocketConnection implements Connection {
     
     public SocketConnection(Socket socket) throws IOException {
         this.socket = socket;
-        this.in = socket.getInputStream();
+        this.in = new StrictBufferedInputStream(socket.getInputStream(), 65536);// 64 KB buffer
         this.out = socket.getOutputStream();
     }
     

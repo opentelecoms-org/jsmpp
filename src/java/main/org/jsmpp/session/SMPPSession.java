@@ -593,7 +593,9 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	     */
 	    private void notifyNoActivity() {
 	        logger.debug("No activity notified");
-	        enquireLinkSender.enquireLink();
+	        if (sessionContext().getSessionState().isBound()) {
+	            enquireLinkSender.enquireLink();
+	        }
 	    }
 	}
 	
