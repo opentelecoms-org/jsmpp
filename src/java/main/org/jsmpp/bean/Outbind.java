@@ -19,6 +19,8 @@ package org.jsmpp.bean;
  * 
  */
 public class Outbind extends Command {
+    private static final long serialVersionUID = -3730649847637872720L;
+    
     private String systemId;
     private String password;
 

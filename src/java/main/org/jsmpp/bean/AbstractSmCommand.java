@@ -23,6 +23,8 @@ import org.jsmpp.SMPPConstant;
  *
  */
 public class AbstractSmCommand extends Command {
+    private static final long serialVersionUID = 745091499168413812L;
+    
     protected String serviceType;
     protected byte sourceAddrTon;
     protected byte sourceAddrNpi;

@@ -14,6 +14,8 @@
  */
 package org.jsmpp.bean;
 
+import java.io.Serializable;
+
 import org.jsmpp.util.IntUtil;
 
 /**
@@ -23,7 +25,9 @@ import org.jsmpp.util.IntUtil;
  * @version 1.0
  * 
  */
-public class Command {
+public class Command implements Serializable {
+    private static final long serialVersionUID = -5226111982905878489L;
+    
     protected int commandLength;
     protected int commandId;
     protected int commandStatus;

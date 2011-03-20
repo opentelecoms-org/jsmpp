@@ -19,6 +19,8 @@ package org.jsmpp.bean;
  * 
  */
 public class QuerySmResp extends Command {
+    private static final long serialVersionUID = 8491715207469144080L;
+    
     private String messageId;
     private String finalDate;
     private MessageState messageState;

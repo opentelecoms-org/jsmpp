@@ -19,6 +19,7 @@ package org.jsmpp.bean;
  * 
  */
 public class EnquireLinkResp extends Command {
+    private static final long serialVersionUID = -610901596380281785L;
 
     public EnquireLinkResp() {
         super();

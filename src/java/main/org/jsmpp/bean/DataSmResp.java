@@ -21,6 +21,8 @@ import java.util.Arrays;
  *
  */
 public class DataSmResp extends AbstractSmRespCommand {
+    private static final long serialVersionUID = -3727842432265342831L;
+    
     private OptionalParameter[] optionalParameters;
     
     public DataSmResp() {

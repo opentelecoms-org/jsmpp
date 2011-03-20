@@ -19,6 +19,8 @@ package org.jsmpp.bean;
  * 
  */
 public class AbstractSmRespCommand extends Command {
+    private static final long serialVersionUID = 4829782792374754685L;
+    
     private String messageId;
 
     public AbstractSmRespCommand() {

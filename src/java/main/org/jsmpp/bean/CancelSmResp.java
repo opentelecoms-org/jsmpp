@@ -19,6 +19,8 @@ package org.jsmpp.bean;
  *
  */
 public class CancelSmResp extends Command {
+    private static final long serialVersionUID = -8535074405458491134L;
+
     public CancelSmResp() {
         super();
     }

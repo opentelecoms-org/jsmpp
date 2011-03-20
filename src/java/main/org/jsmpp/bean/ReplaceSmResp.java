@@ -19,6 +19,7 @@ package org.jsmpp.bean;
  *
  */
 public class ReplaceSmResp extends Command {
+    private static final long serialVersionUID = 8001670292534801489L;
 
     public ReplaceSmResp() {
         super();

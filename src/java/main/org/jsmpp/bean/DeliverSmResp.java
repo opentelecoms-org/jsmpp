@@ -22,6 +22,8 @@ package org.jsmpp.bean;
  * 
  */
 public class DeliverSmResp extends AbstractSmRespCommand {
+    private static final long serialVersionUID = 7778001562181827176L;
+
     /**
      * Default constructor.
      */

@@ -21,6 +21,7 @@ import org.jsmpp.SMPPConstant;
  * 
  */
 public class EnquireLink extends Command {
+    private static final long serialVersionUID = -2906795675909484142L;
 
     public EnquireLink(int sequenceNumber) {
         super();

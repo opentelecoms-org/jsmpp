@@ -21,6 +21,8 @@ import java.util.Arrays;
  *
  */
 public class ReplaceSm extends Command {
+    private static final long serialVersionUID = 3470186872335922365L;
+    
     private String messageId;
     private byte sourceAddrTon;
     private byte sourceAddrNpi;

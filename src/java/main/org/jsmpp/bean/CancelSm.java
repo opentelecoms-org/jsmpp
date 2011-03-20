@@ -20,6 +20,8 @@ package org.jsmpp.bean;
  *
  */
 public class CancelSm extends Command {
+    private static final long serialVersionUID = -6290826230167091177L;
+    
     private String serviceType;
     private String messageId;
     private byte sourceAddrTon;

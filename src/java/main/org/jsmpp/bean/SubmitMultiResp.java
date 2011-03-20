@@ -21,6 +21,8 @@ import java.util.Arrays;
  *
  */
 public class SubmitMultiResp extends Command {
+    private static final long serialVersionUID = -5021136911028620812L;
+    
     private String messageId;
     private UnsuccessDelivery[] unsuccessSmes;
     

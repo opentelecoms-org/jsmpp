@@ -19,8 +19,9 @@ package org.jsmpp.bean;
  *
  */
 public class GenericNack extends Command {
-	
-	public GenericNack() {
+    private static final long serialVersionUID = 2081061486975721242L;
+
+    public GenericNack() {
 		super();
 	}
 	

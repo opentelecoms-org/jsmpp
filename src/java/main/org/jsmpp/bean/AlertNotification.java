@@ -21,6 +21,8 @@ import java.util.Arrays;
  *
  */
 public class AlertNotification extends Command {
+    private static final long serialVersionUID = 1566936459989108566L;
+    
     private byte sourceAddrTon;
     private byte sourceAddrNpi;
     private String sourceAddr;

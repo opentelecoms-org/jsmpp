@@ -20,6 +20,8 @@ package org.jsmpp.bean;
  * 
  */
 public class QuerySm extends Command {
+    private static final long serialVersionUID = 393203012792088078L;
+    
     private String messageId;
     private byte sourceAddrTon;
     private byte sourceAddrNpi;

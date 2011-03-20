@@ -22,6 +22,8 @@ package org.jsmpp.bean;
  * 
  */
 public class Bind extends Command {
+    private static final long serialVersionUID = 4232311703795097833L;
+    
     private String systemId;
     private String password;
     private String systemType;

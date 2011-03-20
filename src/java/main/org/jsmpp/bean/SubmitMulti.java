@@ -21,6 +21,8 @@ import java.util.Arrays;
  *
  */
 public class SubmitMulti extends Command {
+    private static final long serialVersionUID = -6800953916456361473L;
+    
     private String serviceType;
     private byte sourceAddrTon;
     private byte sourceAddrNpi;

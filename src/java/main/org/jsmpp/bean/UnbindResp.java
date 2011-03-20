@@ -19,6 +19,7 @@ package org.jsmpp.bean;
  * 
  */
 public class UnbindResp extends Command {
+    private static final long serialVersionUID = 965186659031844204L;
 
     public UnbindResp() {
         super();
