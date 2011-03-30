@@ -64,17 +64,24 @@ public abstract class AbstractSessionContext implements SessionContext {
     
     public void addSessionStateListener(
             SessionStateListener l) {
-        sessionStateListeners.add(l);
+        synchronized (sessionStateListeners) {
+            sessionStateListeners.add(l);
+        }
+        
     }
     
     public void removeSessionStateListener(SessionStateListener l) {
-        sessionStateListeners.remove(l);
+        synchronized (sessionStateListeners) {
+            sessionStateListeners.remove(l);
+        }
     }
     
     protected void fireStateChanged(SessionState newState,
             SessionState oldState, Object source) {
-        for (SessionStateListener l : sessionStateListeners) {
-            l.onStateChange(newState, oldState, source);
+        synchronized (sessionStateListeners) {
+            for (SessionStateListener l : sessionStateListeners) {
+                l.onStateChange(newState, oldState, source);
+            }
         }
     }
     
