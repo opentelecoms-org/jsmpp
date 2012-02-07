@@ -1,0 +1,15 @@
+#common
+target/
+out/
+classes/
+syntax:glob
+*.swp
+
+# Eclipse Project Files
+.settings/
+.gwt/
+.project
+.classpath
+
+version.properties
+git.properties
