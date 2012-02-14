@@ -52,7 +52,7 @@ public interface PDUReader {
      * @return the complete byte of smpp command.
      * @throws IOException if an I/O error occurs.
      */
-    public byte[] readPDU(InputStream in, Command pduHeader) throws IOException;
+    public byte[] readPDU(DataInputStream in, Command pduHeader) throws IOException;
 
     /**
      * Read all smpp pdu (excluding the command header) with specified pdu
@@ -66,7 +66,7 @@ public interface PDUReader {
      * @return the complete byte of smpp command.
      * @throws IOException if an I/O error occurs.
      */
-    public byte[] readPDU(InputStream in, int commandLength, int commandId,
+    public byte[] readPDU(DataInputStream in, int commandLength, int commandId,
             int commandStatus, int sequenceNumber) throws IOException;
 
 }

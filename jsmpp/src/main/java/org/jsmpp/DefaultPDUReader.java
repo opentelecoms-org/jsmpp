@@ -16,7 +16,6 @@ package org.jsmpp;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.jsmpp.bean.Command;
 import org.jsmpp.util.OctetUtil;
@@ -57,7 +56,7 @@ public class DefaultPDUReader implements PDUReader {
     /* (non-Javadoc)
      * @see org.jsmpp.PDUReader#readPDU(java.io.InputStream, org.jsmpp.bean.Command)
      */
-    public byte[] readPDU(InputStream in, Command pduHeader) throws IOException {
+    public byte[] readPDU(DataInputStream in, Command pduHeader) throws IOException {
         return readPDU(in, pduHeader.getCommandLength(), pduHeader
                 .getCommandId(), pduHeader.getCommandStatus(), pduHeader
                 .getSequenceNumber());
@@ -66,7 +65,7 @@ public class DefaultPDUReader implements PDUReader {
     /* (non-Javadoc)
      * @see org.jsmpp.PDUReader#readPDU(java.io.InputStream, int, int, int, int)
      */
-    public byte[] readPDU(InputStream in, int commandLength, int commandId,
+    public byte[] readPDU(DataInputStream in, int commandLength, int commandId,
             int commandStatus, int sequenceNumber) throws IOException {
 
         byte[] b = new byte[commandLength];
@@ -76,15 +75,8 @@ public class DefaultPDUReader implements PDUReader {
         System.arraycopy(OctetUtil.intToBytes(sequenceNumber), 0, b, 12, 4);
 
         if (commandLength > 16) {
-            int len = commandLength - 16;
-            int totalReaded = -1;
             synchronized (in) {
-                totalReaded = in.read(b, 16, commandLength - 16);
-            }
-            if (totalReaded != len) {
-                throw new IOException(
-                        "Unexpected length of byte readed. Expecting " + len
-                                + " but only read " + totalReaded);
+                in.readFully(b, 16, commandLength - 16);
             }
         }
         return b;
