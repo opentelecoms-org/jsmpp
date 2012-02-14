@@ -457,6 +457,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			messageReceiverListener.onAcceptDeliverSm(deliverSm);
         } else { 
 			logger.warn("Receive deliver_sm but MessageReceiverListener is null. Short message = " + new String(deliverSm.getShortMessage()));
+			throw new ProcessRequestException("No message receiver listener registered", SMPPConstant.STAT_ESME_RX_T_APPN);
         }
 	}
 	
