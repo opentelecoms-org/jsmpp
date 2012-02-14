@@ -63,7 +63,7 @@ public class StringValidationTest {
         
         try {
             StringValidator.validateString("smsgwsmsgwsmsgwee", StringParameter.SYSTEM_ID);
-            fail("Should be fail inserting 16 char of string");
+            fail("Should be fail inserting 17 char of string");
         } catch (PDUStringException e) {
         }
     }
