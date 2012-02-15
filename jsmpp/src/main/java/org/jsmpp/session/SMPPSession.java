@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jsmpp.DefaultPDUReader;
@@ -101,6 +102,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	private DataInputStream in;
 	private OutputStream out;
 	
+	private PDUReaderWorker pduReaderWorker;
 	private final ResponseHandler responseHandler = new ResponseHandlerImpl();
 	private MessageReceiverListener messageReceiverListener;
     private BoundSessionStateListener sessionStateListener = new BoundSessionStateListener();
@@ -227,7 +229,8 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			in = new DataInputStream(conn.getInputStream());
 			out = conn.getOutputStream();
 			
-			new PDUReaderWorker().start();
+			pduReaderWorker = new PDUReaderWorker();
+			pduReaderWorker.start();
 			String smscSystemId = sendBind(bindParam.getBindType(), bindParam.getSystemId(), bindParam.getPassword(), bindParam.getSystemType(),
                     InterfaceVersion.IF_34, bindParam.getAddrTon(), bindParam.getAddrNpi(), bindParam.getAddressRange(), timeout);
 			sessionContext.bound(bindParam.getBindType());
@@ -537,7 +540,8 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	 *
 	 */
 	private class PDUReaderWorker extends Thread {
-	    private ExecutorService executorService = Executors.newFixedThreadPool(getPduProcessorDegree());
+		// start with serial execution of pdu processing, when the session is bound the pool will be enlarge up to the PduProcessorDegree
+	    private ExecutorService executorService = Executors.newFixedThreadPool(1); 
 		
 	    private Runnable onIOExceptionTask = new Runnable() {
 		    public void run() {
@@ -547,7 +551,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		
 	    @Override
 		public void run() {
-	        logger.info("Starting PDUReaderWorker with processor degree:{} ...", getPduProcessorDegree());
+	        logger.info("Starting PDUReaderWorker");
 			while (isReadPdu()) {
                 readPDU();
 			}
@@ -668,6 +672,10 @@ public class SMPPSession extends AbstractSession implements ClientSession {
                 } catch (IOException e) {
                     logger.error("Failed setting so_timeout for session timer", e);
                 }
+    	        
+               	logger.info("Changing processor degree to {}", getPduProcessorDegree());
+               	((ThreadPoolExecutor)pduReaderWorker.executorService).setCorePoolSize(getPduProcessorDegree());
+               	((ThreadPoolExecutor)pduReaderWorker.executorService).setMaximumPoolSize(getPduProcessorDegree());
 	        }
 	    }
 	}
