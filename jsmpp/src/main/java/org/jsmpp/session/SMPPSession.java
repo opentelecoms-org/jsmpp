@@ -570,7 +570,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
                  * process it concurrently.
                  */
                 PDUProcessTask task = new PDUProcessTask(pduHeader, pdu,
-                        sessionContext.getStateProcessor(), responseHandler,
+                        sessionContext, responseHandler,
                         sessionContext, onIOExceptionTask);
 	            executorService.execute(task);
 	            
