@@ -566,7 +566,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     
     private class BoundStateListener implements SessionStateListener {
         public void onStateChange(SessionState newState, SessionState oldState,
-                Object source) {
+        		Session source) {
             if (newState.isBound()) {
                 enquireLinkSender.start();
             }

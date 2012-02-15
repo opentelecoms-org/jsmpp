@@ -656,7 +656,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	 */
 	private class BoundSessionStateListener implements SessionStateListener {
 	    public void onStateChange(SessionState newState, SessionState oldState,
-	            Object source) {
+	    		Session source) {
 	        /*
 	         * We need to set SO_TIMEOUT to sessionTimer so when timeout occur, 
 	         * a SocketTimeoutException will be raised. When Exception raised we

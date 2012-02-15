@@ -31,6 +31,7 @@ import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.SMPPSession;
+import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,7 +161,7 @@ public class AutoReconnectGateway implements Gateway {
      */
     private class SessionStateListenerImpl implements SessionStateListener {
         public void onStateChange(SessionState newState, SessionState oldState,
-                Object source) {
+        		Session source) {
             if (newState.equals(SessionState.CLOSED)) {
                 logger.info("Session closed");
                 reconnectAfter(reconnectInterval);
