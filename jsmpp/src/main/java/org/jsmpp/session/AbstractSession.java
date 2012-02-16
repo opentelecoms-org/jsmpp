@@ -208,6 +208,12 @@ public abstract class AbstractSession implements Session {
             } catch (IOException e) {
             }
         }
+        
+        try {
+			enquireLinkSender.join();
+		} catch (InterruptedException e) {
+			logger.warn("interrupted while waiting for enquireLinkSender thread to exit");
+		}
     }
     
     /**
