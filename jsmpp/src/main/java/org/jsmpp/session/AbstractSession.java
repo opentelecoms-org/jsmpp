@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUException;
@@ -59,6 +60,8 @@ public abstract class AbstractSession implements Session {
     private String sessionId = generateSessionId();
     private int enquireLinkTimer = 5000;
     private long transactionTimer = 2000;
+    
+    protected EnquireLinkSender enquireLinkSender;
     
     public AbstractSession(PDUSender pduSender) {
         this.pduSender = pduSender;
@@ -110,6 +113,10 @@ public abstract class AbstractSession implements Session {
     public SessionState getSessionState() {
         return sessionContext().getSessionState();
     }
+    
+    protected synchronized boolean isReadPdu() {
+		return getSessionState().isBound() || getSessionState().equals(SessionState.OPEN);
+	}
     
     public void addSessionStateListener(SessionStateListener l) {
         if (l != null) {
@@ -376,5 +383,51 @@ public abstract class AbstractSession implements Session {
         }
     }
     
+	protected class EnquireLinkSender extends Thread {
+        private final AtomicBoolean sendingEnquireLink = new AtomicBoolean(false);
+        
+        @Override
+        public void run() {
+            logger.info("Starting EnquireLinkSender");
+            while (isReadPdu()) {
+                while (!sendingEnquireLink.compareAndSet(true, false) && isReadPdu()) {
+                    synchronized (sendingEnquireLink) {
+                        try {
+                            sendingEnquireLink.wait(500);
+                        } catch (InterruptedException e) {
+                        }
+                    }
+                }
+                if (!isReadPdu()) {
+                    break;
+                }
+                try {
+                    sendEnquireLink();
+                } catch (ResponseTimeoutException e) {
+                    close();
+                } catch (InvalidResponseException e) {
+                    // lets unbind gracefully
+                    unbindAndClose();
+                } catch (IOException e) {
+                    close();
+                }
+            }
+            logger.info("EnquireLinkSender stop");
+        }
+        
+        /**
+         * This method will send enquire link asynchronously.
+         */
+        public void enquireLink() {
+            if (sendingEnquireLink.compareAndSet(false, true)) {
+                logger.debug("Sending enquire link notify");
+                synchronized (sendingEnquireLink) {
+                    sendingEnquireLink.notify();
+                }
+            } else {
+                logger.debug("Not sending enquire link notify");
+            }
+        }
+    }
     
 }

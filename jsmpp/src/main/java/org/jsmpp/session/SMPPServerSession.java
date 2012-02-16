@@ -22,7 +22,6 @@ import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
@@ -79,7 +78,6 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     
     private ServerMessageReceiverListener messageReceiverListener;
     private ServerResponseDeliveryListener responseDeliveryListener;
-    private final EnquireLinkSender enquireLinkSender;
     private BindRequestReceiver bindRequestReceiver = new BindRequestReceiver(responseHandler);
     
     public SMPPServerSession(Connection conn,
@@ -146,11 +144,6 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                     "waitForBind() should be invoked on OPEN state, actual state is "
                             + currentSessionState);
         }
-    }
-    
-    private synchronized boolean isReadPdu() {
-        SessionState sessionState = sessionContext.getSessionState();
-        return sessionState.isBound() || sessionState.equals(SessionState.OPEN);
     }
     
     public void deliverShortMessage(String serviceType,
@@ -520,49 +513,6 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         }
     }
     
-    private class EnquireLinkSender extends Thread {
-        private final AtomicBoolean sendingEnquireLink = new AtomicBoolean(false);
-        
-        @Override
-        public void run() {
-            logger.info("Starting EnquireLinkSender");
-            while (isReadPdu()) {
-                while (!sendingEnquireLink.compareAndSet(true, false) && isReadPdu()) {
-                    synchronized (sendingEnquireLink) {
-                        try {
-                            sendingEnquireLink.wait(500);
-                        } catch (InterruptedException e) {
-                        }
-                    }
-                }
-                if (!isReadPdu()) {
-                    break;
-                }
-                try {
-                    sendEnquireLink();
-                } catch (ResponseTimeoutException e) {
-                    close();
-                } catch (InvalidResponseException e) {
-                    // lets unbind gracefully
-                    unbindAndClose();
-                } catch (IOException e) {
-                    close();
-                }
-            }
-            logger.info("EnquireLinkSender stop");
-        }
-        
-        /**
-         * This method will send enquire link asynchronously.
-         */
-        public void enquireLink() {
-            if (sendingEnquireLink.compareAndSet(false, true)) {
-                synchronized (sendingEnquireLink) {
-                    sendingEnquireLink.notify();
-                }
-            }
-        }
-    }
     
     private class BoundStateListener implements SessionStateListener {
         public void onStateChange(SessionState newState, SessionState oldState,

@@ -21,7 +21,6 @@ import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
@@ -107,7 +106,6 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	private MessageReceiverListener messageReceiverListener;
     private BoundSessionStateListener sessionStateListener = new BoundSessionStateListener();
     private SMPPSessionContext sessionContext = new SMPPSessionContext(this, sessionStateListener);
-	private EnquireLinkSender enquireLinkSender;
 	
 	/**
      * Default constructor of {@link SMPPSession}. The next action might be
@@ -446,10 +444,6 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	    return messageReceiverListener;
 	}
 	
-    private synchronized boolean isReadPdu() {
-		return sessionContext.getSessionState().isBound() || sessionContext.getSessionState().equals(SessionState.OPEN);
-	}
-	
 	@Override
 	protected void finalize() throws Throwable {
 		close();
@@ -603,54 +597,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	        }
 	    }
 	}
-	
-	
-	private class EnquireLinkSender extends Thread {
-        private final AtomicBoolean sendingEnquireLink = new AtomicBoolean(false);
-        
-        @Override
-        public void run() {
-            logger.info("Starting EnquireLinkSender");
-            while (isReadPdu()) {
-                while (!sendingEnquireLink.compareAndSet(true, false) && isReadPdu()) {
-                    synchronized (sendingEnquireLink) {
-                        try {
-                            sendingEnquireLink.wait(500);
-                        } catch (InterruptedException e) {
-                        }
-                    }
-                }
-                if (!isReadPdu()) {
-                    break;
-                }
-                try {
-                    sendEnquireLink();
-                } catch (ResponseTimeoutException e) {
-                    close();
-                } catch (InvalidResponseException e) {
-                    // lets unbind gracefully
-                    unbindAndClose();
-                } catch (IOException e) {
-                    close();
-                }
-            }
-            logger.info("EnquireLinkSender stop");
-        }
-        
-        /**
-         * This method will send enquire link asynchronously.
-         */
-        public void enquireLink() {
-            if (sendingEnquireLink.compareAndSet(false, true)) {
-                logger.debug("Sending enquire link notify");
-                synchronized (sendingEnquireLink) {
-                    sendingEnquireLink.notify();
-                }
-            } else {
-                logger.debug("Not sending enquire link notify");
-            }
-        }
-    }
+
 	
 	/**
 	 * Session state listener for internal class use.
