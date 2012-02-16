@@ -392,6 +392,11 @@ public abstract class AbstractSession implements Session {
 	protected class EnquireLinkSender extends Thread {
         private final AtomicBoolean sendingEnquireLink = new AtomicBoolean(false);
         
+        public EnquireLinkSender()
+        {
+        	super("EnquireLinkSender: " + AbstractSession.this);
+        }
+        
         @Override
         public void run() {
             logger.info("Starting EnquireLinkSender");
