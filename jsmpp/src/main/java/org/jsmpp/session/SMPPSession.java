@@ -21,6 +21,7 @@ import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
@@ -551,6 +552,11 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			}
 			close();
 			executorService.shutdown();
+			try {
+				executorService.awaitTermination(getTransactionTimer(), TimeUnit.MILLISECONDS);
+			} catch (InterruptedException e) {
+				logger.warn("interrupted while waiting for executor service pool to finish");
+			}
 			logger.info("PDUReaderWorker stop");
 		}
 		
