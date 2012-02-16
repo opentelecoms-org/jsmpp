@@ -60,7 +60,7 @@ public class HexUtil {
      */
     public static String convertBytesToHexString(byte[] data, int offset,
             int length) {
-        StringBuffer sBuf = new StringBuffer();
+        StringBuffer sBuf = new StringBuffer((length-offset)*2);
         // System.err.println("converBytesToHexString");
         for (int i = offset; i < length; i++) {
             /*
