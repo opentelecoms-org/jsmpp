@@ -16,6 +16,8 @@ package org.jsmpp.bean;
 
 import java.util.Arrays;
 
+import org.jsmpp.bean.OptionalParameter.Tag;
+
 /**
  * @author uudashr
  *
@@ -29,6 +31,11 @@ public class DataSmResp extends AbstractSmRespCommand {
         super();
     }
 
+    public OptionalParameter getOptionalParameter(Tag tagEnum)
+    {
+    	return getOptionalParameter(tagEnum, optionalParameters);
+    }
+    
     public OptionalParameter[] getOptionalParameters() {
         return optionalParameters;
     }

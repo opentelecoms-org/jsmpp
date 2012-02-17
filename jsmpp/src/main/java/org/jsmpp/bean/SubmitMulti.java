@@ -16,6 +16,8 @@ package org.jsmpp.bean;
 
 import java.util.Arrays;
 
+import org.jsmpp.bean.OptionalParameter.Tag;
+
 /**
  * @author uudashr
  *
@@ -164,6 +166,11 @@ public class SubmitMulti extends Command {
         this.shortMessage = shortMessage;
     }
 
+    public OptionalParameter getOptionalParameter(Tag tagEnum)
+    {
+    	return getOptionalParameter(tagEnum, optionalParameters);
+    }
+    
     public OptionalParameter[] getOptionalParameters() {
         return optionalParameters;
     }

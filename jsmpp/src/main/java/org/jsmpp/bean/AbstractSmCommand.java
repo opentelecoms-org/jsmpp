@@ -17,6 +17,7 @@ package org.jsmpp.bean;
 import java.util.Arrays;
 
 import org.jsmpp.SMPPConstant;
+import org.jsmpp.bean.OptionalParameter.Tag;
 
 /**
  * @author uudashr
@@ -185,7 +186,11 @@ public class AbstractSmCommand extends Command {
         this.serviceType = serviceType;
     }
 
-
+    public OptionalParameter getOptionalParameter(Tag tagEnum)
+    {
+    	return getOptionalParameter(tagEnum, optionalParameters);
+    }
+    
     public OptionalParameter[] getOptionalParameters() {
         return optionalParameters;
     }
