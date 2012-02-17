@@ -56,7 +56,7 @@ public class SynchronizedPDUReader implements PDUReader {
      * @see org.jsmpp.PDUReader#readPDU(java.io.InputStream,
      *      org.jsmpp.bean.Command)
      */
-    public byte[] readPDU(InputStream in, Command pduHeader) throws IOException {
+    public byte[] readPDU(DataInputStream in, Command pduHeader) throws IOException {
         synchronized (in) {
             return pduReader.readPDU(in, pduHeader);
         }
@@ -68,7 +68,7 @@ public class SynchronizedPDUReader implements PDUReader {
      * @see org.jsmpp.PDUReader#readPDU(java.io.InputStream, int, int,
      *      int, int)
      */
-    public byte[] readPDU(InputStream in, int commandLength, int commandId,
+    public byte[] readPDU(DataInputStream in, int commandLength, int commandId,
             int commandStatus, int sequenceNumber) throws IOException {
         synchronized (in) {
             return pduReader.readPDU(in, commandLength, commandId,

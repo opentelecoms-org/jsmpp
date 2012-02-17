@@ -20,7 +20,8 @@ import java.io.OutputStream;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
@@ -101,11 +102,11 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	private DataInputStream in;
 	private OutputStream out;
 	
+	private PDUReaderWorker pduReaderWorker;
 	private final ResponseHandler responseHandler = new ResponseHandlerImpl();
 	private MessageReceiverListener messageReceiverListener;
     private BoundSessionStateListener sessionStateListener = new BoundSessionStateListener();
     private SMPPSessionContext sessionContext = new SMPPSessionContext(this, sessionStateListener);
-	private EnquireLinkSender enquireLinkSender;
 	
 	/**
      * Default constructor of {@link SMPPSession}. The next action might be
@@ -227,7 +228,8 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			in = new DataInputStream(conn.getInputStream());
 			out = conn.getOutputStream();
 			
-			new PDUReaderWorker().start();
+			pduReaderWorker = new PDUReaderWorker();
+			pduReaderWorker.start();
 			String smscSystemId = sendBind(bindParam.getBindType(), bindParam.getSystemId(), bindParam.getPassword(), bindParam.getSystemType(),
                     InterfaceVersion.IF_34, bindParam.getAddrTon(), bindParam.getAddrNpi(), bindParam.getAddressRange(), timeout);
 			sessionContext.bound(bindParam.getBindType());
@@ -443,10 +445,6 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	    return messageReceiverListener;
 	}
 	
-    private synchronized boolean isReadPdu() {
-		return sessionContext.getSessionState().isBound() || sessionContext.getSessionState().equals(SessionState.OPEN);
-	}
-	
 	@Override
 	protected void finalize() throws Throwable {
 		close();
@@ -457,6 +455,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			messageReceiverListener.onAcceptDeliverSm(deliverSm);
         } else { 
 			logger.warn("Receive deliver_sm but MessageReceiverListener is null. Short message = " + new String(deliverSm.getShortMessage()));
+			throw new ProcessRequestException("No message receiver listener registered", SMPPConstant.STAT_ESME_RX_T_APPN);
         }
 	}
 	
@@ -536,8 +535,13 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	 *
 	 */
 	private class PDUReaderWorker extends Thread {
-	    private ExecutorService executorService = Executors.newFixedThreadPool(getPduProcessorDegree());
+		// start with serial execution of pdu processing, when the session is bound the pool will be enlarge up to the PduProcessorDegree
+	    private ExecutorService executorService = Executors.newFixedThreadPool(1); 
 		
+	    public PDUReaderWorker() {
+        	super("PDUReaderWorker: " + SMPPSession.this);
+	    }
+	    
 	    private Runnable onIOExceptionTask = new Runnable() {
 		    public void run() {
 		        close();
@@ -546,12 +550,17 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		
 	    @Override
 		public void run() {
-	        logger.info("Starting PDUReaderWorker with processor degree:{} ...", getPduProcessorDegree());
+	        logger.info("Starting PDUReaderWorker");
 			while (isReadPdu()) {
                 readPDU();
 			}
 			close();
 			executorService.shutdown();
+			try {
+				executorService.awaitTermination(getTransactionTimer(), TimeUnit.MILLISECONDS);
+			} catch (InterruptedException e) {
+				logger.warn("interrupted while waiting for executor service pool to finish");
+			}
 			logger.info("PDUReaderWorker stop");
 		}
 		
@@ -569,7 +578,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
                  * process it concurrently.
                  */
                 PDUProcessTask task = new PDUProcessTask(pduHeader, pdu,
-                        sessionContext.getStateProcessor(), responseHandler,
+                        sessionContext, responseHandler,
                         sessionContext, onIOExceptionTask);
 	            executorService.execute(task);
 	            
@@ -598,54 +607,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	        }
 	    }
 	}
-	
-	
-	private class EnquireLinkSender extends Thread {
-        private final AtomicBoolean sendingEnquireLink = new AtomicBoolean(false);
-        
-        @Override
-        public void run() {
-            logger.info("Starting EnquireLinkSender");
-            while (isReadPdu()) {
-                while (!sendingEnquireLink.compareAndSet(true, false) && isReadPdu()) {
-                    synchronized (sendingEnquireLink) {
-                        try {
-                            sendingEnquireLink.wait(500);
-                        } catch (InterruptedException e) {
-                        }
-                    }
-                }
-                if (!isReadPdu()) {
-                    break;
-                }
-                try {
-                    sendEnquireLink();
-                } catch (ResponseTimeoutException e) {
-                    close();
-                } catch (InvalidResponseException e) {
-                    // lets unbind gracefully
-                    unbindAndClose();
-                } catch (IOException e) {
-                    close();
-                }
-            }
-            logger.info("EnquireLinkSender stop");
-        }
-        
-        /**
-         * This method will send enquire link asynchronously.
-         */
-        public void enquireLink() {
-            if (sendingEnquireLink.compareAndSet(false, true)) {
-                logger.debug("Sending enquire link notify");
-                synchronized (sendingEnquireLink) {
-                    sendingEnquireLink.notify();
-                }
-            } else {
-                logger.debug("Not sending enquire link notify");
-            }
-        }
-    }
+
 	
 	/**
 	 * Session state listener for internal class use.
@@ -655,7 +617,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	 */
 	private class BoundSessionStateListener implements SessionStateListener {
 	    public void onStateChange(SessionState newState, SessionState oldState,
-	            Object source) {
+	    		Session source) {
 	        /*
 	         * We need to set SO_TIMEOUT to sessionTimer so when timeout occur, 
 	         * a SocketTimeoutException will be raised. When Exception raised we
@@ -667,6 +629,10 @@ public class SMPPSession extends AbstractSession implements ClientSession {
                 } catch (IOException e) {
                     logger.error("Failed setting so_timeout for session timer", e);
                 }
+    	        
+               	logger.info("Changing processor degree to {}", getPduProcessorDegree());
+               	((ThreadPoolExecutor)pduReaderWorker.executorService).setCorePoolSize(getPduProcessorDegree());
+               	((ThreadPoolExecutor)pduReaderWorker.executorService).setMaximumPoolSize(getPduProcessorDegree());
 	        }
 	    }
 	}

@@ -36,6 +36,7 @@ import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.SMPPSession;
+import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
 
 /**
@@ -51,7 +52,7 @@ public class SubmitMultipartMultilangualExample {
 	private static final int MAX_SINGLE_MSG_SEGMENT_SIZE_7BIT = 160;
 
 	private class SessionStateListenerImpl implements SessionStateListener {
-		public void onStateChange(SessionState newState, SessionState oldState, Object source) {
+		public void onStateChange(SessionState newState, SessionState oldState, Session source) {
 			System.out.println("Session state changed from " + oldState + " to " + newState);
 		}
 	}

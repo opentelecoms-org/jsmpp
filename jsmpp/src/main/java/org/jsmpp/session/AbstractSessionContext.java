@@ -77,7 +77,7 @@ public abstract class AbstractSessionContext implements SessionContext {
     }
     
     protected void fireStateChanged(SessionState newState,
-            SessionState oldState, Object source) {
+            SessionState oldState, Session source) {
         synchronized (sessionStateListeners) {
             for (SessionStateListener l : sessionStateListeners) {
                 l.onStateChange(newState, oldState, source);

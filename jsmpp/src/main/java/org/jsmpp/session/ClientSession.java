@@ -19,6 +19,7 @@ import java.io.IOException;
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUException;
 import org.jsmpp.bean.Address;
+import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.NumberingPlanIndicator;
@@ -201,4 +202,85 @@ public interface ClientSession extends Session {
             RegisteredDelivery registeredDelivery, byte smDefaultMsgId,
             byte[] shortMessage) throws PDUException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException;
+    
+    /**
+     * Open connection and bind immediately. The default
+     * timeout is 1 minutes.
+     * 
+     * @param host is the SMSC host address.
+     * @param port is the SMSC listen port.
+     * @param bindType is the bind type.
+     * @param systemId is the system id.
+     * @param password is the password.
+     * @param systemType is the system type.
+     * @param addrTon is the address TON.
+     * @param addrNpi is the address NPI.
+     * @param addressRange is the address range.
+     * @throws IOException if there is an IO error found.
+     */
+    void connectAndBind(String host, int port, BindType bindType,
+            String systemId, String password, String systemType,
+            TypeOfNumber addrTon, NumberingPlanIndicator addrNpi,
+            String addressRange) throws IOException;
+    
+    /**
+     * Open connection and bind immediately with specified timeout. The default
+     * timeout is 1 minutes.
+     * 
+     * @param host is the SMSC host address.
+     * @param port is the SMSC listen port.
+     * @param bindType is the bind type.
+     * @param systemId is the system id.
+     * @param password is the password.
+     * @param systemType is the system type.
+     * @param addrTon is the address TON.
+     * @param addrNpi is the address NPI.
+     * @param addressRange is the address range.
+     * @param timeout is the timeout.
+     * @throws IOException if there is an IO error found.
+     */
+    public void connectAndBind(String host, int port, BindType bindType,
+            String systemId, String password, String systemType,
+            TypeOfNumber addrTon, NumberingPlanIndicator addrNpi,
+            String addressRange, long timeout) throws IOException;
+    
+    /**
+     * Open connection and bind immediately.
+     * 
+     * @param host is the SMSC host address.
+     * @param port is the SMSC listen port.
+     * @param bindParam is the bind parameters.
+     * @return the SMSC system id.
+     * @throws IOException if there is an IO error found.
+     */
+    public String connectAndBind(String host, int port,
+            BindParameter bindParam) 
+            throws IOException;
+    
+    /**
+     * Open connection and bind immediately.
+     * 
+     * @param host is the SMSC host address.
+     * @param port is the SMSC listen port.
+     * @param bindParam is the bind parameters.
+     * @param timeout is the timeout.
+     * @return the SMSC system id.
+     * @throws IOException if there is an IO error found.
+     */
+    public String connectAndBind(String host, int port,
+            BindParameter bindParam, long timeout) 
+            throws IOException;
+    
+    /**
+     * Get the current message receiver listener that is currently registered for this smpp session.
+     * @return The current message receiver listener
+     */
+    public MessageReceiverListener getMessageReceiverListener();
+    
+    /**
+     * Sets a message receiver listener for this smpp session.
+     * @param messageReceiverListener is the new listener
+     */
+    public void setMessageReceiverListener(
+            MessageReceiverListener messageReceiverListener);
 }

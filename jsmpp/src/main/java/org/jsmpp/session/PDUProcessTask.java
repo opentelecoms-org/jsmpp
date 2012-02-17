@@ -18,7 +18,6 @@ import java.io.IOException;
 
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
-import org.jsmpp.session.state.SMPPSessionState;
 
 /**
  * @author uudashr
@@ -27,17 +26,17 @@ import org.jsmpp.session.state.SMPPSessionState;
 public class PDUProcessTask implements Runnable {
     private final Command pduHeader;
     private final byte[] pdu;
-    private final SMPPSessionState stateProcessor;
+    private final SMPPSessionContext sessionContext;
     private final ResponseHandler responseHandler;
     private final ActivityNotifier activityNotifier;
     private final Runnable onIOExceptionTask;
     
     public PDUProcessTask(Command pduHeader, byte[] pdu,
-            SMPPSessionState stateProcessor, ResponseHandler responseHandler,
+    		SMPPSessionContext sessionContext, ResponseHandler responseHandler,
             ActivityNotifier activityNotifier, Runnable onIOExceptionTask) {
         this.pduHeader = pduHeader;
         this.pdu = pdu;
-        this.stateProcessor = stateProcessor;
+        this.sessionContext = sessionContext;
         this.responseHandler = responseHandler;
         this.activityNotifier = activityNotifier;
         this.onIOExceptionTask = onIOExceptionTask;
@@ -50,66 +49,66 @@ public class PDUProcessTask implements Runnable {
             case SMPPConstant.CID_BIND_TRANSMITTER_RESP:
             case SMPPConstant.CID_BIND_TRANSCEIVER_RESP:
                 activityNotifier.notifyActivity();
-                stateProcessor.processBindResp(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processBindResp(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_GENERIC_NACK:
                 activityNotifier.notifyActivity();
-                stateProcessor.processGenericNack(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processGenericNack(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_ENQUIRE_LINK:
                 activityNotifier.notifyActivity();
-                stateProcessor.processEnquireLink(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processEnquireLink(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_ENQUIRE_LINK_RESP:
                 activityNotifier.notifyActivity();
-                stateProcessor.processEnquireLinkResp(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processEnquireLinkResp(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_SUBMIT_SM_RESP:
                 activityNotifier.notifyActivity();
-                stateProcessor.processSubmitSmResp(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processSubmitSmResp(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_SUBMIT_MULTI_RESP:
                 activityNotifier.notifyActivity();
-                stateProcessor.processSubmitMultiResp(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processSubmitMultiResp(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_QUERY_SM_RESP:
                 activityNotifier.notifyActivity();
-                stateProcessor.processQuerySmResp(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processQuerySmResp(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_DELIVER_SM:
                 activityNotifier.notifyActivity();
-                stateProcessor.processDeliverSm(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processDeliverSm(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_DATA_SM:
                 activityNotifier.notifyActivity();
-                stateProcessor.processDataSm(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processDataSm(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_DATA_SM_RESP:
                 activityNotifier.notifyActivity();
-                stateProcessor.processDataSmResp(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processDataSmResp(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_CANCEL_SM_RESP:
                 activityNotifier.notifyActivity();
-                stateProcessor.processCancelSmResp(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processCancelSmResp(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_REPLACE_SM_RESP:
                 activityNotifier.notifyActivity();
-                stateProcessor.processReplaceSmResp(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processReplaceSmResp(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_ALERT_NOTIFICATION:
                 activityNotifier.notifyActivity();
-                stateProcessor.processAlertNotification(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processAlertNotification(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_UNBIND:
                 activityNotifier.notifyActivity();
-                stateProcessor.processUnbind(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processUnbind(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_UNBIND_RESP:
                 activityNotifier.notifyActivity();
-                stateProcessor.processUnbindResp(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processUnbindResp(pduHeader, pdu, responseHandler);
                 break;
             default:
-                stateProcessor.processUnknownCid(pduHeader, pdu, responseHandler);
+            	sessionContext.getStateProcessor().processUnknownCid(pduHeader, pdu, responseHandler);
             }
         } catch (IOException e) {
             onIOExceptionTask.run();

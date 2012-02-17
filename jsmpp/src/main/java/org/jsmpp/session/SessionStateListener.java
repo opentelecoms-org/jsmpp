@@ -34,5 +34,5 @@ public interface SessionStateListener {
      * @param source is source of changed state.
      */
     public void onStateChange(SessionState newState, SessionState oldState,
-            Object source);
+    		Session source);
 }
