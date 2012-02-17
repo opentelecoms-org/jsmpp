@@ -431,7 +431,6 @@ public abstract class AbstractSession implements Session {
          */
         public void enquireLink() {
             if (sendingEnquireLink.compareAndSet(false, true)) {
-                logger.debug("Sending enquire link notify");
                 synchronized (sendingEnquireLink) {
                     sendingEnquireLink.notify();
                 }

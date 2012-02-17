@@ -86,7 +86,6 @@ public abstract class AbstractSessionContext implements SessionContext {
     }
     
     public void notifyActivity() {
-        logger.debug("Activity notified");
         lastActivityTimestamp = System.currentTimeMillis();
     }
     

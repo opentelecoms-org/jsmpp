@@ -508,7 +508,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
          * Notify for no activity.
          */
         private void notifyNoActivity() {
-            logger.debug("No activity notified");
+            logger.debug("No activity notified, sending enquireLink");
             enquireLinkSender.enquireLink();
         }
     }
