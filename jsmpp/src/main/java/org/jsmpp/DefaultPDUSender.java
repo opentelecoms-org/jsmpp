@@ -30,7 +30,10 @@ import org.jsmpp.bean.ReplaceIfPresentFlag;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.util.DefaultComposer;
+import org.jsmpp.util.HexUtil;
 import org.jsmpp.util.PDUComposer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The SMPP PDU reader class.
@@ -41,6 +44,7 @@ import org.jsmpp.util.PDUComposer;
  * 
  */
 public class DefaultPDUSender implements PDUSender {
+    private static final Logger logger = LoggerFactory.getLogger(DefaultPDUSender.class);
     private final PDUComposer pduComposer;
 
     /**
@@ -416,6 +420,11 @@ public class DefaultPDUSender implements PDUSender {
     
     private static void writeAndFlush(OutputStream out, byte[] b)
             throws IOException {
+    	if(logger.isDebugEnabled())
+    	{
+    		String hexmsg = HexUtil.conventBytesToHexString(b);
+    		logger.debug("Sending SMPP message {}", hexmsg);
+    	}
         out.write(b);
         out.flush();
     }

@@ -18,12 +18,16 @@ import java.io.IOException;
 
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author uudashr
  *
  */
 public class PDUProcessTask implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(PDUProcessTask.class);
+    
     private final Command pduHeader;
     private final byte[] pdu;
     private final SMPPSessionContext sessionContext;
@@ -44,6 +48,10 @@ public class PDUProcessTask implements Runnable {
 
     public void run() {
         try {
+        	if(logger.isDebugEnabled()) {
+        		logger.debug("Received SMPP message {} {}", pduHeader, new String(pdu));
+        	}
+        	
             switch (pduHeader.getCommandId()) {
             case SMPPConstant.CID_BIND_RECEIVER_RESP:
             case SMPPConstant.CID_BIND_TRANSMITTER_RESP:
