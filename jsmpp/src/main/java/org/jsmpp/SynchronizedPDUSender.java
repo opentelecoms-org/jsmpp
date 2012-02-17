@@ -272,10 +272,10 @@ public class SynchronizedPDUSender implements PDUSender {
         }
     }
 
-    public byte[] sendDeliverSmResp(OutputStream os, int sequenceNumber)
+    public byte[] sendDeliverSmResp(OutputStream os, int commandStatus, int sequenceNumber)
             throws IOException {
         synchronized (os) {
-            return pduSender.sendDeliverSmResp(os, sequenceNumber);
+            return pduSender.sendDeliverSmResp(os, commandStatus, sequenceNumber);
         }
     }
 

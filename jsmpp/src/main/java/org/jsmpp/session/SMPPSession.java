@@ -505,8 +505,8 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		    sessionContext.unbound();
 		}
 		
-		public void sendDeliverSmResp(int sequenceNumber) throws IOException {
-			pduSender().sendDeliverSmResp(out, sequenceNumber);
+		public void sendDeliverSmResp(int commandStatus, int sequenceNumber) throws IOException {
+			pduSender().sendDeliverSmResp(out, commandStatus, sequenceNumber);
 			logger.debug("deliver_sm_resp with seq_number " + sequenceNumber + " has been sent");
 		}
 		

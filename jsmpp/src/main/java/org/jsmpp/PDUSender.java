@@ -277,7 +277,7 @@ public interface PDUSender {
      * @return the composed bytes.
      * @throws IOException if there is an IO error occur.
      */
-    byte[] sendDeliverSmResp(OutputStream os, int sequenceNumber)
+    byte[] sendDeliverSmResp(OutputStream os, int commandStatus, int sequenceNumber)
             throws IOException;
 
     /**
