@@ -420,11 +420,11 @@ public class DefaultPDUSender implements PDUSender {
     
     private static void writeAndFlush(OutputStream out, byte[] b)
             throws IOException {
-    	if(logger.isDebugEnabled())
-    	{
-    		String hexmsg = HexUtil.conventBytesToHexString(b);
-    		logger.debug("Sending SMPP message {}", hexmsg);
-    	}
+        if(logger.isDebugEnabled())
+        {
+            String hexmsg = HexUtil.convertBytesToHexString(b, 0, b.length, " ");
+            logger.debug("Sending SMPP message {}", hexmsg);
+        }
         out.write(b);
         out.flush();
     }

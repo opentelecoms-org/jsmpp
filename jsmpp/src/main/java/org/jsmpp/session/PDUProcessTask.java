@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
+import org.jsmpp.util.HexUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,10 +49,11 @@ public class PDUProcessTask implements Runnable {
 
     public void run() {
         try {
-        	if(logger.isDebugEnabled()) {
-        		logger.debug("Received SMPP message {} {}", pduHeader, new String(pdu));
-        	}
-        	
+            if(logger.isDebugEnabled()) {
+                logger.debug("Received SMPP message {} {}", pduHeader, 
+                        HexUtil.convertBytesToHexString(pdu, 16, pdu.length, " "));
+            }
+            
             switch (pduHeader.getCommandId()) {
             case SMPPConstant.CID_BIND_RECEIVER_RESP:
             case SMPPConstant.CID_BIND_TRANSMITTER_RESP:
