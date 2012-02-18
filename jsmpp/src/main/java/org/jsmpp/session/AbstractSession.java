@@ -200,6 +200,7 @@ public abstract class AbstractSession implements Session {
     }
     
     public void close() {
+        logger.info("AbstractSession.close() called");
         SessionContext ctx = sessionContext();
         if (!ctx.getSessionState().equals(SessionState.CLOSED)) {
             ctx.close();
