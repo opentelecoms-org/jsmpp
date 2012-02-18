@@ -455,6 +455,20 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	}
 	
 	@Override
+	public void close()
+	{
+		super.close();
+
+		if(Thread.currentThread() != pduReaderWorker) {
+			try {
+				pduReaderWorker.join();
+			} catch (InterruptedException e) {
+				logger.warn("Interrupted while waiting for pduReaderWorker thread to exit");
+			}
+		}
+	}
+
+	@Override
 	protected void finalize() throws Throwable {
 		close();
 	}
@@ -602,6 +616,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	        } catch (SocketTimeoutException e) {
 	            notifyNoActivity();
 	        } catch (IOException e) {
+	            logger.warn("IOException while reading: {}", e.getMessage());
 	            close();
 	        }
 	    }
