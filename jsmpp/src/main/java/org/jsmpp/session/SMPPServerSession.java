@@ -189,40 +189,36 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptSubmitSm(submitSm, this);
         }
-        String msg = "Receiving message but server hasn't " + ServerMessageReceiverListener.class + " yet";
-        logger.warn(msg);
-        System.err.println(msg);
-        throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
+        logger.warn("Received SubmitSm but MessageReceiverListener is null, returning SMPP error");
+        throw new ProcessRequestException("No message receiver listener registered",
+                SMPPConstant.STAT_ESME_RX_R_APPN);
     }
     
     private SubmitMultiResult fireAcceptSubmitMulti(SubmitMulti submitMulti) throws ProcessRequestException {
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptSubmitMulti(submitMulti, this);
         }
-        String msg = "Receiving message but server hasn't " + ServerMessageReceiverListener.class + " yet";
-        logger.warn(msg);
-        System.err.println(msg);
-        throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
+        logger.warn("Received SubmitMultiSm but MessageReceiverListener is null, returning SMPP error");
+        throw new ProcessRequestException("No message receiver listener registered",
+                SMPPConstant.STAT_ESME_RX_R_APPN);
     }
     
     private QuerySmResult fireAcceptQuerySm(QuerySm querySm) throws ProcessRequestException {
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptQuerySm(querySm, this);
         }
-        String msg = "Receiving message but server hasn't " + ServerMessageReceiverListener.class + " yet";
-        logger.warn(msg);
-        System.err.println(msg);
-        throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
+        logger.warn("Received SubmitQuerySm but MessageReceiverListener is null, returning SMPP error");
+        throw new ProcessRequestException("No message receiver listener registered", 
+                SMPPConstant.STAT_ESME_RX_R_APPN);
     }
     
     private void fireAcceptReplaceSm(ReplaceSm replaceSm) throws ProcessRequestException {
         if (messageReceiverListener != null) {
             messageReceiverListener.onAcceptReplaceSm(replaceSm, this);
         } else {
-            String msg = "Receiving message but server hasn't " + ServerMessageReceiverListener.class + " yet";
-            logger.warn(msg);
-            System.err.println(msg);
-            throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
+            logger.warn("Received SubmitMultiSm but MessageReceiverListener is null, returning SMPP error");
+            throw new ProcessRequestException("No message receiver listener registered",
+                    SMPPConstant.STAT_ESME_RX_R_APPN);
         }
     }
     
@@ -230,10 +226,9 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             messageReceiverListener.onAcceptCancelSm(cancelSm, this);
         } else {
-            String msg = "Receiving message but server hasn't " + ServerMessageReceiverListener.class + " yet";
-            logger.warn(msg);
-            System.err.println(msg);
-            throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
+            logger.warn("Received SubmitMultiSm but MessageReceiverListener is null, returning SMPP error");
+            throw new ProcessRequestException("No message receiver listener registered",
+                    SMPPConstant.STAT_ESME_RX_R_APPN);
         }
     }
     
@@ -341,7 +336,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             MessageId messageId = fireAcceptSubmitSm(submitSm);
             if (messageId == null) {
                 String msg = "Invalid message_id, shouldn't null value. " + ServerMessageReceiverListener.class + "#onAcceptSubmitSm(SubmitSm) return null value";
-                System.err.println(msg);
+                logger.error(msg);
                 throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
             }
             return messageId;

@@ -16,8 +16,12 @@ package org.jsmpp.bean;
 
 import org.jsmpp.util.HexUtil;
 import org.jsmpp.util.OctetUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LongSMS {
+    private static final Logger logger = LoggerFactory.getLogger(LongSMS.class);
+    
     private final static int MAX_MESSAGE_7BIT = 160;
     private final static int MAX_MESSAGE_8BIT = 140;
     private final static int MAX_MESSAGE_SEGMENT_8BIT = 133; // 140-7
@@ -58,15 +62,15 @@ public class LongSMS {
         int lengthOfData;
         byte[] referenceNumber = copyShort2Bytes(getReferenceNumber());
         for (int i = 0; i < segmentNum; i++) {
-            System.out.println("i = " + i);
+            logger.debug("i = " + i);
             if (segmentNum - i == 1)
                 lengthOfData = messageLength - i * MAX_MESSAGE_SEGMENT_8BIT;
             else
                 lengthOfData = MAX_MESSAGE_SEGMENT_8BIT;
-            System.out.println("Length of data = " + lengthOfData);
+            logger.debug("Length of data = " + lengthOfData);
 
             segments[i] = new byte[7 + lengthOfData];
-            System.out.println("segments[" + i + "].length = "
+            logger.debug("segments[" + i + "].length = "
                     + segments[i].length);
 
             segments[i][0] = 6; // doesn't include itself, is header length
@@ -171,15 +175,13 @@ public class LongSMS {
 
         byte[][] splittedMsg = splitMessage8Bit(message.getBytes());
         for (int i = 0; i < splittedMsg.length; i++) {
-            System.out.println(splittedMsg[i].length);
-            System.out.println(new String(splittedMsg[i]));
-            // System.out.println("sar_msg_refnum tag: " +
-            // OctetUtil.bytesToShort(splittedMsg[i], 0));
-            System.out.println("sar_msg_refnum tag: "
+            logger.debug("splittedMsg[i].length = " + splittedMsg[i].length);
+            logger.debug(new String(splittedMsg[i]));
+            logger.debug("sar_msg_refnum tag: "
                     + HexUtil.convertBytesToHexString(splittedMsg[i], 0, 2));
-            System.out.println("sar_msg_refnum length: "
+            logger.debug("sar_msg_refnum length: "
                     + OctetUtil.bytesToShort(splittedMsg[i], 2));
-            System.out.println("sar_msg_refnum value: "
+            logger.debug("sar_msg_refnum value: "
                     + OctetUtil.bytesToShort(splittedMsg[i], 4));
         }
     }
