@@ -45,6 +45,7 @@ import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.OptionalParameter.Byte;
 import org.jsmpp.bean.QuerySmResp;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceIfPresentFlag;
@@ -52,6 +53,7 @@ import org.jsmpp.bean.SubmitMultiResp;
 import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ProcessRequestException;
@@ -61,6 +63,7 @@ import org.jsmpp.session.connection.Connection;
 import org.jsmpp.session.connection.ConnectionFactory;
 import org.jsmpp.session.connection.socket.SocketConnectionFactory;
 import org.jsmpp.util.DefaultComposer;
+import org.jsmpp.util.HexUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -293,6 +296,12 @@ public class SMPPSession extends AbstractSession implements ClientSession {
                 addrNpi, addressRange);
 	    
 	    BindResp resp = (BindResp)executeSendCommand(task, timeout);
+	    OptionalParameter.Byte sc_interface_version = (Byte) resp.getOptionalParameter(Tag.SC_INTERFACE_VERSION);
+	    if(sc_interface_version != null) {
+		    String sc_interface_version_hex = HexUtil.conventBytesToHexString(new byte[] {sc_interface_version.getValue()});
+		    logger.info("Other side reports smpp interface version {}", sc_interface_version_hex);
+	    }
+        
 		return resp.getSystemId();
 	}
 	
