@@ -493,16 +493,33 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	private class ResponseHandlerImpl implements ResponseHandler {
 		
 		public void processDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
-			fireAcceptDeliverSm(deliverSm);
+			try {
+				fireAcceptDeliverSm(deliverSm);
+			} catch(Exception e) {
+				String msg = "Invalid runtime exception thrown when processing DeliverSm";
+				logger.error(msg, e);
+				throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_T_APPN);
+			}
 		}
 		
 		public DataSmResult processDataSm(DataSm dataSm)
 		        throws ProcessRequestException {
-		    return fireAcceptDataSm(dataSm);
+			try {
+				return fireAcceptDataSm(dataSm);
+			} catch(Exception e) {
+				String msg = "Invalid runtime exception thrown when processing DataSm";
+				logger.error(msg, e);
+				throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_T_APPN);
+			}
 		}
 		
 		public void processAlertNotification(AlertNotification alertNotification) {
-		    fireAcceptAlertNotification(alertNotification);
+			try {
+				fireAcceptAlertNotification(alertNotification);
+			} catch(Exception e) {
+				String msg = "Invalid runtime exception thrown when processing AlertSm";
+				logger.error(msg, e);
+			}
 		}
 		
 		public void sendDataSmResp(DataSmResult dataSmResult, int sequenceNumber)

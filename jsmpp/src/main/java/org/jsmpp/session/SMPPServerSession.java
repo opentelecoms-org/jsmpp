@@ -333,13 +333,19 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         
         public MessageId processSubmitSm(SubmitSm submitSm)
                 throws ProcessRequestException {
-            MessageId messageId = fireAcceptSubmitSm(submitSm);
-            if (messageId == null) {
-                String msg = "Invalid message_id, shouldn't null value. " + ServerMessageReceiverListener.class + "#onAcceptSubmitSm(SubmitSm) return null value";
-                logger.error(msg);
-                throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
+            try {
+                MessageId messageId = fireAcceptSubmitSm(submitSm);
+                if (messageId == null) {
+                    String msg = "Invalid message_id, shouldn't null value. " + ServerMessageReceiverListener.class + "#onAcceptSubmitSm(SubmitSm) return null value";
+                    logger.error(msg);
+                    throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
+                }
+                return messageId;
+            } catch(Exception e) {
+                String msg = "Invalid runtime exception thrown when processing SubmitSm";
+                logger.error(msg, e);
+                throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
             }
-            return messageId;
         }
         
         public void sendSubmitSmResponse(MessageId messageId, int sequenceNumber)
@@ -366,7 +372,13 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         
         public SubmitMultiResult processSubmitMulti(SubmitMulti submitMulti)
                 throws ProcessRequestException {
-            return fireAcceptSubmitMulti(submitMulti);
+            try {
+                return fireAcceptSubmitMulti(submitMulti);
+            } catch(Exception e) {
+                String msg = "Invalid runtime exception thrown when processing SubmitMultiSm";
+                logger.error(msg, e);
+                throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
+            }
         }
         
         public void sendSubmitMultiResponse(
@@ -395,7 +407,13 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         
         public QuerySmResult processQuerySm(QuerySm querySm)
                 throws ProcessRequestException {
-            return fireAcceptQuerySm(querySm);
+            try {
+                return fireAcceptQuerySm(querySm);
+            } catch(Exception e) {
+                String msg = "Invalid runtime exception thrown when processing QuerySm";
+                logger.error(msg, e);
+                throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
+            }
         }
         
         public void sendQuerySmResp(String messageId, String finalDate,
@@ -414,7 +432,13 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         
         public DataSmResult processDataSm(DataSm dataSm)
                 throws ProcessRequestException {
-            return fireAcceptDataSm(dataSm);
+            try {
+                return fireAcceptDataSm(dataSm);
+            } catch(Exception e) {
+                String msg = "Invalid runtime exception thrown when processing DataSm";
+                logger.error(msg, e);
+                throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
+            }
         }
         
         // TODO uudashr: we can generalize this method 
@@ -435,7 +459,13 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         
         public void processCancelSm(CancelSm cancelSm)
                 throws ProcessRequestException {
-            fireAcceptCancelSm(cancelSm);
+            try {
+                fireAcceptCancelSm(cancelSm);
+            } catch(Exception e) {
+                String msg = "Invalid runtime exception thrown when processing CancelSm";
+                logger.error(msg, e);
+                throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
+            }
         }
         
         public void sendCancelSmResp(int sequenceNumber) throws IOException {
@@ -445,7 +475,13 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         
         public void processReplaceSm(ReplaceSm replaceSm)
                 throws ProcessRequestException {
-            fireAcceptReplaceSm(replaceSm);
+            try {
+                fireAcceptReplaceSm(replaceSm);
+            } catch(Exception e) {
+                String msg = "Invalid runtime exception thrown when processing ReplaceSm";
+                logger.error(msg, e);
+                throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
+            }
         }
         
         public void sendReplaceSmResp(int sequenceNumber) throws IOException {
