@@ -60,10 +60,15 @@ public class HexUtil {
      */
     public static String convertBytesToHexString(byte[] data, int offset,
             int length) {
-        StringBuffer sBuf = new StringBuffer((length-offset)*2);
+        return convertBytesToHexString(data, offset, length, "");
+    }
+    public static String convertBytesToHexString(byte[] data, int offset,
+            int length, String byteDelimiter) {
+        StringBuffer sBuf = new StringBuffer((length-offset)*(2+byteDelimiter.length()));
         for (int i = offset; i < length; i++) {
             sBuf.append(hexChar[(data[i] >> 4) & 0xf]);
             sBuf.append(hexChar[data[i] & 0xf]);
+            sBuf.append(byteDelimiter);
         }
         return sBuf.toString();
     }
