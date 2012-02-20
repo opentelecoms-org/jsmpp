@@ -211,7 +211,9 @@ public abstract class AbstractSession implements Session {
         }
         
         try {
-			enquireLinkSender.join();
+        	if(enquireLinkSender != null) {
+        		enquireLinkSender.join();
+        	}
 		} catch (InterruptedException e) {
 			logger.warn("interrupted while waiting for enquireLinkSender thread to exit");
 		}

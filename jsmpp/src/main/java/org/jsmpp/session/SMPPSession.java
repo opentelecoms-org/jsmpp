@@ -461,7 +461,9 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 
 		if(Thread.currentThread() != pduReaderWorker) {
 			try {
-				pduReaderWorker.join();
+				if(pduReaderWorker != null) {
+					pduReaderWorker.join();
+				}
 			} catch (InterruptedException e) {
 				logger.warn("Interrupted while waiting for pduReaderWorker thread to exit");
 			}
