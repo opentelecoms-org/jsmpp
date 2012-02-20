@@ -20,14 +20,18 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
+import org.jsmpp.session.SMPPSession;
 import org.jsmpp.session.connection.Connection;
 import org.jsmpp.util.StrictBufferedInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author uudashr
  *
  */
 public class SocketConnection implements Connection {
+	private static final Logger logger = LoggerFactory.getLogger(SocketConnection.class);
     
     private final Socket socket;
     private final InputStream in;
@@ -47,6 +51,7 @@ public class SocketConnection implements Connection {
         try {
             socket.close();
         } catch (IOException e) {
+        	logger.warn("Suppressing IOException while closing socket: " + e);
         }
     }
     
