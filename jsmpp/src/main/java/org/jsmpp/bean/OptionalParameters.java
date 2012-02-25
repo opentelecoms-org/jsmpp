@@ -100,10 +100,8 @@ public class OptionalParameters {
      * @return the OptionalParameter object.
      */
     public static OptionalParameter deserialize(short tagCode, byte[] content) {
-        Tag tag = null;
-        try {
-            tag = Tag.valueOf(tagCode);
-        } catch (IllegalArgumentException e) {
+        Tag tag = Tag.valueOf(tagCode);
+        if(tag == null) {
             return new COctetString(tagCode, content);
         }
         

@@ -305,7 +305,7 @@ public abstract class OptionalParameter {
                 if (tag.code == code)
                     return tag;
             }
-            throw new IllegalArgumentException("No tag for: " + code);
+            return null;
         }
     }
     

@@ -16,7 +16,7 @@ package org.jsmpp.bean;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.assertNull;
 
 import org.jsmpp.bean.OptionalParameter.OctetString;
 import org.jsmpp.bean.OptionalParameter.Tag;
@@ -53,23 +53,13 @@ public class OptionalParameterTest {
     @Test
     public void undefinedTag() {
         final short tagCode = 0x0000;
-        try {
-            Tag.valueOf(tagCode);
-            fail("Tag code 0x0000 should be not found");
-        } catch (IllegalArgumentException e) {
-        }
-        OptionalParameters.deserialize(tagCode, "Undefined tag".getBytes());
+        assertNull(Tag.valueOf(tagCode));
     }
     
     @Test
     public void anotherUndefinedTag() {
         short tagCode = (short)(-127 & 0xffff);
-        try {
-            Tag.valueOf(tagCode);
-            fail("Tag code " + tagCode + " should be not found");
-        } catch (IllegalArgumentException e) {
-        }
-        OptionalParameters.deserialize(tagCode, "Undefined tag".getBytes());
+        assertNull(Tag.valueOf(tagCode));
     }
     
     @Test
