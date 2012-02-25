@@ -300,6 +300,10 @@ public abstract class OptionalParameter {
             return code;
         }
         
+        public Class<? extends OptionalParameter> type() {
+            return type;
+        }
+
         public static Tag valueOf(short code) {
             for (Tag tag : Tag.values()) {
                 if (tag.code == code)
