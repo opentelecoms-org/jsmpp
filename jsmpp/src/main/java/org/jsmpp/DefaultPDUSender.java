@@ -25,6 +25,7 @@ import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceIfPresentFlag;
 import org.jsmpp.bean.TypeOfNumber;
@@ -106,10 +107,18 @@ public class DefaultPDUSender implements PDUSender {
      *      java.lang.String)
      */
     public byte[] sendBindResp(OutputStream os, int commandId,
-            int sequenceNumber, String systemId) throws PDUStringException,
+            int sequenceNumber, String systemId, InterfaceVersion interfaceVersion) throws PDUStringException,
             IOException {
-
-        byte[] b = pduComposer.bindResp(commandId, sequenceNumber, systemId);
+        
+        OptionalParameter p[];
+        if(interfaceVersion != null) {
+            OptionalParameter interfaceVersionParam = new OptionalParameter.Byte(Tag.SC_INTERFACE_VERSION, interfaceVersion.value());
+            p = new OptionalParameter[] {interfaceVersionParam};
+        } else {
+            p = new OptionalParameter[] {};
+        }
+        
+        byte[] b = pduComposer.bindResp(commandId, sequenceNumber, systemId, p);
         writeAndFlush(os, b);
         return b;
     }

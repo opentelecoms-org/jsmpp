@@ -34,7 +34,7 @@ public class BindRequestTest {
     @BeforeMethod
     public void setUp() {
         responseHandler = new DummyResponseHandler();
-        bindRequest = new BindRequest(1, BindType.BIND_TRX, null, null, null, null, null, null, responseHandler);
+        bindRequest = new BindRequest(1, BindType.BIND_TRX, null, null, null, null, null, null, null, responseHandler);
     }
     
     

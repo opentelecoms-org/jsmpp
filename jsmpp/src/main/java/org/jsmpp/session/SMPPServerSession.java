@@ -40,6 +40,7 @@ import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.ESMClass;
+import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
@@ -317,10 +318,10 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             pduSender().sendUnbindResp(out, SMPPConstant.STAT_ESME_ROK, sequenceNumber);
         }
         
-        public void sendBindResp(String systemId, BindType bindType, int sequenceNumber) throws IOException {
+        public void sendBindResp(String systemId, InterfaceVersion interfaceVersion, BindType bindType, int sequenceNumber) throws IOException {
             sessionContext.bound(bindType);
             try {
-                pduSender().sendBindResp(out, bindType.responseCommandId(), sequenceNumber, systemId);
+                pduSender().sendBindResp(out, bindType.responseCommandId(), sequenceNumber, systemId, interfaceVersion);
             } catch (PDUStringException e) {
                 logger.error("Failed sending bind response", e);
                 // TODO uudashr: we have double checking when accept the bind request
