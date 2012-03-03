@@ -20,7 +20,8 @@ import java.nio.ByteBuffer;
 import org.jsmpp.util.OctetUtil;
 
 /**
- * The Optional Parameter class.
+ * Please see SMPP specifications v3.4 or v5.0 for a detailed explanation of Optional Parameters. This abstract class has 
+ * subclasses for each available Optional Parameter.
  * 
  * @author mikko.koponen
  * @author uudashr
@@ -34,6 +35,10 @@ public abstract class OptionalParameter {
         this.tag = tag;
     }
 
+    /** Convert the optional parameter into a byte serialized form conforming to the SMPP specification.
+     * 
+     * @return A byte array according to SMPP specification
+     */
     public byte[] serialize() {
         byte[] value = serializeValue();
         ByteBuffer buffer = ByteBuffer.allocate(value.length + 4);
@@ -43,8 +48,16 @@ public abstract class OptionalParameter {
         return buffer.array();
     }
 
+    /** This method should serialize the value part of the optional parameter. The format of the value is dependant
+     * on the specific optional parameter type so it is abstract and must be implmented by subclasses.
+     * @return
+     */
     protected abstract byte[] serializeValue();
     
+    /**
+     * An optional parameter with an empty value field.
+     *
+     */
     public static class Null extends OptionalParameter {
         public Null(short tag) {
             super(tag);
@@ -60,6 +73,10 @@ public abstract class OptionalParameter {
         }
     }
 
+    /**
+     * An optional parameter containing two bytes representing a short integer.
+     *
+     */
     public static class Short extends OptionalParameter {
         private final short value;
 
@@ -99,6 +116,10 @@ public abstract class OptionalParameter {
         }
     }
 
+    /**
+     * An optional parameter containing four bytes representing an int integer.
+     *
+     */
     public static class Int extends OptionalParameter {
         private final int value;
 
@@ -125,6 +146,10 @@ public abstract class OptionalParameter {
         }
     }
 
+    /**
+     * An optional parameter containing one byte representing a byte integer.
+     *
+     */
     public static class Byte extends OptionalParameter {
         private final byte value;
 
@@ -151,6 +176,10 @@ public abstract class OptionalParameter {
         }
     }
 
+    /**
+     * An optional parameter containing a series of octets, not necessarily NULL terminated.
+     *
+     */
     public static class OctetString extends OptionalParameter {
         private final byte[] value;
         
@@ -195,6 +224,10 @@ public abstract class OptionalParameter {
         }
     }
 
+    /**
+     * An optional parameter containing a series of ASCII characters terminated with the NULL character.
+     *
+     */
     public static class COctetString extends OctetString {
 
         public COctetString(short tag, String value, String charsetName)
