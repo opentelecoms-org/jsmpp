@@ -17,6 +17,7 @@ package org.jsmpp.bean;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
+import org.jsmpp.util.HexUtil;
 import org.jsmpp.util.OctetUtil;
 
 /**
@@ -114,6 +115,14 @@ public abstract class OptionalParameter {
         protected byte[] serializeValue() {
             return OctetUtil.shortToBytes(value);
         }
+        
+        /**
+         * Print Optional Parameter byte in hex format
+         */
+        public String toString()
+        {
+            return HexUtil.conventBytesToHexString(OctetUtil.shortToBytes(value));
+        }
     }
 
     /**
@@ -144,6 +153,14 @@ public abstract class OptionalParameter {
         protected byte[] serializeValue() {
             return OctetUtil.intToBytes(value);
         }
+        
+        /**
+         * Print Optional Parameter byte in hex format
+         */
+        public String toString()
+        {
+            return HexUtil.conventBytesToHexString(OctetUtil.intToBytes(value));
+        }
     }
 
     /**
@@ -173,6 +190,14 @@ public abstract class OptionalParameter {
         @Override
         protected byte[] serializeValue() {
             return new byte[] { value };
+        }
+        
+        /**
+         * Print Optional Parameter byte in hex format
+         */
+        public String toString()
+        {
+            return HexUtil.conventBytesToHexString(new byte[] {getValue()});
         }
     }
 
