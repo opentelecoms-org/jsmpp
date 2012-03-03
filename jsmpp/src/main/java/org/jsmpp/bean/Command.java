@@ -16,7 +16,6 @@ package org.jsmpp.bean;
 
 import java.io.Serializable;
 
-import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.util.IntUtil;
 
 /**
@@ -175,18 +174,6 @@ public class Command implements Serializable {
         if (sequenceNumber != other.sequenceNumber)
             return false;
         return true;
-    }
-    
-    protected static OptionalParameter getOptionalParameter(Tag tagEnum, OptionalParameter[] parameters)
-    {
-    	short tag = tagEnum.code();
-    	
-    	for(OptionalParameter i: parameters) {
-    		if(i.tag == tag) {
-    			return i;
-    		}
-    	}
-    	return null;
     }
     
 }
