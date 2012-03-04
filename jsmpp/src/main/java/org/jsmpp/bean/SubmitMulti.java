@@ -166,9 +166,14 @@ public class SubmitMulti extends Command {
         this.shortMessage = shortMessage;
     }
 
+    public <U extends OptionalParameter> U getOptionalParameter(Class<U> tagClass)
+    {
+    	return OptionalParameters.get(tagClass, optionalParameters);
+    }
+    
     public OptionalParameter getOptionalParameter(Tag tagEnum)
     {
-    	return getOptionalParameter(tagEnum, optionalParameters);
+    	return OptionalParameters.get(tagEnum.code(), optionalParameters);
     }
     
     public OptionalParameter[] getOptionalParameters() {
