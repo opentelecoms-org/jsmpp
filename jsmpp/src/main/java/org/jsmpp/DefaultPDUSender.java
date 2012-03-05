@@ -25,12 +25,16 @@ import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceIfPresentFlag;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.util.DefaultComposer;
+import org.jsmpp.util.HexUtil;
 import org.jsmpp.util.PDUComposer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The SMPP PDU reader class.
@@ -41,6 +45,7 @@ import org.jsmpp.util.PDUComposer;
  * 
  */
 public class DefaultPDUSender implements PDUSender {
+    private static final Logger logger = LoggerFactory.getLogger(DefaultPDUSender.class);
     private final PDUComposer pduComposer;
 
     /**
@@ -102,10 +107,18 @@ public class DefaultPDUSender implements PDUSender {
      *      java.lang.String)
      */
     public byte[] sendBindResp(OutputStream os, int commandId,
-            int sequenceNumber, String systemId) throws PDUStringException,
+            int sequenceNumber, String systemId, InterfaceVersion interfaceVersion) throws PDUStringException,
             IOException {
-
-        byte[] b = pduComposer.bindResp(commandId, sequenceNumber, systemId);
+        
+        OptionalParameter p[];
+        if(interfaceVersion != null) {
+            OptionalParameter interfaceVersionParam = new OptionalParameter.Byte(Tag.SC_INTERFACE_VERSION, interfaceVersion.value());
+            p = new OptionalParameter[] {interfaceVersionParam};
+        } else {
+            p = new OptionalParameter[] {};
+        }
+        
+        byte[] b = pduComposer.bindResp(commandId, sequenceNumber, systemId, p);
         writeAndFlush(os, b);
         return b;
     }
@@ -286,9 +299,9 @@ public class DefaultPDUSender implements PDUSender {
      * 
      * @see org.jsmpp.PDUSender#sendDeliverSmResp(java.io.OutputStream, int)
      */
-    public byte[] sendDeliverSmResp(OutputStream os, int sequenceNumber)
+    public byte[] sendDeliverSmResp(OutputStream os, int commandStatus, int sequenceNumber)
             throws IOException {
-        byte[] b = pduComposer.deliverSmResp(sequenceNumber);
+        byte[] b = pduComposer.deliverSmResp(commandStatus, sequenceNumber);
         writeAndFlush(os, b);
         return b;
     }
@@ -416,6 +429,11 @@ public class DefaultPDUSender implements PDUSender {
     
     private static void writeAndFlush(OutputStream out, byte[] b)
             throws IOException {
+        if(logger.isDebugEnabled())
+        {
+            String hexmsg = HexUtil.convertBytesToHexString(b, 0, b.length, " ");
+            logger.debug("Sending SMPP message {}", hexmsg);
+        }
         out.write(b);
         out.flush();
     }

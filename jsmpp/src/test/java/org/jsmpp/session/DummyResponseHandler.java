@@ -21,6 +21,7 @@ import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
+import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.ReplaceSm;
@@ -84,7 +85,7 @@ class DummyResponseHandler implements ServerResponseHandler {
         return null;
     }
 
-    public void sendBindResp(String systemId, BindType bindType, int sequenceNumber)
+    public void sendBindResp(String systemId, InterfaceVersion interfaceVersion, BindType bindType, int sequenceNumber)
             throws IOException {
         if (connectionClosed) {
             throw new IOException("Connection closed");

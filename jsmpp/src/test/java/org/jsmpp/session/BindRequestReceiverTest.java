@@ -18,6 +18,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.BindType;
+import org.jsmpp.bean.InterfaceVersion;
 
 import static org.testng.Assert.*;
 
@@ -115,6 +116,7 @@ public class BindRequestReceiverTest {
     private static final Bind dummyBind() {
         Bind bind = new Bind();
         bind.setCommandId(BindType.BIND_RX.commandId());
+        bind.setInterfaceVersion(InterfaceVersion.IF_34.value());
         return bind;
     }
 }

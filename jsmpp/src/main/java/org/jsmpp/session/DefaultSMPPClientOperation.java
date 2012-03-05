@@ -168,6 +168,6 @@ public class DefaultSMPPClientOperation extends AbstractSMPPOperation implements
 
     public void deliverSmResp(int sequenceNumber) throws IOException {
         pduSender().sendDeliverSmResp(connection().getOutputStream(),
-                sequenceNumber);
+                0, sequenceNumber);
     }
 }

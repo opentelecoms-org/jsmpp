@@ -200,6 +200,7 @@ public abstract class AbstractSession implements Session {
     }
     
     public void close() {
+        logger.info("AbstractSession.close() called");
         SessionContext ctx = sessionContext();
         if (!ctx.getSessionState().equals(SessionState.CLOSED)) {
             ctx.close();
@@ -210,7 +211,9 @@ public abstract class AbstractSession implements Session {
         }
         
         try {
-			enquireLinkSender.join();
+        	if(enquireLinkSender != null) {
+        		enquireLinkSender.join();
+        	}
 		} catch (InterruptedException e) {
 			logger.warn("interrupted while waiting for enquireLinkSender thread to exit");
 		}
@@ -431,7 +434,6 @@ public abstract class AbstractSession implements Session {
          */
         public void enquireLink() {
             if (sendingEnquireLink.compareAndSet(false, true)) {
-                logger.debug("Sending enquire link notify");
                 synchronized (sendingEnquireLink) {
                     sendingEnquireLink.notify();
                 }

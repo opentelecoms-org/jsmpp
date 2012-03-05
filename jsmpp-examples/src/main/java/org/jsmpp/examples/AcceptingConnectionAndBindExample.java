@@ -48,7 +48,7 @@ public class AcceptingConnectionAndBindExample {
                         request.getPassword().equals("test")) {
                     
                     // accepting request and send bind response immediately
-                    System.out.println("Accepting bind request");
+                    System.out.println("Accepting bind request, interface version is " + request.getInterfaceVersion());
                     request.accept("sys");
                     
                     try { Thread.sleep(20000); } catch (InterruptedException e) {}

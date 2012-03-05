@@ -98,11 +98,11 @@ public class SynchronizedPDUSender implements PDUSender {
      *      java.lang.String)
      */
     public byte[] sendBindResp(OutputStream os, int commandId,
-            int sequenceNumber, String systemId) throws PDUStringException,
+            int sequenceNumber, String systemId, InterfaceVersion interfaceVersion) throws PDUStringException,
             IOException {
         synchronized (os) {
             return pduSender.sendBindResp(os, commandId, sequenceNumber,
-                    systemId);
+                    systemId, interfaceVersion);
         }
     }
 
@@ -272,10 +272,10 @@ public class SynchronizedPDUSender implements PDUSender {
         }
     }
 
-    public byte[] sendDeliverSmResp(OutputStream os, int sequenceNumber)
+    public byte[] sendDeliverSmResp(OutputStream os, int commandStatus, int sequenceNumber)
             throws IOException {
         synchronized (os) {
-            return pduSender.sendDeliverSmResp(os, sequenceNumber);
+            return pduSender.sendDeliverSmResp(os, commandStatus, sequenceNumber);
         }
     }
 

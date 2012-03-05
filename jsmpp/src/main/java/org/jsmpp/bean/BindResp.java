@@ -16,6 +16,8 @@ package org.jsmpp.bean;
 
 import java.util.Arrays;
 
+import org.jsmpp.bean.OptionalParameter.Tag;
+
 /**
  * This class represent SMPP bind response command.
  * 
@@ -52,6 +54,16 @@ public class BindResp extends Command {
      */
     public void setSystemId(String systemId) {
         this.systemId = systemId;
+    }
+    
+    public <U extends OptionalParameter> U getOptionalParameter(Class<U> tagClass)
+    {
+    	return OptionalParameters.get(tagClass, optionalParameters);
+    }
+    
+    public OptionalParameter getOptionalParameter(Tag tagEnum)
+    {
+    	return OptionalParameters.get(tagEnum.code(), optionalParameters);
     }
     
     public OptionalParameter[] getOptionalParameters() {

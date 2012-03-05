@@ -16,6 +16,8 @@ package org.jsmpp.bean;
 
 import java.util.Arrays;
 
+import org.jsmpp.bean.OptionalParameter.Tag;
+
 /**
  * @author uudashr
  *
@@ -83,6 +85,16 @@ public class AlertNotification extends Command {
         this.esmeAddr = esmeAddr;
     }
 
+    public <U extends OptionalParameter> U getOptionalParameter(Class<U> tagClass)
+    {
+    	return OptionalParameters.get(tagClass, optionalParameters);
+    }
+    
+    public OptionalParameter getOptionalParameter(Tag tagEnum)
+    {
+    	return OptionalParameters.get(tagEnum.code(), optionalParameters);
+    }
+    
     public OptionalParameter[] getOptionalParameters() {
         return optionalParameters;
     }

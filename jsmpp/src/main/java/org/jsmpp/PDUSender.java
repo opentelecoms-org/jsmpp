@@ -89,7 +89,7 @@ public interface PDUSender {
      * @throws IOException if an IO error occur.
      */
     byte[] sendBindResp(OutputStream os, int commandId, int sequenceNumber,
-            String systemId) throws PDUStringException, IOException;
+            String systemId, InterfaceVersion interfaceVersion) throws PDUStringException, IOException;
 
     /**
      * Send unbind command.
@@ -277,7 +277,7 @@ public interface PDUSender {
      * @return the composed bytes.
      * @throws IOException if there is an IO error occur.
      */
-    byte[] sendDeliverSmResp(OutputStream os, int sequenceNumber)
+    byte[] sendDeliverSmResp(OutputStream os, int commandStatus, int sequenceNumber)
             throws IOException;
 
     /**

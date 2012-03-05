@@ -15,6 +15,7 @@
 package org.jsmpp.session;
 
 import org.jsmpp.bean.BindType;
+import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
 
@@ -32,6 +33,7 @@ public class BindParameter {
     private TypeOfNumber addrTon;
     private NumberingPlanIndicator addrNpi;
     private String addressRange;
+    private InterfaceVersion interfaceVersion;
 
     /**
      * Construct with all mandatory parameters.
@@ -47,6 +49,12 @@ public class BindParameter {
     public BindParameter(BindType bindType, String systemId, String password,
             String systemType, TypeOfNumber addrTon,
             NumberingPlanIndicator addrNpi, String addressRange) {
+    	this(bindType, systemId, password, systemType, addrTon, addrNpi, addressRange, InterfaceVersion.IF_34);
+    }
+    
+    public BindParameter(BindType bindType, String systemId, String password,
+            String systemType, TypeOfNumber addrTon,
+            NumberingPlanIndicator addrNpi, String addressRange, InterfaceVersion interfaceVersion) {
         this.bindType = bindType;
         this.systemId = systemId;
         this.password = password;
@@ -54,8 +62,9 @@ public class BindParameter {
         this.addrTon = addrTon;
         this.addrNpi = addrNpi;
         this.addressRange = addressRange;
+        this.interfaceVersion = interfaceVersion;
     }
-
+    
     public BindType getBindType() {
         return bindType;
     }
@@ -100,6 +109,9 @@ public class BindParameter {
                 + ((systemId == null) ? 0 : systemId.hashCode());
         result = prime * result
                 + ((systemType == null) ? 0 : systemType.hashCode());
+        result = prime * result
+                + ((interfaceVersion == null) ? 0 : interfaceVersion.hashCode());
+        
         return result;
     }
 
@@ -199,5 +211,8 @@ public class BindParameter {
         return true;
     }
 
+	public InterfaceVersion getInterfaceVersion() {
+		return interfaceVersion;
+	}
 
 }

@@ -22,6 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.BindType;
+import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.ProcessRequestException;
@@ -43,6 +44,7 @@ public class BindRequest {
     private final TypeOfNumber addrTon;
     private final NumberingPlanIndicator addrNpi;
     private final String addressRange;
+    private final InterfaceVersion interfaceVersion;
     
     private final int originalSequenceNumber;
     private boolean done;
@@ -50,7 +52,7 @@ public class BindRequest {
     private final ServerResponseHandler responseHandler;
     public BindRequest(int sequenceNumber, BindType bindType, String systemId, String password, 
             String systemType, TypeOfNumber addrTon, NumberingPlanIndicator addrNpi, 
-            String addressRange, ServerResponseHandler responseHandler) {
+            String addressRange, InterfaceVersion interfaceVersion, ServerResponseHandler responseHandler) {
         this.originalSequenceNumber = sequenceNumber;
         this.responseHandler = responseHandler;
         
@@ -61,6 +63,7 @@ public class BindRequest {
         this.addrTon = addrTon;
         this.addrNpi = addrNpi;
         this.addressRange = addressRange;
+        this.interfaceVersion = interfaceVersion;
     }
     
     public BindRequest(Bind bind, ServerResponseHandler responseHandler) {
@@ -68,7 +71,7 @@ public class BindRequest {
                 bind.getPassword(), bind.getSystemType(), 
                 TypeOfNumber.valueOf(bind.getAddrTon()), 
                 NumberingPlanIndicator.valueOf(bind.getAddrNpi()), 
-                bind.getAddressRange(), responseHandler);
+                bind.getAddressRange(), InterfaceVersion.valueOf(bind.getInterfaceVersion()), responseHandler);
     }
     
     @Deprecated
@@ -104,8 +107,12 @@ public class BindRequest {
         return addressRange;
     }
     
+    public InterfaceVersion getInterfaceVersion() {
+    	return interfaceVersion;
+    }
     /**
-     * Accept the bind request.
+     * Accept the bind request. Will not send the optional parameter sc_interface_version in
+     * the bind response message.
      * 
      * @param systemId is the system identifier that will be send to ESME.
      * @throws PDUStringException if the system id is not valid.
@@ -114,13 +121,28 @@ public class BindRequest {
      * @see #reject(ProcessRequestException)
      */
     public void accept(String systemId) throws PDUStringException, IllegalStateException, IOException {
+    	accept(systemId, null);
+    }
+    
+    /**
+     * Accept the bind request. The provided interface version will be put into the optional parameter 
+     * sc_interface_version in the bind response message.
+     * 
+     * @param systemId is the system identifier that will be send to ESME.
+     * @param interfaceVersion is the interface version that will be sent to the ESME
+     * @throws PDUStringException if the system id is not valid.
+     * @throws IllegalStateException if the acceptance or rejection has been made.
+     * @throws IOException is the connection already closed.
+     * @see #reject(ProcessRequestException)
+     */
+    public void accept(String systemId, InterfaceVersion interfaceVersion) throws PDUStringException, IllegalStateException, IOException {
         StringValidator.validateString(systemId, StringParameter.SYSTEM_ID);
         lock.lock();
         try {
             if (!done) {
                 done = true;
                 try {
-                    responseHandler.sendBindResp(systemId, bindType, originalSequenceNumber);
+                    responseHandler.sendBindResp(systemId, interfaceVersion, bindType, originalSequenceNumber);
                 } finally {
                     condition.signal();
                 }

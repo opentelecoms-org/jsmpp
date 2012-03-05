@@ -118,7 +118,7 @@ public interface PDUComposer {
             byte registeredDelivery, byte dataCoding, byte[] shortMessage,
             OptionalParameter... optionalParameters) throws PDUStringException;
 
-    byte[] deliverSmResp(int sequenceNumber);
+    byte[] deliverSmResp(int commandStatus, int sequenceNumber);
 
     /**
      * Compose data short message (data_sm) PDU.

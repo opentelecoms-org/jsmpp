@@ -45,6 +45,7 @@ import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.OptionalParameter.Sc_interface_version;
 import org.jsmpp.bean.QuerySmResp;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceIfPresentFlag;
@@ -231,7 +232,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			pduReaderWorker = new PDUReaderWorker();
 			pduReaderWorker.start();
 			String smscSystemId = sendBind(bindParam.getBindType(), bindParam.getSystemId(), bindParam.getPassword(), bindParam.getSystemType(),
-                    InterfaceVersion.IF_34, bindParam.getAddrTon(), bindParam.getAddrNpi(), bindParam.getAddressRange(), timeout);
+                    bindParam.getInterfaceVersion(), bindParam.getAddrTon(), bindParam.getAddrNpi(), bindParam.getAddressRange(), timeout);
 			sessionContext.bound(bindParam.getBindType());
 			
 			enquireLinkSender = new EnquireLinkSender();
@@ -293,6 +294,11 @@ public class SMPPSession extends AbstractSession implements ClientSession {
                 addrNpi, addressRange);
 	    
 	    BindResp resp = (BindResp)executeSendCommand(task, timeout);
+	    OptionalParameter.Sc_interface_version sc_version = resp.getOptionalParameter(Sc_interface_version.class);
+	    if(sc_version != null) {
+		    logger.info("Other side reports smpp interface version {}", sc_version);
+	    }
+        
 		return resp.getSystemId();
 	}
 	
@@ -446,6 +452,22 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	}
 	
 	@Override
+	public void close()
+	{
+		super.close();
+
+		if(Thread.currentThread() != pduReaderWorker) {
+			try {
+				if(pduReaderWorker != null) {
+					pduReaderWorker.join();
+				}
+			} catch (InterruptedException e) {
+				logger.warn("Interrupted while waiting for pduReaderWorker thread to exit");
+			}
+		}
+	}
+
+	@Override
 	protected void finalize() throws Throwable {
 		close();
 	}
@@ -470,16 +492,33 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	private class ResponseHandlerImpl implements ResponseHandler {
 		
 		public void processDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
-			fireAcceptDeliverSm(deliverSm);
+			try {
+				fireAcceptDeliverSm(deliverSm);
+			} catch(Exception e) {
+				String msg = "Invalid runtime exception thrown when processing DeliverSm";
+				logger.error(msg, e);
+				throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_T_APPN);
+			}
 		}
 		
 		public DataSmResult processDataSm(DataSm dataSm)
 		        throws ProcessRequestException {
-		    return fireAcceptDataSm(dataSm);
+			try {
+				return fireAcceptDataSm(dataSm);
+			} catch(Exception e) {
+				String msg = "Invalid runtime exception thrown when processing DataSm";
+				logger.error(msg, e);
+				throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_T_APPN);
+			}
 		}
 		
 		public void processAlertNotification(AlertNotification alertNotification) {
-		    fireAcceptAlertNotification(alertNotification);
+			try {
+				fireAcceptAlertNotification(alertNotification);
+			} catch(Exception e) {
+				String msg = "Invalid runtime exception thrown when processing AlertSm";
+				logger.error(msg, e);
+			}
 		}
 		
 		public void sendDataSmResp(DataSmResult dataSmResult, int sequenceNumber)
@@ -505,8 +544,8 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		    sessionContext.unbound();
 		}
 		
-		public void sendDeliverSmResp(int sequenceNumber) throws IOException {
-			pduSender().sendDeliverSmResp(out, sequenceNumber);
+		public void sendDeliverSmResp(int commandStatus, int sequenceNumber) throws IOException {
+			pduSender().sendDeliverSmResp(out, commandStatus, sequenceNumber);
 			logger.debug("deliver_sm_resp with seq_number " + sequenceNumber + " has been sent");
 		}
 		
@@ -593,6 +632,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	        } catch (SocketTimeoutException e) {
 	            notifyNoActivity();
 	        } catch (IOException e) {
+	            logger.warn("IOException while reading: {}", e.getMessage());
 	            close();
 	        }
 	    }
@@ -601,7 +641,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	     * Notify for no activity.
 	     */
 	    private void notifyNoActivity() {
-	        logger.debug("No activity notified");
+	        logger.debug("No activity notified, sending enquireLink");
 	        if (sessionContext().getSessionState().isBound()) {
 	            enquireLinkSender.enquireLink();
 	        }

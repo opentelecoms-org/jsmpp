@@ -30,6 +30,7 @@ import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliveryReceipt;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.GSMSpecificFeature;
+import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.MessageMode;
 import org.jsmpp.bean.MessageType;
 import org.jsmpp.bean.NumberingPlanIndicator;
@@ -147,7 +148,7 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
                 BindRequest bindRequest = serverSession.waitForBind(1000);
                 logger.debug("Accepting bind for session {}", serverSession.getSessionId());
                 try {
-                    bindRequest.accept("sys");
+                    bindRequest.accept("sys", InterfaceVersion.IF_34);
                 } catch (PDUStringException e) {
                     logger.error("Invalid system id", e);
                     bindRequest.reject(SMPPConstant.STAT_ESME_RSYSERR);
