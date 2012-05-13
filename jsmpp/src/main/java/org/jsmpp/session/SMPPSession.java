@@ -240,22 +240,22 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			return smscSystemId;
 		} catch (PDUException e) {
 		    logger.error("Failed sending bind command", e);
-		    throw new IOException("Failed sending bind since some string parameter area invalid : " + e.getMessage());
+		    throw new IOException("Failed sending bind since some string parameter area invalid : " + e.getMessage(), e);
 		} catch (NegativeResponseException e) {
 			String message = "Receive negative bind response";
 			logger.error(message, e);
 			close();
-			throw new IOException(message + ": " + e.getMessage());
+			throw new IOException(message + ": " + e.getMessage(), e);
 		} catch (InvalidResponseException e) {
 			String message = "Receive invalid response of bind";
 			logger.error(message, e);
 			close();
-			throw new IOException(message + ": " + e.getMessage());
+			throw new IOException(message + ": " + e.getMessage(), e);
 		} catch (ResponseTimeoutException e) {
 			String message = "Waiting bind response take time to long";
 			logger.error(message, e);
 			close();
-			throw new IOException(message + ": " + e.getMessage());
+			throw new IOException(message + ": " + e.getMessage(), e);
 		} catch (IOException e) {
 			logger.error("IO Error occur", e);
 			close();
