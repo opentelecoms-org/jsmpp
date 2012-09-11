@@ -494,6 +494,8 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		public void processDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
 			try {
 				fireAcceptDeliverSm(deliverSm);
+			} catch(ProcessRequestException e) {
+				throw e;
 			} catch(Exception e) {
 				String msg = "Invalid runtime exception thrown when processing DeliverSm";
 				logger.error(msg, e);
@@ -505,6 +507,8 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		        throws ProcessRequestException {
 			try {
 				return fireAcceptDataSm(dataSm);
+			} catch(ProcessRequestException e) {
+				throw e;
 			} catch(Exception e) {
 				String msg = "Invalid runtime exception thrown when processing DataSm";
 				logger.error(msg, e);
