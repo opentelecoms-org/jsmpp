@@ -342,7 +342,11 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                     throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
                 }
                 return messageId;
-            } catch(Exception e) {
+            } 
+            catch(ProcessRequestException e) {
+				throw e;
+            }
+            catch(Exception e) {
                 String msg = "Invalid runtime exception thrown when processing SubmitSm";
                 logger.error(msg, e);
                 throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
