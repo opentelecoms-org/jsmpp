@@ -46,18 +46,18 @@ public class AbsoluteTimeFormatter implements TimeFormatter {
         int second = calendar.get(Calendar.SECOND);
         int tenthsOfSecond = calendar.get(Calendar.MILLISECOND) / 100;
         
-        int rawOffset = calendar.getTimeZone().getRawOffset();
+        int offset = calendar.getTimeZone().getOffset(calendar.getTimeInMillis());
         
         // Get the sign
         char sign;
-        if (rawOffset > 0) {
+        if (offset > 0) {
             sign = '+';
         } else {
             sign = '-';
         }
         
         // Time difference in quarter hours
-        int timeDiff = (int)(Math.abs(rawOffset) / (15 * 60 * 1000));
+        int timeDiff = (int)(Math.abs(offset) / (15 * 60 * 1000));
         
         return format(year, month, day, hour, minute, second, tenthsOfSecond, timeDiff, sign);
     }

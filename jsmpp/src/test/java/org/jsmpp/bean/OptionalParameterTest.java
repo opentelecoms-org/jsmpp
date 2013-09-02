@@ -20,6 +20,10 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+
+import org.jsmpp.bean.OptionalParameter.COctetString;
 import org.jsmpp.bean.OptionalParameter.Callback_num_pres_ind.Presentation_Indicator;
 import org.jsmpp.bean.OptionalParameter.Callback_num_pres_ind.Screening_Indicator;
 import org.jsmpp.bean.OptionalParameter.Ms_msg_wait_facilities;
@@ -144,4 +148,11 @@ public class OptionalParameterTest {
 		assertEquals(o.getErrorCode(), (short)60000);
 		
 	}
+
+    @Test(groups="checkintest")
+    public void cOctetStringGetValueAsString() throws UnsupportedEncodingException {
+        COctetString string = new OptionalParameter.COctetString(Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), "urgent");
+
+        assertEquals(string.getValueAsString(), "urgent");
+    }
 }

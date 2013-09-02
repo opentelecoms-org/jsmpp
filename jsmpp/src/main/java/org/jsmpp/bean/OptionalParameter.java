@@ -270,8 +270,7 @@ public abstract class OptionalParameter {
         
         @Override
         public String getValueAsString() {
-            byte[] value = getValue();
-            return new String(value, 0, value.length - 1);
+            return new String(getValue());
         }
         
     }
