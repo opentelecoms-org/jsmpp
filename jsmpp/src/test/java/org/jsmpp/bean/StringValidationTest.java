@@ -50,9 +50,15 @@ public class StringValidationTest {
         }
         
         try {
-            StringValidator.validateString("smsgwsmsgwsmsgwe", StringParameter.SYSTEM_ID);
+            StringValidator.validateString("smsgwsmsgwsmsgw", StringParameter.SYSTEM_ID);
         } catch (PDUStringException e) {
-            fail("Should be okay inserting 16 char of string");
+            fail("Should be okay inserting 15 char of string");
+        }
+        
+        try {
+            StringValidator.validateString("smsgwsmsgwsmsgwe", StringParameter.SYSTEM_ID);
+            fail("Should fail inserting 16 char of string");
+        } catch (PDUStringException e) {
         }
         
         try {

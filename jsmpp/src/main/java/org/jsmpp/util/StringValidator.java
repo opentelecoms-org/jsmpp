@@ -87,7 +87,7 @@ public final class StringValidator {
     static boolean isCOctetStringValid(String value, int maxLength) {
         if (value == null)
             return true;
-        if (value.length() > maxLength)
+        if (value.length() >= maxLength)
             return false;
         return true;
 
@@ -96,7 +96,7 @@ public final class StringValidator {
     static boolean isCOctetStringValid(byte[] value, int maxLength) {
         if (value == null)
             return true;
-        if (value.length > maxLength)
+        if (value.length >= maxLength)
             return false;
         return true;
 
