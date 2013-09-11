@@ -34,21 +34,21 @@ public final class StringValidator {
             if (param.isRangeMinAndMax()) {
                 if (!isCOctetStringValid(value, param.getMax())) {
                     throw new PDUStringException("C-Octet String value '"
-                            + value + "' cannot more than " + param.getMax()
-                            + ". Actual length of string is " + value.length(),
+                            + value + "' length must be less than " + param.getMax()
+                            + ". Actual length is " + value.length(),
                             param);
                 }
             } else if (!isCOctetStringNullOrNValValid(value, param.getMax())) {
                 throw new PDUStringException(
-                        "C-Octet String value should be 1 or " + param.getMax()
-                                + ". The actual length of string is "
+                        "C-Octet String value '" + value + "' length should be 1 or " + (param.getMax() - 1)
+                                + ". Actual length is "
                                 + value.length(), param);
             }
         } else if (param.getType() == StringType.OCTET_STRING
                 && !isOctetStringValid(value, param.getMax())) {
             throw new PDUStringException("Octet String value '" + value
-                    + "' cannot more than " + param.getMax()
-                    + ". Actual length of string is " + value.length(), param);
+                    + "' length must be less than or equal to " + param.getMax()
+                    + ". Actual length is " + value.length(), param);
         }
     }
 
@@ -58,21 +58,21 @@ public final class StringValidator {
             if (param.isRangeMinAndMax()) {
                 if (!isCOctetStringValid(value, param.getMax())) {
                     throw new PDUStringException("C-Octet String value '"
-                            + new String(value) + "' cannot more than "
-                            + param.getMax() + ". Actual length of string is "
+                            + new String(value) + "' length must be less than "
+                            + param.getMax() + ". Actual length is "
                             + value.length, param);
                 }
             } else if (!isCOctetStringNullOrNValValid(value, param.getMax())) {
                 throw new PDUStringException(
-                        "C-Octet String value should be 1 or " + param.getMax()
-                                + ". The actual length of string is "
+                        "C-Octet String value '" + new String(value) + "' length should be 1 or " + (param.getMax() - 1)
+                                + ". Actual length is "
                                 + value.length, param);
             }
         } else if (param.getType() == StringType.OCTET_STRING
                 && !isOctetStringValid(value, param.getMax())) {
             throw new PDUStringException("Octet String value '"
-                    + new String(value) + "' cannot more than "
-                    + param.getMax() + ". Actual length of string is "
+                    + new String(value) + "' length must be less than or equal to "
+                    + param.getMax() + ". Actual length is "
                     + value.length, param);
         }
     }
@@ -131,9 +131,10 @@ public final class StringValidator {
             return true;
         if (value.length == 0)
             return true;
-        if (value.length != length)
-            return false;
-        return true;
+        if (value.length == length - 1) {
+            return true;
+        }
+        return false;
     }
 
     /**
