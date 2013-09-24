@@ -134,7 +134,7 @@ public class SubmitMultipartMultilangualExample {
 			e.printStackTrace();
 		}
 
-		// configure variables acording to if message contains national
+		// configure variables according to if message contains national
 		// characters
 		Alphabet alphabet = null;
 		int maximumSingleMessageSize = 0;

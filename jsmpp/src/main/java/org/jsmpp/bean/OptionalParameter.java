@@ -49,7 +49,7 @@ public abstract class OptionalParameter {
         return buffer.array();
     }
 
-    /** This method should serialize the value part of the optional parameter. The format of the value is dependant
+    /** This method should serialize the value part of the optional parameter. The format of the value is dependent
      * on the specific optional parameter type so it is abstract and must be implmented by subclasses.
      * @return
      */

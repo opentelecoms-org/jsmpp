@@ -133,11 +133,11 @@ public abstract class AbstractSession implements Session {
     }
     
     /**
-     * Set total thread can read PDU and process it parallely. It's defaulted to
+     * Set total thread can read PDU and process it in parallel. It's defaulted to
      * 3.
      * 
      * @param pduProcessorDegree is the total thread can handle read and process
-     *        PDU parallely.
+     *        PDU in parallel.
      * @throws IllegalStateException if the PDU Reader has been started.
      */
     public void setPduProcessorDegree(int pduProcessorDegree) throws IllegalStateException {
@@ -149,10 +149,10 @@ public abstract class AbstractSession implements Session {
     }
     
     /**
-     * Get the total of thread that can handle read and process PDU parallely.
+     * Get the total of thread that can handle read and process PDU in parallel.
      * 
-     * @return the total of thread that can handle read and process PDU
-     *         parallely.
+     * @return the total of thread that can handle read and process PDU in
+     *         parallel.
      */
     public int getPduProcessorDegree() {
         return pduProcessorDegree;
