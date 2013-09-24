@@ -332,14 +332,14 @@ public interface SMPPConstant {
      */
     public static final byte NPI_UNKNOWN = 0x00;
     public static final byte NPI_ISDN = 0x01;
-    public static final byte NPI_DATA = 0x02;
-    public static final byte NPI_TELEX = 0x03;
-    public static final byte NPI_LAND_MOBILE = 0x04;
+    public static final byte NPI_DATA = 0x03;
+    public static final byte NPI_TELEX = 0x04;
+    public static final byte NPI_LAND_MOBILE = 0x06;
     public static final byte NPI_NATIONAL = 0x08;
     public static final byte NPI_PRIVATE = 0x09;
-    public static final byte NPI_ERMES = 0x10;
-    public static final byte NPI_INTERNET = 0x14;
-    public static final byte NPI_WAP = 0x18;
+    public static final byte NPI_ERMES = 0x0a;
+    public static final byte NPI_INTERNET = 0x0e;
+    public static final byte NPI_WAP = 0x12;
 
     public static final short TAG_SC_INTERFACE_VERSION = 0x0210;
     public static final short TAG_SAR_MSG_REF_NUM = 0X020C;
