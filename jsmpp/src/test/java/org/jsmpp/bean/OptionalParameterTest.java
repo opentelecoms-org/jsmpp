@@ -154,5 +154,14 @@ public class OptionalParameterTest {
         COctetString string = new OptionalParameter.COctetString(Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), "urgent");
 
         assertEquals(string.getValueAsString(), "urgent");
+
+		assertEquals((byte)0x75, string.getValue()[0]); // u
+		assertEquals((byte)0x72, string.getValue()[1]); // r
+		assertEquals((byte)0x67, string.getValue()[2]); // g
+		assertEquals((byte)0x65, string.getValue()[3]); // e
+		assertEquals((byte)0x6e, string.getValue()[4]); // n
+		assertEquals((byte)0x74, string.getValue()[5]); // t
+		assertEquals((byte)0x00, string.getValue()[6]); // NULL
+
     }
 }

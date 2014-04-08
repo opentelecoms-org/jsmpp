@@ -265,7 +265,7 @@ public abstract class OptionalParameter {
 
 		public COctetString(short tag, String value) {
 			super(tag, new byte[value.getBytes().length + 1]);
-			System.arraycopy(value.getBytes(), 0, value, 0,
+			System.arraycopy(value.getBytes(), 0, this.value, 0,
 					value.getBytes().length);
 			this.value[value.getBytes().length] = (byte) 0x00;
 			return;
