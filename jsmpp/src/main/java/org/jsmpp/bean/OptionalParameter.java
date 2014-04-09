@@ -2159,6 +2159,9 @@ public abstract class OptionalParameter {
 			super(tag, value);
 			try {
 				address = new String(value, 2, value.length-2, "ISO-8859-1");
+			} catch (StringIndexOutOfBoundsException e) {
+				// TODO: do something better
+				e.printStackTrace();
 			} catch (UnsupportedEncodingException e) {
 				// TODO: do something better
 				e.printStackTrace();
