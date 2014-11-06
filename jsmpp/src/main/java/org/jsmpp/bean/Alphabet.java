@@ -29,7 +29,7 @@ public enum Alphabet {
     ALPHA_DEFAULT((byte)0x00),
 
     /**
-     * The -bit aphabet coding.
+     * 8-bit binary octet unspecified coding.
      */
     ALPHA_8_BIT((byte)0x04),
 
