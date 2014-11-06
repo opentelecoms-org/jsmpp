@@ -16,6 +16,9 @@ package org.jsmpp.bean;
 
 /**
  * This is enum of the alphabet type.
+ *
+ * Alphabet represents the lower 4 bits of the data_coding field in the PDU,
+ * as specified in s5.2.19 of the SMPP v3.4 specification.
  * 
  * @author uudashr
  * @version 1.0
