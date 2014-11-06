@@ -80,7 +80,7 @@ public class GeneralDataCoding implements DataCoding {
         byte value = compressed ? DataCodingFactory00xx.MASK_COMPRESSED : 0;
         value |= alphabet.value();
         if (messageClass != null) {
-            value |= DataCodingFactory00xx.MASK_CONTAIN_MESSAGE_CLASS;
+            value |= DataCodings.MASK_CONTAIN_MESSAGE_CLASS;
             value |= messageClass.value();
         }
         return value;
