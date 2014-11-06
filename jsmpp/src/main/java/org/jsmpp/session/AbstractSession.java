@@ -200,25 +200,32 @@ public abstract class AbstractSession implements Session {
     }
     
     public void close() {
-        logger.info("AbstractSession.close() called");
-        SessionContext ctx = sessionContext();
-        if (!ctx.getSessionState().equals(SessionState.CLOSED)) {
-            ctx.close();
-            try {
-                connection().close();
-            } catch (IOException e) {
-            }
-        }
-        
+      logger.info("AbstractSession.close() called");
+      SessionContext ctx = sessionContext();
+      if (!ctx.getSessionState().equals(SessionState.CLOSED)) {
+        ctx.close();
         try {
-        	if(enquireLinkSender != null) {
-        		enquireLinkSender.join();
-        	}
-		} catch (InterruptedException e) {
-			logger.warn("interrupted while waiting for enquireLinkSender thread to exit");
-		}
+          connection().close();
+        } catch (IOException e) {
+        }
+      }
+
+      // Make sure the enquireLinkThread doesn't wait for itself
+      if (Thread.currentThread() != enquireLinkSender)
+      {
+        if (enquireLinkSender != null)
+        {
+          try {
+            enquireLinkSender.join();
+          } catch (InterruptedException e) {
+            logger.warn("interrupted while waiting for enquireLinkSender thread to exit");
+          }
+        }
+      }
+
+      logger.info("AbstractSession.close() done");
     }
-    
+
     /**
      * Validate the response, the command_status should be 0 otherwise will
      * throw {@link NegativeResponseException}.
@@ -262,11 +269,21 @@ public abstract class AbstractSession implements Session {
         pendingResponse.put(seqNum, pendingResp);
         try {
             task.executeTask(connection().getOutputStream(), seqNum);
-        } catch (IOException e) {
-            logger.error("Failed sending " + task.getCommandName() + " command", e);
+        }
+        catch (IOException e)
+        {
+          logger.error("Failed sending " + task.getCommandName() + " command", e);
+          
+          if(task.getCommandName().equals("enquire_link"))
+          {
+            logger.info("Tomas: Ignore failure of sending enquire_link, wait to see if connection is restored");
+          }
+          else
+          {
             pendingResponse.remove(seqNum);
             close();
             throw e;
+          }
         }
         
         try {
@@ -334,6 +351,8 @@ public abstract class AbstractSession implements Session {
     }
     
     public void unbindAndClose() {
+
+        logger.info("unbindAndClose() called");
         if (sessionContext().getSessionState().isBound()) {
             try {
                 unbind();
@@ -418,11 +437,14 @@ public abstract class AbstractSession implements Session {
                 try {
                     sendEnquireLink();
                 } catch (ResponseTimeoutException e) {
+                    logger.error("EnquireLinkSender.run() ResponseTimeoutException", e);
                     close();
                 } catch (InvalidResponseException e) {
+                    logger.error("EnquireLinkSender.run() InvalidResponseException", e);
                     // lets unbind gracefully
                     unbindAndClose();
                 } catch (IOException e) {
+                    logger.error("EnquireLinkSender.run() IOException", e);
                     close();
                 }
             }

@@ -108,7 +108,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	private MessageReceiverListener messageReceiverListener;
     private BoundSessionStateListener sessionStateListener = new BoundSessionStateListener();
     private SMPPSessionContext sessionContext = new SMPPSessionContext(this, sessionStateListener);
-	
+
 	/**
      * Default constructor of {@link SMPPSession}. The next action might be
      * connect and bind to a destination message center.
@@ -269,7 +269,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	 * @param bindType is the bind type.
 	 * @param systemId is the system id.
 	 * @param password is the password.
-	 * @param systemTypeis the system type.
+	 * @param systemType is the system type.
 	 * @param interfaceVersion is the interface version.
 	 * @param addrTon is the address TON.
 	 * @param addrNpi is the address NPI.
@@ -454,22 +454,26 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	@Override
 	public void close()
 	{
-		super.close();
+    super.close();
 
-		if(Thread.currentThread() != pduReaderWorker) {
-			try {
-				if(pduReaderWorker != null) {
-					pduReaderWorker.join();
-				}
-			} catch (InterruptedException e) {
-				logger.warn("Interrupted while waiting for pduReaderWorker thread to exit");
-			}
-		}
+// Moved all cleanup handling to superclass. This code may cause a deadlock because
+// PDUReaderWorker waits for EnquireLinkSender and visa versa
+//		if(Thread.currentThread() != pduReaderWorker) {
+//			try {
+//				if(pduReaderWorker != null) {
+//				    logger.trace("Try to join pduReaderWorker thread");
+//					pduReaderWorker.join();
+//					logger.trace("Joined");
+//				}
+//			} catch (InterruptedException e) {
+//				logger.warn("Interrupted while waiting for pduReaderWorker thread to exit");
+//			}
+//		}
 	}
 
 	@Override
 	protected void finalize() throws Throwable {
-		close();
+    close();
 	}
 	
 	private void fireAcceptDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
@@ -611,8 +615,8 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	        try {
 	            Command pduHeader = null;
 	            byte[] pdu = null;
-	            
-                pduHeader = pduReader.readPDUHeader(in);
+
+				pduHeader = pduReader.readPDUHeader(in);
                 pdu = pduReader.readPDU(in, pduHeader);
 	            
                 /*
@@ -624,7 +628,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
                         sessionContext, responseHandler,
                         sessionContext, onIOExceptionTask);
 	            executorService.execute(task);
-	            
+
 	        } catch (InvalidCommandLengthException e) {
 	            logger.warn("Receive invalid command length", e);
 	            try {
