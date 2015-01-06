@@ -7,6 +7,18 @@
     <version>2.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <name>jSMPP</name>
+    <description>SMPP library for Java</description>
+    <url>http://jsmpp.org</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <modules>
         <module>jsmpp</module>
         <module>jsmpp-examples</module>
@@ -200,8 +212,9 @@
     </build>
 
     <scm>
-        <connection>scm:git:ssh://git@github.com:uudashr/jsmpp.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:kostousov-ds/jsmpp.git</developerConnection>
+        <url>https://github.com/opentelecoms-org/jsmpp</url>
+        <connection>scm:git:ssh://git@github.com:opentelecoms-org/jsmpp.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:opentelecoms-org/jsmpp.git</developerConnection>
     </scm>
 
 </project>
