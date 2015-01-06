@@ -19,6 +19,11 @@
         <developer>
             <name>Nuruddin Ashr</name>
         </developer>
+        <developer>
+            <name>Daniel Pocock</name>
+            <email>daniel@pocock.pro</email>
+            <url>http://danielpocock.com</url>
+        </developer>
     </developers>
 
     <properties>
