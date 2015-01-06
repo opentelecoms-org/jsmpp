@@ -209,16 +209,23 @@ public abstract class AbstractSession implements Session {
             } catch (IOException e) {
             }
         }
-        
-        try {
-        	if(enquireLinkSender != null) {
-        		enquireLinkSender.join();
-        	}
-		} catch (InterruptedException e) {
-			logger.warn("interrupted while waiting for enquireLinkSender thread to exit");
-		}
+
+        // Make sure the enquireLinkThread doesn't wait for itself
+        if (Thread.currentThread() != enquireLinkSender) {
+            if (enquireLinkSender != null) {
+                while(enquireLinkSender.isAlive()) {
+                    try {
+                        enquireLinkSender.join();
+                    } catch (InterruptedException e) {
+                        logger.warn("interrupted while waiting for enquireLinkSender thread to exit");
+                    }
+                }
+            }
+        }
+
+        logger.info("AbstractSession.close() done");
     }
-    
+
     /**
      * Validate the response, the command_status should be 0 otherwise will
      * throw {@link NegativeResponseException}.
@@ -264,9 +271,14 @@ public abstract class AbstractSession implements Session {
             task.executeTask(connection().getOutputStream(), seqNum);
         } catch (IOException e) {
             logger.error("Failed sending " + task.getCommandName() + " command", e);
-            pendingResponse.remove(seqNum);
-            close();
-            throw e;
+          
+            if(task.getCommandName().equals("enquire_link")) {
+                logger.info("Tomas: Ignore failure of sending enquire_link, wait to see if connection is restored");
+            } else {
+                pendingResponse.remove(seqNum);
+                close();
+                throw e;
+            }
         }
         
         try {
@@ -334,6 +346,8 @@ public abstract class AbstractSession implements Session {
     }
     
     public void unbindAndClose() {
+
+        logger.info("unbindAndClose() called");
         if (sessionContext().getSessionState().isBound()) {
             try {
                 unbind();
@@ -418,11 +432,14 @@ public abstract class AbstractSession implements Session {
                 try {
                     sendEnquireLink();
                 } catch (ResponseTimeoutException e) {
+                    logger.error("EnquireLinkSender.run() ResponseTimeoutException", e);
                     close();
                 } catch (InvalidResponseException e) {
+                    logger.error("EnquireLinkSender.run() InvalidResponseException", e);
                     // lets unbind gracefully
                     unbindAndClose();
                 } catch (IOException e) {
+                    logger.error("EnquireLinkSender.run() IOException", e);
                     close();
                 }
             }

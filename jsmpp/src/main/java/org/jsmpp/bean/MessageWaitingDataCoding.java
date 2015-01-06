@@ -58,12 +58,13 @@ public class MessageWaitingDataCoding implements DataCoding {
     public MessageWaitingDataCoding(IndicationSense indicationSense,
             IndicationType indicationType, Alphabet alphabet)
             throws IllegalArgumentException {
-        if (alphabet != null && (alphabet.equals(Alphabet.ALPHA_8_BIT)
-                || alphabet.equals(Alphabet.ALPHA_RESERVED))) {
+        if (alphabet != null && (alphabet.isUnspecified()
+                || alphabet.isReserved())) {
             throw new IllegalArgumentException(
-                    "Supported alphabet for SimpleDataCoding is "
-                            + Alphabet.ALPHA_DEFAULT + " or "
-                            + Alphabet.ALPHA_8_BIT + " only. Current alphabet is " + alphabet);
+                    "Supported alphabet for SimpleDataCoding is one of "
+                            + Alphabet.ALPHA_DEFAULT + ", "
+                            + Alphabet.ALPHA_UNSPECIFIED_2 + " or " + Alphabet.ALPHA_8_BIT
+                            + " only. Current alphabet is " + alphabet);
         }
         this.indicationSense = indicationSense;
         this.indicationType = indicationType;
