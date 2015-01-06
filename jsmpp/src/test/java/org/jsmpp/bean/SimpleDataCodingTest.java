@@ -76,7 +76,7 @@ public class SimpleDataCodingTest {
     @Test
     public void alpha8BitClass0() {
         // 11110100
-        SimpleDataCoding dataCoding = new SimpleDataCoding(Alphabet.ALPHA_UNSPECIFIED_4, MessageClass.CLASS0);
+        SimpleDataCoding dataCoding = new SimpleDataCoding(Alphabet.ALPHA_8_BIT, MessageClass.CLASS0);
         byte expected = (byte)0xf4;
         assertEquals(dataCoding.toByte(), expected);
         
@@ -87,7 +87,7 @@ public class SimpleDataCodingTest {
     @Test
     public void alpha8BitClass1() {
         // 11110101
-        SimpleDataCoding dataCoding = new SimpleDataCoding(Alphabet.ALPHA_UNSPECIFIED_4, MessageClass.CLASS1);
+        SimpleDataCoding dataCoding = new SimpleDataCoding(Alphabet.ALPHA_8_BIT, MessageClass.CLASS1);
         byte expected = (byte)0xf5;
         assertEquals(dataCoding.toByte(), expected);
         
@@ -98,7 +98,7 @@ public class SimpleDataCodingTest {
     @Test
     public void alpha8BitClass2() {
         // 11110110
-        SimpleDataCoding dataCoding = new SimpleDataCoding(Alphabet.ALPHA_UNSPECIFIED_4, MessageClass.CLASS2);
+        SimpleDataCoding dataCoding = new SimpleDataCoding(Alphabet.ALPHA_8_BIT, MessageClass.CLASS2);
         byte expected = (byte)0xf6;
         assertEquals(dataCoding.toByte(), expected);
         
@@ -109,7 +109,7 @@ public class SimpleDataCodingTest {
     @Test
     public void alpha8BitClass3() {
         // 11110111
-        SimpleDataCoding dataCoding = new SimpleDataCoding(Alphabet.ALPHA_UNSPECIFIED_4, MessageClass.CLASS3);
+        SimpleDataCoding dataCoding = new SimpleDataCoding(Alphabet.ALPHA_8_BIT, MessageClass.CLASS3);
         byte expected = (byte)0xf7;
         assertEquals(dataCoding.toByte(), expected);
         

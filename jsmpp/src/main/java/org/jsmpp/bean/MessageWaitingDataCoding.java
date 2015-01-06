@@ -63,7 +63,7 @@ public class MessageWaitingDataCoding implements DataCoding {
             throw new IllegalArgumentException(
                     "Supported alphabet for SimpleDataCoding is one of "
                             + Alphabet.ALPHA_DEFAULT + ", "
-                            + Alphabet.ALPHA_UNSPECIFIED_2 + " or " + Alphabet.ALPHA_UNSPECIFIED_4
+                            + Alphabet.ALPHA_UNSPECIFIED_2 + " or " + Alphabet.ALPHA_8_BIT
                             + " only. Current alphabet is " + alphabet);
         }
         this.indicationSense = indicationSense;

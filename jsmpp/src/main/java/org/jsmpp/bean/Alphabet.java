@@ -49,7 +49,7 @@ public enum Alphabet {
     /**
      * 8-bit binary octet unspecified coding.
      */
-    ALPHA_UNSPECIFIED_4((byte)0x04, true, true),
+    ALPHA_8_BIT((byte)0x04, true, true),
 
     /**
      * JIS (X 0208-1990)
