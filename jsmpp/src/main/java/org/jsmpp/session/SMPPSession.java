@@ -452,26 +452,6 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	}
 	
 	@Override
-	public void close()
-	{
-    super.close();
-
-// Moved all cleanup handling to superclass. This code may cause a deadlock because
-// PDUReaderWorker waits for EnquireLinkSender and visa versa
-//		if(Thread.currentThread() != pduReaderWorker) {
-//			try {
-//				if(pduReaderWorker != null) {
-//				    logger.trace("Try to join pduReaderWorker thread");
-//					pduReaderWorker.join();
-//					logger.trace("Joined");
-//				}
-//			} catch (InterruptedException e) {
-//				logger.warn("Interrupted while waiting for pduReaderWorker thread to exit");
-//			}
-//		}
-	}
-
-	@Override
 	protected void finalize() throws Throwable {
     close();
 	}
