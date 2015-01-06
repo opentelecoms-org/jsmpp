@@ -26,6 +26,16 @@ It was maintained by uudashr on Github until 2013
 
 It is now a community project maintained at http://jsmpp.org
 
+Release procedure
+-----------------
+
+  mvn deploy -DperformRelease=true -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging
+
+  * log in here: https://oss.sonatype.org
+  * click the `Staging Repositories' link
+  * select the repository and click close
+  * select the repository and click release
+
 License
 -------
 
