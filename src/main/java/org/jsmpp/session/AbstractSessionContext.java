@@ -14,7 +14,7 @@
  */
 package org.jsmpp.session;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.List;
 
 import org.jsmpp.bean.BindType;
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractSessionContext implements SessionContext {
     private static final Logger logger = LoggerFactory.getLogger(AbstractSessionContext.class);
     private long lastActivityTimestamp;
-    private List<SessionStateListener> sessionStateListeners = new ArrayList<SessionStateListener>();
+    private List<SessionStateListener> sessionStateListeners = new CopyOnWriteArrayList<SessionStateListener>();
     
     public AbstractSessionContext() {
     }
