@@ -10,6 +10,16 @@ syntax:glob
 .gwt/
 .project
 .classpath
+.externalToolBuilders
+
+# IntelliJ Project Files
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# MAC_OSX
+*.DS_Store
 
 version.properties
 git.properties
