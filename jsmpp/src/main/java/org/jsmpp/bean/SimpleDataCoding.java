@@ -52,11 +52,11 @@ public class SimpleDataCoding implements DataCoding {
                     "alphabet is mandatory, can't be null");
         }
         if (alphabet.equals(Alphabet.ALPHA_UCS2)
-                || alphabet.equals(Alphabet.ALPHA_RESERVED)) {
+                || alphabet.isReserved()) {
             throw new IllegalArgumentException(
-                    "Supported alphabet for SimpleDataCoding is "
-                            + Alphabet.ALPHA_DEFAULT + " or "
-                            + Alphabet.ALPHA_8_BIT + " only. Current alphabet is " + alphabet);
+                    "Supported alphabet for SimpleDataCoding does not include "
+                            + Alphabet.ALPHA_UCS2 + " or "
+                            + "reserved alphabet codes. Current alphabet is " + alphabet);
         }
         if (messageClass == null) {
             throw new IllegalArgumentException(

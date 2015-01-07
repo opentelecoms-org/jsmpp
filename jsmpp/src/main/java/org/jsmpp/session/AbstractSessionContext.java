@@ -14,7 +14,7 @@
  */
 package org.jsmpp.session;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.List;
 
 import org.jsmpp.bean.BindType;
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractSessionContext implements SessionContext {
     private static final Logger logger = LoggerFactory.getLogger(AbstractSessionContext.class);
     private long lastActivityTimestamp;
-    private List<SessionStateListener> sessionStateListeners = new ArrayList<SessionStateListener>();
+    private List<SessionStateListener> sessionStateListeners = new CopyOnWriteArrayList<SessionStateListener>();
     
     public AbstractSessionContext() {
     }
@@ -64,29 +64,24 @@ public abstract class AbstractSessionContext implements SessionContext {
     
     public void addSessionStateListener(
             SessionStateListener l) {
-        synchronized (sessionStateListeners) {
-            sessionStateListeners.add(l);
-        }
-        
+        sessionStateListeners.add(l);
     }
     
     public void removeSessionStateListener(SessionStateListener l) {
-        synchronized (sessionStateListeners) {
-            sessionStateListeners.remove(l);
-        }
+        sessionStateListeners.remove(l);
     }
-    
+
     protected void fireStateChanged(SessionState newState,
-            SessionState oldState, Session source) {
-        synchronized (sessionStateListeners) {
-            for (SessionStateListener l : sessionStateListeners) {
-                try {
-                    l.onStateChange(newState, oldState, source);
-                } catch(Exception e) {
-                    logger.error("Invalid runtime exception thrown when calling onStateChange for " + source, e);
-                }
+                                    SessionState oldState, Session source) {
+
+        for (SessionStateListener l : sessionStateListeners) {
+            try {
+                l.onStateChange(newState, oldState, source);
+            } catch (Exception e) {
+                logger.error("Invalid runtime exception thrown when calling onStateChange for " + source, e);
             }
         }
+
     }
     
     public void notifyActivity() {

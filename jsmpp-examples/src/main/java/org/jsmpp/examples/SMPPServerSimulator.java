@@ -67,7 +67,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
     private static final Integer DEFAULT_PORT = 8056;
     private static final Logger logger = LoggerFactory.getLogger(SMPPServerSimulator.class);
     private final ExecutorService execService = Executors.newFixedThreadPool(5);
-    private final ExecutorService execServiceDelReciept = Executors.newFixedThreadPool(100);
+    private final ExecutorService execServiceDelReceipt = Executors.newFixedThreadPool(100);
     private final MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
     private int port;
     
@@ -88,7 +88,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
                 execService.execute(new WaitBindTask(serverSession));
             }
         } catch (IOException e) {
-            logger.error("IO error occured", e);
+            logger.error("IO error occurred", e);
         }
     }
     
@@ -103,7 +103,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
         MessageId messageId = messageIDGenerator.newMessageId();
         logger.debug("Receiving submit_sm '{}', and return message id {}", new String(submitSm.getShortMessage()), messageId);
         if (SMSCDeliveryReceipt.SUCCESS.containedIn(submitSm.getRegisteredDelivery()) || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitSm.getRegisteredDelivery())) {
-            execServiceDelReciept.execute(new DeliveryReceiptTask(source, submitSm, messageId));
+            execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitSm, messageId));
         }
         return messageId;
     }
@@ -121,7 +121,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
                 messageId);
         if (SMSCDeliveryReceipt.SUCCESS.containedIn(submitMulti.getRegisteredDelivery())
                 || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitMulti.getRegisteredDelivery())) {
-            execServiceDelReciept.execute(new DeliveryReceiptTask(source, submitMulti, messageId));
+            execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitMulti, messageId));
         }
 
         return new SubmitMultiResult(messageId.getValue(), new UnsuccessDelivery[0]);
@@ -255,7 +255,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
                         new RegisteredDelivery(0), 
                         DataCodings.ZERO, 
                         delRec.toString().getBytes());
-                logger.debug("Sending delivery reciept for message id " + messageId + ":" + stringValue);
+                logger.debug("Sending delivery receipt for message id " + messageId + ":" + stringValue);
             } catch (Exception e) {
                 logger.error("Failed sending delivery_receipt for message id " + messageId + ":" + stringValue, e);
             }

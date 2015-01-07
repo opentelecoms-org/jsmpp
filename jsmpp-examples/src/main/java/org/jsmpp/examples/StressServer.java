@@ -93,7 +93,7 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
                 waitBindExecService.execute(new WaitBindTask(serverSession));
             }
         } catch (IOException e) {
-            logger.error("IO error occured", e);
+            logger.error("IO error occurred", e);
         }
     }
     
@@ -199,7 +199,7 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
                         new RegisteredDelivery(0), 
                         DataCodings.ZERO, 
                         delRec.toString().getBytes());
-                logger.debug("Sending delivery reciept for message id " + messageId + ":" + stringValue);
+                logger.debug("Sending delivery receipt for message id " + messageId + ":" + stringValue);
             } catch (Exception e) {
                 logger.error("Failed sending delivery_receipt for message id " + messageId + ":" + stringValue, e);
             }

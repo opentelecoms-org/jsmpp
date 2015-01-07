@@ -61,7 +61,7 @@ abstract class AbstractGenericSMPPSessionBound implements GenericSMPPSessionStat
 
     public void processUnbind(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-        logger.info("Receving unbind request");
+        logger.info("Receiving unbind request");
         try {
             responseHandler.sendUnbindResp(pduHeader.getSequenceNumber());
         } finally {

@@ -43,11 +43,6 @@ public class DataCodingFactory00xx extends AbstractDataCodingFactory {
      */
     public static final byte MASK_COMPRESSED = 0x20;
     
-    /**
-     * bin: 00010000
-     */
-    public static final byte MASK_CONTAIN_MESSAGE_CLASS = 0x10;
-    
     public DataCodingFactory00xx() {
         super(MASK, GROUP);
     }
@@ -69,7 +64,11 @@ public class DataCodingFactory00xx extends AbstractDataCodingFactory {
         return (dataCoding & MASK_COMPRESSED) == MASK_COMPRESSED;
     }
     
+    /**
+     * @deprecated use {@link #DataCodings.containsMessageClass(byte dataCoding)}
+     */
+    @Deprecated
     public boolean isContainMessageClass(byte dataCoding) {
-        return (dataCoding & MASK_CONTAIN_MESSAGE_CLASS) == MASK_CONTAIN_MESSAGE_CLASS;
+        return DataCodings.containsMessageClass(dataCoding);
     }
 }

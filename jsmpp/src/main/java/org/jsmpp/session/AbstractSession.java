@@ -133,11 +133,11 @@ public abstract class AbstractSession implements Session {
     }
     
     /**
-     * Set total thread can read PDU and process it parallely. It's defaulted to
+     * Set total thread can read PDU and process it in parallel. It's defaulted to
      * 3.
      * 
      * @param pduProcessorDegree is the total thread can handle read and process
-     *        PDU parallely.
+     *        PDU in parallel.
      * @throws IllegalStateException if the PDU Reader has been started.
      */
     public void setPduProcessorDegree(int pduProcessorDegree) throws IllegalStateException {
@@ -149,10 +149,10 @@ public abstract class AbstractSession implements Session {
     }
     
     /**
-     * Get the total of thread that can handle read and process PDU parallely.
+     * Get the total of thread that can handle read and process PDU in parallel.
      * 
-     * @return the total of thread that can handle read and process PDU
-     *         parallely.
+     * @return the total of thread that can handle read and process PDU in
+     *         parallel.
      */
     public int getPduProcessorDegree() {
         return pduProcessorDegree;
@@ -209,16 +209,23 @@ public abstract class AbstractSession implements Session {
             } catch (IOException e) {
             }
         }
-        
-        try {
-        	if(enquireLinkSender != null) {
-        		enquireLinkSender.join();
-        	}
-		} catch (InterruptedException e) {
-			logger.warn("interrupted while waiting for enquireLinkSender thread to exit");
-		}
+
+        // Make sure the enquireLinkThread doesn't wait for itself
+        if (Thread.currentThread() != enquireLinkSender) {
+            if (enquireLinkSender != null) {
+                while(enquireLinkSender.isAlive()) {
+                    try {
+                        enquireLinkSender.join();
+                    } catch (InterruptedException e) {
+                        logger.warn("interrupted while waiting for enquireLinkSender thread to exit");
+                    }
+                }
+            }
+        }
+
+        logger.info("AbstractSession.close() done");
     }
-    
+
     /**
      * Validate the response, the command_status should be 0 otherwise will
      * throw {@link NegativeResponseException}.
@@ -264,9 +271,14 @@ public abstract class AbstractSession implements Session {
             task.executeTask(connection().getOutputStream(), seqNum);
         } catch (IOException e) {
             logger.error("Failed sending " + task.getCommandName() + " command", e);
-            pendingResponse.remove(seqNum);
-            close();
-            throw e;
+          
+            if(task.getCommandName().equals("enquire_link")) {
+                logger.info("Tomas: Ignore failure of sending enquire_link, wait to see if connection is restored");
+            } else {
+                pendingResponse.remove(seqNum);
+                close();
+                throw e;
+            }
         }
         
         try {
@@ -334,6 +346,8 @@ public abstract class AbstractSession implements Session {
     }
     
     public void unbindAndClose() {
+
+        logger.info("unbindAndClose() called");
         if (sessionContext().getSessionState().isBound()) {
             try {
                 unbind();
@@ -418,11 +432,14 @@ public abstract class AbstractSession implements Session {
                 try {
                     sendEnquireLink();
                 } catch (ResponseTimeoutException e) {
+                    logger.error("EnquireLinkSender.run() ResponseTimeoutException", e);
                     close();
                 } catch (InvalidResponseException e) {
+                    logger.error("EnquireLinkSender.run() InvalidResponseException", e);
                     // lets unbind gracefully
                     unbindAndClose();
                 } catch (IOException e) {
+                    logger.error("EnquireLinkSender.run() IOException", e);
                     close();
                 }
             }

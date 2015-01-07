@@ -167,7 +167,7 @@ public interface PDUDecomposer {
     QuerySm querySm(byte[] b) throws PDUStringException;
 
     /**
-     * Decompose the SMPP PDU query short message reponse command.
+     * Decompose the SMPP PDU query short message response command.
      * 
      * @param b is the PDU.
      * @return the query short message response command object.
