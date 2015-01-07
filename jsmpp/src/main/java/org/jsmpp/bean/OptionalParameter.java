@@ -258,16 +258,16 @@ public abstract class OptionalParameter {
         public COctetString(short tag, String value, String charsetName)
 				throws UnsupportedEncodingException {
 			super(tag, new byte[value.getBytes(charsetName).length + 1]);
-			System.arraycopy(value.getBytes(charsetName), 0, this.value, 0,
-					value.getBytes(charsetName).length);
-			this.value[value.getBytes().length] = (byte) 0x00;
+			byte[] bytes = value.getBytes(charsetName);
+			System.arraycopy(bytes, 0, this.value, 0, bytes.length);
+			this.value[bytes.length] = (byte) 0x00;
 		}
 
 		public COctetString(short tag, String value) {
 			super(tag, new byte[value.getBytes().length + 1]);
-			System.arraycopy(value.getBytes(), 0, this.value, 0,
-					value.getBytes().length);
-			this.value[value.getBytes().length] = (byte) 0x00;
+			byte[] bytes = value.getBytes();
+			System.arraycopy(bytes, 0, this.value, 0, bytes.length);
+			this.value[bytes.length] = (byte) 0x00;
 			return;
 		}
 
