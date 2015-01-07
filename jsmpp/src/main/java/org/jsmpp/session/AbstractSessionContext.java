@@ -64,29 +64,24 @@ public abstract class AbstractSessionContext implements SessionContext {
     
     public void addSessionStateListener(
             SessionStateListener l) {
-        synchronized (sessionStateListeners) {
-            sessionStateListeners.add(l);
-        }
-        
+        sessionStateListeners.add(l);
     }
     
     public void removeSessionStateListener(SessionStateListener l) {
-        synchronized (sessionStateListeners) {
-            sessionStateListeners.remove(l);
-        }
+        sessionStateListeners.remove(l);
     }
-    
+
     protected void fireStateChanged(SessionState newState,
-            SessionState oldState, Session source) {
-        synchronized (sessionStateListeners) {
-            for (SessionStateListener l : sessionStateListeners) {
-                try {
-                    l.onStateChange(newState, oldState, source);
-                } catch(Exception e) {
-                    logger.error("Invalid runtime exception thrown when calling onStateChange for " + source, e);
-                }
+                                    SessionState oldState, Session source) {
+
+        for (SessionStateListener l : sessionStateListeners) {
+            try {
+                l.onStateChange(newState, oldState, source);
+            } catch (Exception e) {
+                logger.error("Invalid runtime exception thrown when calling onStateChange for " + source, e);
             }
         }
+
     }
     
     public void notifyActivity() {
