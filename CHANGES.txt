@@ -38,7 +38,7 @@ Changes:
 - Change the max length of short message to 254, referring to SMPP 3.4
   Previously using  255 (taken from SMPP 5.0)
   
-2.0.2
+2.1.0
 - set connection timeout when binding
 - provide source (the session) for onAcceptDataSm
 - use StrictBufferedInputStream
