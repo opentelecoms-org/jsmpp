@@ -26,6 +26,7 @@
         <buildNumber>${maven.build.timestamp}</buildNumber>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.6.1</slf4j.version>
+        <log4j.version>1.2.17</log4j.version>
         <git.properties>git.properties</git.properties>
     </properties>
 
@@ -73,7 +74,7 @@
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
-                <version>1.2.16</version>
+                <version>${log4j.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
