@@ -84,7 +84,7 @@ public class RelativeTimeFormatterTest {
     GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("Europe/Berlin"));
     date.setTimeInMillis(smscDate.getTimeInMillis());
     // Tenth of seconds should be ignored
-    smscDate.set(Calendar.MILLISECOND, 800);
+    date.set(Calendar.MILLISECOND, 800);
 
     assertEquals(timeFormatter.format(date, smscDate), "000000000000000R");
   }
