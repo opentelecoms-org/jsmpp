@@ -72,9 +72,9 @@ public class RelativeTimeFormatterTest {
   public void formatRelativeDateIgnoreMilliSeconds() {
     RelativeTimeFormatter timeFormatter = new RelativeTimeFormatter();
 
-    // Set the SMSC date
+    // Set the SMSC date to some future datetime
     GregorianCalendar smscDate = new GregorianCalendar(TimeZone.getTimeZone("Europe/Berlin"));
-    smscDate.set(Calendar.YEAR, 1998);
+    smscDate.set(Calendar.YEAR, 2080);
     smscDate.set(Calendar.MONTH, Calendar.JANUARY);
     smscDate.set(Calendar.DAY_OF_MONTH, 1);
     smscDate.set(Calendar.HOUR, 13);
