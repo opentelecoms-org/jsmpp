@@ -14,130 +14,102 @@
  */
 package org.jsmpp.util;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static org.testng.Assert.*;
-
 import org.testng.annotations.Test;
 
 
 /**
  * @author uudashr
- *
  */
 public class DateFormatterTest {
-    
-    @Test(groups="checkintest")
-    public void testStaticAbsoluteFormatter() {
-        String formatted = AbsoluteTimeFormatter.format(07, 12, 26, 11, 37, 03, 8, 45, '+');
-        assertEquals(formatted, "071226113703845+");
-    }
-    
-    @Test(groups="checkintest")
-    public void testStaticRelativeFormatter() {
-        String formatted = RelativeTimeFormatter.format(07, 12, 26, 12, 46, 10);
-        assertEquals(formatted, "071226124610000R");
-    }
-    
-    @Test(groups="checkintest")
-    public void formatNullDate() {
-        TimeFormatter timeFormatter = new AbsoluteTimeFormatter();
-        assertNull(timeFormatter.format((Date)null));
-        assertNull(timeFormatter.format((Calendar)null));
-        
-        timeFormatter = new RelativeTimeFormatter();
-        assertNull(timeFormatter.format((Date)null));
-        assertNull(timeFormatter.format((Calendar)null));
-    }
-    
-    @Test(groups="checkintest")
-    public void validateAbsoluteDate() throws Exception {
-        String formatted = AbsoluteTimeFormatter.format(07, 12, 26, 11, 37, 03, 8, 45, '+');
-        StringValidator.validateString(formatted, StringParameter.SCHEDULE_DELIVERY_TIME);
-        StringValidator.validateString(formatted, StringParameter.VALIDITY_PERIOD);
-        StringValidator.validateString(formatted, StringParameter.FINAL_DATE);
-    }
-    
-    @Test(groups="checkintest")
-    public void validateRelativeDate() throws Exception {
-        String formatted = RelativeTimeFormatter.format(07, 12, 26, 12, 46, 10);
-        StringValidator.validateString(formatted, StringParameter.SCHEDULE_DELIVERY_TIME);
-        StringValidator.validateString(formatted, StringParameter.VALIDITY_PERIOD);
-        StringValidator.validateString(formatted, StringParameter.FINAL_DATE);
-    }
 
-    @Test(groups="checkintest")
-    public void formatAbsoluteDate() {
-        TimeFormatter timeFormatter = new AbsoluteTimeFormatter();
+  @Test(groups = "checkintest")
+  public void testStaticAbsoluteFormatter() {
+    String formatted = AbsoluteTimeFormatter.format(07, 12, 26, 11, 37, 03, 8, 45, '+');
+    assertEquals(formatted, "071226113703845+");
+  }
 
-        GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("Europe/Berlin"), Locale.GERMANY);
-        date.set(Calendar.YEAR, 2013);
-        date.set(Calendar.MONTH, Calendar.JANUARY);
-        date.set(Calendar.DAY_OF_MONTH, 1);
-        date.set(Calendar.HOUR_OF_DAY, 1);
-        date.set(Calendar.MINUTE, 0);
-        date.set(Calendar.SECOND, 0);
-        date.set(Calendar.MILLISECOND, 0);
+  @Test(groups = "checkintest")
+  public void testStaticRelativeFormatter() {
+    String formatted = RelativeTimeFormatter.format(07, 12, 26, 12, 46, 10);
+    assertEquals(formatted, "071226124610000R");
+  }
 
-        assertEquals(timeFormatter.format(date), "130101010000004+");
+  @Test(groups = "checkintest")
+  public void formatNullDate() {
+    TimeFormatter timeFormatter = new AbsoluteTimeFormatter();
+    assertNull(timeFormatter.format((Date) null));
+    assertNull(timeFormatter.format((Calendar) null));
 
-        date.set(Calendar.MONTH, Calendar.JULY);
+    timeFormatter = new RelativeTimeFormatter();
+    assertNull(timeFormatter.format((Date) null));
+    assertNull(timeFormatter.format((Calendar) null));
+  }
 
-        // because of daylight saving time, we have a different offset
-        assertEquals(timeFormatter.format(date), "130701010000008+");
-    }
+  @Test(groups = "checkintest")
+  public void validateAbsoluteDate() throws Exception {
+    String formatted = AbsoluteTimeFormatter.format(07, 12, 26, 11, 37, 03, 8, 45, '+');
+    StringValidator.validateString(formatted, StringParameter.SCHEDULE_DELIVERY_TIME);
+    StringValidator.validateString(formatted, StringParameter.VALIDITY_PERIOD);
+    StringValidator.validateString(formatted, StringParameter.FINAL_DATE);
+  }
 
-    @Test(groups="checkintest")
-    public void formatAbsoluteDateRussia() {
-        TimeFormatter timeFormatter = new AbsoluteTimeFormatter();
+  @Test(groups = "checkintest")
+  public void validateRelativeDate() throws Exception {
+    String formatted = RelativeTimeFormatter.format(07, 12, 26, 12, 46, 10);
+    StringValidator.validateString(formatted, StringParameter.SCHEDULE_DELIVERY_TIME);
+    StringValidator.validateString(formatted, StringParameter.VALIDITY_PERIOD);
+    StringValidator.validateString(formatted, StringParameter.FINAL_DATE);
+  }
 
-        GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("Asia/Yekaterinburg"), new Locale("ru", "RU"));
-        date.set(Calendar.YEAR, 2013);
-        date.set(Calendar.MONTH, Calendar.JANUARY);
-        date.set(Calendar.DAY_OF_MONTH, 1);
-        date.set(Calendar.HOUR_OF_DAY, 1);
-        date.set(Calendar.MINUTE, 0);
-        date.set(Calendar.SECOND, 0);
-        date.set(Calendar.MILLISECOND, 0);
+  @Test(groups = "checkintest")
+  public void formatAbsoluteDate() {
+    TimeFormatter timeFormatter = new AbsoluteTimeFormatter();
 
-        assertEquals(timeFormatter.format(date), "130101010000024+");
+    GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("Europe/Berlin"), Locale.GERMANY);
+    date.set(Calendar.YEAR, 2013);
+    date.set(Calendar.MONTH, Calendar.JANUARY);
+    date.set(Calendar.DAY_OF_MONTH, 1);
+    date.set(Calendar.HOUR_OF_DAY, 1);
+    date.set(Calendar.MINUTE, 0);
+    date.set(Calendar.SECOND, 0);
+    date.set(Calendar.MILLISECOND, 0);
 
-        date.set(Calendar.MONTH, Calendar.JULY);
+    assertEquals(timeFormatter.format(date), "130101010000004+");
 
-        // we have the same offset because of the absent of daylight saving time
-        assertEquals(timeFormatter.format(date), "130701010000024+");
-    }
+    date.set(Calendar.MONTH, Calendar.JULY);
 
-    @Test(groups="checkintest",enabled=false) // FIXME - enable again after fixing issues below
-    public void formatRelativeDate() {
-        RelativeTimeFormatter timeFormatter = new RelativeTimeFormatter(TimeZone.getTimeZone("America/Denver"));
+    // because of daylight saving time, we have a different offset
+    assertEquals(timeFormatter.format(date), "130701010000008+");
+  }
 
-        // at this date neither Denver nor Germany has daylight saving time
-        GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("Europe/Berlin"), Locale.GERMANY);
-        date.set(Calendar.YEAR, 2013);
-        date.set(Calendar.MONTH, Calendar.JANUARY);
-        date.set(Calendar.DAY_OF_MONTH, 1);
-        date.set(Calendar.HOUR_OF_DAY, 1);
-        date.set(Calendar.MINUTE, 0);
-        date.set(Calendar.SECOND, 0);
-        date.set(Calendar.MILLISECOND, 0);
+  @Test(groups = "checkintest")
+  public void formatAbsoluteDateRussia() {
+    TimeFormatter timeFormatter = new AbsoluteTimeFormatter();
 
-        assertEquals(timeFormatter.format(date), "130101050000000R"); // FIXME - should be a relative time but looks like an absolute value
-        
-        // at this date Denver has already daylight saving time but not Germany
-        date.set(Calendar.MONTH, Calendar.MARCH);
-        date.set(Calendar.DAY_OF_MONTH, 20);
-        
-        assertEquals(timeFormatter.format(date), "130320060000000R"); // FIXME - should be a relative time but looks like an absolute value
+    GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("Asia/Yekaterinburg"), new Locale("ru", "RU"));
+    date.set(Calendar.YEAR, 2013);
+    date.set(Calendar.MONTH, Calendar.JANUARY);
+    date.set(Calendar.DAY_OF_MONTH, 1);
+    date.set(Calendar.HOUR_OF_DAY, 1);
+    date.set(Calendar.MINUTE, 0);
+    date.set(Calendar.SECOND, 0);
+    date.set(Calendar.MILLISECOND, 0);
 
-        // at this date Denver and Germany has daylight saving time
-        date.set(Calendar.MONTH, Calendar.APRIL);
-        date.set(Calendar.DAY_OF_MONTH, 1);
+    assertEquals(timeFormatter.format(date), "130101010000024+");
 
-        assertEquals(timeFormatter.format(date), "130401050000000R"); // FIXME - should be a relative time but looks like an absolute value
-    }
+    date.set(Calendar.MONTH, Calendar.JULY);
+
+    // we have the same offset because of the absent of daylight saving time
+    assertEquals(timeFormatter.format(date), "130701010000024+");
+  }
+
 }
