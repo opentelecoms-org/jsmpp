@@ -68,7 +68,7 @@ public class RelativeTimeFormatterTest {
     fail("Expected IllegalArgumentException not thrown");
   }
 
-  @Test(groups = "checkintest", expectedExceptions = IllegalArgumentException.class)
+  @Test(groups = "checkintest")
   public void formatRelativeDateIgnoreMilliSeconds() {
     RelativeTimeFormatter timeFormatter = new RelativeTimeFormatter();
 
