@@ -45,6 +45,10 @@
                   <Bundle-Name>${project.artifactId}</Bundle-Name>
                   <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
                   <Export-Package>org.jsmpp</Export-Package>
+                  <_exportcontents>
+                    org.jsmpp.bean,
+                    org.jsmpp.util
+                  </_exportcontents>
                   <Import-Package>
                     org.slf4j;resolution:=optional,
                     *
