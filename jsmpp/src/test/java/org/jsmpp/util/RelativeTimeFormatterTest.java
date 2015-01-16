@@ -60,7 +60,7 @@ public class RelativeTimeFormatterTest {
     date.set(Calendar.YEAR, 1998);
     date.set(Calendar.MONTH, Calendar.MARCH);
     date.set(Calendar.DAY_OF_MONTH, 1);
-    date.set(Calendar.HOUR, 13);
+    date.set(Calendar.HOUR_OF_DAY, 13);
     date.set(Calendar.MINUTE, 46);
     date.set(Calendar.SECOND, 59);
 
@@ -77,7 +77,7 @@ public class RelativeTimeFormatterTest {
     smscDate.set(Calendar.YEAR, 2080);
     smscDate.set(Calendar.MONTH, Calendar.JANUARY);
     smscDate.set(Calendar.DAY_OF_MONTH, 1);
-    smscDate.set(Calendar.HOUR, 13);
+    smscDate.set(Calendar.HOUR_OF_DAY, 13);
     smscDate.set(Calendar.MINUTE, 46);
     smscDate.set(Calendar.SECOND, 59);
 
