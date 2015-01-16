@@ -77,7 +77,7 @@ public class RelativeTimeFormatter implements TimeFormatter {
     int years = offsetEpoch.get(Calendar.YEAR) - 1970;
     int months = offsetEpoch.get(Calendar.MONTH);
     int days = offsetEpoch.get(Calendar.DAY_OF_MONTH) - 1;
-    int hours = offsetEpoch.get(Calendar.HOUR);
+    int hours = offsetEpoch.get(Calendar.HOUR_OF_DAY);
     int minutes = offsetEpoch.get(Calendar.MINUTE);
     int seconds = offsetEpoch.get(Calendar.SECOND);
 

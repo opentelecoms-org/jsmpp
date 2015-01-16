@@ -60,7 +60,7 @@ public class RelativeTimeFormatterTest {
     date.set(Calendar.YEAR, 1998);
     date.set(Calendar.MONTH, Calendar.MARCH);
     date.set(Calendar.DAY_OF_MONTH, 1);
-    date.set(Calendar.HOUR, 13);
+    date.set(Calendar.HOUR_OF_DAY, 13);
     date.set(Calendar.MINUTE, 46);
     date.set(Calendar.SECOND, 59);
 
@@ -77,7 +77,7 @@ public class RelativeTimeFormatterTest {
     smscDate.set(Calendar.YEAR, 2080);
     smscDate.set(Calendar.MONTH, Calendar.JANUARY);
     smscDate.set(Calendar.DAY_OF_MONTH, 1);
-    smscDate.set(Calendar.HOUR, 13);
+    smscDate.set(Calendar.HOUR_OF_DAY, 13);
     smscDate.set(Calendar.MINUTE, 46);
     smscDate.set(Calendar.SECOND, 59);
 
@@ -150,6 +150,17 @@ public class RelativeTimeFormatterTest {
     date.setTimeInMillis(smscDate.getTimeInMillis());
     date.add(Calendar.SECOND, 1);
     assertEquals(timeFormatter.format(date, smscDate), "000000000001000R");
+  }
+
+  @Test(groups = "checkintest")
+  public void formatRelativeTimeHours() {
+    RelativeTimeFormatter timeFormatter = new RelativeTimeFormatter();
+    GregorianCalendar smscDate = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
+
+    GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
+    date.setTimeInMillis(smscDate.getTimeInMillis());
+    date.add(Calendar.HOUR_OF_DAY, 16);
+    assertEquals(timeFormatter.format(date, smscDate), "000000160000000R");
   }
 
   @Test(groups = "checkintest")
