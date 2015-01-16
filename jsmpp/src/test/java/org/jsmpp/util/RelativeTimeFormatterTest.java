@@ -153,6 +153,17 @@ public class RelativeTimeFormatterTest {
   }
 
   @Test(groups = "checkintest")
+  public void formatRelativeTimeHours() {
+    RelativeTimeFormatter timeFormatter = new RelativeTimeFormatter();
+    GregorianCalendar smscDate = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
+
+    GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
+    date.setTimeInMillis(smscDate.getTimeInMillis());
+    date.add(Calendar.HOUR_OF_DAY, 16);
+    assertEquals(timeFormatter.format(date, smscDate), "000000160000000R");
+  }
+
+  @Test(groups = "checkintest")
   public void formatRelativeTimeMonth() {
     RelativeTimeFormatter timeFormatter = new RelativeTimeFormatter();
     GregorianCalendar smscDate = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
