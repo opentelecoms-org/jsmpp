@@ -80,6 +80,7 @@ public class RelativeTimeFormatterTest {
     smscDate.set(Calendar.HOUR_OF_DAY, 13);
     smscDate.set(Calendar.MINUTE, 46);
     smscDate.set(Calendar.SECOND, 59);
+    smscDate.set(Calendar.MILLISECOND, 0);
 
     GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("Europe/Berlin"));
     date.setTimeInMillis(smscDate.getTimeInMillis());
