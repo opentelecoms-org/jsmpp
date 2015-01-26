@@ -1,0 +1,12 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/maven.mk
+
+PACKAGE              := $(DEB_SOURCE_PACKAGE)
+VERSION              := $(shell echo $(DEB_UPSTREAM_VERSION))
+JAVA_HOME            := /usr/lib/jvm/default-java
+
+#get-orig-source:
+#	uscan --download-version $(VERSION) --force-download --rename
+

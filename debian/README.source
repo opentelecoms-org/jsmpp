@@ -1,0 +1,17 @@
+
+Contributions from other developers are welcome.
+
+Just join pkg-java and make sure any changes you make
+are pushed into the Git repository before you upload/NMU.
+
+  http://pkg-java.alioth.debian.org/
+
+This builds the package:
+
+git-buildpackage -rfakeroot \
+    --git-debian-branch=debian \
+    --git-upstream-branch=master \
+    --git-upstream-tag='%(version)s' \
+    -i"'(^.git|^target|pom.xml)'"
+
+

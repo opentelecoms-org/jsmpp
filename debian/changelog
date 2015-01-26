@@ -1,0 +1,6 @@
+jsmpp (2.1.2-1) unstable; urgency=low
+
+  * Initial packaging (Closes: #776289)
+
+ -- Daniel Pocock <daniel@pocock.pro>  Mon, 26 Jan 2015 11:29:44 +0100
+

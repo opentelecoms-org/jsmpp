@@ -1,0 +1,23 @@
+Source: jsmpp
+Section: java
+Priority: optional
+Maintainer: Debian Java Maintainers <pkg-java-maintainers@lists.alioth.debian.org>
+Uploaders: Daniel Pocock <daniel@pocock.pro>
+Build-Depends: debhelper (>= 9), cdbs (>= 0.4.5.3), default-jdk
+Build-Depends-Indep: maven-debian-helper (>> 0.5), libmaven-bundle-plugin-java, junit, testng
+Standards-Version: 3.9.5
+Homepage: http://jsmpp.org
+Vcs-Git: https://github.com/opentelecoms-org/jsmpp.git
+Vcs-Browser: https://github.com/opentelecoms-org/jsmpp
+
+Package: libjsmpp-java
+Architecture: all
+Depends: ${misc:Depends}, libslf4j-java
+Description: SMPP API for sending SMS from Java
+ jSMPP is a 100% Java library for SMPP.  SMPP is a carrier-neutral
+ protocol that is used to connect users to the mobile SMS messaging
+ network over IP networks such as the Internet.  It is highly scalable
+ and is the protocol used between many carriers.  SMPP PDUs are mapped
+ directly to the format of PDUs used by mobile handsets so it is easier
+ to predict the way a message is delivered to the mobile device when
+ it is created and transmitted through an SMPP stack.
