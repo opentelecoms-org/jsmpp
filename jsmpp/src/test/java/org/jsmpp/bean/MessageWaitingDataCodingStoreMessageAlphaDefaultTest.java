@@ -38,11 +38,8 @@ public class MessageWaitingDataCodingStoreMessageAlphaDefaultTest {
                 IndicationType.VOICEMAIL_MESSAGE_WAITING,
                 Alphabet.ALPHA_DEFAULT);
         byte expected = (byte)0xd0;
-        
-        System.out.println(0xff & expected);
-        System.out.println(0xff & dataCoding.toByte());
-        
-        assertEquals(dataCoding.toByte(), expected);
+
+        assertEquals(dataCoding.toByte(), expected, "Datacoding differs");
         
         DataCoding buildedInstance = DataCodings.newInstance(dataCoding.toByte());
         assertEquals(buildedInstance, dataCoding);
