@@ -23,11 +23,11 @@ import org.jsmpp.util.OctetUtil;
 
 /**
  * Default implementation of {@link PDUReader}.
- * 
+ *
  * @author uudashr
  * @version 1.0
  * @since 1.0
- * 
+ *
  */
 public class DefaultPDUReader implements PDUReader {
 
@@ -40,12 +40,13 @@ public class DefaultPDUReader implements PDUReader {
         header.setCommandLength(in.readInt());
 
         if (header.getCommandLength() < 16) {
-            // command length to short, read the left dump anyway
+            // command length too short, read the left dump anyway
             byte[] dump = new byte[header.getCommandLength()];
-            in.read(dump, 4, header.getCommandLength() - 4);
-
+            if (header.getCommandLength() >= 4) {
+                in.read(dump, 4, header.getCommandLength() - 4);
+            }
             throw new InvalidCommandLengthException("Command length "
-                    + header.getCommandLength() + " is to short");
+                    + header.getCommandLength() + " is too short");
         }
         header.setCommandId(in.readInt());
         header.setCommandStatus(in.readInt());

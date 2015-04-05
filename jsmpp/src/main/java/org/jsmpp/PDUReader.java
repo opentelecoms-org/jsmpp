@@ -37,7 +37,7 @@ public interface PDUReader {
      * 
      * @param in is the input stream of the pdu.
      * @return the header of smpp command.
-     * @throws InvalidCommandLengthException if command_length is to short.
+     * @throws InvalidCommandLengthException if command_length is too short.
      * @throws IOException if an I/O error occurs.
      */
     public Command readPDUHeader(DataInputStream in)
