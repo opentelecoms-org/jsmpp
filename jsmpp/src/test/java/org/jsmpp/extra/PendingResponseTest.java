@@ -66,7 +66,6 @@ public class PendingResponseTest {
         try {
             notifyInvalidResponse(90, pendingResponse);
             pendingResponse.waitDone();
-            System.out.println("DONE");
             fail("Should throw InvalidResponseException");
         } catch (ResponseTimeoutException e) {
             fail("Should throw InvalidResponseException");
