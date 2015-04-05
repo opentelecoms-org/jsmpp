@@ -536,7 +536,11 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             } catch (SocketTimeoutException e) {
                 notifyNoActivity();
             } catch (IOException e) {
+                logger.warn("IOException while reading: {}", e.getMessage());
                 close();
+            } catch (RuntimeException e) {
+                logger.warn("RuntimeException: {}", e.getMessage());
+                unbindAndClose();
             }
         }
         
