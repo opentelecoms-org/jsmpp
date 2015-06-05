@@ -58,12 +58,12 @@ public class BindResp extends Command {
     
     public <U extends OptionalParameter> U getOptionalParameter(Class<U> tagClass)
     {
-    	return OptionalParameters.get(tagClass, optionalParameters);
+    	return optionalParameters != null ? OptionalParameters.get(tagClass, optionalParameters) : null;
     }
     
     public OptionalParameter getOptionalParameter(Tag tagEnum)
     {
-    	return OptionalParameters.get(tagEnum.code(), optionalParameters);
+    	return optionalParameters != null ? OptionalParameters.get(tagEnum.code(), optionalParameters) : null;
     }
     
     public OptionalParameter[] getOptionalParameters() {
