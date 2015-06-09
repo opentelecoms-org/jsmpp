@@ -105,7 +105,7 @@ public class OptionalParameters {
     public static OptionalParameter deserialize(short tagCode, byte[] content) {
         Tag tag = Tag.valueOf(tagCode);
         if(tag == null) {
-            logger.warn("Optional Parameter Tag not recognized for deserialization: " + tagCode);
+            logger.warn("Optional Parameter Tag not recognized for deserialization: {}", tagCode);
             return new COctetString(tagCode, content);
         }
         
@@ -206,11 +206,11 @@ public class OptionalParameters {
             case VENDOR_SPECIFIC_DEST_MSC_ADDR:
                 return new OptionalParameter.Vendor_specific_dest_msc_addr(content);
             default:
-                logger.warn("Missing code in deserialize to handle Optional Parameter Tag: " + tag);
+                logger.warn("Missing code in deserialize to handle Optional Parameter Tag: {}", tag);
         }
 
         // fallback
-        logger.warn("Falling back to basic OptionalParameter types for " + tag);
+        logger.warn("Falling back to basic OptionalParameter types for {}", tag);
         if (Null.class.isAssignableFrom(tag.type)) {
             return new Null(tagCode);
         }
@@ -235,23 +235,27 @@ public class OptionalParameters {
     @SuppressWarnings("unchecked")
     public static <U extends OptionalParameter> U get(Class<U> tagClass, OptionalParameter[] parameters)
     {
-        for(OptionalParameter i: parameters) {
-            if(i.getClass() == tagClass) {
-                return (U)i;
+        if (parameters != null) {
+          for (OptionalParameter i : parameters) {
+            if (i.getClass() == tagClass) {
+              return (U) i;
             }
+          }
         }
-        logger.info("optional tag " + tagClass + " not found");
+        logger.info("Optional Parameter Tag {} not found", tagClass);
         return null;
     }
 
     public static OptionalParameter get(short tag, OptionalParameter[] parameters)
     {
-        for(OptionalParameter i: parameters) {
-            if(i.tag == tag) {
-                return i;
+        if (parameters != null) {
+          for (OptionalParameter i : parameters) {
+            if (i.tag == tag) {
+              return i;
             }
+          }
         }
-        logger.info("optional tag " + tag + " not found");
+        logger.info("Optional Parameter Tag {} not found", tag);
         return null;
     }
 }
