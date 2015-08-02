@@ -210,19 +210,6 @@ public abstract class AbstractSession implements Session {
             }
         }
 
-        // Make sure the enquireLinkThread doesn't wait for itself
-        if (Thread.currentThread() != enquireLinkSender) {
-            if (enquireLinkSender != null) {
-                while(enquireLinkSender.isAlive()) {
-                    try {
-                        enquireLinkSender.join();
-                    } catch (InterruptedException e) {
-                        logger.warn("interrupted while waiting for enquireLinkSender thread to exit");
-                    }
-                }
-            }
-        }
-
         logger.info("AbstractSession.close() done");
     }
 
