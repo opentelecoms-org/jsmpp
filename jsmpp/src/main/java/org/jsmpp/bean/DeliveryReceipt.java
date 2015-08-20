@@ -55,27 +55,27 @@ public class DeliveryReceipt {
     public DeliveryReceipt() {
     }
 
-    public DeliveryReceipt(String formattedDelieryReceipt)
+    public DeliveryReceipt(String formattedDeliveryReceipt)
             throws InvalidDeliveryReceiptException {
         /*
          * id:IIIIIIIIII sub:SSS dlvrd:DDD submit date:YYMMDDhhmm done
          * date:YYMMDDhhmm stat:DDDDDDD err:E Text: ..........
          */
         try {
-            id = getDeliveryReceiptValue(DeliveryReceipt.DELREC_ID, formattedDelieryReceipt);
+            id = getDeliveryReceiptValue(DeliveryReceipt.DELREC_ID, formattedDeliveryReceipt);
             submitted = Integer.parseInt(getDeliveryReceiptValue(
-                    DeliveryReceipt.DELREC_SUB, formattedDelieryReceipt));
+                    DeliveryReceipt.DELREC_SUB, formattedDeliveryReceipt));
             delivered = Integer.parseInt(getDeliveryReceiptValue(
-                    DeliveryReceipt.DELREC_DLVRD, formattedDelieryReceipt));
+                    DeliveryReceipt.DELREC_DLVRD, formattedDeliveryReceipt));
             submitDate = string2Date(getDeliveryReceiptValue(
-                    DeliveryReceipt.DELREC_SUBMIT_DATE, formattedDelieryReceipt));
+                    DeliveryReceipt.DELREC_SUBMIT_DATE, formattedDeliveryReceipt));
             doneDate = string2Date(getDeliveryReceiptValue(
-                    DeliveryReceipt.DELREC_DONE_DATE, formattedDelieryReceipt));
+                    DeliveryReceipt.DELREC_DONE_DATE, formattedDeliveryReceipt));
             finalStatus = DeliveryReceiptState
                     .getByName(getDeliveryReceiptValue(
-                            DeliveryReceipt.DELREC_STAT, formattedDelieryReceipt));
-            error = getDeliveryReceiptValue(DeliveryReceipt.DELREC_ERR, formattedDelieryReceipt);
-            text = getDeliveryReceiptTextValue(formattedDelieryReceipt);
+                            DeliveryReceipt.DELREC_STAT, formattedDeliveryReceipt));
+            error = getDeliveryReceiptValue(DeliveryReceipt.DELREC_ERR, formattedDeliveryReceipt);
+            text = getDeliveryReceiptTextValue(formattedDeliveryReceipt);
         } catch (Exception e) {
             throw new InvalidDeliveryReceiptException(
                     "There is an error found when parsing delivery receipt", e);
