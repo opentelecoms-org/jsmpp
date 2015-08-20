@@ -22,6 +22,10 @@ package org.jsmpp.bean;
  */
 public enum MessageState {
     /**
+     * The message is in scheduled state.
+     */
+    SCHEDULED((byte) 0x00),
+    /**
      * The message is in enroute state.
      */
     ENROUTE((byte) 0x01),
@@ -52,7 +56,11 @@ public enum MessageState {
     /**
      * Message is in rejected state.
      */
-    REJECTED((byte) 0x08);
+    REJECTED((byte) 0x08),
+    /**
+     * Message is in skipped state.
+     */
+    SKIPPED((byte) 0x09);
 
     private final byte value;
 
@@ -71,6 +79,6 @@ public enum MessageState {
         }
 
         throw new IllegalArgumentException(
-                "No enum const MessageStatte with value " + value);
+                "No enum const MessageState with value " + value);
     }
 }
