@@ -150,7 +150,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
         public void run() {
             try {
                 BindRequest bindRequest = serverSession.waitForBind(1000);
-                logger.info("Accepting bind for session {}, interface version {}", serverSession.getSessionId());
+                logger.info("Accepting bind for session {}, interface version {}", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
                 try {
                     bindRequest.accept("sys", InterfaceVersion.IF_34);
                 } catch (PDUStringException e) {
@@ -234,7 +234,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
             }
             SessionState state = session.getSessionState();
             if (!state.isReceivable()) {
-                logger.debug("Not sending delivery receipt for message id " + messageId + " since session state is " + state);
+                logger.debug("Not sending delivery receipt for message id {} since session state is {}", messageId, state);
                 return;
             }
             String stringValue = Integer.valueOf(messageId.getValue(), 16).toString();
@@ -255,7 +255,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
                         new RegisteredDelivery(0), 
                         DataCodings.ZERO, 
                         delRec.toString().getBytes());
-                logger.debug("Sending delivery receipt for message id " + messageId + ":" + stringValue);
+                logger.debug("Sending delivery receipt for message id {}: {}", messageId, stringValue);
             } catch (Exception e) {
                 logger.error("Failed sending delivery_receipt for message id " + messageId + ":" + stringValue, e);
             }
