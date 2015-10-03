@@ -88,5 +88,6 @@ public interface SMPPClientOperation extends SMPPOperation {
             byte[] shortMessage) throws PDUException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException;
 
-    void deliverSmResp(int sequenceNumber) throws IOException;
+    void deliverSmResp(int sequenceNumber, String messageId) throws IOException;
+
 }

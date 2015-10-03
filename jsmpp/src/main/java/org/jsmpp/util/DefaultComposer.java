@@ -352,12 +352,13 @@ public class DefaultComposer implements PDUComposer {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jsmpp.util.PDUComposer#deliverSmResp(int)
+     * @see org.jsmpp.util.PDUComposer#deliverSmResp(int, int, String)
      */
-    public byte[] deliverSmResp(int commandStatus, int sequenceNumber) {
+    @Override
+    public byte[] deliverSmResp(int commandStatus, int sequenceNumber, String messageId) {
         PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_DELIVER_SM_RESP,
-        		commandStatus, sequenceNumber);
-        buf.append((String)null);
+                commandStatus, sequenceNumber);
+        buf.append(messageId);
         return buf.toBytes();
     }
 
