@@ -107,14 +107,14 @@ class SMPPSessionBoundRX extends SMPPSessionBound implements SMPPSessionState {
         try {
             DeliverSm deliverSm = pduDecomposer.deliverSm(pdu);
             responseHandler.processDeliverSm(deliverSm);
-            responseHandler.sendDeliverSmResp(0, pduHeader.getSequenceNumber());
+            responseHandler.sendDeliverSmResp(0, pduHeader.getSequenceNumber(), deliverSm.getId());
         } catch (PDUStringException e) {
             logger.error("Failed decomposing deliver_sm", e);
             responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
                     .getSequenceNumber());
         } catch (ProcessRequestException e) {
             logger.error("Failed processing deliver_sm", e);
-            responseHandler.sendDeliverSmResp(e.getErrorCode(), pduHeader.getSequenceNumber());
+            responseHandler.sendDeliverSmResp(e.getErrorCode(), pduHeader.getSequenceNumber(), null);
         }
     }
     

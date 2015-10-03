@@ -22,7 +22,17 @@ import org.jsmpp.util.InvalidDeliveryReceiptException;
  *
  */
 public class DeliverSm extends MessageRequest {
-    
+
+	private String id;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public DeliverSm() {
 		super();
 	}

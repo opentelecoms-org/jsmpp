@@ -297,11 +297,12 @@ public class DefaultPDUSender implements PDUSender {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jsmpp.PDUSender#sendDeliverSmResp(java.io.OutputStream, int)
+     * @see org.jsmpp.PDUSender#sendDeliverSmResp(java.io.OutputStream, int, int, String)
      */
-    public byte[] sendDeliverSmResp(OutputStream os, int commandStatus, int sequenceNumber)
+    @Override
+    public byte[] sendDeliverSmResp(OutputStream os, int commandStatus, int sequenceNumber, String messageId)
             throws IOException {
-        byte[] b = pduComposer.deliverSmResp(commandStatus, sequenceNumber);
+        byte[] b = pduComposer.deliverSmResp(commandStatus, sequenceNumber, messageId);
         writeAndFlush(os, b);
         return b;
     }
