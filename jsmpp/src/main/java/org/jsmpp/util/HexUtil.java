@@ -49,7 +49,6 @@ public class HexUtil {
         return convertBytesToHexString(data, 0, data.length);
     }
 
-    // 
     /**
      * Convert bytes to hex string value (using Big-Endian rule).
      * 
@@ -62,15 +61,14 @@ public class HexUtil {
             int length) {
         return convertBytesToHexString(data, offset, length, "");
     }
-    public static String convertBytesToHexString(byte[] data, int offset,
-            int length, String byteDelimiter) {
-        StringBuffer sBuf = new StringBuffer((length-offset)*(2+byteDelimiter.length()));
+    public static String convertBytesToHexString(byte[] data, int offset, int length, String byteDelimiter) {
+        final StringBuilder stringBuilder = new StringBuilder((length-offset)*(2+byteDelimiter.length()));
         for (int i = offset; i < length; i++) {
-            sBuf.append(hexChar[(data[i] >> 4) & 0xf]);
-            sBuf.append(hexChar[data[i] & 0xf]);
-            sBuf.append(byteDelimiter);
+            stringBuilder.append(hexChar[(data[i] >> 4) & 0x0f]);
+            stringBuilder.append(hexChar[data[i] & 0x0f]);
+            stringBuilder.append(byteDelimiter);
         }
-        return sBuf.toString();
+        return stringBuilder.toString();
     }
 
     /**
