@@ -51,7 +51,7 @@ public class SocketConnection implements Connection {
         try {
             socket.close();
         } catch (IOException e) {
-        	logger.warn("Suppressing IOException while closing socket: " + e);
+        	logger.warn("Suppressing IOException while closing socket", e);
         }
     }
     

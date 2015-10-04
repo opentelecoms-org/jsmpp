@@ -58,7 +58,8 @@ class SMPPServerSessionBoundTX extends SMPPServerSessionBound implements
         try {
             SubmitSm submitSm = pduDecomposer.submitSm(pdu);
             MessageId messageId = responseHandler.processSubmitSm(submitSm);
-            logger.debug("Sending response with message_id " + messageId + " for request with sequence_number " + pduHeader.getSequenceNumber());
+            logger.debug("Sending response with message_id {} for request with sequence_number {}",
+                messageId, pduHeader.getSequenceNumber());
             responseHandler.sendSubmitSmResponse(messageId, pduHeader.getSequenceNumber());
         } catch (PDUStringException e) {
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
@@ -72,7 +73,8 @@ class SMPPServerSessionBoundTX extends SMPPServerSessionBound implements
         try {
             SubmitMulti submitMulti = pduDecomposer.submitMulti(pdu);
             SubmitMultiResult result = responseHandler.processSubmitMulti(submitMulti);
-            logger.debug("Sending response with message_id " + result.getMessageId() + " for request with sequence_number " + pduHeader.getSequenceNumber());
+            logger.debug("Sending response with message_id {} for request with sequence_number {}",
+                result.getMessageId(), pduHeader.getSequenceNumber());
             responseHandler.sendSubmitMultiResponse(result, pduHeader.getSequenceNumber());
         } catch (PDUStringException e) {
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());

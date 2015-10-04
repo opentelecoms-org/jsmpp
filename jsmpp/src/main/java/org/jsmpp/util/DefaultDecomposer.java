@@ -64,8 +64,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class DefaultDecomposer implements PDUDecomposer {
-    private static final Logger logger = LoggerFactory
-            .getLogger(DefaultDecomposer.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultDecomposer.class);
     private static final PDUDecomposer instance = new DefaultDecomposer();
 
     public static final PDUDecomposer getInstance() {
@@ -513,7 +512,7 @@ public class DefaultDecomposer implements PDUDecomposer {
             } else if (flag == Flag.DISTRIBUTION_LIST.getValue()) {
                 destAddresses[i] = new DistributionList(reader.readCString());
             } else {
-                logger.warn("Unknown destination address flag: " + flag);
+                logger.warn("Unknown destination address flag: {}", flag);
             }
         }
         req.setDestAddresses(destAddresses);
@@ -634,9 +633,8 @@ public class DefaultDecomposer implements PDUDecomposer {
             SequentialBytesReader seqBytesReader) {
         int commandLength = seqBytesReader.readInt();
         if (seqBytesReader.getBytes().length != commandLength)
-            logger.error("SYSTEM BUGS, the command_length (" + commandLength
-                    + ") not equals with the byte array length ("
-                    + seqBytesReader.getBytes().length + ")");
+            logger.error("SYSTEM BUGS, the command_length ({}) not equals with the byte array length ({})",
+                commandLength, seqBytesReader.getBytes().length);
         pdu.setCommandLength(commandLength);
         pdu.setCommandId(seqBytesReader.readInt());
         pdu.setCommandStatus(seqBytesReader.readInt());
