@@ -2158,9 +2158,10 @@ public abstract class OptionalParameter {
 		private Vendor_specific_msc_addr(short tag, byte value[]) {
 			super(tag, value);
 			try {
-				address = new String(value, 2, value.length-2, "ISO-8859-1");
+        if (value.length >= 2) {
+          address = new String(value, 2, value.length - 2, "ISO-8859-1");
+        }
 			} catch (StringIndexOutOfBoundsException e) {
-				// TODO: do something better
 				e.printStackTrace();
 			} catch (UnsupportedEncodingException e) {
 				// TODO: do something better
