@@ -767,6 +767,9 @@ public abstract class OptionalParameter {
 		public Additional_status_info_text(byte[] value) {
 			super(Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), value);
 		}
+		public Additional_status_info_text(String value) {
+			super(Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), value);
+		}
 	}
 
 	/** 
@@ -780,8 +783,10 @@ public abstract class OptionalParameter {
 	 *
 	 */
 	public static class Receipted_message_id extends OptionalParameter.COctetString {
-
 		public Receipted_message_id(byte[] value) {
+			super(Tag.RECEIPTED_MESSAGE_ID.code(), value);
+		}
+		public Receipted_message_id(String value) {
 			super(Tag.RECEIPTED_MESSAGE_ID.code(), value);
 		}
 	}
