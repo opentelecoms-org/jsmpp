@@ -2,12 +2,12 @@
 Introduction
 ------------
 
-jSMPP is a java implementation (SMPP API) of SMPP protocol (currently support
-SMPP v3.4). It provides interfaces to communicate with Message Center or
-ESME (External Short Message Entity) and able to handle
-traffic 3000-5000 messages per second. 
+jSMPP is a java implementation (SMPP API) of the SMPP protocol (currently supports
+SMPP v3.4). It provides interfaces to communicate with a Message Center or
+an ESME (External Short Message Entity) and is able to handle
+traffic of 3000-5000 messages per second. 
 
-jSMPP is not a high-level library.  Many people looking for a quick way to
+jSMPP is not a high-level library. People looking for a quick way to
 get started with SMPP may be better of using an abstraction layer such
 as the Apache Camel SMPP component:
   http://camel.apache.org/smpp.html
@@ -22,7 +22,7 @@ History
 
 The project started on Google Code:  http://code.google.com/p/jsmpp/
 
-It was maintained by uudashr on Github until 2013
+It was maintained by uudashr on Github until 2013.
 
 It is now a community project maintained at http://jsmpp.org
 
