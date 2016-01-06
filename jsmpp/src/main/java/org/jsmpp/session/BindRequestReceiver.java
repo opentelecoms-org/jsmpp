@@ -65,8 +65,6 @@ class BindRequestReceiver {
             alreadyWaitForRequest = true;
             lock.unlock();
         }
-        
-        
     }
     
     /**
