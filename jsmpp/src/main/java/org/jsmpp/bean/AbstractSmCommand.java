@@ -195,6 +195,11 @@ public class AbstractSmCommand extends Command {
     {
     	return OptionalParameters.get(tagEnum.code(), optionalParameters);
     }
+
+    public OptionalParameter getOptionalParameter(short code)
+    {
+        return OptionalParameters.get(code, optionalParameters);
+    }
     
     public OptionalParameter[] getOptionalParameters() {
         return optionalParameters;
