@@ -29,15 +29,14 @@ import org.slf4j.LoggerFactory;
  */
 public class PDUProcessServerTask implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(PDUProcessServerTask.class);
-    
+
     private final Command pduHeader;
     private final byte[] pdu;
     private final SMPPServerSessionState stateProcessor;
     private final ActivityNotifier activityNotifier;
     private final ServerResponseHandler responseHandler;
     private final Runnable onIOExceptionTask;
-    
-    
+
     public PDUProcessServerTask(Command pduHeader, byte[] pdu,
             SMPPServerSessionState stateProcessor,
             ActivityNotifier activityNotifier,
@@ -52,12 +51,11 @@ public class PDUProcessServerTask implements Runnable {
 
     public void run() {
         try {
-        	if(logger.isDebugEnabled()) 
-        	{
+            if(logger.isDebugEnabled())
+        	  {
                 String hexmsg = HexUtil.convertBytesToHexString(pdu, 0, pdu.length, " ");
-        		logger.debug("Received SMPP message {} {}", pduHeader, hexmsg);
-        	}
-        	
+                logger.debug("Received SMPP message {} {}", pduHeader, hexmsg);
+            }
             switch (pduHeader.getCommandId()) {
             case SMPPConstant.CID_BIND_RECEIVER:
             case SMPPConstant.CID_BIND_TRANSMITTER:
