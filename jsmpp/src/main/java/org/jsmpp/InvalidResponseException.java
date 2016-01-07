@@ -15,7 +15,7 @@
 package org.jsmpp;
 
 /**
- * This exception thrown if we receive unexpected response (such as invalid PDU
+ * This exception is thrown if we receive unexpected response (such as invalid PDU
  * parameter).
  * 
  * @author uudashr

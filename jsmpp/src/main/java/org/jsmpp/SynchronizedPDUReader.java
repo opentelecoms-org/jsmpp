@@ -22,9 +22,8 @@ import org.jsmpp.bean.Command;
 
 
 /**
- * This class id implementation of {@link PDUReader} that use synchronize when
- * accessing to the {@link InputStream} or {@link DataInputStream} tha used to
- * read the PDU.
+ * This class is an implementation of a {@link PDUReader} that uses synchronization when
+ * accessing the {@link InputStream} or {@link DataInputStream} used to read the PDU.
  * 
  * @author uudashr
  * @version 1.1

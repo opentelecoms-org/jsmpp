@@ -17,7 +17,7 @@ package org.jsmpp.util;
 import org.jsmpp.PDUStringException;
 
 /**
- * This class is wrap simple {@link String} value as message_id. The main 
+ * This class wraps a simple {@link String} value as a message_id. The main 
  * purpose is the creation of the value will be validated as proper message_id.
  *  
  * @author uudashr

@@ -43,7 +43,7 @@ import org.jsmpp.bean.Unbind;
 import org.jsmpp.bean.UnbindResp;
 
 /**
- * This class is provide interface to decompose SMPP PDU bytes form into SMPP
+ * This class provides an interface to decompose SMPP PDU bytes form into a SMPP
  * command object.
  * 
  * @author uudashr

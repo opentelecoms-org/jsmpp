@@ -20,7 +20,7 @@ import java.util.Date;
 
 
 /**
- * Absolute time formatter is {@link TimeFormatter} implementation referred to
+ * Absolute time formatter is a {@link TimeFormatter} implementation referred to in
  * SMPP Protocol Specification v3.4 point 7.1.1.
  * 
  * @author uudashr
