@@ -1,23 +1,39 @@
 Changes:
 
-2.0 beta 3
-- Add SMPP Server component
-- Add Optional Parameter support (contribution from mikko.koponen@gmail.com)
-- Handling PDU processing concurrently (performance improvement)
-- Add data_sm support
-- Add cancel_sm support
-- Add replace_sm support
-- Add alert_notification support
-- Add CapacityPolicy to PDUByteBuffer (performance improvement, minimize ByteArray 
-  creation)
+2.2.2
+- Fixed some logging
+- Added SMPP 5.0 message states
+- Fixed NullPointerException when OptionaParameters are empty in a BindResp
+- Fixed invalid command length (<4) throws an IndexOutOfBoundsException
+- Added RelativeTimeFormatter
 
-2.0 beta 4
-- Modify Optional Parameter API (currently for TLV related to message 
-  concatenation case)
-- Add ServerResponseDeliveryListener (listener to receive success or failure 
-  event of submit_sm_resp/submit_multi_resp delivery)
-- Change license from LGPL to "Apache License, Version 2.0"
-- Add license notice to every source file
+2.2.1
+- Fix examples
+- Use StrictBufferedInputStream for better performance
+- Provide source for onAcceptDataSm
+
+2.2.0
+- New DataCoding API.
+  Removed the old class (since I could not make the change backwards compatible)
+  Added some new classes instead:
+  1. DataCodings
+  2. DataCoding (GeneralDataCoding, MessageWatingDataCoding, SimpleDataCoding, RawDataCoding)
+- Expose remote InetAddress on server side API via SMPPServerSession
+  Add new method: InetAddress SMPPServerSession#getInetAddress()
+- Ensure command execution is in valid state. Checking done on local side (remote side also does the checking)
+- Make Command and its subclasses serializable
+
+2.1.0
+- set connection timeout when binding
+- provide source (the session) for onAcceptDataSm
+- use StrictBufferedInputStream
+
+2.0.1
+- Bug fix, MessageReceiverListener should be subclass of GenericMessageReceiverListener
+
+2.0 beta 6
+- Change the max length of short message to 254, referring to SMPP 3.4
+  Previously using 255 (taken from SMPP 5.0)
 
 2.0 beta 5
 - Bug fix for type on OptionalParameters class
@@ -31,37 +47,21 @@ Changes:
 - Fix the date parsing on delivery receipt
 - Referring to Appendix C of SMPP 3.4 for year parsing rule
 
-2.0 beta 6
-- Change the max length of short message to 254, referring to SMPP 3.4
-  Previously using 255 (taken from SMPP 5.0)
+2.0 beta 4
+- Modify Optional Parameter API (currently for TLV related to message 
+  concatenation case)
+- Add ServerResponseDeliveryListener (listener to receive success or failure 
+  event of submit_sm_resp/submit_multi_resp delivery)
+- Change license from LGPL to "Apache License, Version 2.0"
+- Add license notice to every source file
 
-2.0.1
-- Bug fix, MessageReceiverListener should be subclass of GenericMessageReceiverListener
-
-2.1.0
-- set connection timeout when binding
-- provide source (the session) for onAcceptDataSm
-- use StrictBufferedInputStream
-
-2.2.0
-- New DataCoding API.
-  Removed the old class (since I could not make the change backwards compatible)
-  Added some new classes instead:
-  1. DataCodings
-  2. DataCoding (GeneralDataCoding, MessageWatingDataCoding, SimpleDataCoding, RawDataCoding)
-- Expose remote InetAddress on server side API via SMPPServerSession
-  Add new method: InetAddress SMPPServerSession#getInetAddress()
-- Ensure command execution is in valid state. Checking done on local side (remote side also does the checking)
-- Make Command and its subclasses serializable
-
-2.2.1
-- Fix examples
-- Use StrictBufferedInputStream for better performance
-- Provide source for onAcceptDataSm
-
-2.2.2
-- Fixed some logging
-- Added SMPP 5.0 message states
-- Fixed NullPointerException when OptionaParameters are empty in a BindResp
-- Fixed invalid command length (<4) throws an IndexOutOfBoundsException
-- Added RelativeTimeFormatter
+2.0 beta 3
+- Add SMPP Server component
+- Add Optional Parameter support (contribution from mikko.koponen@gmail.com)
+- Handling PDU processing concurrently (performance improvement)
+- Add data_sm support
+- Add cancel_sm support
+- Add replace_sm support
+- Add alert_notification support
+- Add CapacityPolicy to PDUByteBuffer (performance improvement, minimize ByteArray 
+  creation)
