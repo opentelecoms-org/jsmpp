@@ -48,7 +48,7 @@ import org.jsmpp.extra.SessionState;
  * <p>
  * To terminate the communication with the Message Center gracefully, invoke
  * {@link #unbindAndClose()}. It will send UNBIND command and close the
- * connection. This method will wait the UNIBIND_RESP but, negative response
+ * connection. This method will wait the UNBIND_RESP but, negative response
  * will be acceptable and closing connection will be done immediately.
  * </p>
  * 
