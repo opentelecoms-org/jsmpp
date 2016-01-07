@@ -15,7 +15,7 @@
 package org.jsmpp;
 
 /**
- * This is enum const that specified the message coding (see smpp spesification).
+ * This is an enum const that specifies the message coding (see smpp spesification).
  * 
  * @author uudashr
  * @version 1.0
