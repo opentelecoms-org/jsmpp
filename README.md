@@ -2,6 +2,8 @@
 Introduction
 ------------
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jsmpp/jsmpp/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.jsmpp/jsmpp)
+
 jSMPP is a java implementation (SMPP API) of the SMPP protocol (currently supports
 SMPP v3.4). It provides interfaces to communicate with a Message Center or
 an ESME (External Short Message Entity) and is able to handle
