@@ -15,10 +15,10 @@
 package org.jsmpp.util;
 
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
+
 import org.jsmpp.PDUStringException;
-import org.jsmpp.util.StringParameter;
-import org.jsmpp.util.StringValidator;
-import static org.testng.Assert.*;
 import org.testng.annotations.Test;
 
 /**
@@ -69,7 +69,7 @@ public class StringValidatorTest {
     }
 
     @Test(groups="checkintest")
-    public void validateStringOctedStringWithString() throws Exception {
+    public void validateStringOctetStringWithString() throws Exception {
         StringValidator.validateString("", StringParameter.SHORT_MESSAGE);
         StringValidator.validateString("short messages", StringParameter.SHORT_MESSAGE);
         String shortMessage = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567"
@@ -89,7 +89,7 @@ public class StringValidatorTest {
     }
 
     @Test(groups="checkintest")
-    public void validateStringOctedStringWithByteArray() throws Exception {
+    public void validateStringOctetStringWithByteArray() throws Exception {
         StringValidator.validateString("".getBytes("UTF-8"), StringParameter.SHORT_MESSAGE);
         StringValidator.validateString("short messages".getBytes("UTF-8"), StringParameter.SHORT_MESSAGE);
         String shortMessage = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567"
@@ -109,7 +109,7 @@ public class StringValidatorTest {
     }
 
     @Test(groups="checkintest")
-    public void validateStringCOctedStringWithString() throws Exception {
+    public void validateStringCOctetStringWithString() throws Exception {
         StringValidator.validateString("", StringParameter.SYSTEM_ID);
         StringValidator.validateString("System ID", StringParameter.SYSTEM_ID);
         StringValidator.validateString("123456789012345", StringParameter.SYSTEM_ID);
@@ -125,7 +125,7 @@ public class StringValidatorTest {
     }
 
     @Test(groups="checkintest")
-    public void validateStringCOctedStringWithByteArray() throws Exception {
+    public void validateStringCOctetStringWithByteArray() throws Exception {
         StringValidator.validateString("".getBytes("UTF-8"), StringParameter.SYSTEM_ID);
         StringValidator.validateString("System ID".getBytes("UTF-8"), StringParameter.SYSTEM_ID);
         StringValidator.validateString("123456789012345".getBytes("UTF-8"), StringParameter.SYSTEM_ID);
@@ -141,7 +141,7 @@ public class StringValidatorTest {
     }
     
     @Test(groups="checkintest")
-    public void validateStringCOctedStringWithStringAndWithoutARange() throws Exception {
+    public void validateStringCOctetStringWithStringAndWithoutARange() throws Exception {
         StringValidator.validateString("", StringParameter.SCHEDULE_DELIVERY_TIME);
         StringValidator.validateString("020610233429000R", StringParameter.SCHEDULE_DELIVERY_TIME);
 
@@ -156,7 +156,7 @@ public class StringValidatorTest {
     }
     
     @Test(groups="checkintest")
-    public void validateStringCOctedStringWithByteArrayAndWithoutARange() throws Exception {
+    public void validateStringCOctetStringWithByteArrayAndWithoutARange() throws Exception {
         StringValidator.validateString("".getBytes("UTF-8"), StringParameter.SCHEDULE_DELIVERY_TIME);
         StringValidator.validateString("020610233429000R".getBytes("UTF-8"), StringParameter.SCHEDULE_DELIVERY_TIME);
 
