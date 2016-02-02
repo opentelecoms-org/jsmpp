@@ -50,7 +50,7 @@ public class AbsoluteTimeFormatter implements TimeFormatter {
         
         // Get the sign
         char sign;
-        if (offset > 0) {
+        if (offset >= 0) {
             sign = '+';
         } else {
             sign = '-';
