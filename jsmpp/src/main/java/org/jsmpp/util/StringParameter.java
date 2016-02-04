@@ -26,47 +26,47 @@ public enum StringParameter {
 	/**
 	 * system_id string parameter.
 	 */
-	SYSTEM_ID(StringType.C_OCTEC_STRING, 0, 16, true, SMPPConstant.STAT_ESME_RINVSYSID),
+	SYSTEM_ID(StringType.C_OCTET_STRING, 0, 16, true, SMPPConstant.STAT_ESME_RINVSYSID),
     
 	/**
 	 * password string parameter.
 	 */
-	PASSWORD(StringType.C_OCTEC_STRING, 0, 9, true, SMPPConstant.STAT_ESME_RINVPASWD),
+	PASSWORD(StringType.C_OCTET_STRING, 0, 9, true, SMPPConstant.STAT_ESME_RINVPASWD),
     
 	/**
 	 * system_type string parameter.
 	 */
-	SYSTEM_TYPE(StringType.C_OCTEC_STRING, 0, 13, true, SMPPConstant.STAT_ESME_RINVSYSTYP),
+	SYSTEM_TYPE(StringType.C_OCTET_STRING, 0, 13, true, SMPPConstant.STAT_ESME_RINVSYSTYP),
     
 	/**
 	 * Invalid address range assume should return the error of invalid source address.
 	 */
-	ADDRESS_RANGE(StringType.C_OCTEC_STRING, 0, 41, true, SMPPConstant.STAT_ESME_RINVSRCADR), 
+	ADDRESS_RANGE(StringType.C_OCTET_STRING, 0, 41, true, SMPPConstant.STAT_ESME_RINVSRCADR),
     
-	SERVICE_TYPE(StringType.C_OCTEC_STRING, 0, 6, true, SMPPConstant.STAT_ESME_RINVSERTYP),
-	SOURCE_ADDR(StringType.C_OCTEC_STRING, 0, 21, true, SMPPConstant.STAT_ESME_RINVSRCADR), 
-	DESTINATION_ADDR(StringType.C_OCTEC_STRING, 0, 21, true, SMPPConstant.STAT_ESME_RINVSRCADR), 
-	SCHEDULE_DELIVERY_TIME(StringType.C_OCTEC_STRING, 0, 17, false, SMPPConstant.STAT_ESME_RINVSCHED), 
-	VALIDITY_PERIOD(StringType.C_OCTEC_STRING, 0, 17, false, SMPPConstant.STAT_ESME_RINVEXPIRY),
+	SERVICE_TYPE(StringType.C_OCTET_STRING, 0, 6, true, SMPPConstant.STAT_ESME_RINVSERTYP),
+	SOURCE_ADDR(StringType.C_OCTET_STRING, 0, 21, true, SMPPConstant.STAT_ESME_RINVSRCADR),
+	DESTINATION_ADDR(StringType.C_OCTET_STRING, 0, 21, true, SMPPConstant.STAT_ESME_RINVSRCADR),
+	SCHEDULE_DELIVERY_TIME(StringType.C_OCTET_STRING, 0, 17, false, SMPPConstant.STAT_ESME_RINVSCHED),
+	VALIDITY_PERIOD(StringType.C_OCTET_STRING, 0, 17, false, SMPPConstant.STAT_ESME_RINVEXPIRY),
 	
 	/**
 	 * Validator for DL_NAME (Distribution List)
 	 */
-	DL_NAME(StringType.C_OCTEC_STRING, 0, 21, true, SMPPConstant.STAT_ESME_RINVDLNAME),
+	DL_NAME(StringType.C_OCTET_STRING, 0, 21, true, SMPPConstant.STAT_ESME_RINVDLNAME),
 	
 	/**
 	 * When validating final date is failed, then we should throw error with status 
 	 * STAT_ESME_RINVDFTMSGID, means that predefined message are not exist.
 	 */
-	FINAL_DATE(StringType.C_OCTEC_STRING, 0, 17, false, SMPPConstant.STAT_ESME_RINVDFTMSGID),
+	FINAL_DATE(StringType.C_OCTET_STRING, 0, 17, false, SMPPConstant.STAT_ESME_RINVDFTMSGID),
 	SHORT_MESSAGE(StringType.OCTET_STRING, 0, 254, true, SMPPConstant.STAT_ESME_RINVMSGLEN),  
-	MESSAGE_ID(StringType.C_OCTEC_STRING, 0, 65, true, SMPPConstant.STAT_ESME_RINVMSGID), 
-	DEL_MESSAGE_ID(StringType.C_OCTEC_STRING, 0, 0, true, SMPPConstant.STAT_ESME_RINVMSGID), 
+	MESSAGE_ID(StringType.C_OCTET_STRING, 0, 65, true, SMPPConstant.STAT_ESME_RINVMSGID),
+	DEL_MESSAGE_ID(StringType.C_OCTET_STRING, 0, 0, true, SMPPConstant.STAT_ESME_RINVMSGID),
 	/**
 	 * ESME_ADDR has error code OK because there is not response to alert_notification
 	 * (ESME_ADDR only use on alert_notification), so there is no error code to return.
 	 */
-	ESME_ADDR(StringType.C_OCTEC_STRING, 0, 65, true, SMPPConstant.STAT_ESME_ROK);
+	ESME_ADDR(StringType.C_OCTET_STRING, 0, 65, true, SMPPConstant.STAT_ESME_ROK);
 	
 	private StringType type;
 	private final int min;

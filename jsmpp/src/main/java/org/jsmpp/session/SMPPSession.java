@@ -240,7 +240,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			return smscSystemId;
 		} catch (PDUException e) {
 		    logger.error("Failed sending bind command", e);
-		    throw new IOException("Failed sending bind since some string parameter area invalid : " + e.getMessage(), e);
+		    throw new IOException("Failed sending bind since some string parameter area invalid: " + e.getMessage(), e);
 		} catch (NegativeResponseException e) {
 			String message = "Receive negative bind response";
 			logger.error(message, e);
@@ -252,12 +252,12 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			close();
 			throw new IOException(message + ": " + e.getMessage(), e);
 		} catch (ResponseTimeoutException e) {
-			String message = "Waiting bind response take time to long";
+			String message = "Waiting bind response take time too long";
 			logger.error(message, e);
 			close();
 			throw new IOException(message + ": " + e.getMessage(), e);
 		} catch (IOException e) {
-			logger.error("IO Error occur", e);
+			logger.error("IO error occurred", e);
 			close();
 			throw e;
 		}
@@ -459,10 +459,10 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	private void fireAcceptDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
 		if (messageReceiverListener != null) {
 			messageReceiverListener.onAcceptDeliverSm(deliverSm);
-        } else { 
-			logger.warn("Receive deliver_sm but MessageReceiverListener is null. Short message = " + new String(deliverSm.getShortMessage()));
+		} else {
+			logger.warn("Receive deliver_sm but MessageReceiverListener is null. Short message = {}", new String(deliverSm.getShortMessage()));
 			throw new ProcessRequestException("No message receiver listener registered", SMPPConstant.STAT_ESME_RX_T_APPN);
-        }
+		}
 	}
 	
 	private void fireAcceptAlertNotification(AlertNotification alertNotification) {
@@ -481,7 +481,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			} catch(ProcessRequestException e) {
 				throw e;
 			} catch(Exception e) {
-				String msg = "Invalid runtime exception thrown when processing DeliverSm";
+				String msg = "Invalid runtime exception thrown when processing deliver_sm";
 				logger.error(msg, e);
 				throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_T_APPN);
 			}
@@ -494,7 +494,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			} catch(ProcessRequestException e) {
 				throw e;
 			} catch(Exception e) {
-				String msg = "Invalid runtime exception thrown when processing DataSm";
+				String msg = "Invalid runtime exception thrown when processing data_sm";
 				logger.error(msg, e);
 				throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_T_APPN);
 			}
@@ -504,8 +504,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			try {
 				fireAcceptAlertNotification(alertNotification);
 			} catch(Exception e) {
-				String msg = "Invalid runtime exception thrown when processing AlertSm";
-				logger.error(msg, e);
+				logger.error("Invalid runtime exception thrown when processing alert_sm", e);
 			}
 		}
 		
@@ -531,10 +530,11 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		public void notifyUnbonded() {
 		    sessionContext.unbound();
 		}
-		
-		public void sendDeliverSmResp(int commandStatus, int sequenceNumber) throws IOException {
-			pduSender().sendDeliverSmResp(out, commandStatus, sequenceNumber);
-			logger.debug("deliver_sm_resp with seq_number " + sequenceNumber + " has been sent");
+
+		@Override
+		public void sendDeliverSmResp(int commandStatus, int sequenceNumber, String messageId) throws IOException {
+			pduSender().sendDeliverSmResp(out, commandStatus, sequenceNumber, messageId);
+			logger.debug("deliver_sm_resp with seq_number {} has been sent", sequenceNumber);
 		}
 		
 		public void sendEnquireLinkResp(int sequenceNumber) throws IOException {

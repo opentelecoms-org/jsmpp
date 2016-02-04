@@ -26,7 +26,7 @@ public enum StringType {
     /**
      * String delimited by null value.
      */
-    C_OCTEC_STRING,
+    C_OCTET_STRING,
 
     /**
      * String that determined by the length.

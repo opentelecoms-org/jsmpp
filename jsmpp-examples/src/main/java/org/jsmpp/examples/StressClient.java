@@ -86,7 +86,7 @@ public class StressClient implements Runnable {
     private String password;
     private String sourceAddr;
     private String destinationAddr;
-    
+
     public StressClient(int id, String host, int port, int bulkSize,
             String systemId, String password, String sourceAddr,
             String destinationAddr, long transactionTimer,
@@ -114,14 +114,14 @@ public class StressClient implements Runnable {
             smppSession.connectAndBind(host, port, BindType.BIND_TRX, systemId,
                     password, "cln", TypeOfNumber.UNKNOWN,
                     NumberingPlanIndicator.UNKNOWN, null);
-            logger.info("Bound to " + host + ":" + port);
+            logger.info("Bound to {}:{}", host, port);
         } catch (IOException e) {
             logger.error("Failed initialize connection or bind", e);
             return;
         }
         new TrafficWatcherThread().start();
-        
-        logger.info("Starting send " + bulkSize + " bulk message...");
+
+        logger.info("Starting to send {} bulk messages", bulkSize);
         for (int i = 0; i < bulkSize && !exit.get(); i++) {
             execService.execute(newSendTask("Hello " + id + " idx=" + i));
         }
@@ -188,7 +188,8 @@ public class StressClient implements Runnable {
                 long maxDelayPerSecond = maxDelay.getAndSet(0);
                 totalRequestCounter.addAndGet(requestPerSecond);
                 int total = totalResponseCounter.addAndGet(responsePerSecond);
-                logger.info("Request/Response per second : " + requestPerSecond + "/" + responsePerSecond + " of " + total + " maxDelay=" + maxDelayPerSecond);
+                logger.info("Request/Response per second: {}/{} of {} maxDelay={}",
+                    requestPerSecond, responsePerSecond, total, maxDelayPerSecond);
                 if (total == bulkSize) {
                     shutdown();
                 }
@@ -202,7 +203,6 @@ public class StressClient implements Runnable {
         String password = System.getProperty("jsmpp.client.password", DEFAULT_PASSWORD);
         String sourceAddr = System.getProperty("jsmpp.client.sourceAddr", DEFAULT_SOURCEADDR);
         String destinationAddr = System.getProperty("jsmpp.client.destinationAddr", DEFAULT_DESTADDR);
-        
         
         int port;
         try {

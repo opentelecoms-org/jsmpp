@@ -24,19 +24,20 @@ package org.jsmpp.util;
  */
 public class IntUtil {
 
-    public static String to4DigitString(int value) {
+    public static String to4DigitString(final int value) {
         return toNDigitString(value, 4);
     }
 
-    public static String to2DigitString(int value) {
+    public static String to2DigitString(final int value) {
         return toNDigitString(value, 2);
     }
 
-    public static String toNDigitString(int value, int digitLength) {
-        StringBuffer sBuf = new StringBuffer(String.valueOf(value));
-        while (sBuf.length() < digitLength)
-            sBuf.insert(0, "0");
-        return sBuf.toString();
+    public static String toNDigitString(final int value, final int digitLength) {
+        StringBuilder stringBuilder = new StringBuilder(String.valueOf(value));
+        while (stringBuilder.length() < digitLength) {
+            stringBuilder.insert(0, "0");
+        }
+        return stringBuilder.toString();
     }
 
     public static final String toHexString(int value) {

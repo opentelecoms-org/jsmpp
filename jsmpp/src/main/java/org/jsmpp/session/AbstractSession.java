@@ -115,17 +115,17 @@ public abstract class AbstractSession implements Session {
     }
     
     protected synchronized boolean isReadPdu() {
-		return getSessionState().isBound() || getSessionState().equals(SessionState.OPEN);
-	}
+		    return getSessionState().isBound() || getSessionState().equals(SessionState.OPEN);
+	  }
     
-    public void addSessionStateListener(SessionStateListener l) {
-        if (l != null) {
-            sessionContext().addSessionStateListener(l);
+    public void addSessionStateListener(SessionStateListener listener) {
+        if (listener != null) {
+            sessionContext().addSessionStateListener(listener);
         }
     }
     
-    public void removeSessionStateListener(SessionStateListener l) {
-        sessionContext().removeSessionStateListener(l);
+    public void removeSessionStateListener(SessionStateListener listener) {
+        sessionContext().removeSessionStateListener(listener);
     }
     
     public long getLastActivityTimestamp() {
@@ -143,7 +143,7 @@ public abstract class AbstractSession implements Session {
     public void setPduProcessorDegree(int pduProcessorDegree) throws IllegalStateException {
         if (!getSessionState().equals(SessionState.CLOSED)) {
             throw new IllegalStateException(
-                    "Cannot set pdu processor degree since the pdu dispatcher thread already created.");
+                    "Cannot set PDU processor degree since the PDU dispatcher thread already created.");
         }
         this.pduProcessorDegree = pduProcessorDegree;
     }
@@ -200,7 +200,7 @@ public abstract class AbstractSession implements Session {
     }
     
     public void close() {
-        logger.info("AbstractSession.close() called");
+        logger.debug("AbstractSession.close() called");
         SessionContext ctx = sessionContext();
         if (!ctx.getSessionState().equals(SessionState.CLOSED)) {
             ctx.close();
@@ -223,7 +223,7 @@ public abstract class AbstractSession implements Session {
             }
         }
 
-        logger.info("AbstractSession.close() done");
+        logger.debug("AbstractSession.close() done");
     }
 
     /**
@@ -233,18 +233,18 @@ public abstract class AbstractSession implements Session {
      * @param response is the response.
      * @throws NegativeResponseException if the command_status value is not zero.
      */
-    private static void validateResponse(Command response) throws NegativeResponseException {
+    private static void validateResponse(final Command response) throws NegativeResponseException {
         if (response.getCommandStatus() != SMPPConstant.STAT_ESME_ROK) {
             throw new NegativeResponseException(response.getCommandStatus());
         }
     }
     
-    protected DataSmResult fireAcceptDataSm(DataSm dataSm) throws ProcessRequestException {
+    protected DataSmResult fireAcceptDataSm(final DataSm dataSm) throws ProcessRequestException {
         GenericMessageReceiverListener messageReceiverListener = messageReceiverListener();
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptDataSm(dataSm, this);
         } else {
-            throw new ProcessRequestException("MessageReceveiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
+            throw new ProcessRequestException("MessageReceiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
         }
     }
     
@@ -283,7 +283,7 @@ public abstract class AbstractSession implements Session {
         
         try {
             pendingResp.waitDone();
-            logger.debug(task.getCommandName() + " response received");
+            logger.debug("{} response received", task.getCommandName());
         } catch (ResponseTimeoutException e) {
             pendingResponse.remove(seqNum);
             throw new ResponseTimeoutException("No response after waiting for "
@@ -340,14 +340,14 @@ public abstract class AbstractSession implements Session {
             logger.warn("PDU String should be always valid", e);
         } catch (NegativeResponseException e) {
             // ignore the negative response
-            logger.warn("Receive non-ok command_status (" + e.getCommandStatus() + ") for unbind_resp");
+            logger.warn("Receive non-ok command_status ({}) for unbind_resp", e.getCommandStatus());
         }
         
     }
     
     public void unbindAndClose() {
 
-        logger.info("unbindAndClose() called");
+        logger.debug("unbindAndClose() called");
         if (sessionContext().getSessionState().isBound()) {
             try {
                 unbind();
@@ -356,7 +356,7 @@ public abstract class AbstractSession implements Session {
             } catch (InvalidResponseException e) {
                 logger.error("Receive invalid unbind response", e);
             } catch (IOException e) {
-                logger.error("IO error found ", e);
+                logger.error("IO error found", e);
             }
         }
         close();
@@ -443,7 +443,7 @@ public abstract class AbstractSession implements Session {
                     close();
                 }
             }
-            logger.info("EnquireLinkSender stop");
+            logger.debug("EnquireLinkSender stop");
         }
         
         /**

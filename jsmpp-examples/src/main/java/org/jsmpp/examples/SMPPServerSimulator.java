@@ -240,7 +240,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
             String stringValue = Integer.valueOf(messageId.getValue(), 16).toString();
             try {
                 
-                DeliveryReceipt delRec = new DeliveryReceipt(stringValue, totalSubmitted, totalDelivered, new Date(), new Date(), DeliveryReceiptState.DELIVRD,  null, new String(shortMessage));
+                DeliveryReceipt delRec = new DeliveryReceipt(stringValue, totalSubmitted, totalDelivered, new Date(), new Date(), DeliveryReceiptState.DELIVRD, "000", new String(shortMessage));
                 session.deliverShortMessage(
                         "mc", 
                         sourceAddrTon, 

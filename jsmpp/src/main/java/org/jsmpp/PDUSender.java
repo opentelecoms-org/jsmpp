@@ -31,8 +31,8 @@ import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.bean.UnsuccessDelivery;
 
 /**
- * This class provide way to send SMPP Command over an {@link OutputStream}.
- * PDU will be created and returned as bytes.
+ * This class provides a way to send SMPP Commands over an {@link OutputStream}.
+ * PDUs will be created and returned as bytes.
  * 
  * @author uudashr
  * @version 1.0
@@ -277,7 +277,7 @@ public interface PDUSender {
      * @return the composed bytes.
      * @throws IOException if there is an IO error occur.
      */
-    byte[] sendDeliverSmResp(OutputStream os, int commandStatus, int sequenceNumber)
+    byte[] sendDeliverSmResp(OutputStream os, int commandStatus, int sequenceNumber, String messageId)
             throws IOException;
 
     /**

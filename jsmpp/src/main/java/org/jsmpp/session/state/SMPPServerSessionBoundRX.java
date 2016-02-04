@@ -84,8 +84,7 @@ class SMPPServerSessionBoundRX extends SMPPServerSessionBound implements
             DeliverSmResp resp = pduDecomposer.deliverSmResp(pdu);
             pendingResp.done(resp);
         } else {
-            logger.warn("No request with sequence number "
-                    + pduHeader.getSequenceNumber() + " found");
+            logger.warn("No request with sequence number {} found", pduHeader.getSequenceNumber());
         }
     }
     

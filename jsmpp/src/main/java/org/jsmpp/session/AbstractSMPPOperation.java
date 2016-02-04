@@ -44,37 +44,37 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractSMPPOperation implements SMPPOperation {
     private static final Logger logger = LoggerFactory.getLogger(AbstractSMPPOperation.class);
-    
+
     private final Hashtable<Integer, PendingResponse<Command>> pendingResponse = new Hashtable<Integer, PendingResponse<Command>>();
     private final Sequence sequence = new Sequence(1);
     private final PDUSender pduSender;
     private final Connection connection;
     private long transactionTimer = 2000;
-    
+
     public AbstractSMPPOperation(Connection connection, PDUSender pduSender) {
         this.connection = connection;
         this.pduSender = pduSender;
     }
-    
+
     protected PDUSender pduSender() {
         return pduSender;
     }
-    
+
     protected Connection connection() {
         return connection;
     }
-    
+
     public void setTransactionTimer(long transactionTimer) {
         this.transactionTimer = transactionTimer;
     }
-    
+
     public long getTransactionTimer() {
         return transactionTimer;
     }
-    
+
     /**
      * Execute send command command task.
-     * 
+     *
      * @param task is the task.
      * @param timeout is the timeout in millisecond.
      * @return the command response.
@@ -87,7 +87,7 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
     protected Command executeSendCommand(SendCommandTask task, long timeout)
             throws PDUException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException {
-        
+
         int seqNum = sequence.nextValue();
         PendingResponse<Command> pendingResp = new PendingResponse<Command>(timeout);
         pendingResponse.put(seqNum, pendingResp);
@@ -98,29 +98,29 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
             pendingResponse.remove(seqNum);
             throw e;
         }
-        
+
         try {
             pendingResp.waitDone();
-            logger.debug(task.getCommandName() + " response received");
+            logger.debug("{} response received", task.getCommandName() );
         } catch (ResponseTimeoutException e) {
             pendingResponse.remove(seqNum);
-            logger.debug("Response timeout for " + task.getCommandName() + " with sessionIdSequence number " + seqNum);
+            logger.debug("Response timeout for {} with sessionIdSequence number {}", task.getCommandName(), seqNum);
             throw e;
         } catch (InvalidResponseException e) {
             pendingResponse.remove(seqNum);
             throw e;
         }
-        
+
         Command resp = pendingResp.getResponse();
         validateResponse(resp);
         return resp;
-        
+
     }
-    
+
     /**
      * Validate the response, the command_status should be 0 otherwise will
      * throw {@link NegativeResponseException}.
-     * 
+     *
      * @param response is the response.
      * @throws NegativeResponseException if the command_status value is not zero.
      */
@@ -129,10 +129,10 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
             throw new NegativeResponseException(response.getCommandStatus());
         }
     }
-    
+
     public void unbind() throws ResponseTimeoutException, InvalidResponseException, IOException {
         UnbindCommandTask task = new UnbindCommandTask(pduSender);
-        
+
         try {
             executeSendCommand(task, transactionTimer);
         } catch (PDUException e) {
@@ -147,7 +147,7 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
     public void unbindResp(int sequenceNumber) throws IOException {
         pduSender.sendUnbindResp(connection().getOutputStream(), SMPPConstant.STAT_ESME_ROK, sequenceNumber);
     }
-    
+
     public DataSmResult dataSm(String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
@@ -156,14 +156,14 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
             OptionalParameter... optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException {
-        
+
         DataSmCommandTask task = new DataSmCommandTask(pduSender,
                 serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr,
                 destAddrTon, destAddrNpi, destinationAddr, esmClass,
                 registeredDelivery, dataCoding, optionalParameters);
-        
+
         DataSmResp resp = (DataSmResp)executeSendCommand(task, getTransactionTimer());
-        
+
         return new DataSmResult(resp.getMessageId(), resp.getOptionalParameters());
     }
 

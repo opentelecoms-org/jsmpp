@@ -3,12 +3,14 @@
     <parent>
         <groupId>org.jsmpp</groupId>
         <artifactId>jsmpp-pom</artifactId>
-        <version>2.2.2</version>
+        <version>2.2.4-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>bundle</packaging>
 
     <artifactId>jsmpp</artifactId>
+
+    <name>jSMPP - Core</name>
 
     <licenses>
         <license>
@@ -44,13 +46,17 @@
                 <instructions>
                   <Bundle-Name>${project.artifactId}</Bundle-Name>
                   <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+<<<<<<< HEAD
                   <Export-Package>org.jsmpp</Export-Package>
                   <_exportcontents>
                     org.jsmpp.bean,
                     org.jsmpp.util
                   </_exportcontents>
+=======
+                  <Export-Package>org.jsmpp.*</Export-Package>
+>>>>>>> opentelecoms-org/master
                   <Import-Package>
-                    org.slf4j;resolution:=optional,
+                    org.slf4j,
                     *
                   </Import-Package>
                   <Implementation-Title>jsmpp</Implementation-Title>

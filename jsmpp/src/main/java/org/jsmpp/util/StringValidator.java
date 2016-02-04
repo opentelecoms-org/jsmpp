@@ -30,7 +30,7 @@ public final class StringValidator {
 
     public static void validateString(String value, StringParameter param)
             throws PDUStringException {
-        if (param.getType() == StringType.C_OCTEC_STRING) {
+        if (param.getType() == StringType.C_OCTET_STRING) {
             if (param.isRangeMinAndMax()) {
                 if (!isCOctetStringValid(value, param.getMax())) {
                     throw new PDUStringException("C-Octet String value '"
@@ -54,7 +54,7 @@ public final class StringValidator {
 
     public static void validateString(byte[] value, StringParameter param)
             throws PDUStringException {
-        if (param.getType() == StringType.C_OCTEC_STRING) {
+        if (param.getType() == StringType.C_OCTET_STRING) {
             if (param.isRangeMinAndMax()) {
                 if (!isCOctetStringValid(value, param.getMax())) {
                     throw new PDUStringException("C-Octet String value '"

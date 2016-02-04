@@ -222,23 +222,23 @@ public class DeliveryReceipt {
          * id:IIIIIIIIII sub:SSS dlvrd:DDD submit date:YYMMDDhhmm done
          * date:YYMMDDhhmm stat:DDDDDDD err:E Text: . . . . . . . . .
          */
-        StringBuffer sBuf = new StringBuffer(120);
-        sBuf.append(DELREC_ID + ":" + id);
-        sBuf.append(" ");
-        sBuf.append(DELREC_SUB + ":" + intToString(submitted, 3));
-        sBuf.append(" ");
-        sBuf.append(DELREC_DLVRD + ":" + intToString(delivered, 3));
-        sBuf.append(" ");
-        sBuf.append(DELREC_SUBMIT_DATE + ":" + dateFormat.format(submitDate));
-        sBuf.append(" ");
-        sBuf.append(DELREC_DONE_DATE + ":" + dateFormat.format(doneDate));
-        sBuf.append(" ");
-        sBuf.append(DELREC_STAT + ":" + finalStatus);
-        sBuf.append(" ");
-        sBuf.append(DELREC_ERR + ":" + error);
-        sBuf.append(" ");
-        sBuf.append(DELREC_TEXT.toLowerCase() + ":" + text);
-        return sBuf.toString();
+        StringBuilder stringBuilder = new StringBuilder(120);
+        stringBuilder.append(DELREC_ID + ":" + id);
+        stringBuilder.append(" ");
+        stringBuilder.append(DELREC_SUB + ":" + intToString(submitted, 3));
+        stringBuilder.append(" ");
+        stringBuilder.append(DELREC_DLVRD + ":" + intToString(delivered, 3));
+        stringBuilder.append(" ");
+        stringBuilder.append(DELREC_SUBMIT_DATE + ":" + dateFormat.format(submitDate));
+        stringBuilder.append(" ");
+        stringBuilder.append(DELREC_DONE_DATE + ":" + dateFormat.format(doneDate));
+        stringBuilder.append(" ");
+        stringBuilder.append(DELREC_STAT + ":" + finalStatus);
+        stringBuilder.append(" ");
+        stringBuilder.append(DELREC_ERR + ":" + error);
+        stringBuilder.append(" ");
+        stringBuilder.append(DELREC_TEXT.toLowerCase() + ":" + text);
+        return stringBuilder.toString();
     }
 
     @Override
@@ -306,12 +306,12 @@ public class DeliveryReceipt {
      * @return the String representation of int value.
      */
     private static String intToString(int value, int digit) {
-        StringBuffer sBuf = new StringBuffer(digit);
-        sBuf.append(Integer.toString(value));
-        while (sBuf.length() < digit) {
-            sBuf.insert(0, "0");
+        StringBuilder stringBuilder = new StringBuilder(digit);
+        stringBuilder.append(Integer.toString(value));
+        while (stringBuilder.length() < digit) {
+            stringBuilder.insert(0, "0");
         }
-        return sBuf.toString();
+        return stringBuilder.toString();
     }
 
     private boolean hasEqualId(DeliveryReceipt other) {

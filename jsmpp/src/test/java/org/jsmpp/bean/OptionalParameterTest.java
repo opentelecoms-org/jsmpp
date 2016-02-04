@@ -14,14 +14,13 @@
  */
 package org.jsmpp.bean;
 
-import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
+import static org.testng.AssertJUnit.assertFalse;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 
 import org.jsmpp.bean.OptionalParameter.COctetString;
 import org.jsmpp.bean.OptionalParameter.Callback_num_pres_ind.Presentation_Indicator;
@@ -149,11 +148,11 @@ public class OptionalParameterTest {
 		
 	}
 
-    @Test(groups="checkintest")
-    public void cOctetStringGetValueAsString() throws UnsupportedEncodingException {
-        COctetString string = new OptionalParameter.COctetString(Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), "urgent");
+  @Test(groups="checkintest")
+  public void cOctetStringGetValueAsString() throws UnsupportedEncodingException {
+    COctetString string = new OptionalParameter.COctetString(Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), "urgent");
 
-        assertEquals(string.getValueAsString(), "urgent");
+    assertEquals(string.getValueAsString(), "urgent");
 
 		assertEquals((byte)0x75, string.getValue()[0]); // u
 		assertEquals((byte)0x72, string.getValue()[1]); // r
@@ -162,6 +161,18 @@ public class OptionalParameterTest {
 		assertEquals((byte)0x6e, string.getValue()[4]); // n
 		assertEquals((byte)0x74, string.getValue()[5]); // t
 		assertEquals((byte)0x00, string.getValue()[6]); // NULL
+  }
 
-    }
+  @Test
+  public void testAdditionalStatusInfoTextStringAsString() {
+    COctetString op = new OptionalParameter.Additional_status_info_text("additional text");
+    assertEquals("additional text", op.getValueAsString());
+  }
+
+  @Test
+  public void testAdditionalStatusInfoTextBytesAsString() {
+    byte[] content = "more additional text\0".getBytes();
+    COctetString op = new OptionalParameter.Additional_status_info_text(content);
+    assertEquals("more additional text", op.getValueAsString());
+  }
 }

@@ -29,64 +29,64 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class OptionalParameters {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(OptionalParameters.class);
     /**
      * Create SAR_MESSAGE_REF_NUM TLV instance.
-     * 
+     *
      * @param value is the value.
      * @return the optional parameter.
      */
     public static OptionalParameter.Short newSarMsgRefNum(short value) {
         return new OptionalParameter.Short(Tag.SAR_MSG_REF_NUM, value);
     }
-    
+
     /**
      * Create SAR_MESSAGE_REF_NUM TLV instance.
      * The value will cast automatically into short type.
-     * 
+     *
      * @param value is the value.
      * @return the optional parameter.
      */
     public static OptionalParameter.Short newSarMsgRefNum(int value) {
         return newSarMsgRefNum((byte)value);
     }
-    
+
     /**
      * Create SAR_SEGMENT_SEQNUM TLV instance.
-     * 
+     *
      * @param value is the value.
      * @return the optional parameter.
      */
     public static OptionalParameter.Byte newSarSegmentSeqnum(byte value) {
         return new OptionalParameter.Byte(Tag.SAR_SEGMENT_SEQNUM, value);
     }
-    
+
     /**
      * Create SAR_SEGMENT_SEQNUM TLV instance.
      * The value will cast automatically into byte type.
-     * 
+     *
      * @param value is the value.
      * @return the optional parameter.
      */
     public static OptionalParameter.Byte newSarSegmentSeqnum(int value) {
         return newSarSegmentSeqnum((byte)value);
     }
-    
+
     /**
      * Create SAR_TOTAL_SEGMENTS TLV instance.
-     * 
+     *
      * @param value is the value.
      * @return the optional parameter.
      */
     public static OptionalParameter.Byte newSarTotalSegments(byte value) {
         return new OptionalParameter.Byte(Tag.SAR_TOTAL_SEGMENTS, value);
     }
-    
+
     /**
      * Create SAR_TOTAL_SEGMENTS TLV instance.
      * The value will cast automatically into byte type.
-     * 
+     *
      * @param value is the value.
      * @return the optional parameter.
      */
@@ -97,18 +97,18 @@ public class OptionalParameters {
     /**
      * Deserialize all recognized tag code to {@link OptionalParameter} object.
      * Unrecognized will be classified as {@link COctetString}.
-     * 
+     *
      * @param tagCode is the tag code.
      * @param content is the content.
      * @return the OptionalParameter object.
      */
     public static OptionalParameter deserialize(short tagCode, byte[] content) {
         Tag tag = Tag.valueOf(tagCode);
-        if(tag == null) {
-            logger.warn("Optional Parameter Tag not recognized for deserialization: {}", tagCode);
-            return new COctetString(tagCode, content);
+        if (tag == null) {
+            logger.info("Optional Parameter Tag not recognized for deserialization: {}", tagCode);
+            return new OctetString(tagCode, content);
         }
-        
+
         switch(tag)
         {
             case DEST_ADDR_SUBUNIT:

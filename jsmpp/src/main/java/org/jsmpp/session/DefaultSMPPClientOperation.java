@@ -166,8 +166,11 @@ public class DefaultSMPPClientOperation extends AbstractSMPPOperation implements
         executeSendCommand(replaceSmTask, getTransactionTimer());
     }
 
-    public void deliverSmResp(int sequenceNumber) throws IOException {
+    @Override
+    public void deliverSmResp(int sequenceNumber, String messageId) throws IOException {
         pduSender().sendDeliverSmResp(connection().getOutputStream(),
-                0, sequenceNumber);
+                0, sequenceNumber, messageId);
+
     }
+
 }

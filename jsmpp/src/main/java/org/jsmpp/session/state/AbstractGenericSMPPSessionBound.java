@@ -55,7 +55,7 @@ abstract class AbstractGenericSMPPSessionBound implements GenericSMPPSessionStat
             EnquireLinkResp resp = pduDecomposer.enquireLinkResp(pdu);
             pendingResp.done(resp);
         } else {
-            logger.error("No request found for " + pduHeader);
+            logger.error("No request found for {}", pduHeader);
         }
     }
 
@@ -77,7 +77,7 @@ abstract class AbstractGenericSMPPSessionBound implements GenericSMPPSessionStat
             UnbindResp resp = pduDecomposer.unbindResp(pdu);
             pendingResp.done(resp);
         } else {
-            logger.error("No request found for " + pduHeader);
+            logger.error("No request found for {}", pduHeader);
         }
     }
 
@@ -107,7 +107,7 @@ abstract class AbstractGenericSMPPSessionBound implements GenericSMPPSessionStat
         try {
             DataSm dataSm = pduDecomposer.dataSm(pdu);
             DataSmResult dataSmResult = responseHandler.processDataSm(dataSm);
-            logger.debug("Sending response with message_id " + dataSmResult.getMessageId() + " for request with sequence_number " + pduHeader.getSequenceNumber());
+            logger.debug("Sending response with message_id {} for request with sequence_number {}", dataSmResult.getMessageId(), pduHeader.getSequenceNumber());
             responseHandler.sendDataSmResp(dataSmResult, pduHeader.getSequenceNumber());
         } catch (PDUStringException e) {
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
@@ -131,8 +131,7 @@ abstract class AbstractGenericSMPPSessionBound implements GenericSMPPSessionStat
                         .getSequenceNumber());
             }
         } else {
-            logger.warn("No request with sequence number "
-                    + pduHeader.getSequenceNumber() + " found");
+            logger.warn("No request with sequence number {} found", pduHeader.getSequenceNumber());
         }
     }
 }
