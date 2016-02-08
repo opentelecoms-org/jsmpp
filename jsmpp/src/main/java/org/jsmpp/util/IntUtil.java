@@ -24,6 +24,10 @@ package org.jsmpp.util;
  */
 public class IntUtil {
 
+    private IntUtil() {
+        throw new InstantiationError("This class must not be instantiated");
+    }
+
     public static String to4DigitString(final int value) {
         return toNDigitString(value, 4);
     }

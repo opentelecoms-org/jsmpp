@@ -30,6 +30,10 @@ public class LongSMS {
     private final static byte UDHIE_SAR_LENGTH = 0x04;
     private static int referenceNumber = 0;
 
+    private LongSMS() {
+        throw new InstantiationError("This class must not be instantiated");
+    }
+
     private static synchronized int getReferenceNumber() {
         referenceNumber++;
         if (referenceNumber >= 65536)
