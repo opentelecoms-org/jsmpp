@@ -593,12 +593,9 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		
 		private void readPDU() {
 	        try {
-	            Command pduHeader = null;
-	            byte[] pdu = null;
+                Command pduHeader = pduReader.readPDUHeader(in);
+                byte[] pdu = pduReader.readPDU(in, pduHeader);
 
-				pduHeader = pduReader.readPDUHeader(in);
-                pdu = pduReader.readPDU(in, pduHeader);
-	            
                 /*
                  * When the processing PDU is need user interaction via event,
                  * the code on event might take non-short time, so we need to
