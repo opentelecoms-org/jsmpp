@@ -72,7 +72,7 @@ public class OctetUtil {
         // 
         int result = 0x00000000;
 
-        int length = 0;
+        int length;
         if (bytes.length - offset < 4) // maximum byte size for int data type
                                         // is 4
             length = bytes.length - offset;

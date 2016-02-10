@@ -515,11 +515,8 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         
         private void readPDU() {
             try {
-                Command pduHeader = null;
-                byte[] pdu = null;
-
-                pduHeader = pduReader.readPDUHeader(in);
-                pdu = pduReader.readPDU(in, pduHeader);
+                Command pduHeader = pduReader.readPDUHeader(in);
+                byte[] pdu = pduReader.readPDU(in, pduHeader);
                 
                 PDUProcessServerTask task = new PDUProcessServerTask(pduHeader,
                         pdu, sessionContext.getStateProcessor(),
