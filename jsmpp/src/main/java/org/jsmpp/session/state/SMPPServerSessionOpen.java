@@ -43,7 +43,6 @@ class SMPPServerSessionOpen implements SMPPServerSessionState {
         try {
             Bind bind = pduDecomposer.bind(pdu);
             responseHandler.processBind(bind);
-            //responseHandler.sendBindResp(BindType.valueOf(pduHeader.getCommandId()), pduHeader.getSequenceNumber());
         } catch (PDUStringException e) {
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
         } catch (IllegalArgumentException e) {
