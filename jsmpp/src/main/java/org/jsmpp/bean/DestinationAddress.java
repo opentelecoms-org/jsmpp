@@ -21,7 +21,7 @@ package org.jsmpp.bean;
  *
  */
 public interface DestinationAddress {
-    public static enum Flag {
+    public enum Flag {
         SME_ADDRESS((byte)1), DISTRIBUTION_LIST((byte)2);
         
         private final byte value;

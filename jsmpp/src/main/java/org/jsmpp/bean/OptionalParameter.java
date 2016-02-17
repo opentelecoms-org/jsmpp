@@ -277,7 +277,7 @@ public abstract class OptionalParameter {
 
 		@Override
 		public String getValueAsString() {
-			byte[] s = new byte[(value.length > 0 ? value.length - 1 : 0)];
+			byte[] s = new byte[value.length > 0 ? value.length - 1 : 0];
 			System.arraycopy(value, 0, s, 0, s.length);
 			return new String(s);
 		}
@@ -288,7 +288,7 @@ public abstract class OptionalParameter {
      * Represents valid values for the optional parameters dest_addr_subunit and source_addr_subunit.
      *
      */
-	public static enum Addr_subunit{
+	public enum Addr_subunit{
 		/**
 		 * 0x00 = Unknown (default)
 		 */
@@ -372,7 +372,7 @@ public abstract class OptionalParameter {
 	 * Represents valid values for the optional parameters dest_network_type and source_network_type.
 	 *
 	 */
-	public static enum Network_type {
+	public enum Network_type {
 		UNKNOWN(0x00),
 		GSM(0x01),
 		ANSI_136_TDMA(0x02),
@@ -443,7 +443,7 @@ public abstract class OptionalParameter {
 	 * Represents valid values for the optional parameters dest_bearer_type and source_bearer_type.
 	 *
 	 */
-	public static enum Bearer_type {
+	public enum Bearer_type {
 		UNKNOWN(0x00),
 		SMS(0x01),
 		CIRCUIT_SWITCHED_DATA(0x02),
@@ -862,7 +862,7 @@ public abstract class OptionalParameter {
 		}
 		
 		public String toString() {
-			String endString = (isIndicatorActive() ? "active" : "inactive");
+			String endString = isIndicatorActive() ? "active" : "inactive";
 			return getMessageType().toString() + " set as " + endString;
 		}
 	}
@@ -1509,7 +1509,7 @@ public abstract class OptionalParameter {
 		}
 		
 		public boolean getDpfResult() {
-			return (value == 1);
+			return value == 1;
 		}
 	}
 	
@@ -1547,7 +1547,7 @@ public abstract class OptionalParameter {
 		}
 		
 		public boolean isDpfSet() {
-			return (value == 1);
+			return value == 1;
 		}
 	}
 	
