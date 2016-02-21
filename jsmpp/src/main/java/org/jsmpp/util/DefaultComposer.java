@@ -332,15 +332,11 @@ public class DefaultComposer implements PDUComposer {
         buf.append(esmClass);
         buf.append(protocolId);
         buf.append(priorityFlag);
-        // buf.append(scheduleDeliveryTime);
         buf.append((String)null); // schedule delivery time
-        // buf.append(validityPeriod);
         buf.append((String)null); // validity period
         buf.append(registeredDelivery);
-        // buf.append(replaceIfPresent);
         buf.append((byte)0); // replace if present flag
         buf.append(dataCoding);
-        // buf.append(smDefaultMsgId);
         buf.append((byte)0); // sm default msg id
         buf.append((byte)shortMessage.length);
         buf.append(shortMessage);

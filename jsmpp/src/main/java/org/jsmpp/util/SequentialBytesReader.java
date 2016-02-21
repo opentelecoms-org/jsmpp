@@ -110,17 +110,10 @@ class SequentialBytesReader {
      */
     public String readString(byte length) {
         /*
-         * if (length == 0) return null;
-         */
-        /*
          * you have to convert the signed byte into unsigned byte (in
          * integer representation) with & operand by 0xff
          */
         return readString(length & 0xff);
-        /*
-         * String val = new String(_bytes, _cursor, length & 0xff); _cursor +=
-         * length; return val;
-         */
     }
     
     public int remainBytesLength() {
