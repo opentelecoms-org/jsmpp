@@ -29,7 +29,7 @@ public enum MessageMode {
     
     private final byte value;
 
-    private MessageMode(byte value) {
+    MessageMode(byte value) {
         this.value = value;
     }
 

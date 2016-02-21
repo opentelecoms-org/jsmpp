@@ -42,7 +42,7 @@ public enum SMSCDeliveryReceipt {
 
     private final byte value;
 
-    private SMSCDeliveryReceipt(byte value) {
+    SMSCDeliveryReceipt(byte value) {
         this.value = value;
     }
 

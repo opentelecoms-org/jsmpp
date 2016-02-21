@@ -16,14 +16,12 @@ package org.jsmpp.bean;
 
 /**
  * @author uudashr
- * 
+ *
  */
 public class ReplaceIfPresentFlag {
-    public static final ReplaceIfPresentFlag DEFAULT = new ReplaceIfPresentFlag(
-            0);
+    public static final ReplaceIfPresentFlag DEFAULT = new ReplaceIfPresentFlag(0);
     public static final ReplaceIfPresentFlag DONT_REPLACE = DEFAULT;
-    public static final ReplaceIfPresentFlag REPLACE = new ReplaceIfPresentFlag(
-            1);
+    public static final ReplaceIfPresentFlag REPLACE = new ReplaceIfPresentFlag(1);
 
     private byte value;
 

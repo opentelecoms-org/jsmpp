@@ -15,7 +15,7 @@ public enum IndicationSense {
     
     private final byte value;
     
-    private IndicationSense(byte value) {
+    IndicationSense(byte value) {
         this.value = value;
     }
     

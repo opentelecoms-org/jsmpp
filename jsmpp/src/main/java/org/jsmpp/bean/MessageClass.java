@@ -28,7 +28,7 @@ public enum MessageClass {
 
     private final byte value;
 
-    private MessageClass(byte value) {
+    MessageClass(byte value) {
         this.value = value;
     }
 
