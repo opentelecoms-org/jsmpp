@@ -23,6 +23,11 @@ package org.jsmpp.util;
  * 
  */
 public class OctetUtil {
+
+    private OctetUtil() {
+        throw new InstantiationError("This class must not be instantiated");
+    }
+
     /**
      * Convert integer (4 octets) value to bytes.
      * 
