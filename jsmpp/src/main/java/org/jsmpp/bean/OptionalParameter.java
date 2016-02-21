@@ -38,7 +38,7 @@ public abstract class OptionalParameter {
 
     /** Convert the optional parameter into a byte serialized form conforming to the SMPP specification.
      * 
-     * @return A byte array according to SMPP specification
+     * @return A byte array according to the SMPP specification
      */
     public byte[] serialize() {
         byte[] value = serializeValue();
@@ -50,7 +50,7 @@ public abstract class OptionalParameter {
     }
 
     /** This method should serialize the value part of the optional parameter. The format of the value is dependent
-     * on the specific optional parameter type so it is abstract and must be implmented by subclasses.
+     * on the specific optional parameter type so it is abstract and must be implemented by subclasses.
      * @return
      */
     protected abstract byte[] serializeValue();
