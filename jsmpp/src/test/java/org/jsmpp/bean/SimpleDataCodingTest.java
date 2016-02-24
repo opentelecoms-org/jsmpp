@@ -14,13 +14,8 @@
  */
 package org.jsmpp.bean;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
-import org.jsmpp.bean.Alphabet;
-import org.jsmpp.bean.DataCoding;
-import org.jsmpp.bean.DataCodings;
-import org.jsmpp.bean.MessageClass;
-import org.jsmpp.bean.SimpleDataCoding;
 import org.testng.annotations.Test;
 
 /**
@@ -28,6 +23,17 @@ import org.testng.annotations.Test;
  *
  */
 public class SimpleDataCodingTest {
+
+    @Test
+    public void testDefault() {
+        // 11110001
+        SimpleDataCoding dataCoding = new SimpleDataCoding();
+        byte expected = (byte)0xf1;
+        assertEquals(dataCoding.toByte(), expected);
+
+        DataCoding buildedInstance = DataCodings.newInstance(dataCoding.toByte());
+        assertEquals(buildedInstance, dataCoding);
+    }
     
     @Test
     public void alphaDefaultClass0() {
@@ -115,5 +121,10 @@ public class SimpleDataCodingTest {
         
         DataCoding buildedInstance = DataCodings.newInstance(dataCoding.toByte());
         assertEquals(buildedInstance, dataCoding);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testIllegalAlphabetUcs2() {
+        SimpleDataCoding dataCoding = new SimpleDataCoding(Alphabet.ALPHA_UCS2, MessageClass.CLASS1);
     }
 }
