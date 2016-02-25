@@ -33,7 +33,7 @@ public class DataCodingFactory1111 extends AbstractDataCodingFactory {
     /**
      * bin: 11110111
      */
-    private final byte MASK_BIT3_REMOVAL = (byte)0xf7;
+    private static final byte MASK_BIT3_REMOVAL = (byte)0xf7;
     
     public DataCodingFactory1111() {
         super(MASK, GROUP);
