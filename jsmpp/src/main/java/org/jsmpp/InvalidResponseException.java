@@ -29,19 +29,19 @@ public class InvalidResponseException extends Exception {
     /**
      * Construct with specified message and cause.
      * 
-	 * @param message is the detail message.
-	 * @param cause is the parent cause.
-	 */
-	public InvalidResponseException(String message, Throwable cause) {
-		super(message, cause);
-	}
+     * @param message is the detail message.
+     * @param cause is the parent cause.
+     */
+    public InvalidResponseException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	/**
+    /**
      * Construct with specified message.
      * 
-	 * @param message is the detail message.
-	 */
-	public InvalidResponseException(String message) {
-		super(message);
-	}
+     * @param message is the detail message.
+     */
+    public InvalidResponseException(String message) {
+        super(message);
+    }
 }

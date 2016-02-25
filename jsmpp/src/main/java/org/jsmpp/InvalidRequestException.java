@@ -23,41 +23,41 @@ package org.jsmpp;
  *
  */
 public class InvalidRequestException extends Exception {
-	private static final long serialVersionUID = -2275241874120654607L;
+    private static final long serialVersionUID = -2275241874120654607L;
 
-	/**
-	 * Default constructor.
-	 */
-	public InvalidRequestException() {
-		super();
-	}
+    /**
+     * Default constructor.
+     */
+    public InvalidRequestException() {
+        super();
+    }
 
-	/**
+    /**
      * Construct with specified message and cause.
      * 
-	 * @param message is the detail message.
-	 * @param cause is the parent cause.
-	 */
-	public InvalidRequestException(String message, Throwable cause) {
-		super(message, cause);
-	}
+     * @param message is the detail message.
+     * @param cause is the parent cause.
+     */
+    public InvalidRequestException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	/**
+    /**
      * Construct with specified message.
      * 
-	 * @param message is the detail message.
-	 */
-	public InvalidRequestException(String message) {
-		super(message);
-	}
+     * @param message is the detail message.
+     */
+    public InvalidRequestException(String message) {
+        super(message);
+    }
 
-	/**
+    /**
      * Construct with specified cause.
      * 
-	 * @param cause is the parent cause.
-	 */
-	public InvalidRequestException(Throwable cause) {
-		super(cause);
-	}
-	
+     * @param cause is the parent cause.
+     */
+    public InvalidRequestException(Throwable cause) {
+        super(cause);
+    }
+    
 }

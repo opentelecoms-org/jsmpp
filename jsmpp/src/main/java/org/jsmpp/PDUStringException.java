@@ -26,7 +26,7 @@ import org.jsmpp.util.StringParameter;
  */
 public class PDUStringException extends PDUException {
     private static final long serialVersionUID = 5456303478921567516L;
-    private StringParameter parameter;
+    private final StringParameter parameter;
 
     /**
      * Construct with specified message and parameter.

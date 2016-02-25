@@ -24,40 +24,40 @@ package org.jsmpp;
  */
 public class PDUException extends Exception {
 
-	private static final long serialVersionUID = -4168434058788171394L;
+    private static final long serialVersionUID = -4168434058788171394L;
 
-	/**
-	 * Default constructor.
-	 */
-	public PDUException() {
-		super("PDUException found");
-	}
+    /**
+     * Default constructor.
+     */
+    public PDUException() {
+        super("PDUException found");
+    }
 
-	/**
+    /**
      * Construct with specified message and cause.
      * 
-	 * @param message is the detail message.
-	 * @param cause is the parent cause.
-	 */
-	public PDUException(String message, Throwable cause) {
-		super(message, cause);
-	}
+     * @param message is the detail message.
+     * @param cause is the parent cause.
+     */
+    public PDUException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	/**
+    /**
      * Construct with specified message.
      * 
-	 * @param message is the detail message.
-	 */
-	public PDUException(String message) {
-		super(message);
-	}
+     * @param message is the detail message.
+     */
+    public PDUException(String message) {
+        super(message);
+    }
 
-	/**
+    /**
      * Construct with specified cause.
      * 
-	 * @param cause is the parent cause.
-	 */
-	public PDUException(Throwable cause) {
-		super(cause);
-	}
+     * @param cause is the parent cause.
+     */
+    public PDUException(Throwable cause) {
+        super(cause);
+    }
 }

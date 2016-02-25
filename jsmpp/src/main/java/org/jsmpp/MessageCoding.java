@@ -23,10 +23,10 @@ package org.jsmpp;
  *
  */
 public enum MessageCoding {
-	/**
-	 * Coding 7-bit.
-	 */
-	CODING_7_BIT,
+    /**
+     * Coding 7-bit.
+     */
+    CODING_7_BIT,
     
     /**
      * Coding 8-bit.
