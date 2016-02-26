@@ -1729,7 +1729,7 @@ public abstract class OptionalParameter {
 	 */
 	public static class Message_payload extends OptionalParameter.OctetString {
 
-		public Message_payload(byte value[]) {
+		public Message_payload(byte[] value) {
 			super(Tag.MESSAGE_PAYLOAD.code(), value);
 		}
 	}
@@ -1970,7 +1970,7 @@ public abstract class OptionalParameter {
 	 *
 	 */
 	public static class Billing_identification extends OptionalParameter.OctetString {
-		public Billing_identification(byte value[]) {
+		public Billing_identification(byte[] value) {
 			super(Tag.BILLING_IDENTIFICATION.code, value);
 		}
 
@@ -2138,7 +2138,7 @@ public abstract class OptionalParameter {
 	 */
 	public static class Vendor_specific_source_msc_addr extends OptionalParameter.Vendor_specific_msc_addr {
 		
-		public Vendor_specific_source_msc_addr(byte value[]) {
+		public Vendor_specific_source_msc_addr(byte[] value) {
 			super(Tag.VENDOR_SPECIFIC_SOURCE_MSC_ADDR.code, value);
 		}
 	}
@@ -2152,7 +2152,7 @@ public abstract class OptionalParameter {
 	 */
 	public static class Vendor_specific_dest_msc_addr extends OptionalParameter.Vendor_specific_msc_addr {
 		
-		public Vendor_specific_dest_msc_addr(byte value[]) {
+		public Vendor_specific_dest_msc_addr(byte[] value) {
 			super(Tag.VENDOR_SPECIFIC_DEST_MSC_ADDR.code, value);
 		}
 	}
@@ -2160,7 +2160,7 @@ public abstract class OptionalParameter {
 	private static class Vendor_specific_msc_addr extends OptionalParameter.OctetString {
 		String address;
 		
-		private Vendor_specific_msc_addr(short tag, byte value[]) {
+		private Vendor_specific_msc_addr(short tag, byte[] value) {
 			super(tag, value);
 			try {
         if (value.length >= 2) {
