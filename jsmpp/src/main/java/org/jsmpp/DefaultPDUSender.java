@@ -110,7 +110,7 @@ public class DefaultPDUSender implements PDUSender {
             int sequenceNumber, String systemId, InterfaceVersion interfaceVersion) throws PDUStringException,
             IOException {
         
-        OptionalParameter p[];
+        OptionalParameter[] p;
         if(interfaceVersion != null) {
             OptionalParameter interfaceVersionParam = new OptionalParameter.Byte(Tag.SC_INTERFACE_VERSION, interfaceVersion.value());
             p = new OptionalParameter[] {interfaceVersionParam};
