@@ -61,10 +61,10 @@ public class QuerySmResult {
 	 */
 	@Override
 	public int hashCode() {
-		final int PRIME = 31;
+		final int prime = 31;
 		int result = 1;
-		result = PRIME * result + ((finalDate == null) ? 0 : finalDate.hashCode());
-		result = PRIME * result + ((messageState == null) ? 0 : messageState.hashCode());
+		result = prime * result + ((finalDate == null) ? 0 : finalDate.hashCode());
+		result = prime * result + ((messageState == null) ? 0 : messageState.hashCode());
 		return result;
 	}
 	
