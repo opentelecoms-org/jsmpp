@@ -27,11 +27,11 @@ import org.jsmpp.session.connection.ConnectionFactory;
 public class SocketConnectionFactory implements ConnectionFactory {
     private static final SocketConnectionFactory connFactory = new SocketConnectionFactory();
     
-    public static SocketConnectionFactory getInstance() {
-        return connFactory;
+    private SocketConnectionFactory() {
     }
     
-    private SocketConnectionFactory() {
+    public static SocketConnectionFactory getInstance() {
+        return connFactory;
     }
     
     public Connection createConnection(String host, int port)

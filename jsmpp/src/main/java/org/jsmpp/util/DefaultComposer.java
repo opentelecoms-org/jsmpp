@@ -437,9 +437,8 @@ public class DefaultComposer implements PDUComposer {
     }
 
     public byte[] cancelSmResp(int sequenceNumber) {
-        byte[] b = composeHeader(SMPPConstant.CID_CANCEL_SM_RESP,
+        return composeHeader(SMPPConstant.CID_CANCEL_SM_RESP,
                 SMPPConstant.STAT_ESME_ROK, sequenceNumber);
-        return b;
     }
 
     public byte[] replaceSm(int sequenceNumber, String messageId,

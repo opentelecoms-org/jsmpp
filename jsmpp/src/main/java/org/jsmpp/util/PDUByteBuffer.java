@@ -27,7 +27,7 @@ import org.jsmpp.bean.OptionalParameter;
  * 
  */
 public class PDUByteBuffer {
-    private static CapacityPolicy DEFAULT_CAPACITY_POLICY = new SimpleCapacityPolicy();
+    private static final CapacityPolicy DEFAULT_CAPACITY_POLICY = new SimpleCapacityPolicy();
     private CapacityPolicy capacityPolicy;
     private byte[] bytes;
     private int bytesLength;
