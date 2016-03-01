@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
+    private static final String NO_REQUEST_FIND_FOR_SEQUENCE_NUMBER = "No request find for sequence number ";
     private static final Logger logger = LoggerFactory.getLogger(SMPPSessionBoundTX.class);
     
     public SessionState getSessionState() {
@@ -101,7 +102,7 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
                         .getSequenceNumber());
             }
         } else {
-            logger.error("No request find for sequence number "
+            logger.error(NO_REQUEST_FIND_FOR_SEQUENCE_NUMBER
                     + pduHeader.getSequenceNumber());
             responseHandler.sendGenerickNack(
                     SMPPConstant.STAT_ESME_RINVDFTMSGID, pduHeader
@@ -117,7 +118,7 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
             CancelSmResp resp = pduDecomposer.cancelSmResp(pdu);
             pendingResp.done(resp);
         } else {
-            logger.error("No request find for sequence number "
+            logger.error(NO_REQUEST_FIND_FOR_SEQUENCE_NUMBER
                     + pduHeader.getSequenceNumber());
         }
     }
@@ -130,7 +131,7 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
             ReplaceSmResp resp = pduDecomposer.replaceSmResp(pdu);
             pendingResp.done(resp);
         } else {
-            logger.error("No request find for sequence number "
+            logger.error(NO_REQUEST_FIND_FOR_SEQUENCE_NUMBER
                     + pduHeader.getSequenceNumber());
         }
     }
