@@ -33,7 +33,8 @@ public class SocketConnectionFactory implements ConnectionFactory {
     public static SocketConnectionFactory getInstance() {
         return connFactory;
     }
-    
+
+    @Override
     public Connection createConnection(String host, int port)
             throws IOException {
         return new SocketConnection(new Socket(host, port));
