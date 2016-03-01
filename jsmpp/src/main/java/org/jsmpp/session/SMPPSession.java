@@ -294,9 +294,9 @@ public class SMPPSession extends AbstractSession implements ClientSession {
                 addrNpi, addressRange);
 	    
 	    BindResp resp = (BindResp)executeSendCommand(task, timeout);
-	    OptionalParameter.Sc_interface_version sc_version = resp.getOptionalParameter(Sc_interface_version.class);
-	    if(sc_version != null) {
-		    logger.info("Other side reports smpp interface version {}", sc_version);
+	    OptionalParameter.Sc_interface_version scVersion = resp.getOptionalParameter(Sc_interface_version.class);
+	    if(scVersion != null) {
+		    logger.info("Other side reports smpp interface version {}", scVersion);
 	    }
         
 		return resp.getSystemId();
@@ -564,16 +564,15 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	private class PDUReaderWorker extends Thread {
 		// start with serial execution of pdu processing, when the session is bound the pool will be enlarge up to the PduProcessorDegree
 	    private ExecutorService executorService = Executors.newFixedThreadPool(1); 
-		
-	    public PDUReaderWorker() {
-        	super("PDUReaderWorker: " + SMPPSession.this);
-	    }
-	    
 	    private Runnable onIOExceptionTask = new Runnable() {
 		    public void run() {
 		        close();
 		    };
 		};
+		
+	    public PDUReaderWorker() {
+        	super("PDUReaderWorker: " + SMPPSession.this);
+	    }
 		
 	    @Override
 		public void run() {
