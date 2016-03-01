@@ -27,6 +27,8 @@ import org.jsmpp.session.ServerResponseHandler;
  */
 public class SMPPServerSessionUnbound implements SMPPServerSessionState {
     
+    private static final String INVALID_PROCESS_FOR_UNBOUND_SESSION = "Invalid process for unbound session state";
+
     public SessionState getSessionState() {
         return SessionState.UNBOUND;
     }
@@ -34,78 +36,78 @@ public class SMPPServerSessionUnbound implements SMPPServerSessionState {
     public void processBind(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler)
             throws IOException {
-        throw new IOException("Invalid process for unbound session state");
+        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 
     public void processDeliverSmResp(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for unbound session state");
+        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 
     public void processQuerySm(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler)
             throws IOException {
-        throw new IOException("Invalid process for unbound session state");
+        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 
     public void processSubmitSm(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler)
             throws IOException {
-        throw new IOException("Invalid process for unbound session state");
+        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
     
     public void processSubmitMulti(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for unbound session state");
+        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
     
     public void processEnquireLink(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for unbound session state");
+        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 
     public void processEnquireLinkResp(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for unbound session state");
+        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 
     public void processGenericNack(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for unbound session state");
+        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 
     public void processUnbind(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for unbound session state");
+        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 
     public void processUnbindResp(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for unbound session state");
+        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 
     public void processUnknownCid(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for unbound session state");
+        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
     
     public void processDataSm(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for unbound session state");
+        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
     
     public void processDataSmResp(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for unbound session state");
+        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
     
     public void processCancelSm(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for unbound session state");
+        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
     
     public void processReplaceSm(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for unbound session state");
+        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 }
