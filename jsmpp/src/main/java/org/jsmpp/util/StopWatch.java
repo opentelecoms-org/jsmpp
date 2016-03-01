@@ -29,7 +29,8 @@ public class StopWatch {
      * @return the current time in millisecond.
      */
     public long start() {
-        return startTime = System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
+        return startTime;
     }
     
     /**

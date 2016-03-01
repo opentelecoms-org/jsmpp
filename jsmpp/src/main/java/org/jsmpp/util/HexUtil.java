@@ -83,12 +83,12 @@ public class HexUtil {
      */
     public static String convertHexStringToString(String hexString) {
         String uHexString = hexString.toLowerCase();
-        StringBuffer sBuf = new StringBuffer();
+        StringBuilder sBld = new StringBuilder();
         for (int i = 0; i < uHexString.length(); i = i + 2) {
             char c = (char)Integer.parseInt(uHexString.substring(i, i + 2), 16);
-            sBuf.append(c);
+            sBld.append(c);
         }
-        return sBuf.toString();
+        return sBld.toString();
     }
 
     /**
