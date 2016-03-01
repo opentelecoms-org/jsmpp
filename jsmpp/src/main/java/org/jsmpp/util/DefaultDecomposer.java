@@ -614,7 +614,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         return req;
     }
     
-    private OptionalParameter[] readOptionalParameters(
+    private static OptionalParameter[] readOptionalParameters(
             SequentialBytesReader reader) {
         if (!reader.hasMoreBytes())
             return null;
