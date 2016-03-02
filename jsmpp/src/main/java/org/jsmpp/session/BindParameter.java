@@ -116,64 +116,50 @@ public class BindParameter {
     }
 
     private boolean hasEqualAddrNpi(BindParameter other) {
-        if (addrNpi == null) {
-            if (other.addrNpi != null) {
-                return false;
-            }
+        if (addrNpi == null && other.addrNpi != null) {
+            return false;
         }
         return addrNpi.equals(other.addrNpi);
     }
 
     private boolean hasEqualAddrTon(BindParameter other) {
-        if (addrTon == null) {
-            if (other.addrTon != null) {
-                return false;
-            }
+        if (addrTon == null && other.addrTon != null) {
+            return false;
         }
         return addrTon.equals(other.addrTon);
     }
 
     private boolean hasEqualAddressRange(BindParameter other) {
-        if (addressRange == null) {
-            if (other.addressRange != null) {
-                return false;
-            }
+        if (addressRange == null && other.addressRange != null) {
+            return false;
         }
         return addressRange.equals(other.addressRange);
     }
 
     private boolean hasEqualBindType(BindParameter other) {
-        if (bindType == null) {
-            if (other.bindType != null) {
-                return false;
-            }
+        if (bindType == null && other.bindType != null) {
+            return false;
         }
         return bindType.equals(other.bindType);
     }
 
     private boolean hasEqualPassword(BindParameter other) {
-        if (password == null) {
-            if (other.password != null) {
-                return false;
-            }
+        if (password == null && other.password != null) {
+            return false;
         }
         return password.equals(other.password);
     }
 
     private boolean hasEqualSystemId(BindParameter other) {
-        if (systemId == null) {
-            if (other.systemId != null) {
-                return false;
-            }
+        if (systemId == null && other.systemId != null) {
+            return false;
         }
         return systemId.equals(other.systemId);
     }
 
     private boolean hasEqualSystemType(BindParameter other) {
-        if (systemType == null) {
-            if (other.systemType != null) {
-                return false;
-            }
+        if (systemType == null && other.systemType != null) {
+            return false;
         }
         return systemType.equals(other.systemType);
     }
