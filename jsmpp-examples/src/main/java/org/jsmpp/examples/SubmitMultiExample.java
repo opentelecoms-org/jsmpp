@@ -74,7 +74,7 @@ public class SubmitMultiExample {
             Address[] addresses = new Address[] {address1, address2};
             SubmitMultiResult result = session.submitMultiple("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "1616",
                                                         addresses, new ESMClass(), (byte)0, (byte)1, timeFormatter.format(new Date()), null,
-                                                        new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS), ReplaceIfPresentFlag.REPLACE,
+                                                        new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE), ReplaceIfPresentFlag.REPLACE,
                                                         new GeneralDataCoding(Alphabet.ALPHA_DEFAULT, MessageClass.CLASS1, false), (byte)0,
                                                         "jSMPP simplify SMPP on Java platform".getBytes());
             System.out.println("Messages submitted, result is " + result);

@@ -32,7 +32,7 @@ public class RegisteredDeliveryTest {
 		regDel.setSMSCDeliveryReceipt(SMSCDeliveryReceipt.SUCCESS_FAILURE);
 		assertTrue(SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(regDel));
 		
-		regDel.setSMSCDeliveryReceipt(SMSCDeliveryReceipt.SUCCESS);
-		assertTrue(SMSCDeliveryReceipt.SUCCESS.containedIn(regDel));
+		regDel.setSMSCDeliveryReceipt(SMSCDeliveryReceipt.FAILURE);
+		assertTrue(SMSCDeliveryReceipt.FAILURE.containedIn(regDel));
 	}
 }
