@@ -20,7 +20,6 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
-import org.jsmpp.session.SMPPSession;
 import org.jsmpp.session.connection.Connection;
 import org.jsmpp.util.StrictBufferedInputStream;
 import org.slf4j.Logger;
@@ -32,41 +31,41 @@ import org.slf4j.LoggerFactory;
  */
 public class SocketConnection implements Connection {
 	private static final Logger logger = LoggerFactory.getLogger(SocketConnection.class);
-    
+
     private final Socket socket;
     private final InputStream in;
     private final OutputStream out;
-    
+
     public SocketConnection(Socket socket) throws IOException {
         this.socket = socket;
         this.in = new StrictBufferedInputStream(socket.getInputStream(), 65536);// 64 KB buffer
         this.out = socket.getOutputStream();
     }
-    
+
     public void setSoTimeout(int timeout) throws IOException {
         socket.setSoTimeout(timeout);
     }
-    
+
     public void close() {
         try {
             socket.close();
         } catch (IOException e) {
-        	logger.warn("Suppressing IOException while closing socket", e);
+        	  logger.warn("Suppressing IOException while closing socket", e);
         }
     }
-    
+
     public boolean isOpen() {
         return !socket.isClosed();
     }
-    
+
     public InputStream getInputStream() {
         return in;
     }
-    
+
     public OutputStream getOutputStream() {
         return out;
     }
-    
+
     public InetAddress getInetAddress() {
         return socket.getInetAddress();
     }

@@ -43,7 +43,11 @@ public final class DataCodings {
      */
     public static final DataCoding ZERO = new GeneralDataCoding();
     private static DataCoding[] dataCodingCache = new DataCoding[255];
-    
+
+    private DataCodings() {
+        throw new InstantiationError("This class must not be instantiated");
+    }
+
     /**
      * Create new instance of {@link DataCoding}.
      * 

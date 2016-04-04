@@ -35,14 +35,14 @@ public enum SMSCDeliveryReceipt {
      * SMSC Delivery Receipt requested where the final delivery outcome is
      * delivery failure.
      */
-    SUCCESS((byte)0x02);
+    FAILURE((byte)0x02);
 
     public static final byte CLEAR_BYTE = (byte)0xfc; // 11111100
     public static final byte MASK_BYTE = 0x03; // 00000011
 
     private final byte value;
 
-    private SMSCDeliveryReceipt(byte value) {
+    SMSCDeliveryReceipt(byte value) {
         this.value = value;
     }
 

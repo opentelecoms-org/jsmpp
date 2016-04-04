@@ -25,6 +25,10 @@ public class DeliverSm extends MessageRequest {
 
 	private String id;
 
+	public DeliverSm() {
+		super();
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -33,10 +37,6 @@ public class DeliverSm extends MessageRequest {
 		this.id = id;
 	}
 
-	public DeliverSm() {
-		super();
-	}
-	
 	/**
      * Get the short message as {@link DeliveryReceipt}. This method will be
      * valid if the parsed short message valid and Message Type (esm_class)

@@ -10,7 +10,7 @@ package org.jsmpp;
  */
 public class InvalidNumberOfDestinationsException extends PDUException {
     private static final long serialVersionUID = -1515128166927438310L;
-    private int actualLength;
+    private final int actualLength;
     
     /**
      * Default constructor.

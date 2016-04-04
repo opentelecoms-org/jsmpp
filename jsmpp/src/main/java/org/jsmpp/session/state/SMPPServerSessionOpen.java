@@ -31,6 +31,7 @@ import org.jsmpp.util.PDUDecomposer;
  *
  */
 class SMPPServerSessionOpen implements SMPPServerSessionState {
+    private static final String INVALID_PROCESS_FOR_OPEN_SESSION = "Invalid process for open session state";
     private static final PDUDecomposer pduDecomposer = new DefaultDecomposer();
     
     public SessionState getSessionState() {
@@ -43,7 +44,6 @@ class SMPPServerSessionOpen implements SMPPServerSessionState {
         try {
             Bind bind = pduDecomposer.bind(pdu);
             responseHandler.processBind(bind);
-            //responseHandler.sendBindResp(BindType.valueOf(pduHeader.getCommandId()), pduHeader.getSequenceNumber());
         } catch (PDUStringException e) {
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
         } catch (IllegalArgumentException e) {
@@ -54,73 +54,73 @@ class SMPPServerSessionOpen implements SMPPServerSessionState {
 
     public void processDeliverSmResp(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for open session state");
+        throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
     }
 
     public void processQuerySm(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler)
             throws IOException {
-        throw new IOException("Invalid process for open session state");
+        throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
     }
 
     public void processSubmitSm(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler)
             throws IOException {
-        throw new IOException("Invalid process for open session state");
+        throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
     }
     
     public void processSubmitMulti(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for open session state");
+        throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
     }
 
     public void processEnquireLink(Command pduHeader, byte[] pdu,
             BaseResponseHandler sessionHandler) throws IOException {
-        throw new IOException("Invalid process for open session state");
+        throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
     }
 
     public void processEnquireLinkResp(Command pduHeader, byte[] pdu,
             BaseResponseHandler sessionHandler) throws IOException {
-        throw new IOException("Invalid process for open session state");
+        throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
     }
 
     public void processGenericNack(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for open session state");
+        throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
     }
 
     public void processUnbind(Command pduHeader, byte[] pdu,
             BaseResponseHandler sessionHandler) throws IOException {
-        throw new IOException("Invalid process for open session state");
+        throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
     }
 
     public void processUnbindResp(Command pduHeader, byte[] pdu,
             BaseResponseHandler sessionHandler) throws IOException {
-        throw new IOException("Invalid process for open session state");
+        throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
     }
 
     public void processUnknownCid(Command pduHeader, byte[] pdu,
             BaseResponseHandler sessionHandler) throws IOException {
-        throw new IOException("Invalid process for open session state");
+        throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
     }
     
     public void processDataSm(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for open session state");
+        throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
     }
     
     public void processDataSmResp(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for open session state");
+        throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
     }
     
     public void processCancelSm(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for open session state");
+        throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
     }
     
     public void processReplaceSm(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException {
-        throw new IOException("Invalid process for open session state");
+        throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
     }
 }

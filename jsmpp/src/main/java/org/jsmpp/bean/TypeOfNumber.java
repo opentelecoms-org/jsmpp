@@ -35,7 +35,7 @@ public enum TypeOfNumber {
 	
 	private byte value;
     
-	private TypeOfNumber(byte value) {
+	TypeOfNumber(byte value) {
 		this.value = value;
 	}
 	

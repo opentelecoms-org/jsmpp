@@ -23,12 +23,20 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
  * @author pmoerenhout
  */
 public class RelativeTimeFormatterTest {
+
+  private RelativeTimeFormatter relativeTimeFormatter;
+
+  @BeforeMethod
+  public void setUp() throws Exception {
+    relativeTimeFormatter = new RelativeTimeFormatter();
+  }
 
   @Test(groups = "checkintest")
   public void testStaticRelativeFormatter() {
@@ -38,9 +46,8 @@ public class RelativeTimeFormatterTest {
 
   @Test(groups = "checkintest")
   public void formatNullDate() {
-    TimeFormatter timeFormatter = new RelativeTimeFormatter();
-    assertNull(timeFormatter.format((Date) null));
-    assertNull(timeFormatter.format((Calendar) null));
+    assertNull(relativeTimeFormatter.format((Date) null));
+    assertNull(relativeTimeFormatter.format((Calendar) null));
   }
 
   @Test(groups = "checkintest")
@@ -53,20 +60,16 @@ public class RelativeTimeFormatterTest {
 
   @Test(groups = "checkintest", expectedExceptions = IllegalArgumentException.class)
   public void formatRelativeDateWhenAlreadyPast() {
-    RelativeTimeFormatter timeFormatter = new RelativeTimeFormatter();
-
     // date in the past
     GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("Europe/Berlin"));
     date.set(1998, Calendar.MARCH, 1, 13, 46, 59);
 
-    timeFormatter.format(date);
+    relativeTimeFormatter.format(date);
     fail("Expected IllegalArgumentException not thrown");
   }
 
   @Test(groups = "checkintest")
   public void formatRelativeDateIgnoreMilliSeconds() {
-    RelativeTimeFormatter timeFormatter = new RelativeTimeFormatter();
-
     // Set the SMSC date to some future datetime
     GregorianCalendar smscDate = new GregorianCalendar(TimeZone.getTimeZone("Europe/Berlin"));
     smscDate.set(Calendar.YEAR, 2080);
@@ -82,7 +85,7 @@ public class RelativeTimeFormatterTest {
     // Tenth of seconds should be ignored
     date.set(Calendar.MILLISECOND, 800);
 
-    assertEquals(timeFormatter.format(date, smscDate), "000000000000000R");
+    assertEquals(relativeTimeFormatter.format(date, smscDate), "000000000000000R");
   }
 
   @Test(groups = "checkintest", expectedExceptions = IllegalArgumentException.class)
@@ -99,83 +102,75 @@ public class RelativeTimeFormatterTest {
 
   @Test(groups = "checkintest")
   public void formatRelativeDateSame() {
-    RelativeTimeFormatter timeFormatter = new RelativeTimeFormatter();
-
     GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
-    assertEquals(timeFormatter.format(date, date), "000000000000000R");
+    assertEquals(relativeTimeFormatter.format(date, date), "000000000000000R");
   }
 
   @Test(groups = "checkintest")
   public void formatRelativeDateDifferentTimeZone() {
-    RelativeTimeFormatter timeFormatter = new RelativeTimeFormatter();
     GregorianCalendar smscDate = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
     smscDate.set(2014, Calendar.JANUARY, 2, 23, 15, 16);
     GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("America/Los_Angeles"));
     date.set(2014, Calendar.JANUARY, 2, 23, 15, 16);
-    assertEquals(timeFormatter.format(date, smscDate), "000000010000000R");
+    assertEquals(relativeTimeFormatter.format(date, smscDate), "000000010000000R");
   }
 
   @Test(groups = "checkintest")
   public void formatRelativeDateMonthFebruary() {
     // for Java 8, the relative time could be calculated better
-    RelativeTimeFormatter timeFormatter = new RelativeTimeFormatter();
     GregorianCalendar smscDate = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Midway"));
     smscDate.set(2015, Calendar.FEBRUARY, 1, 0, 11, 22);
 
     GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("Pacific/Midway"));
     date.setTimeInMillis(smscDate.getTimeInMillis());
     date.add(Calendar.MONTH, 1);
-    assertEquals(timeFormatter.format(date, smscDate), "000028000000000R");
+    assertEquals(relativeTimeFormatter.format(date, smscDate), "000028000000000R");
   }
 
   @Test(groups = "checkintest")
   public void formatRelativeDateMonthMay() {
-    RelativeTimeFormatter timeFormatter = new RelativeTimeFormatter();
     GregorianCalendar smscDate = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
     smscDate.set(2015, Calendar.MAY, 1, 13, 14, 15);
 
     GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
     date.setTimeInMillis(smscDate.getTimeInMillis());
     date.add(Calendar.MONTH, 1);
-    assertEquals(timeFormatter.format(date, smscDate), "000100000000000R");
+    assertEquals(relativeTimeFormatter.format(date, smscDate), "000100000000000R");
   }
 
   @Test(groups = "checkintest")
   public void formatRelativeDateWeek() {
-    RelativeTimeFormatter timeFormatter = new RelativeTimeFormatter();
     GregorianCalendar smscDate = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
+    smscDate.set(2016, Calendar.FEBRUARY, 15, 16, 17, 18);
 
     GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
     date.setTimeInMillis(smscDate.getTimeInMillis());
     date.add(Calendar.DAY_OF_MONTH, 7);
-    assertEquals(timeFormatter.format(date, smscDate), "000007000000000R");
+    assertEquals(relativeTimeFormatter.format(date, smscDate), "000007000000000R");
   }
 
   @Test(groups = "checkintest")
   public void formatRelativeTimeSecond() {
-    RelativeTimeFormatter timeFormatter = new RelativeTimeFormatter();
     GregorianCalendar smscDate = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
 
     GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
     date.setTimeInMillis(smscDate.getTimeInMillis());
     date.add(Calendar.SECOND, 1);
-    assertEquals(timeFormatter.format(date, smscDate), "000000000001000R");
+    assertEquals(relativeTimeFormatter.format(date, smscDate), "000000000001000R");
   }
 
   @Test(groups = "checkintest")
   public void formatRelativeTimeHours() {
-    RelativeTimeFormatter timeFormatter = new RelativeTimeFormatter();
     GregorianCalendar smscDate = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
 
     GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
     date.setTimeInMillis(smscDate.getTimeInMillis());
     date.add(Calendar.HOUR_OF_DAY, 16);
-    assertEquals(timeFormatter.format(date, smscDate), "000000160000000R");
+    assertEquals(relativeTimeFormatter.format(date, smscDate), "000000160000000R");
   }
 
   @Test(groups = "checkintest")
   public void formatRelativeTimeMonth() {
-    RelativeTimeFormatter timeFormatter = new RelativeTimeFormatter();
     GregorianCalendar smscDate = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
     smscDate.set(2001, Calendar.JANUARY, 31, 14, 15, 16);
 
@@ -184,19 +179,18 @@ public class RelativeTimeFormatterTest {
     date.add(Calendar.MONTH, 1);
     // when using Joda-Time or Java 8 Period class
     //assertEquals(timeFormatter.format(date), "000100000000000R");
-    assertEquals(timeFormatter.format(date, smscDate), "000028000000000R");
+    assertEquals(relativeTimeFormatter.format(date, smscDate), "000028000000000R");
   }
 
   @Test(groups = "checkintest")
   public void formatRelativeDateNewYear() {
-    RelativeTimeFormatter timeFormatter = new RelativeTimeFormatter();
     GregorianCalendar smscDate = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
     smscDate.set(2001, Calendar.DECEMBER, 31, 23, 59, 59);
 
     GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("Europe/Berlin"));
     date.setTimeInMillis(smscDate.getTimeInMillis());
     date.add(Calendar.SECOND, 2);
-    assertEquals(timeFormatter.format(date, smscDate), "000000000002000R");
+    assertEquals(relativeTimeFormatter.format(date, smscDate), "000000000002000R");
   }
 
 }

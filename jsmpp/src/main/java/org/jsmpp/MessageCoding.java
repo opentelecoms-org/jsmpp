@@ -15,7 +15,7 @@
 package org.jsmpp;
 
 /**
- * This is an enum const that specifies the message coding (see smpp spesification).
+ * This is an enum const that specifies the message coding (see SMPP specification).
  * 
  * @author uudashr
  * @version 1.0
@@ -23,10 +23,10 @@ package org.jsmpp;
  *
  */
 public enum MessageCoding {
-	/**
-	 * Coding 7-bit.
-	 */
-	CODING_7_BIT,
+    /**
+     * Coding 7-bit.
+     */
+    CODING_7_BIT,
     
     /**
      * Coding 8-bit.

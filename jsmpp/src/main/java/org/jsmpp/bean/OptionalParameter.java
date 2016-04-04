@@ -38,7 +38,7 @@ public abstract class OptionalParameter {
 
     /** Convert the optional parameter into a byte serialized form conforming to the SMPP specification.
      * 
-     * @return A byte array according to SMPP specification
+     * @return A byte array according to the SMPP specification
      */
     public byte[] serialize() {
         byte[] value = serializeValue();
@@ -50,7 +50,7 @@ public abstract class OptionalParameter {
     }
 
     /** This method should serialize the value part of the optional parameter. The format of the value is dependent
-     * on the specific optional parameter type so it is abstract and must be implmented by subclasses.
+     * on the specific optional parameter type so it is abstract and must be implemented by subclasses.
      * @return
      */
     protected abstract byte[] serializeValue();
@@ -277,7 +277,7 @@ public abstract class OptionalParameter {
 
 		@Override
 		public String getValueAsString() {
-			byte[] s = new byte[(value.length > 0 ? value.length - 1 : 0)];
+			byte[] s = new byte[value.length > 0 ? value.length - 1 : 0];
 			System.arraycopy(value, 0, s, 0, s.length);
 			return new String(s);
 		}
@@ -288,7 +288,7 @@ public abstract class OptionalParameter {
      * Represents valid values for the optional parameters dest_addr_subunit and source_addr_subunit.
      *
      */
-	public static enum Addr_subunit{
+	public enum Addr_subunit{
 		/**
 		 * 0x00 = Unknown (default)
 		 */
@@ -372,7 +372,7 @@ public abstract class OptionalParameter {
 	 * Represents valid values for the optional parameters dest_network_type and source_network_type.
 	 *
 	 */
-	public static enum Network_type {
+	public enum Network_type {
 		UNKNOWN(0x00),
 		GSM(0x01),
 		ANSI_136_TDMA(0x02),
@@ -443,7 +443,7 @@ public abstract class OptionalParameter {
 	 * Represents valid values for the optional parameters dest_bearer_type and source_bearer_type.
 	 *
 	 */
-	public static enum Bearer_type {
+	public enum Bearer_type {
 		UNKNOWN(0x00),
 		SMS(0x01),
 		CIRCUIT_SWITCHED_DATA(0x02),
@@ -862,7 +862,7 @@ public abstract class OptionalParameter {
 		}
 		
 		public String toString() {
-			String endString = (isIndicatorActive() ? "active" : "inactive");
+			String endString = isIndicatorActive() ? "active" : "inactive";
 			return getMessageType().toString() + " set as " + endString;
 		}
 	}
@@ -1509,7 +1509,7 @@ public abstract class OptionalParameter {
 		}
 		
 		public boolean getDpfResult() {
-			return (value == 1);
+			return value == 1;
 		}
 	}
 	
@@ -1547,7 +1547,7 @@ public abstract class OptionalParameter {
 		}
 		
 		public boolean isDpfSet() {
-			return (value == 1);
+			return value == 1;
 		}
 	}
 	
@@ -1729,7 +1729,7 @@ public abstract class OptionalParameter {
 	 */
 	public static class Message_payload extends OptionalParameter.OctetString {
 
-		public Message_payload(byte value[]) {
+		public Message_payload(byte[] value) {
 			super(Tag.MESSAGE_PAYLOAD.code(), value);
 		}
 	}
@@ -1970,7 +1970,7 @@ public abstract class OptionalParameter {
 	 *
 	 */
 	public static class Billing_identification extends OptionalParameter.OctetString {
-		public Billing_identification(byte value[]) {
+		public Billing_identification(byte[] value) {
 			super(Tag.BILLING_IDENTIFICATION.code, value);
 		}
 
@@ -2138,7 +2138,7 @@ public abstract class OptionalParameter {
 	 */
 	public static class Vendor_specific_source_msc_addr extends OptionalParameter.Vendor_specific_msc_addr {
 		
-		public Vendor_specific_source_msc_addr(byte value[]) {
+		public Vendor_specific_source_msc_addr(byte[] value) {
 			super(Tag.VENDOR_SPECIFIC_SOURCE_MSC_ADDR.code, value);
 		}
 	}
@@ -2152,7 +2152,7 @@ public abstract class OptionalParameter {
 	 */
 	public static class Vendor_specific_dest_msc_addr extends OptionalParameter.Vendor_specific_msc_addr {
 		
-		public Vendor_specific_dest_msc_addr(byte value[]) {
+		public Vendor_specific_dest_msc_addr(byte[] value) {
 			super(Tag.VENDOR_SPECIFIC_DEST_MSC_ADDR.code, value);
 		}
 	}
@@ -2160,7 +2160,7 @@ public abstract class OptionalParameter {
 	private static class Vendor_specific_msc_addr extends OptionalParameter.OctetString {
 		String address;
 		
-		private Vendor_specific_msc_addr(short tag, byte value[]) {
+		private Vendor_specific_msc_addr(short tag, byte[] value) {
 			super(tag, value);
 			try {
         if (value.length >= 2) {

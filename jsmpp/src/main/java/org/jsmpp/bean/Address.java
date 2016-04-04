@@ -14,9 +14,6 @@
  */
 package org.jsmpp.bean;
 
-
-
-
 /**
  * This are SME (Short Message Entity) Address.
  * 
@@ -40,7 +37,8 @@ public class Address implements DestinationAddress {
                 NumberingPlanIndicator.valueOf(numberingPlanIndicator), 
                 address);
     }
-    
+
+    @Override
     public Flag getFlag() {
         return Flag.SME_ADDRESS;
     }

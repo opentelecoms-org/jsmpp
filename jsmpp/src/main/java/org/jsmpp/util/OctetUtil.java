@@ -23,6 +23,11 @@ package org.jsmpp.util;
  * 
  */
 public class OctetUtil {
+
+    private OctetUtil() {
+        throw new InstantiationError("This class must not be instantiated");
+    }
+
     /**
      * Convert integer (4 octets) value to bytes.
      * 
@@ -72,7 +77,7 @@ public class OctetUtil {
         // 
         int result = 0x00000000;
 
-        int length = 0;
+        int length;
         if (bytes.length - offset < 4) // maximum byte size for int data type
                                         // is 4
             length = bytes.length - offset;
@@ -81,7 +86,6 @@ public class OctetUtil {
 
         int end = offset + length;
         for (int i = 0; i < length; i++) {
-            // result |= bytes[end - i - 1] << (8 * i);
             result |= (bytes[end - i - 1] & 0xff) << (8 * i); // TODO uudashr: CHECK FOR IMPROVEMENT
         }
         return result;

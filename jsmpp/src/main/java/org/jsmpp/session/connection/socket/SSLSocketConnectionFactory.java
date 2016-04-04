@@ -15,28 +15,30 @@
 package org.jsmpp.session.connection.socket;
 
 import java.io.IOException;
-import java.net.Socket;
+
+import javax.net.SocketFactory;
+import javax.net.ssl.SSLSocketFactory;
 
 import org.jsmpp.session.connection.Connection;
 import org.jsmpp.session.connection.ConnectionFactory;
 
 /**
- * @author uudashr
- *
+ * @author pmoerenhout
  */
-public class SocketConnectionFactory implements ConnectionFactory {
-    private static final SocketConnectionFactory connFactory = new SocketConnectionFactory();
-    
-    private SocketConnectionFactory() {
-    }
-    
-    public static SocketConnectionFactory getInstance() {
-        return connFactory;
-    }
+public class SSLSocketConnectionFactory implements ConnectionFactory {
+  private static final SSLSocketConnectionFactory connFactory = new SSLSocketConnectionFactory();
+  private static final SocketFactory socketFactory = SSLSocketFactory.getDefault();
 
-    @Override
-    public Connection createConnection(String host, int port)
-            throws IOException {
-        return new SocketConnection(new Socket(host, port));
-    }
+  private SSLSocketConnectionFactory() {
+  }
+
+  public static SSLSocketConnectionFactory getInstance() {
+    return connFactory;
+  }
+
+  @Override
+  public Connection createConnection(String host, int port)
+      throws IOException {
+    return new SocketConnection(socketFactory.createSocket(host, port));
+  }
 }

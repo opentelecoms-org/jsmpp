@@ -250,7 +250,6 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setDataCoding(reader.readByte());
         req.setSmDefaultMsgId(reader.readByte());
         byte smLength = reader.readByte();
-        // req.setShortMessage(reader.readString(req.getSmLength()));
         req.setShortMessage(reader.readBytes(smLength));
         StringValidator.validateString(req.getShortMessage(),
                 StringParameter.SHORT_MESSAGE);
@@ -615,7 +614,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         return req;
     }
     
-    private OptionalParameter[] readOptionalParameters(
+    private static OptionalParameter[] readOptionalParameters(
             SequentialBytesReader reader) {
         if (!reader.hasMoreBytes())
             return null;

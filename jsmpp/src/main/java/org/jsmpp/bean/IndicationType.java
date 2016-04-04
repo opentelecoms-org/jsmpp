@@ -17,7 +17,7 @@ public enum IndicationType {
     
     private final byte value;
     
-    private IndicationType(byte value) {
+    IndicationType(byte value) {
         this.value = value;
     }
     

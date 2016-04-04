@@ -14,21 +14,21 @@
  */
 package org.jsmpp.bean;
 
-import org.jsmpp.util.HexUtil;
-import org.jsmpp.util.OctetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LongSMS {
     private static final Logger logger = LoggerFactory.getLogger(LongSMS.class);
     
-    private final static int MAX_MESSAGE_7BIT = 160;
-    private final static int MAX_MESSAGE_8BIT = 140;
     private final static int MAX_MESSAGE_SEGMENT_8BIT = 133; // 140-7
     private final static int MAX_MESSAGE_SEGMENT_7BIT = 152;
     private final static byte UDHIE_IDENTIFIER_SAR = 0x08;
     private final static byte UDHIE_SAR_LENGTH = 0x04;
     private static int referenceNumber = 0;
+
+    private LongSMS() {
+        throw new InstantiationError("This class must not be instantiated");
+    }
 
     private static synchronized int getReferenceNumber() {
         referenceNumber++;
@@ -90,7 +90,6 @@ public class LongSMS {
         }
 
         return segments;
-
     }
 
     private static byte[][] splitMessage7Bit(byte[] aMessage) {
@@ -163,26 +162,5 @@ public class LongSMS {
         System.arraycopy(tempBytes, 0, bytes, 0, j);
 
         return bytes;
-    }
-
-    private static byte[][] smsg(byte[] data) {
-        return null;
-    }
-
-    public static void main(String[] args) {
-        String hexMessage = "5465737420736D732067617465776179206C6F6E6720736D73732C205465737420736D732067617465776179206C6F6E6720736D73732C205465737420736D732067617465776179206C6F6E6720736D73732C205465737420736D732067617465776179206C6F6E6720736D73732C205465737420736D732067617465776179206C6F6E6720736D73732C205465737420736D732067617465776179206C6F6E6720736D73732C205465737420736D732067617465776179206C6F6E6720736D73732C205465737420736D732067617465776179206C6F6E6720736D73732C205465737420736D732067617465776179206C6F6E6720736D73732C205465737420736D732067617465776179206C6F6E6720736D73732020";
-        String message = "Test sms gateway long smss, Test sms gateway long smss, Test sms gateway long smss, Test sms gateway long smss, Test sms gateway long smss, Test sms gateway long smss, Test sms gateway long smss, Test sms gateway long smss, Test sms gateway long smss, Test sms gatew";
-
-        byte[][] splittedMsg = splitMessage8Bit(message.getBytes());
-        for (int i = 0; i < splittedMsg.length; i++) {
-            logger.debug("splittedMsg[i].length = " + splittedMsg[i].length);
-            logger.debug(new String(splittedMsg[i]));
-            logger.debug("sar_msg_refnum tag: "
-                    + HexUtil.convertBytesToHexString(splittedMsg[i], 0, 2));
-            logger.debug("sar_msg_refnum length: "
-                    + OctetUtil.bytesToShort(splittedMsg[i], 2));
-            logger.debug("sar_msg_refnum value: "
-                    + OctetUtil.bytesToShort(splittedMsg[i], 4));
-        }
     }
 }

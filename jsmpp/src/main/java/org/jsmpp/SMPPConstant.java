@@ -343,7 +343,7 @@ public interface SMPPConstant {
 
     public static final short TAG_SC_INTERFACE_VERSION = 0x0210;
     public static final short TAG_SAR_MSG_REF_NUM = 0X020C;
-    public static final short TAG_SAR_TOTAl_SEGMENTS = 0x020e;
+    public static final short TAG_SAR_TOTAL_SEGMENTS = 0x020e;
     public static final short TAG_SAR_SEGMENT_SEQNUM = 0x020f;
 
     /*

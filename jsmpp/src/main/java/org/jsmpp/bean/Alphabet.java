@@ -127,7 +127,7 @@ public enum Alphabet {
      * 
      * @param value is the alphabet value.
      */
-    private Alphabet(byte value, boolean valid, boolean unspecified) {
+    Alphabet(byte value, boolean valid, boolean unspecified) {
         this.value = value;
         this.valid = valid;
         this.unspecified = unspecified;

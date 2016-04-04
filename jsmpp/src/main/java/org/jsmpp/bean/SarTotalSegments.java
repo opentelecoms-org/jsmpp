@@ -32,7 +32,7 @@ public class SarTotalSegments {
     }
 
     public short getTag() {
-        return SMPPConstant.TAG_SAR_TOTAl_SEGMENTS;
+        return SMPPConstant.TAG_SAR_TOTAL_SEGMENTS;
     }
 
     public short getLength() {
@@ -45,9 +45,7 @@ public class SarTotalSegments {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        return result;
+        return 1;
     }
 
     @Override

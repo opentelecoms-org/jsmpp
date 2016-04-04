@@ -25,7 +25,8 @@ public class DistributionList implements DestinationAddress {
     public DistributionList(String name) {
         this.name = name;
     }
-    
+
+    @Override
     public Flag getFlag() {
         return Flag.DISTRIBUTION_LIST;
     }

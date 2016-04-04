@@ -64,7 +64,7 @@ public enum MessageState {
 
     private final byte value;
 
-    private MessageState(byte value) {
+    MessageState(byte value) {
         this.value = value;
     }
 

@@ -102,7 +102,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
             SMPPServerSession source) throws ProcessRequestException {
         MessageId messageId = messageIDGenerator.newMessageId();
         logger.debug("Receiving submit_sm '{}', and return message id {}", new String(submitSm.getShortMessage()), messageId);
-        if (SMSCDeliveryReceipt.SUCCESS.containedIn(submitSm.getRegisteredDelivery()) || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitSm.getRegisteredDelivery())) {
+        if (SMSCDeliveryReceipt.FAILURE.containedIn(submitSm.getRegisteredDelivery()) || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitSm.getRegisteredDelivery())) {
             execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitSm, messageId));
         }
         return messageId;
@@ -119,7 +119,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
         logger.debug("Receiving submit_multi_sm '{}', and return message id {}", 
                 new String(submitMulti.getShortMessage()), 
                 messageId);
-        if (SMSCDeliveryReceipt.SUCCESS.containedIn(submitMulti.getRegisteredDelivery())
+        if (SMSCDeliveryReceipt.FAILURE.containedIn(submitMulti.getRegisteredDelivery())
                 || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitMulti.getRegisteredDelivery())) {
             execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitMulti, messageId));
         }

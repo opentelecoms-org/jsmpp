@@ -31,6 +31,11 @@ import org.slf4j.LoggerFactory;
 public class OptionalParameters {
 
     private static final Logger logger = LoggerFactory.getLogger(OptionalParameters.class);
+
+    private OptionalParameters() {
+        throw new InstantiationError("This class must not be instantiated");
+    }
+
     /**
      * Create SAR_MESSAGE_REF_NUM TLV instance.
      *
