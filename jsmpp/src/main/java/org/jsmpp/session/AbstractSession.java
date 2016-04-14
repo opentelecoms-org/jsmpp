@@ -51,42 +51,42 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractSession implements Session {
     private static final Logger logger = LoggerFactory.getLogger(AbstractSession.class);
     private static final Random random = new Random();
-    
+
     private final Map<Integer, PendingResponse<Command>> pendingResponse = new ConcurrentHashMap<Integer, PendingResponse<Command>>();
     private final Sequence sequence = new Sequence(1);
     private final PDUSender pduSender;
     private int pduProcessorDegree = 3;
-    
+
     private String sessionId = generateSessionId();
     private int enquireLinkTimer = 5000;
     private long transactionTimer = 2000;
-    
+
     protected EnquireLinkSender enquireLinkSender;
-    
+
     public AbstractSession(PDUSender pduSender) {
         this.pduSender = pduSender;
     }
-    
+
     protected abstract AbstractSessionContext sessionContext();
     protected abstract Connection connection();
     protected abstract GenericMessageReceiverListener messageReceiverListener();
-    
+
     protected PDUSender pduSender() {
         return pduSender;
     }
-    
+
     protected Sequence sequence() {
         return sequence;
     }
-    
+
     protected PendingResponse<Command> removePendingResponse(int sequenceNumber) {
         return pendingResponse.remove(sequenceNumber);
     }
-    
+
     public String getSessionId() {
         return sessionId;
     }
-    
+
     public void setEnquireLinkTimer(int enquireLinkTimer) {
         if (sessionContext().getSessionState().isBound()) {
             try {
@@ -97,45 +97,45 @@ public abstract class AbstractSession implements Session {
         }
         this.enquireLinkTimer = enquireLinkTimer;
     }
-    
+
     public int getEnquireLinkTimer() {
         return enquireLinkTimer;
     }
-    
+
     public void setTransactionTimer(long transactionTimer) {
         this.transactionTimer = transactionTimer;
     }
-    
+
     public long getTransactionTimer() {
         return transactionTimer;
     }
-    
+
     public SessionState getSessionState() {
         return sessionContext().getSessionState();
     }
-    
+
     protected synchronized boolean isReadPdu() {
 		    return getSessionState().isBound() || getSessionState().equals(SessionState.OPEN);
 	  }
-    
+
     public void addSessionStateListener(SessionStateListener listener) {
         if (listener != null) {
             sessionContext().addSessionStateListener(listener);
         }
     }
-    
+
     public void removeSessionStateListener(SessionStateListener listener) {
         sessionContext().removeSessionStateListener(listener);
     }
-    
+
     public long getLastActivityTimestamp() {
         return sessionContext().getLastActivityTimestamp();
     }
-    
+
     /**
      * Set total thread can read PDU and process it in parallel. It's defaulted to
      * 3.
-     * 
+     *
      * @param pduProcessorDegree is the total thread can handle read and process
      *        PDU in parallel.
      * @throws IllegalStateException if the PDU Reader has been started.
@@ -143,24 +143,24 @@ public abstract class AbstractSession implements Session {
     public void setPduProcessorDegree(int pduProcessorDegree) throws IllegalStateException {
         if (!getSessionState().equals(SessionState.CLOSED)) {
             throw new IllegalStateException(
-                    "Cannot set PDU processor degree since the PDU dispatcher thread already created.");
+                    "Cannot set PDU processor degree since the PDU dispatcher thread already created");
         }
         this.pduProcessorDegree = pduProcessorDegree;
     }
-    
+
     /**
      * Get the total of thread that can handle read and process PDU in parallel.
-     * 
+     *
      * @return the total of thread that can handle read and process PDU in
      *         parallel.
      */
     public int getPduProcessorDegree() {
         return pduProcessorDegree;
     }
-    
+
     /**
      * Send the data_sm command.
-     * 
+     *
      * @param serviceType is the service_type parameter.
      * @param sourceAddrTon is the source_addr_ton parameter.
      * @param sourceAddrNpi is the source_addr_npi parameter.
@@ -187,20 +187,20 @@ public abstract class AbstractSession implements Session {
             DataCoding dataCoding, OptionalParameter... optionalParameters)
             throws PDUException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException {
-        
-        
+
+
         DataSmCommandTask task = new DataSmCommandTask(pduSender,
                 serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr,
                 destAddrTon, destAddrNpi, destinationAddr, esmClass,
                 registeredDelivery, dataCoding, optionalParameters);
-        
+
         DataSmResp resp = (DataSmResp)executeSendCommand(task, getTransactionTimer());
-        
+
         return new DataSmResult(resp.getMessageId(), resp.getOptionalParameters());
     }
-    
+
     public void close() {
-        logger.debug("AbstractSession.close() called");
+        logger.debug("Close session {}", sessionId);
         SessionContext ctx = sessionContext();
         if (!ctx.getSessionState().equals(SessionState.CLOSED)) {
             ctx.close();
@@ -212,24 +212,25 @@ public abstract class AbstractSession implements Session {
 
         // Make sure the enquireLinkThread doesn't wait for itself
         if (Thread.currentThread() != enquireLinkSender) {
+            logger.info("Closing enquireLinkSender for session {}", enquireLinkSender, sessionId);
             if (enquireLinkSender != null) {
                 while(enquireLinkSender.isAlive()) {
                     try {
                         enquireLinkSender.join();
                     } catch (InterruptedException e) {
-                        logger.warn("interrupted while waiting for enquireLinkSender thread to exit");
+                        logger.warn("Interrupted while waiting for enquireLinkSender thread to exit");
                     }
                 }
             }
         }
 
-        logger.debug("AbstractSession.close() done");
+        logger.debug("Session {} is closed and eenquireLinkSender stopped", sessionId);
     }
 
     /**
      * Validate the response, the command_status should be 0 otherwise will
      * throw {@link NegativeResponseException}.
-     * 
+     *
      * @param response is the response.
      * @throws NegativeResponseException if the command_status value is not zero.
      */
@@ -238,7 +239,7 @@ public abstract class AbstractSession implements Session {
             throw new NegativeResponseException(response.getCommandStatus());
         }
     }
-    
+
     protected DataSmResult fireAcceptDataSm(final DataSm dataSm) throws ProcessRequestException {
         GenericMessageReceiverListener messageReceiverListener = messageReceiverListener();
         if (messageReceiverListener != null) {
@@ -247,10 +248,10 @@ public abstract class AbstractSession implements Session {
             throw new ProcessRequestException("MessageReceiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
         }
     }
-    
+
     /**
      * Execute send command command task.
-     * 
+     *
      * @param task is the task.
      * @param timeout is the timeout in millisecond.
      * @return the command response.
@@ -263,7 +264,7 @@ public abstract class AbstractSession implements Session {
     protected Command executeSendCommand(SendCommandTask task, long timeout)
             throws PDUException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException {
-        
+
         int seqNum = sequence.nextValue();
         PendingResponse<Command> pendingResp = new PendingResponse<Command>(timeout);
         pendingResponse.put(seqNum, pendingResp);
@@ -271,7 +272,7 @@ public abstract class AbstractSession implements Session {
             task.executeTask(connection().getOutputStream(), seqNum);
         } catch (IOException e) {
             logger.error("Failed sending " + task.getCommandName() + " command", e);
-          
+
             if(task.getCommandName().equals("enquire_link")) {
                 logger.info("Tomas: Ignore failure of sending enquire_link, wait to see if connection is restored");
             } else {
@@ -280,10 +281,10 @@ public abstract class AbstractSession implements Session {
                 throw e;
             }
         }
-        
+
         try {
             pendingResp.waitDone();
-            logger.debug("{} response received", task.getCommandName());
+            logger.debug("{} response received for session {}", task.getCommandName(), sessionId);
         } catch (ResponseTimeoutException e) {
             pendingResponse.remove(seqNum);
             throw new ResponseTimeoutException("No response after waiting for "
@@ -294,20 +295,20 @@ public abstract class AbstractSession implements Session {
             pendingResponse.remove(seqNum);
             throw e;
         }
-        
+
         Command resp = pendingResp.getResponse();
         validateResponse(resp);
         return resp;
-        
+
     }
-    
+
     private synchronized static final String generateSessionId() {
         return IntUtil.toHexString(random.nextInt());
     }
-    
+
     /**
      * Ensure we have proper link.
-     * 
+     *
      * @throws ResponseTimeoutException if there is no valid response after defined millisecond.
      * @throws InvalidResponseException if there is invalid response found.
      * @throws IOException if there is an IO error found.
@@ -324,15 +325,15 @@ public abstract class AbstractSession implements Session {
             logger.warn("command_status of response should be always 0", e);
         }
     }
-    
-    private void unbind() throws ResponseTimeoutException,
+
+    public void unbind() throws ResponseTimeoutException,
             InvalidResponseException, IOException {
         if (sessionContext().getSessionState().equals(SessionState.CLOSED)) {
-            throw new IOException("Session is closed");
+            throw new IOException("Session " + sessionId + " is closed");
         }
-        
+
         UnbindCommandTask task = new UnbindCommandTask(pduSender);
-        
+
         try {
             executeSendCommand(task, transactionTimer);
         } catch (PDUException e) {
@@ -342,12 +343,11 @@ public abstract class AbstractSession implements Session {
             // ignore the negative response
             logger.warn("Receive non-ok command_status ({}) for unbind_resp", e.getCommandStatus());
         }
-        
-    }
-    
-    public void unbindAndClose() {
 
-        logger.debug("unbindAndClose() called");
+    }
+
+    public void unbindAndClose() {
+        logger.debug("Unbind and close sesssion {}", sessionId);
         if (sessionContext().getSessionState().isBound()) {
             try {
                 unbind();
@@ -365,7 +365,7 @@ public abstract class AbstractSession implements Session {
     /**
      * Ensure the session is receivable. If the session not receivable then an
      * exception thrown.
-     * 
+     *
      * @param activityName is the activity name.
      * @throws IOException if the session not receivable.
      */
@@ -373,14 +373,14 @@ public abstract class AbstractSession implements Session {
         // TODO uudashr: do we have to use another exception for this checking?
         SessionState currentState = getSessionState();
         if (!currentState.isReceivable()) {
-            throw new IOException("Cannot " + activityName + " while in state " + currentState);
+            throw new IOException("Cannot " + activityName + " while session " + sessionId + " in state " + currentState);
         }
     }
 
     /**
      * Ensure the session is transmittable. If the session not transmittable
      * then an exception thrown.
-     * 
+     *
      * @param activityName is the activity name.
      * @throws IOException if the session not transmittable.
      */
@@ -391,7 +391,7 @@ public abstract class AbstractSession implements Session {
     /**
      * Ensure the session is transmittable. If the session not transmittable
      * then an exception thrown.
-     * 
+     *
      * @param activityName is the activity name.
      * @param only set to <tt>true</tt> if you want to ensure transmittable only
      *        (transceive will not pass), otherwise set to <tt>false</tt>.
@@ -402,21 +402,21 @@ public abstract class AbstractSession implements Session {
         // TODO uudashr: do we have to use another exception for this checking?
         SessionState currentState = getSessionState();
         if (!currentState.isTransmittable() || (only && currentState.isReceivable())) {
-            throw new IOException("Cannot " + activityName + " while in state " + currentState);
+            throw new IOException("Cannot " + activityName + " while session " + sessionId + " in state " + currentState);
         }
     }
-    
+
 	protected class EnquireLinkSender extends Thread {
         private final AtomicBoolean sendingEnquireLink = new AtomicBoolean(false);
-        
+
         public EnquireLinkSender()
         {
         	super("EnquireLinkSender: " + AbstractSession.this);
         }
-        
+
         @Override
         public void run() {
-            logger.info("Starting EnquireLinkSender");
+            logger.info("Starting EnquireLinkSender for session {}", sessionId);
             while (isReadPdu()) {
                 while (!sendingEnquireLink.compareAndSet(true, false) && isReadPdu()) {
                     synchronized (sendingEnquireLink) {
@@ -443,9 +443,9 @@ public abstract class AbstractSession implements Session {
                     close();
                 }
             }
-            logger.debug("EnquireLinkSender stop");
+            logger.debug("EnquireLinkSender stopped for session {}", sessionId);
         }
-        
+
         /**
          * This method will send enquire link asynchronously.
          */
@@ -459,5 +459,4 @@ public abstract class AbstractSession implements Session {
             }
         }
     }
-    
 }
