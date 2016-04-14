@@ -296,7 +296,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	    BindResp resp = (BindResp)executeSendCommand(task, timeout);
 	    OptionalParameter.Sc_interface_version scVersion = resp.getOptionalParameter(Sc_interface_version.class);
 	    if(scVersion != null) {
-		    logger.info("Other side reports smpp interface version {}", scVersion);
+		    logger.info("Other side reports SMPP interface version {}", scVersion);
 	    }
         
 		return resp.getSystemId();
@@ -578,7 +578,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		public void run() {
 	        logger.info("Starting PDUReaderWorker");
 			while (isReadPdu()) {
-                readPDU();
+				readPDU();
 			}
 			close();
 			executorService.shutdown();
