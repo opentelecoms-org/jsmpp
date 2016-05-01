@@ -224,7 +224,7 @@ public abstract class AbstractSession implements Session {
             }
         }
 
-        logger.debug("Session {} is closed and eenquireLinkSender stopped", sessionId);
+        logger.debug("Session {} is closed and enquireLinkSender stopped", sessionId);
     }
 
     /**
