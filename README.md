@@ -1,4 +1,3 @@
-
 Introduction
 ------------
 
@@ -34,7 +33,7 @@ Release procedure
   mvn deploy -DperformRelease=true -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging
 
   * log in here: https://oss.sonatype.org
-  * click the `Staging Repositories' link
+  * click the 'Staging Repositories' link
   * select the repository and click close
   * select the repository and click release
 
@@ -44,6 +43,6 @@ License
 Copyright (C) 2007-2013, Nuruddin Ashr <uudashr@gmail.com>
 Copyright (C) 2012-2013, Denis Kostousov <denis.kostousov@gmail.com>
 Copyright (C) 2014, Daniel Pocock http://danielpocock.com
+Copyright (C) 2016, Pim Moerenhout <pim.moerenhout@gmail.com>
 
 This project is licensed under the Apache Software License 2.0.
-
