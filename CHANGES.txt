@@ -1,5 +1,17 @@
 Changes:
 
+2.2.4
+- Fixed some logging
+- Add PriorityFlag enum
+- Add SSL connection factory implementation
+- Fixed SMSCDeliveryReceipt.SUCCESS to FAILURE
+- Fix RelativeTimeFormatter test
+- Multiple lexical and code improvements
+
+2.2.3
+- Use StringBuilder instead of StringBuffer
+- Use OctetString for unknown OptionalParameter
+
 2.2.2
 - Fixed some logging
 - Added SMPP 5.0 message states
