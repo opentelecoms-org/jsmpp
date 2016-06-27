@@ -16,7 +16,6 @@ package org.jsmpp.session;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 
 import org.jsmpp.InvalidResponseException;
