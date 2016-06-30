@@ -38,7 +38,8 @@ public enum NumberingPlanIndicator {
 	WAP(SMPPConstant.NPI_WAP);
 	
 	private byte value;
-	private NumberingPlanIndicator(byte value) {
+
+	NumberingPlanIndicator(byte value) {
 		this.value = value;
 	}
 	
