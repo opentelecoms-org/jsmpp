@@ -617,7 +617,7 @@ public class DefaultDecomposer implements PDUDecomposer {
     private static OptionalParameter[] readOptionalParameters(
             SequentialBytesReader reader) {
         if (!reader.hasMoreBytes())
-            return null;
+            return new OptionalParameter[] {};
         List<OptionalParameter> params = new ArrayList<OptionalParameter>();
         while (reader.hasMoreBytes()) {
             short tag = reader.readShort();
