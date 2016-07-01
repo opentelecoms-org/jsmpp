@@ -224,21 +224,21 @@ public class DeliveryReceipt {
          * date:YYMMDDhhmm stat:DDDDDDD err:E Text: . . . . . . . . .
          */
         StringBuilder stringBuilder = new StringBuilder(120);
-        stringBuilder.append(DELREC_ID + ":" + id);
-        stringBuilder.append(" ");
-        stringBuilder.append(DELREC_SUB + ":" + intToString(submitted, 3));
-        stringBuilder.append(" ");
-        stringBuilder.append(DELREC_DLVRD + ":" + intToString(delivered, 3));
-        stringBuilder.append(" ");
-        stringBuilder.append(DELREC_SUBMIT_DATE + ":" + dateFormat.format(submitDate));
-        stringBuilder.append(" ");
-        stringBuilder.append(DELREC_DONE_DATE + ":" + dateFormat.format(doneDate));
-        stringBuilder.append(" ");
-        stringBuilder.append(DELREC_STAT + ":" + finalStatus);
-        stringBuilder.append(" ");
-        stringBuilder.append(DELREC_ERR + ":" + error);
-        stringBuilder.append(" ");
-        stringBuilder.append(DELREC_TEXT.toLowerCase() + ":" + text);
+        stringBuilder.append(DELREC_ID + ":" + id)
+                     .append(" ")
+                     .append(DELREC_SUB + ":" + intToString(submitted, 3))
+                     .append(" ")
+                     .append(DELREC_DLVRD + ":" + intToString(delivered, 3))
+                     .append(" ")
+                     .append(DELREC_SUBMIT_DATE + ":" + dateFormat.format(submitDate))
+                     .append(" ")
+                     .append(DELREC_DONE_DATE + ":" + dateFormat.format(doneDate))
+                     .append(" ")
+                     .append(DELREC_STAT + ":" + finalStatus)
+                     .append(" ")
+                     .append(DELREC_ERR + ":" + error)
+                     .append(" ")
+                     .append(DELREC_TEXT.toLowerCase() + ":" + text);
         return stringBuilder.toString();
     }
 
