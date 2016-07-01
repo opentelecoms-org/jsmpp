@@ -565,6 +565,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		// start with serial execution of pdu processing, when the session is bound the pool will be enlarge up to the PduProcessorDegree
 	    private ExecutorService executorService = Executors.newFixedThreadPool(1); 
 	    private Runnable onIOExceptionTask = new Runnable() {
+		    @Override
 		    public void run() {
 		        close();
 		    };
