@@ -585,6 +585,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			try {
 				executorService.awaitTermination(getTransactionTimer(), TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
 				logger.warn("interrupted while waiting for executor service pool to finish");
 			}
 			logger.info("PDUReaderWorker stop");

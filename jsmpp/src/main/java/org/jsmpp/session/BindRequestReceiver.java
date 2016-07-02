@@ -53,7 +53,9 @@ class BindRequestReceiver {
             } else if (request == null) {
                 try {
                     requestCondition.await(timeout, TimeUnit.MILLISECONDS);
-                } catch (InterruptedException e) { }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
             
             if (request != null) {
