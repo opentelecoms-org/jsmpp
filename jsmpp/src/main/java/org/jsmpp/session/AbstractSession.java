@@ -218,6 +218,7 @@ public abstract class AbstractSession implements Session {
                     try {
                         enquireLinkSender.join();
                     } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                         logger.warn("Interrupted while waiting for enquireLinkSender thread to exit");
                     }
                 }
@@ -423,6 +424,7 @@ public abstract class AbstractSession implements Session {
                         try {
                             sendingEnquireLink.wait(500);
                         } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
                         }
                     }
                 }
