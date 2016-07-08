@@ -41,7 +41,29 @@ public interface SMPPServerSessionState extends GenericSMPPSessionState {
      */
     void processBind(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException;
-    
+
+    /**
+     * Process the bind resp command.
+     *
+     * @param pduHeader is the PDU header.
+     * @param pdu is the complete PDU.
+     * @param responseHandler is the response handler.
+     * @throws IOException if there is an IO error occur.
+     */
+    void processBindResp(Command pduHeader, byte[] pdu,
+                         ServerResponseHandler responseHandler) throws IOException;
+
+    /**
+     * Process the outbind request command.
+     *
+     * @param pduHeader is the PDU header.
+     * @param pdu is the complete PDU.
+     * @param responseHandler is the response handler.
+     * @throws IOException if there is an IO error occur.
+     */
+    void processOutbind(Command pduHeader, byte[] pdu,
+                        ServerResponseHandler responseHandler) throws IOException;
+
     /**
      * Process the submit short message request command.
      * 
@@ -75,5 +97,4 @@ public interface SMPPServerSessionState extends GenericSMPPSessionState {
     
     void processReplaceSm(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException;
-    
 }

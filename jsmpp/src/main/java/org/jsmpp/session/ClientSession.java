@@ -239,7 +239,7 @@ public interface ClientSession extends Session {
      * @param timeout is the timeout.
      * @throws IOException if there is an IO error found.
      */
-    public void connectAndBind(String host, int port, BindType bindType,
+    void connectAndBind(String host, int port, BindType bindType,
             String systemId, String password, String systemType,
             TypeOfNumber addrTon, NumberingPlanIndicator addrNpi,
             String addressRange, long timeout) throws IOException;
@@ -253,7 +253,7 @@ public interface ClientSession extends Session {
      * @return the SMSC system id.
      * @throws IOException if there is an IO error found.
      */
-    public String connectAndBind(String host, int port,
+    String connectAndBind(String host, int port,
             BindParameter bindParam) 
             throws IOException;
     
@@ -267,20 +267,75 @@ public interface ClientSession extends Session {
      * @return the SMSC system id.
      * @throws IOException if there is an IO error found.
      */
-    public String connectAndBind(String host, int port,
+    String connectAndBind(String host, int port,
             BindParameter bindParam, long timeout) 
             throws IOException;
-    
+
+    /***************************************************************/
+    /**
+     * Open connection and outbind immediately. The default
+     * timeout is 1 minutes.
+     *
+     * @param host is the SMSC host address.
+     * @param port is the SMSC listen port.
+     * @param systemId is the system id.
+     * @param password is the password.
+     * @throws IOException if there is an IO error found.
+     */
+    BindRequest connectAndOutbind(String host, int port,
+                                         String systemId, String password) throws IOException;
+
+    /**
+     * Open connection and bind immediately with specified timeout. The default
+     * timeout is 1 minutes.
+     *
+     * @param host is the SMSC host address.
+     * @param port is the SMSC listen port.
+     * @param systemId is the system id.
+     * @param password is the password.
+     * @param timeout is the timeout.
+     * @throws IOException if there is an IO error found.
+     */
+    BindRequest connectAndOutbind(String host, int port,
+                                         String systemId, String password, long timeout) throws IOException;
+
+    /**
+     * Open connection and bind immediately.
+     *
+     * @param host is the SMSC host address.
+     * @param port is the SMSC listen port.
+     * @param outbindParam is the outbind parameters.
+     * @return the SMSC system id.
+     * @throws IOException if there is an IO error found.
+     */
+    BindRequest connectAndOutbind(String host, int port,
+                                         OutbindParameter outbindParam)
+        throws IOException;
+
+    /**
+     * Open connection and bind immediately.
+     *
+     * @param host is the SMSC host address.
+     * @param port is the SMSC listen port.
+     * @param outbindParam is the outbind parameters.
+     * @param timeout is the timeout.
+     * @return the SMSC system id.
+     * @throws IOException if there is an IO error found.
+     */
+    BindRequest connectAndOutbind(String host, int port,
+                                         OutbindParameter outbindParam, long timeout)
+        throws IOException;
+
     /**
      * Get the current message receiver listener that is currently registered for this smpp session.
      * @return The current message receiver listener
      */
-    public MessageReceiverListener getMessageReceiverListener();
+    MessageReceiverListener getMessageReceiverListener();
     
     /**
      * Sets a message receiver listener for this smpp session.
      * @param messageReceiverListener is the new listener
      */
-    public void setMessageReceiverListener(
+    void setMessageReceiverListener(
             MessageReceiverListener messageReceiverListener);
 }

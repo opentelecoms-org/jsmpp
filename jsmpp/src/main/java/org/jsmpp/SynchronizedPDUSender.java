@@ -389,7 +389,7 @@ public class SynchronizedPDUSender implements PDUSender {
                     unsuccessDeliveries);
         }
     }
-    
+
     public byte[] sendAlertNotification(OutputStream os, int sequenceNumber,
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
             byte esmeAddrTon, byte esmeAddrNpi, String esmeAddr,
@@ -399,6 +399,15 @@ public class SynchronizedPDUSender implements PDUSender {
             return pduSender.sendAlertNotification(os, sequenceNumber,
                     sourceAddrTon, sourceAddrNpi, sourceAddr, esmeAddrTon,
                     esmeAddrNpi, esmeAddr, optionalParameters);
+        }
+    }
+
+    public byte[] sendOutbind(OutputStream os, int sequenceNumber, String systemId, String password)
+        throws PDUStringException, IOException
+    {
+        synchronized (os)
+        {
+            return this.pduSender.sendOutbind(os, sequenceNumber, systemId, password);
         }
     }
 }

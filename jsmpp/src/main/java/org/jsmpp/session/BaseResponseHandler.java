@@ -16,8 +16,10 @@ package org.jsmpp.session;
 
 import java.io.IOException;
 
+import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
+import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ProcessRequestException;
 
@@ -26,7 +28,10 @@ import org.jsmpp.extra.ProcessRequestException;
  *
  */
 public interface BaseResponseHandler {
-    
+
+    void sendBindResp(String systemId, InterfaceVersion interfaceVersion, BindType bindType, int sequenceNumber)
+        throws IOException;
+
     /**
      * Remove the previously {@link PendingResponse} that set when the request
      * was sent.
@@ -93,7 +98,7 @@ public interface BaseResponseHandler {
      *        request.
      * @throws IOException if an IO error occur.
      */
-    public void sendDataSmResp(DataSmResult dataSmResult, int sequenceNumber) throws IOException;
+    void sendDataSmResp(DataSmResult dataSmResult, int sequenceNumber) throws IOException;
     
     /**
      * Notify for unbind.

@@ -29,7 +29,14 @@ import org.jsmpp.session.ResponseHandler;
  * 
  */
 abstract class SMPPSessionBound extends AbstractGenericSMPPSessionBound  implements SMPPSessionState {
-    
+
+    public void processBind(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException
+    {
+        responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
+            SMPPConstant.STAT_ESME_RALYBND, pduHeader.getSequenceNumber());
+    }
+
     public void processBindResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),

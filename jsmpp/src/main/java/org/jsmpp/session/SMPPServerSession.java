@@ -44,6 +44,7 @@ import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.Outbind;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceSm;
@@ -83,6 +84,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     private ServerMessageReceiverListener messageReceiverListener;
     private ServerResponseDeliveryListener responseDeliveryListener;
     private BindRequestReceiver bindRequestReceiver = new BindRequestReceiver(responseHandler);
+    private OutbindRequestReceiver outbindRequestReceiver = new OutbindRequestReceiver();
     
     public SMPPServerSession(Connection conn,
             SessionStateListener sessionStateListener,
@@ -330,9 +332,14 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 // TODO uudashr: we have double checking when accept the bind request
             }
         }
-        
+
         public void processBind(Bind bind) {
-            bindRequestReceiver.notifyAcceptBind(bind);
+            SMPPServerSession.this.bindRequestReceiver.notifyAcceptBind(bind);
+        }
+
+        public void processOutbind(Outbind outbind)
+        {
+            SMPPServerSession.this.outbindRequestReceiver.notifyAcceptOutbind(outbind);
         }
         
         public MessageId processSubmitSm(SubmitSm submitSm)
@@ -553,7 +560,6 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             enquireLinkSender.enquireLink();
         }
     }
-    
     
     private class BoundStateListener implements SessionStateListener {
         public void onStateChange(SessionState newState, SessionState oldState,

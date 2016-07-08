@@ -49,10 +49,10 @@ public class BindRequest {
     private final int originalSequenceNumber;
     private boolean done;
     
-    private final ServerResponseHandler responseHandler;
+    private final BaseResponseHandler responseHandler;
     public BindRequest(int sequenceNumber, BindType bindType, String systemId, String password, 
             String systemType, TypeOfNumber addrTon, NumberingPlanIndicator addrNpi, 
-            String addressRange, InterfaceVersion interfaceVersion, ServerResponseHandler responseHandler) {
+            String addressRange, InterfaceVersion interfaceVersion, BaseResponseHandler responseHandler) {
         this.originalSequenceNumber = sequenceNumber;
         this.responseHandler = responseHandler;
         
@@ -66,7 +66,7 @@ public class BindRequest {
         this.interfaceVersion = interfaceVersion;
     }
     
-    public BindRequest(Bind bind, ServerResponseHandler responseHandler) {
+    public BindRequest(Bind bind, BaseResponseHandler responseHandler) {
         this(bind.getSequenceNumber(), BindType.valueOf(bind.getCommandId()), bind.getSystemId(), 
                 bind.getPassword(), bind.getSystemType(), 
                 TypeOfNumber.valueOf(bind.getAddrTon()), 

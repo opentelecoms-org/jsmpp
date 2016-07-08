@@ -40,6 +40,12 @@ class SMPPSessionClosed implements SMPPSessionState {
     public SessionState getSessionState() {
         return SessionState.CLOSED;
     }
+
+    public void processBind(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) throws IOException
+    {
+        throw new IOException(INVALID_PROCESS_FOR_CLOSED_SESSION);
+    }
     
     public void processBindResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {

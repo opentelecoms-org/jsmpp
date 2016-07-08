@@ -26,10 +26,26 @@ import org.jsmpp.session.ServerResponseHandler;
  */
 abstract class SMPPServerSessionBound extends
         AbstractGenericSMPPSessionBound implements SMPPServerSessionState {
-    
+
+    private static final String INVALID_PROCESS_FOR_BOUND_SESSION = "Invalid process for bound session state";
+
+    @Override
     public void processBind(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException {
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
                 SMPPConstant.STAT_ESME_RALYBND, pduHeader.getSequenceNumber());
+    }
+
+    @Override
+    public void processBindResp(Command pduHeader, byte[] pdu,
+                                ServerResponseHandler responseHandler) throws IOException {
+        throw new IOException(INVALID_PROCESS_FOR_BOUND_SESSION);
+    }
+
+    @Override
+    public void processOutbind(Command pduHeader, byte[] pdu, ServerResponseHandler responseHandler) throws IOException
+    {
+        responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
+            SMPPConstant.STAT_ESME_RALYBND, pduHeader.getSequenceNumber());
     }
 }
