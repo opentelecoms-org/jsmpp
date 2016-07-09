@@ -49,7 +49,7 @@ public class PDUStringException extends PDUException {
     }
 
     /**
-     * Get the error code of the broken constaint.
+     * Get the error code of the broken constraint.
      * 
      * @return the command status should be returned.
      */
