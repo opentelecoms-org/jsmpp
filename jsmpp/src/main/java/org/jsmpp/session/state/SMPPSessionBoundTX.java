@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is unbound state implementation of {@link SMPPSessionState}. This
+ * This class is bound_tx state implementation of {@link SMPPSessionState}. This
  * class give specific response to a transmit related transaction, otherwise
  * it always give negative response.
  * 

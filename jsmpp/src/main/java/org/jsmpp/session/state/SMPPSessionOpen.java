@@ -19,7 +19,6 @@ import java.io.IOException;
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
-import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.Command;
 import org.jsmpp.extra.PendingResponse;
@@ -49,41 +48,6 @@ class SMPPSessionOpen implements SMPPSessionState {
         return SessionState.OPEN;
     }
 
-    public void processBind(Command pduHeader, byte[] pdu,
-                            ResponseHandler responseHandler) throws IOException {
-
-        PendingResponse<Command> pendingResp = responseHandler
-            .removeSentItem(pduHeader.getSequenceNumber());
-
-        if (null==pendingResp)
-        {
-            logger.debug("No pending response found for sequence number {} try to found with previous {}",
-                pduHeader.getSequenceNumber(), pduHeader.getSequenceNumber() - 1);
-            pendingResp = responseHandler.removeSentItem(pduHeader.getSequenceNumber() - 1);
-        }
-        if (pendingResp != null) {
-            try {
-                logger.debug("Bind header ({}, {}, {}, {})",
-                    pduHeader.getCommandLength(),
-                    pduHeader.getCommandIdAsHex(),
-                    IntUtil.toHexString(pduHeader.getCommandStatus()),
-                    pduHeader.getSequenceNumber());
-                Bind bind = pduDecomposer.bind(pdu);
-                pendingResp.done(bind);
-            } catch (PDUStringException e) {
-                String message = "Failed decomposing bind_resp";
-                logger.error(message, e);
-                responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
-                pendingResp
-                    .doneWithInvalidResponse(new InvalidResponseException(
-                        message, e));
-            }
-        } else {
-            logger.error("No request with sequence number {} found", pduHeader.getSequenceNumber() );
-            responseHandler.sendNegativeResponse(pduHeader.getCommandId(),  SMPPConstant.STAT_ESME_RINVDFTMSGID, pduHeader.getSequenceNumber());
-        }
-    }
-    
     public void processBindResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         PendingResponse<Command> pendingResp = responseHandler

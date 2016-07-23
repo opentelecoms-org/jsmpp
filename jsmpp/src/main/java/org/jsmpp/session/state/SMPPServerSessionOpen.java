@@ -16,19 +16,14 @@ package org.jsmpp.session.state;
 
 import java.io.IOException;
 
-import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Bind;
-import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.Command;
-import org.jsmpp.bean.Outbind;
-import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BaseResponseHandler;
 import org.jsmpp.session.ServerResponseHandler;
 import org.jsmpp.util.DefaultDecomposer;
-import org.jsmpp.util.IntUtil;
 import org.jsmpp.util.PDUDecomposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,52 +51,6 @@ class SMPPServerSessionOpen implements SMPPServerSessionState {
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
         } catch (IllegalArgumentException e) {
             // TODO uudashr: might not need anymore
-            responseHandler.sendNegativeResponse(pduHeader.getCommandId(), SMPPConstant.STAT_ESME_RINVCMDID, pduHeader.getSequenceNumber());
-        }
-    }
-
-    public void processBindResp(Command pduHeader, byte[] pdu,
-                               ServerResponseHandler responseHandler) throws IOException
-    {
-        PendingResponse<Command> pendingResp = responseHandler.removeSentItem(pduHeader.getSequenceNumber());
-        if (pendingResp != null) {
-            try {
-                logger.debug("Bind Response header ({}, {}, {}, {})",
-                    pduHeader.getCommandLength(),
-                    pduHeader.getCommandIdAsHex(),
-                    IntUtil.toHexString(pduHeader.getCommandStatus()),
-                    pduHeader.getSequenceNumber());
-                BindResp resp = pduDecomposer.bindResp(pdu);
-                pendingResp.done(resp);
-            } catch (PDUStringException e) {
-                String message = "Failed decomposing submit_sm_resp";
-                logger.error(message, e);
-                responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
-                    .getSequenceNumber());
-                pendingResp
-                    .doneWithInvalidResponse(new InvalidResponseException(message, e));
-            }
-        } else {
-            logger.error("No request with sequence number {} found", pduHeader.getSequenceNumber() );
-            responseHandler.sendGenerickNack(
-                SMPPConstant.STAT_ESME_RINVDFTMSGID, pduHeader.getSequenceNumber());
-        }
-    }
-
-    public void processOutbind(Command pduHeader, byte[] pdu, ServerResponseHandler responseHandler)
-        throws IOException
-    {
-        try
-        {
-            Outbind outbind = pduDecomposer.outbind(pdu);
-            responseHandler.processOutbind(outbind);;
-        }
-        catch (PDUStringException e)
-        {
-            responseHandler.sendNegativeResponse(pduHeader.getCommandId(), e.getErrorCode(), pduHeader.getSequenceNumber());
-        }
-        catch (IllegalArgumentException e)
-        {
             responseHandler.sendNegativeResponse(pduHeader.getCommandId(), SMPPConstant.STAT_ESME_RINVCMDID, pduHeader.getSequenceNumber());
         }
     }

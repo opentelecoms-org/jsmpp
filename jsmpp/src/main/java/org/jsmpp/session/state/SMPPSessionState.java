@@ -29,27 +29,17 @@ import org.jsmpp.session.ResponseHandler;
  * @since 2.0
  */
 public interface SMPPSessionState extends GenericSMPPSessionState {
-    public static final SMPPSessionState OPEN = new SMPPSessionOpen();
-    public static final SMPPSessionState BOUND_RX = new SMPPSessionBoundRX();
-    public static final SMPPSessionState BOUND_TX = new SMPPSessionBoundTX();
-    public static final SMPPSessionState BOUND_TRX = new SMPPSessionBoundTRX();
-    public static final SMPPSessionState UNBOUND = new SMPPSessionUnbound();
-    public static final SMPPSessionState CLOSED = new SMPPSessionClosed();
+    SMPPSessionState OPEN = new SMPPSessionOpen();
+    SMPPSessionState BOUND_RX = new SMPPSessionBoundRX();
+    SMPPSessionState BOUND_TX = new SMPPSessionBoundTX();
+    SMPPSessionState BOUND_TRX = new SMPPSessionBoundTRX();
+    SMPPSessionState UNBOUND = new SMPPSessionUnbound();
+    SMPPSessionState CLOSED = new SMPPSessionClosed();
 
-    /**
-     * Process the bind command received after outbind request.
-     *
-     * @param pduHeader is the PDU header.
-     * @param pdu is the complete PDU.
-     * @param responseHandler is the session handler.
-     * @throws IOException throw if there is an IO error occur.
-     */
-    void processBind(Command pduHeader, byte[] pdu,
-                     ResponseHandler responseHandler) throws IOException;
 
     /**
      * Process the bind response command.
-     * 
+     *
      * @param pduHeader is the PDU header.
      * @param pdu is the complete PDU.
      * @param responseHandler is the session handler.

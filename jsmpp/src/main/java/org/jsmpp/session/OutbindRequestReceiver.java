@@ -23,20 +23,20 @@ import org.jsmpp.bean.Outbind;
 /**
  * @author pmoerenhout
  */
-public class OutbindRequestReceiver {
+class OutbindRequestReceiver {
   private final Lock lock = new ReentrantLock();
   private final Condition requestCondition = this.lock.newCondition();
   private OutbindRequest request;
   private boolean alreadyWaitForRequest;
 
-  public OutbindRequestReceiver() {
+  OutbindRequestReceiver() {
   }
 
   /**
-   * Wait until the bind request received for specified timeout.
+   * Wait until the outbind request received for specified timeout.
    *
    * @param timeout is the timeout.
-   * @return the {@link BindRequest}.
+   * @return the {@link OutbindRequest}.
    * @throws IllegalStateException if this method already called before.
    * @throws TimeoutException      if the timeout has been reach.
    */
@@ -51,6 +51,8 @@ public class OutbindRequestReceiver {
           this.requestCondition.await(timeout, TimeUnit.MILLISECONDS);
         }
         catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          throw new RuntimeException("waitForRequest was interrupted");
         }
       }
 
@@ -58,7 +60,7 @@ public class OutbindRequestReceiver {
         return this.request;
       }
       else {
-        throw new TimeoutException("Waiting for bind request take time too long");
+        throw new TimeoutException("Waiting for outbind request take time too long");
       }
     }
     finally {
@@ -68,7 +70,7 @@ public class OutbindRequestReceiver {
   }
 
   /**
-   * Notify that the bind has accepted.
+   * Notify that the outbind was accepted.
    *
    * @param outbind is the {@link Outbind} command.
    * @throws IllegalStateException if this method already called before.

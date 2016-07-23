@@ -39,17 +39,6 @@ public class SMPPServerSessionUnbound implements SMPPServerSessionState {
         throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 
-    public void processBindResp(Command pduHeader, byte[] pdu,
-            ServerResponseHandler responseHandler) throws IOException {
-        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
-    }
-
-    public void processOutbind(Command pduHeader, byte[] pdu,
-            ServerResponseHandler responseHandler)
-        throws IOException {
-        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
-    }
-
     public void processDeliverSmResp(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);

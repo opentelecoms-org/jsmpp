@@ -107,6 +107,7 @@ public class PendingResponse<T extends Command> {
                     condition.await(timeout, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
+                    throw new RuntimeException("Interrupted");
                 }
             }
             

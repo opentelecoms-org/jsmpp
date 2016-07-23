@@ -64,10 +64,6 @@ public class PDUProcessServerTask implements Runnable {
                 activityNotifier.notifyActivity();
                 stateProcessor.processBind(pduHeader, pdu, responseHandler);
                 break;
-            case SMPPConstant.CID_OUTBIND:
-                this.activityNotifier.notifyActivity();
-                this.stateProcessor.processOutbind(pduHeader, pdu, responseHandler);
-                break;
             case SMPPConstant.CID_GENERIC_NACK:
                 activityNotifier.notifyActivity();
                 stateProcessor.processGenericNack(pduHeader, pdu, responseHandler);

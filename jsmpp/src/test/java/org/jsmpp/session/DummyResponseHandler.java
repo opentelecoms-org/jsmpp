@@ -23,7 +23,6 @@ import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.MessageState;
-import org.jsmpp.bean.Outbind;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SubmitMulti;
@@ -65,9 +64,6 @@ class DummyResponseHandler implements ServerResponseHandler {
     }
     
     public void processBind(Bind bind) {
-    }
-
-    public void processOutbind(Outbind outbind) {
     }
 
     public QuerySmResult processQuerySm(QuerySm querySm)
@@ -129,7 +125,7 @@ class DummyResponseHandler implements ServerResponseHandler {
     public void sendReplaceSmResp(int sequenceNumber) throws IOException {
     }
 
-    public void closeConnection() {
+    void closeConnection() {
         connectionClosed = true;
     }
 }

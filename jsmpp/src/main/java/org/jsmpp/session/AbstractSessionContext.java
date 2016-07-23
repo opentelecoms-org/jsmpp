@@ -41,7 +41,7 @@ public abstract class AbstractSessionContext implements SessionContext {
     public synchronized void open() {
         changeState(SessionState.OPEN);
     }
-    
+
     public synchronized void bound(BindType bindType) {
         if (bindType.equals(BindType.BIND_TX)) {
             changeState(SessionState.BOUND_TX);

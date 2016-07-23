@@ -19,7 +19,6 @@ import java.io.IOException;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.MessageState;
-import org.jsmpp.bean.Outbind;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SubmitMulti;
@@ -32,14 +31,12 @@ import org.jsmpp.util.MessageId;
  * @author uudashr
  * 
  */
-public interface ServerResponseHandler extends BaseResponseHandler {
+public interface ServerResponseHandler extends GenericServerResponseHandler {
 
     void sendSubmitSmResponse(MessageId messageId, int sequenceNumber)
             throws IOException;
 
     void processBind(Bind bind);
-
-    void processOutbind(Outbind outbind);
 
     MessageId processSubmitSm(SubmitSm submitSm) throws ProcessRequestException;
     

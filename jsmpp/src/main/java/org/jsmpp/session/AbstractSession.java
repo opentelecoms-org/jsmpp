@@ -115,7 +115,8 @@ public abstract class AbstractSession implements Session {
     }
 
     protected synchronized boolean isReadPdu() {
-		    return getSessionState().isBound() || getSessionState().equals(SessionState.OPEN);
+        SessionState sessionState = getSessionState();
+		    return sessionState.isBound() || sessionState.equals(SessionState.OPEN) || sessionState.equals(SessionState.OUTBOUND);
 	  }
 
     public void addSessionStateListener(SessionStateListener listener) {
@@ -303,6 +304,30 @@ public abstract class AbstractSession implements Session {
 
     }
 
+    /**
+     * Execute send command command task.
+     *
+     * @param task is the task.
+     * @return the command response.
+     * @throws PDUException if there is invalid PDU parameter found.
+     * @throws ResponseTimeoutException if the response has reach it timeout.
+     * @throws InvalidResponseException if invalid response found.
+     * @throws NegativeResponseException if the negative response found.
+     * @throws IOException if there is an IO error found.
+     */
+    protected void executeSendCommandWithNoResponse(SendCommandTask task)
+        throws PDUException, IOException {
+
+        int seqNum = sequence.nextValue();
+        try {
+            task.executeTask(connection().getOutputStream(), seqNum);
+        } catch (IOException e) {
+            logger.error("Failed sending " + task.getCommandName() + " command", e);
+            close();
+            throw e;
+        }
+    }
+
     private synchronized static final String generateSessionId() {
         return IntUtil.toHexString(random.nextInt());
     }
@@ -327,6 +352,21 @@ public abstract class AbstractSession implements Session {
         }
     }
 
+    public void sendOutbind(String systemId, String password) throws IOException {
+        if (sessionContext().getSessionState().equals(SessionState.CLOSED)) {
+            throw new IOException("Session " + sessionId + " is closed");
+        }
+
+        OutbindCommandTask task = new OutbindCommandTask(pduSender, systemId, password);
+
+        try {
+            executeSendCommandWithNoResponse(task);
+        } catch (PDUException e) {
+            // exception should be never caught since we didn't send any string parameter.
+            logger.warn("PDU String should be always valid", e);
+        }
+    }
+
     public void unbind() throws ResponseTimeoutException,
             InvalidResponseException, IOException {
         if (sessionContext().getSessionState().equals(SessionState.CLOSED)) {
@@ -344,7 +384,6 @@ public abstract class AbstractSession implements Session {
             // ignore the negative response
             logger.warn("Receive non-ok command_status ({}) for unbind_resp", e.getCommandStatus());
         }
-
     }
 
     public void unbindAndClose() {
@@ -425,6 +464,7 @@ public abstract class AbstractSession implements Session {
                             sendingEnquireLink.wait(500);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
+                            throw new RuntimeException("Interrupted");
                         }
                     }
                 }

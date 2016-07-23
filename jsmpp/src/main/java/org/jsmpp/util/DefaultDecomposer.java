@@ -32,6 +32,7 @@ import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.DeliverSmResp;
 import org.jsmpp.bean.DeliveryReceipt;
 import org.jsmpp.bean.DestinationAddress;
+import org.jsmpp.bean.DestinationAddress.Flag;
 import org.jsmpp.bean.DistributionList;
 import org.jsmpp.bean.EnquireLink;
 import org.jsmpp.bean.EnquireLinkResp;
@@ -51,7 +52,6 @@ import org.jsmpp.bean.SubmitSmResp;
 import org.jsmpp.bean.Unbind;
 import org.jsmpp.bean.UnbindResp;
 import org.jsmpp.bean.UnsuccessDelivery;
-import org.jsmpp.bean.DestinationAddress.Flag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -631,9 +631,10 @@ public class DefaultDecomposer implements PDUDecomposer {
     private static void assignHeader(Command pdu,
             SequentialBytesReader seqBytesReader) {
         int commandLength = seqBytesReader.readInt();
-        if (seqBytesReader.getBytes().length != commandLength)
-            logger.error("SYSTEM BUGS, the command_length ({}) not equals with the byte array length ({})",
+        if (seqBytesReader.getBytes().length != commandLength) {
+            logger.error("The command_length ({}) not equals the byte array length ({})",
                 commandLength, seqBytesReader.getBytes().length);
+        }
         pdu.setCommandLength(commandLength);
         pdu.setCommandId(seqBytesReader.readInt());
         pdu.setCommandStatus(seqBytesReader.readInt());

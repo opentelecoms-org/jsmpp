@@ -44,7 +44,6 @@ import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
-import org.jsmpp.bean.Outbind;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceSm;
@@ -84,8 +83,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     private ServerMessageReceiverListener messageReceiverListener;
     private ServerResponseDeliveryListener responseDeliveryListener;
     private BindRequestReceiver bindRequestReceiver = new BindRequestReceiver(responseHandler);
-    private OutbindRequestReceiver outbindRequestReceiver = new OutbindRequestReceiver();
-    
+
     public SMPPServerSession(Connection conn,
             SessionStateListener sessionStateListener,
             ServerMessageReceiverListener messageReceiverListener,
@@ -337,11 +335,6 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             SMPPServerSession.this.bindRequestReceiver.notifyAcceptBind(bind);
         }
 
-        public void processOutbind(Outbind outbind)
-        {
-            SMPPServerSession.this.outbindRequestReceiver.notifyAcceptOutbind(outbind);
-        }
-        
         public MessageId processSubmitSm(SubmitSm submitSm)
                 throws ProcessRequestException {
             try {
@@ -510,7 +503,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             @Override
             public void run() {
                 close();
-            };
+            }
         };
         
         @Override
