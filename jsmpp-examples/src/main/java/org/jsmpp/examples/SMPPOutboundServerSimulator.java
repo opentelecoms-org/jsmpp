@@ -39,19 +39,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author uudashr
+ *
+ * @author pmoerenhout
+ *
  */
-public class OutboundSMPPServerSimulatorTest extends ServerResponseDeliveryAdapter
+public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
     implements Runnable, OutboundServerMessageReceiverListener {
   private static final Integer DEFAULT_PORT = 8056;
-  private static final Logger logger = LoggerFactory.getLogger(OutboundSMPPServerSimulatorTest.class);
+  private static final Logger logger = LoggerFactory.getLogger(SMPPOutboundServerSimulator.class);
   private final ExecutorService execService = Executors.newFixedThreadPool(100);
-  private final ExecutorService execServiceDelReceipt = Executors.newFixedThreadPool(100);
   private int port;
 
   private AtomicBoolean exit = new AtomicBoolean();
 
-  OutboundSMPPServerSimulatorTest(int port) {
+  SMPPOutboundServerSimulator(int port) {
     this.port = port;
   }
 
@@ -64,7 +65,8 @@ public class OutboundSMPPServerSimulatorTest extends ServerResponseDeliveryAdapt
       port = DEFAULT_PORT;
     }
     BasicConfigurator.configure();
-    OutboundSMPPServerSimulatorTest smppServerSim = new OutboundSMPPServerSimulatorTest(port);
+
+    SMPPOutboundServerSimulator smppServerSim = new SMPPOutboundServerSimulator(port);
     logger.info("run {}", smppServerSim);
     smppServerSim.run();
   }
@@ -75,10 +77,9 @@ public class OutboundSMPPServerSimulatorTest extends ServerResponseDeliveryAdapt
 
   public void run() {
     try {
-      logger.info("OutboundSMPPServerSessionListener {}", port);
+      logger.info("Listening on port {}", port);
       OutboundSMPPServerSessionListener sessionListener = new OutboundSMPPServerSessionListener(port);
 
-      logger.info("Listening on port {}", port);
       while (!exit.get()) {
         final SMPPOutboundServerSession outboundServerSession = sessionListener.accept();
         logger.info("Accepting connection from {} for session {}", outboundServerSession.getInetAddress(),
@@ -87,7 +88,7 @@ public class OutboundSMPPServerSimulatorTest extends ServerResponseDeliveryAdapt
         outboundServerSession.addSessionStateListener(new SessionStateListenerImpl());
         outboundServerSession.setOutboundServerMessageReceiverListener(this);
 
-        execService.execute(new OutboundSMPPServerSimulatorTest.WaitOutbindTask(outboundServerSession));
+        execService.execute(new SMPPOutboundServerSimulator.WaitOutbindTask(outboundServerSession));
 
         try {
           Thread.sleep(60 * 60 * 1000L);
