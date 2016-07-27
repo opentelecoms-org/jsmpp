@@ -52,7 +52,7 @@ public enum DeliveryReceiptState {
 
     private int value;
 
-    private DeliveryReceiptState(int value) {
+    DeliveryReceiptState(int value) {
         this.value = value;
     }
 

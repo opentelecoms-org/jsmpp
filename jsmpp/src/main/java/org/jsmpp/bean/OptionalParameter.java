@@ -318,7 +318,8 @@ public abstract class OptionalParameter {
 		RESERVED(0x05);
 		
 		protected byte value;
-		private Addr_subunit(int value) {
+
+		Addr_subunit(int value) {
 			this.value = (byte)value;
 		}
 		
@@ -461,7 +462,8 @@ public abstract class OptionalParameter {
 		RESERVED(0x09);
 
 		protected byte value;
-		private Bearer_type(int value) {
+
+		Bearer_type(int value) {
 			this.value = (byte)value;
 		}
 
@@ -722,7 +724,8 @@ public abstract class OptionalParameter {
 			RESERVED(255);
 
 			protected byte value;
-			private Payload_type_enum(int value) {
+
+			Payload_type_enum(int value) {
 				this.value = (byte)value;
 			}
 
@@ -822,7 +825,8 @@ public abstract class OptionalParameter {
 			UNKNOWN(4);
 			
 			protected byte value;
-			private Ms_msg_wait_facilities_type(int value) {
+
+			Ms_msg_wait_facilities_type(int value) {
 				this.value = (byte)value;
 			}
 
@@ -1142,7 +1146,8 @@ public abstract class OptionalParameter {
 			RESERVED(255);
 
 			protected byte value;
-			private Language_indicator_enum(int value) {
+
+			Language_indicator_enum(int value) {
 				this.value = (byte)value;
 			}
 

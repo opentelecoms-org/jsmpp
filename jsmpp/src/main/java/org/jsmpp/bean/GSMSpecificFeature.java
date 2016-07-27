@@ -41,7 +41,7 @@ public enum GSMSpecificFeature {
 
     private final byte value;
 
-    private GSMSpecificFeature(byte value) {
+    GSMSpecificFeature(byte value) {
         this.value = value;
     }
 
