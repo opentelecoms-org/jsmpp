@@ -81,7 +81,7 @@ public enum StringParameter {
 	 * @param rangeMinAndMax
 	 * @param errCode AKA error code on command_status.
 	 */
-	private StringParameter(StringType type, int min, int max, boolean rangeMinAndMax, int errCode) {
+	StringParameter(StringType type, int min, int max, boolean rangeMinAndMax, int errCode) {
 		this.type = type;
 		this.min = min;
 		this.max = max;

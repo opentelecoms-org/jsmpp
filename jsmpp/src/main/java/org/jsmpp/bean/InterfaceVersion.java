@@ -42,7 +42,7 @@ public enum InterfaceVersion {
 
     private byte value;
 
-    private InterfaceVersion(byte value) {
+    InterfaceVersion(byte value) {
         this.value = value;
     }
 
