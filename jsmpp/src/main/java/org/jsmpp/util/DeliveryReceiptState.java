@@ -22,6 +22,10 @@ package org.jsmpp.util;
  */
 public enum DeliveryReceiptState {
     /**
+     * ENROUTE
+     */
+    ENROUTE(0),
+    /**
      * DELIVERED
      */
     DELIVRD(1),
