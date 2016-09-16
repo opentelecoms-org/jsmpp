@@ -390,7 +390,8 @@ public abstract class OptionalParameter {
 		RESERVED(0x09);
 		
 		protected byte value;
-		private Network_type(int value) {
+
+		Network_type(int value) {
 			this.value = (byte)value;
 		}
 
@@ -1327,7 +1328,8 @@ public abstract class OptionalParameter {
 			RESERVED(3);
 			
 			protected byte value;
-			private Presentation_Indicator(int value) {
+
+			Presentation_Indicator(int value) {
 				this.value = (byte)value;
 			}
 
@@ -1363,7 +1365,8 @@ public abstract class OptionalParameter {
 			NETWORK_PROVIDED(3);
 
 			protected byte value;
-			private Screening_Indicator(int value) {
+
+			Screening_Indicator(int value) {
 				this.value = (byte)value;
 			}
 
@@ -1591,7 +1594,8 @@ public abstract class OptionalParameter {
 			RESERVED(3);
 			
 			protected byte value;
-			private Ms_availability_status_enum(int value) {
+
+			Ms_availability_status_enum(int value) {
 				this.value = (byte)value;
 			}
 
@@ -1694,7 +1698,8 @@ public abstract class OptionalParameter {
 			RESERVED(9);
 			
 			protected byte value;
-			private Network_error_code_type(int value) {
+
+			Network_error_code_type(int value) {
 				this.value = (byte)value;
 			}
 
@@ -1791,7 +1796,8 @@ public abstract class OptionalParameter {
 			RESERVED(4);
 			
 			protected byte value;
-			private Delivery_failure_reason_enum(int value) {
+
+			Delivery_failure_reason_enum(int value) {
 				this.value = (byte)value;
 			}
 
@@ -1854,7 +1860,8 @@ public abstract class OptionalParameter {
 			RESERVED(2);
 			
 			protected byte value;
-			private More_messages_to_send_enum(int value) {
+
+			More_messages_to_send_enum(int value) {
 				this.value = (byte)value;
 			}
 
@@ -1914,8 +1921,8 @@ public abstract class OptionalParameter {
 			REJECTED(8);
 			
 			private byte value;
-			
-			private Message_state_enum(int value) {
+
+			Message_state_enum(int value) {
 				this.value = (byte)value;
 			}
 			
@@ -2265,7 +2272,7 @@ public abstract class OptionalParameter {
         private final short code;
         final Class<? extends OptionalParameter> type;
 
-        private Tag(int code, Class<? extends OptionalParameter> type) {
+         Tag(int code, Class<? extends OptionalParameter> type) {
             this.code = (short)code;
             this.type = type;
         }

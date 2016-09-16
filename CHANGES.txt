@@ -1,6 +1,6 @@
 Changes:
 
-2.2.5
+2.3.0
 - Add outbind processing
 
 2.2.4
