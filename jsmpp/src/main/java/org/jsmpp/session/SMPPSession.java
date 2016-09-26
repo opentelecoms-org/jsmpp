@@ -397,7 +397,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException {
         
-        ensureTransmittable("replaceShortMessage", true);
+        ensureTransmittable("replaceShortMessage");
         
         ReplaceSmCommandTask replaceSmTask = new ReplaceSmCommandTask(
                 pduSender(), messageId, sourceAddrTon, sourceAddrNpi,

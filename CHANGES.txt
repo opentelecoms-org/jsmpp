@@ -1,5 +1,8 @@
 Changes:
 
+2.3.1
+- Allow replace_sm for state OUTBOUND_TRX
+
 2.3.0
 - Add outbind processing
 
