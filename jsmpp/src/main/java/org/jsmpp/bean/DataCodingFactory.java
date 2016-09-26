@@ -23,13 +23,13 @@ public interface DataCodingFactory {
 
     /**
      * @param dataCoding
-     * @return
+     * @return <tt>true</tt> if dataCoding is recognized
      */
     boolean isRecognized(byte dataCoding);
     
     /**
      * @param dataCoding
-     * @return
+     * @return new DataCoding object
      */
     DataCoding newInstance(byte dataCoding);
 
