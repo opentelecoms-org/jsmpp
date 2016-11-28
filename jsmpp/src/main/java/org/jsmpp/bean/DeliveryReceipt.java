@@ -418,8 +418,12 @@ public class DeliveryReceipt {
         int day = Integer.parseInt(date.substring(4, 6));
         int hour = Integer.parseInt(date.substring(6, 8));
         int minute = Integer.parseInt(date.substring(8, 10));
+        int second = 0;
+        if (date.length() >= 12){
+            second = Integer.parseInt(date.substring(10, 12));
+        }
         Calendar cal = Calendar.getInstance();
-        cal.set(convertTwoDigitYear(year), month - 1, day, hour, minute, 0);
+        cal.set(convertTwoDigitYear(year), month - 1, day, hour, minute, second);
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
     }
