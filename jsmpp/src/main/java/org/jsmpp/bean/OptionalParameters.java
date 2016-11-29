@@ -110,7 +110,7 @@ public class OptionalParameters {
     public static OptionalParameter deserialize(short tagCode, byte[] content) {
         Tag tag = Tag.valueOf(tagCode);
         if (tag == null) {
-            logger.info("Optional Parameter Tag not recognized for deserialization: {}", tagCode);
+            logger.debug("Optional Parameter Tag not recognized for deserialization: {}", tagCode);
             return new OctetString(tagCode, content);
         }
 
