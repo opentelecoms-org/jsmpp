@@ -1,5 +1,12 @@
 Changes:
 
+2.3.2
+- Process optional seconds in delivery receipt
+- Change log level for not recognized optional parameter
+- Allow replace_sm in state OUTBOUND_TRX (as it is allowed in SMPP 5.0)
+- Add ENROUTE inf DeliveryReceiptState enum
+- Add SCHEDULED and SKIPPED (SMPP 5.0) message_state
+
 2.3.1
 - Allow replace_sm for state OUTBOUND_TRX
 
