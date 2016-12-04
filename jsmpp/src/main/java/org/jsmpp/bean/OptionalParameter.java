@@ -1911,6 +1911,7 @@ public abstract class OptionalParameter {
 		 *
 		 */
 		public enum Message_state_enum {
+			SCHEDULED(0),
 			ENROUTE(1),
 			DELIVERED(2),
 			EXPIRED(3),
@@ -1918,7 +1919,8 @@ public abstract class OptionalParameter {
 			UNDELIVERABLE(5),
 			ACCEPTED(6),
 			UNKNOWN(7),
-			REJECTED(8);
+			REJECTED(8),
+			SKIPPED(9);
 			
 			private byte value;
 
@@ -1997,7 +1999,6 @@ public abstract class OptionalParameter {
 		public Billing_identification(byte[] value) {
 			super(Tag.BILLING_IDENTIFICATION.code, value);
 		}
-
 	}
 
 	
