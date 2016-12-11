@@ -213,15 +213,14 @@ public abstract class AbstractSession implements Session {
 
         // Make sure the enquireLinkThread doesn't wait for itself
         if (Thread.currentThread() != enquireLinkSender) {
-            logger.info("Closing enquireLinkSender for session {}", enquireLinkSender, sessionId);
+            logger.debug("Closing enquireLinkSender for session {}", sessionId);
             if (enquireLinkSender != null) {
-                while(enquireLinkSender.isAlive()) {
-                    try {
-                        enquireLinkSender.join();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        logger.warn("Interrupted while waiting for enquireLinkSender thread to exit");
-                    }
+                enquireLinkSender.interrupt();
+                try {
+                    enquireLinkSender.join();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    logger.warn("Interrupted while waiting for enquireLinkSender thread to exit");
                 }
             }
         }
@@ -474,14 +473,14 @@ public abstract class AbstractSession implements Session {
                 try {
                     sendEnquireLink();
                 } catch (ResponseTimeoutException e) {
-                    logger.error("EnquireLinkSender.run() ResponseTimeoutException", e);
+                    logger.error("Response timeout on enquireLink", e);
                     close();
                 } catch (InvalidResponseException e) {
-                    logger.error("EnquireLinkSender.run() InvalidResponseException", e);
+                    logger.error("Invalid response on enquireLink", e);
                     // lets unbind gracefully
                     unbindAndClose();
                 } catch (IOException e) {
-                    logger.error("EnquireLinkSender.run() IOException", e);
+                    logger.error("I/O exception on enquireLink", e);
                     close();
                 }
             }
