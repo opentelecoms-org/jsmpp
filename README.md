@@ -30,7 +30,7 @@ It is now a community project maintained at http://jsmpp.org
 Release procedure
 -----------------
 
-  mvn deploy -DperformRelease=true -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging
+  mvn deploy -DperformRelease=true -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging -Dgpg.passphrase=\<yourpassphrase\>
 
   * log in here: https://oss.sonatype.org
   * click the 'Staging Repositories' link
