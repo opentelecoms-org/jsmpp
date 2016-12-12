@@ -200,29 +200,35 @@ public abstract class AbstractSession implements Session {
         return new DataSmResult(resp.getMessageId(), resp.getOptionalParameters());
     }
 
-    public void close() {
+    public synchronized void close() {
         logger.debug("Close session {}", sessionId);
         SessionContext ctx = sessionContext();
-        if (!ctx.getSessionState().equals(SessionState.CLOSED)) {
-            ctx.close();
+        SessionState sessionState = ctx.getSessionState();
+        if (!sessionState.equals(SessionState.CLOSED)) {
             try {
                 connection().close();
             } catch (IOException e) {
+                logger.warn("Failed to close connection: {}", e.getMessage());
             }
         }
 
         // Make sure the enquireLinkThread doesn't wait for itself
         if (Thread.currentThread() != enquireLinkSender) {
-            logger.debug("Closing enquireLinkSender for session {}", sessionId);
+            logger.debug("Stop enquireLinkSender for session {}", sessionId);
             if (enquireLinkSender != null) {
-                enquireLinkSender.interrupt();
                 try {
+                    enquireLinkSender.interrupt();
                     enquireLinkSender.join();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     logger.warn("Interrupted while waiting for enquireLinkSender thread to exit");
                 }
             }
+        }
+
+        if (!sessionState.equals(SessionState.CLOSED)) {
+            logger.debug("Close session context {} in state {}", sessionId, sessionState);
+            ctx.close();
         }
 
         logger.debug("Session {} is closed and enquireLinkSender stopped", sessionId);
@@ -457,17 +463,17 @@ public abstract class AbstractSession implements Session {
         public void run() {
             logger.info("Starting EnquireLinkSender for session {}", sessionId);
             while (isReadPdu()) {
-                while (!sendingEnquireLink.compareAndSet(true, false) && isReadPdu()) {
+                while (!sendingEnquireLink.compareAndSet(true, false) && !Thread.currentThread().isInterrupted() && isReadPdu()) {
                     synchronized (sendingEnquireLink) {
                         try {
                             sendingEnquireLink.wait(500);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
-                            throw new RuntimeException("Interrupted");
+                            break;
                         }
                     }
                 }
-                if (!isReadPdu()) {
+                if (Thread.currentThread().isInterrupted() || !isReadPdu()) {
                     break;
                 }
                 try {
