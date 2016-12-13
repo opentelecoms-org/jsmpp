@@ -22,6 +22,10 @@ package org.jsmpp.util;
  */
 public enum DeliveryReceiptState {
     /**
+     * ENROUTE
+     */
+    ENROUTE(0),
+    /**
      * DELIVERED
      */
     DELIVRD(1),
@@ -52,7 +56,7 @@ public enum DeliveryReceiptState {
 
     private int value;
 
-    private DeliveryReceiptState(int value) {
+    DeliveryReceiptState(int value) {
         this.value = value;
     }
 

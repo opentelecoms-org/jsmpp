@@ -29,11 +29,11 @@ import org.jsmpp.bean.Bind;
 class BindRequestReceiver {
     private final Lock lock = new ReentrantLock();
     private final Condition requestCondition = lock.newCondition();
-    private final ServerResponseHandler responseHandler;
+    private final GenericServerResponseHandler responseHandler;
     private BindRequest request;
     private boolean alreadyWaitForRequest;
     
-    public BindRequestReceiver(ServerResponseHandler responseHandler) {
+    BindRequestReceiver(GenericServerResponseHandler responseHandler) {
         this.responseHandler = responseHandler;
     }
     
@@ -43,7 +43,7 @@ class BindRequestReceiver {
      * @param timeout is the timeout.
      * @return the {@link BindRequest}.
      * @throws IllegalStateException if this method already called before.
-     * @throws TimeoutException if the timeout has been reach.
+     * @throws TimeoutException if the timeout has been reached.
      */
     BindRequest waitForRequest(long timeout) throws IllegalStateException, TimeoutException {
         lock.lock();
@@ -53,7 +53,10 @@ class BindRequestReceiver {
             } else if (request == null) {
                 try {
                     requestCondition.await(timeout, TimeUnit.MILLISECONDS);
-                } catch (InterruptedException e) { }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("Interrupted");
+                }
             }
             
             if (request != null) {
@@ -71,7 +74,7 @@ class BindRequestReceiver {
      * Notify that the bind has accepted.
      * 
      * @param bindParameter is the {@link Bind} command.
-     * @throws IllegalStateException if this method already called before.
+     * @throws IllegalStateException if this method is already called before.
      */
     void notifyAcceptBind(Bind bindParameter) throws IllegalStateException {
         lock.lock();

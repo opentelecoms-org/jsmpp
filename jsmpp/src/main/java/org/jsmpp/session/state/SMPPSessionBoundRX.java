@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is bound_tx state implementation of {@link SMPPSessionState}.
+ * This class is bound_rx state implementation of {@link SMPPSessionState}.
  * Response to receiver related transaction.
  * 
  * @author uudashr
@@ -111,7 +111,7 @@ class SMPPSessionBoundRX extends SMPPSessionBound implements SMPPSessionState {
         } catch (PDUStringException e) {
             logger.error("Failed decomposing deliver_sm", e);
             responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
-                    .getSequenceNumber());
+                .getSequenceNumber());
         } catch (ProcessRequestException e) {
             logger.error("Failed processing deliver_sm", e);
             responseHandler.sendDeliverSmResp(e.getErrorCode(), pduHeader.getSequenceNumber(), null);

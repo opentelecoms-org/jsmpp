@@ -98,7 +98,7 @@ interface GenericSMPPSessionState {
      */
     void processUnknownCid(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException;
-    
+
     /**
      * Process the data short message request command.
      * 

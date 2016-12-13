@@ -49,7 +49,7 @@ public class DataCodingFactory00xx extends AbstractDataCodingFactory {
     
     public DataCoding newInstance(byte dataCoding) {
         boolean compressed = isCompressed(dataCoding);
-        boolean containMessageClass = isContainMessageClass(dataCoding);
+        boolean containMessageClass = DataCodings.containsMessageClass(dataCoding);
         MessageClass messageClass = null;
         if (containMessageClass) {
             // ignore Message Class if the PDU has tell us no Message Class

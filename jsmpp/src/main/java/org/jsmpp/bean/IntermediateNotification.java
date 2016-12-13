@@ -28,7 +28,7 @@ public enum IntermediateNotification {
 
     private final byte value;
 
-    private IntermediateNotification(byte value) {
+    IntermediateNotification(byte value) {
         this.value = value;
     }
 

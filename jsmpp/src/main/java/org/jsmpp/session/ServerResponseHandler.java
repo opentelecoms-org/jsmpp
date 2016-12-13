@@ -17,9 +17,7 @@ package org.jsmpp.session;
 import java.io.IOException;
 
 import org.jsmpp.bean.Bind;
-import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.CancelSm;
-import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.ReplaceSm;
@@ -33,9 +31,7 @@ import org.jsmpp.util.MessageId;
  * @author uudashr
  * 
  */
-public interface ServerResponseHandler extends BaseResponseHandler {
-    void sendBindResp(String systemId, InterfaceVersion interfaceVersion, BindType bindType, int sequenceNumber)
-            throws IOException;
+public interface ServerResponseHandler extends GenericServerResponseHandler {
 
     void sendSubmitSmResponse(MessageId messageId, int sequenceNumber)
             throws IOException;

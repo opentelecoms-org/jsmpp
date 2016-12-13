@@ -47,7 +47,7 @@ class SMPPSessionOpen implements SMPPSessionState {
     public SessionState getSessionState() {
         return SessionState.OPEN;
     }
-    
+
     public void processBindResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         PendingResponse<Command> pendingResp = responseHandler

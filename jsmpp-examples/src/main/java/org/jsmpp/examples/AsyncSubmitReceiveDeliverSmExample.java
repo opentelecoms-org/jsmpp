@@ -52,7 +52,7 @@ import org.jsmpp.util.TimeFormatter;
  *
  */
 public class AsyncSubmitReceiveDeliverSmExample {
-    private static TimeFormatter timeFormatter = new AbsoluteTimeFormatter();;
+    private static TimeFormatter timeFormatter = new AbsoluteTimeFormatter();
     public static void main(String[] args) {
         final AtomicInteger counter = new AtomicInteger();
         
@@ -140,7 +140,10 @@ public class AsyncSubmitReceiveDeliverSmExample {
         }
         
         while (counter.get() != maxMessage) {
-            try { Thread.sleep(1000); } catch (InterruptedException e) { }
+            try { Thread.sleep(1000); }
+            catch (InterruptedException e) {
+                System.err.println("Interrupted");
+            }
         }
         session.unbindAndClose();
         execService.shutdown();

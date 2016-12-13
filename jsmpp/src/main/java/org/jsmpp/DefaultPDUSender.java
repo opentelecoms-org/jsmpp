@@ -125,6 +125,20 @@ public class DefaultPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
+     *
+     * @see org.jsmpp.PDUSender#sendOutbind(java.io.OutputStream,
+     *      int, java.lang.String, java.lang.String)
+     */
+    public byte[] sendOutbind(OutputStream os, int sequenceNumber, String systemId, String password)
+        throws PDUStringException, IOException
+    {
+        byte[] b = this.pduComposer.outbind( sequenceNumber,systemId, password);
+        writeAndFlush(os, b);
+        return b;
+    }
+
+    /*
+     * (non-Javadoc)
      * 
      * @see org.jsmpp.PDUSender#sendUnbind(java.io.OutputStream, int)
      */

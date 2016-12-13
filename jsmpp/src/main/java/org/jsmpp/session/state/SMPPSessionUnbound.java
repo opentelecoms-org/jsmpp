@@ -40,7 +40,7 @@ class SMPPSessionUnbound implements SMPPSessionState {
     public SessionState getSessionState() {
         return SessionState.UNBOUND;
     }
-    
+
     public void processBindResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);

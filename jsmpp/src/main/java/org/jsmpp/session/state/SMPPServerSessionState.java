@@ -24,12 +24,12 @@ import org.jsmpp.session.ServerResponseHandler;
  *
  */
 public interface SMPPServerSessionState extends GenericSMPPSessionState {
-    public static final SMPPServerSessionState OPEN = new SMPPServerSessionOpen();
-    public static final SMPPServerSessionState BOUND_RX = new SMPPServerSessionBoundRX();
-    public static final SMPPServerSessionState BOUND_TX = new SMPPServerSessionBoundTX();
-    public static final SMPPServerSessionState BOUND_TRX = new SMPPServerSessionTRX();
-    public static final SMPPServerSessionState UNBOUND = new SMPPServerSessionUnbound();
-    public static final SMPPServerSessionState CLOSED = new SMPPServerSessionClosed();
+    SMPPServerSessionState OPEN = new SMPPServerSessionOpen();
+    SMPPServerSessionState BOUND_RX = new SMPPServerSessionBoundRX();
+    SMPPServerSessionState BOUND_TX = new SMPPServerSessionBoundTX();
+    SMPPServerSessionState BOUND_TRX = new SMPPServerSessionTRX();
+    SMPPServerSessionState UNBOUND = new SMPPServerSessionUnbound();
+    SMPPServerSessionState CLOSED = new SMPPServerSessionClosed();
     
     /**
      * Process the bind request command.
@@ -41,7 +41,7 @@ public interface SMPPServerSessionState extends GenericSMPPSessionState {
      */
     void processBind(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException;
-    
+
     /**
      * Process the submit short message request command.
      * 
@@ -72,8 +72,15 @@ public interface SMPPServerSessionState extends GenericSMPPSessionState {
      */
     void processCancelSm(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException;
-    
+
+    /**
+     * Process the replace short message request command.
+     *
+     * @param pduHeader is the PDU header.
+     * @param pdu is the complete PDU.
+     * @param responseHandler is the session handler.
+     * @throws IOException throw if there is an IO error occur.
+     */
     void processReplaceSm(Command pduHeader, byte[] pdu,
             ServerResponseHandler responseHandler) throws IOException;
-    
 }

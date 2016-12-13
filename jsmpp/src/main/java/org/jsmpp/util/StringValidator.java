@@ -29,6 +29,7 @@ public final class StringValidator {
     private static final String C_OCTET_STRING_VALUE = "C-Octet String value '";
 
     private StringValidator() {
+        throw new InstantiationError("This class must not be instantiated");
     }
 
     public static void validateString(String value, StringParameter param)

@@ -15,7 +15,8 @@
 package org.jsmpp.session;
 
 import java.io.IOException;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUException;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractSMPPOperation implements SMPPOperation {
     private static final Logger logger = LoggerFactory.getLogger(AbstractSMPPOperation.class);
 
-    private final Hashtable<Integer, PendingResponse<Command>> pendingResponse = new Hashtable<Integer, PendingResponse<Command>>();
+    private final Map<Integer, PendingResponse<Command>> pendingResponse = new HashMap<Integer, PendingResponse<Command>>();
     private final Sequence sequence = new Sequence(1);
     private final PDUSender pduSender;
     private final Connection connection;

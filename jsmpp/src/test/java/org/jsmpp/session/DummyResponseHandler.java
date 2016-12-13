@@ -124,7 +124,8 @@ class DummyResponseHandler implements ServerResponseHandler {
     
     public void sendReplaceSmResp(int sequenceNumber) throws IOException {
     }
-    public void closeConnection() {
+
+    void closeConnection() {
         connectionClosed = true;
     }
 }

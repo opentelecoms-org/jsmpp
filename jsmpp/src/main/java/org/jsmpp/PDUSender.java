@@ -92,6 +92,21 @@ public interface PDUSender {
             String systemId, InterfaceVersion interfaceVersion) throws PDUStringException, IOException;
 
     /**
+     * Send outbind command.
+     *
+     * @param os is the {@link OutputStream}
+     * @param sequenceNumber is the sequence_number.
+     * @param systemId is the system_id.
+     * @param password is the password.
+     * @return the composed bytes.
+     * @throws PDUStringException if there is an invalid string constraint found.
+     * @throws IOException if an I/O error occur.
+     */
+    byte[] sendOutbind(OutputStream os,int sequenceNumber,
+                       String systemId, String password)
+        throws PDUStringException, IOException;
+
+    /**
      * Send unbind command.
      * 
      * @param os is the {@link OutputStream} .

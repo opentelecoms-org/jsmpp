@@ -71,10 +71,32 @@ public class DeliveryReceiptParserTest {
             fail("Failed parsing delivery receipt:" + e.getMessage());
         }
     }
+
+    @Test
+    public void parseWithSecondInDate() {
+        try {
+            DeliveryReceipt delReceipt = decomposer.deliveryReceipt("id:0123456789 sub:001 dlvrd:001 submit date:080901113012 done date:080901113147 stat:DELIVRD err:000 " + ORIGINAL_MESSAGE);
+            assertEquals(delReceipt.getText(), null);
+
+            Date submitDate = delReceipt.getSubmitDate();
+            Date expectedSubmitDate = createDate(2008, 9, 1, 11, 30, 12);
+            assertEquals(submitDate, expectedSubmitDate);
+
+            Date doneDate = delReceipt.getDoneDate();
+            Date expectedDoneDate = createDate(2008, 9, 1, 11, 31, 47);
+            assertEquals(doneDate, expectedDoneDate);
+        } catch (InvalidDeliveryReceiptException e) {
+            e.printStackTrace();
+            fail("Failed parsing delivery receipt:" + e.getMessage());
+        }
+    }
     
     private static Date createDate(int year, int month, int day, int hour, int minute) {
+        return createDate(year, month, day, hour, minute, 0);
+    }
+    private static Date createDate(int year, int month, int day, int hour, int minute, int second) {
         Calendar cal = Calendar.getInstance();
-        cal.set(year, month - 1, day, hour, minute, 0);
+        cal.set(year, month - 1, day, hour, minute, second);
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
     }

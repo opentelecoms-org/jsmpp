@@ -115,7 +115,8 @@ public abstract class AbstractSession implements Session {
     }
 
     protected synchronized boolean isReadPdu() {
-		    return getSessionState().isBound() || getSessionState().equals(SessionState.OPEN);
+        SessionState sessionState = getSessionState();
+		    return sessionState.isBound() || sessionState.equals(SessionState.OPEN) || sessionState.equals(SessionState.OUTBOUND);
 	  }
 
     public void addSessionStateListener(SessionStateListener listener) {
@@ -199,32 +200,38 @@ public abstract class AbstractSession implements Session {
         return new DataSmResult(resp.getMessageId(), resp.getOptionalParameters());
     }
 
-    public void close() {
+    public synchronized void close() {
         logger.debug("Close session {}", sessionId);
         SessionContext ctx = sessionContext();
-        if (!ctx.getSessionState().equals(SessionState.CLOSED)) {
-            ctx.close();
+        SessionState sessionState = ctx.getSessionState();
+        if (!sessionState.equals(SessionState.CLOSED)) {
             try {
                 connection().close();
             } catch (IOException e) {
+                logger.warn("Failed to close connection: {}", e.getMessage());
             }
         }
 
         // Make sure the enquireLinkThread doesn't wait for itself
         if (Thread.currentThread() != enquireLinkSender) {
-            logger.info("Closing enquireLinkSender for session {}", enquireLinkSender, sessionId);
+            logger.debug("Stop enquireLinkSender for session {}", sessionId);
             if (enquireLinkSender != null) {
-                while(enquireLinkSender.isAlive()) {
-                    try {
-                        enquireLinkSender.join();
-                    } catch (InterruptedException e) {
-                        logger.warn("Interrupted while waiting for enquireLinkSender thread to exit");
-                    }
+                try {
+                    enquireLinkSender.interrupt();
+                    enquireLinkSender.join();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    logger.warn("Interrupted while waiting for enquireLinkSender thread to exit");
                 }
             }
         }
 
-        logger.debug("Session {} is closed and eenquireLinkSender stopped", sessionId);
+        if (!sessionState.equals(SessionState.CLOSED)) {
+            logger.debug("Close session context {} in state {}", sessionId, sessionState);
+            ctx.close();
+        }
+
+        logger.debug("Session {} is closed and enquireLinkSender stopped", sessionId);
     }
 
     /**
@@ -273,7 +280,7 @@ public abstract class AbstractSession implements Session {
         } catch (IOException e) {
             logger.error("Failed sending " + task.getCommandName() + " command", e);
 
-            if(task.getCommandName().equals("enquire_link")) {
+            if("enquire_link".equals(task.getCommandName())) {
                 logger.info("Tomas: Ignore failure of sending enquire_link, wait to see if connection is restored");
             } else {
                 pendingResponse.remove(seqNum);
@@ -302,6 +309,30 @@ public abstract class AbstractSession implements Session {
 
     }
 
+    /**
+     * Execute send command command task.
+     *
+     * @param task is the task.
+     * @return the command response.
+     * @throws PDUException if there is invalid PDU parameter found.
+     * @throws ResponseTimeoutException if the response has reach it timeout.
+     * @throws InvalidResponseException if invalid response found.
+     * @throws NegativeResponseException if the negative response found.
+     * @throws IOException if there is an IO error found.
+     */
+    protected void executeSendCommandWithNoResponse(SendCommandTask task)
+        throws PDUException, IOException {
+
+        int seqNum = sequence.nextValue();
+        try {
+            task.executeTask(connection().getOutputStream(), seqNum);
+        } catch (IOException e) {
+            logger.error("Failed sending " + task.getCommandName() + " command", e);
+            close();
+            throw e;
+        }
+    }
+
     private synchronized static final String generateSessionId() {
         return IntUtil.toHexString(random.nextInt());
     }
@@ -326,6 +357,21 @@ public abstract class AbstractSession implements Session {
         }
     }
 
+    public void sendOutbind(String systemId, String password) throws IOException {
+        if (sessionContext().getSessionState().equals(SessionState.CLOSED)) {
+            throw new IOException("Session " + sessionId + " is closed");
+        }
+
+        OutbindCommandTask task = new OutbindCommandTask(pduSender, systemId, password);
+
+        try {
+            executeSendCommandWithNoResponse(task);
+        } catch (PDUException e) {
+            // exception should be never caught since we didn't send any string parameter.
+            logger.warn("PDU String should be always valid", e);
+        }
+    }
+
     public void unbind() throws ResponseTimeoutException,
             InvalidResponseException, IOException {
         if (sessionContext().getSessionState().equals(SessionState.CLOSED)) {
@@ -343,7 +389,6 @@ public abstract class AbstractSession implements Session {
             // ignore the negative response
             logger.warn("Receive non-ok command_status ({}) for unbind_resp", e.getCommandStatus());
         }
-
     }
 
     public void unbindAndClose() {
@@ -418,28 +463,30 @@ public abstract class AbstractSession implements Session {
         public void run() {
             logger.info("Starting EnquireLinkSender for session {}", sessionId);
             while (isReadPdu()) {
-                while (!sendingEnquireLink.compareAndSet(true, false) && isReadPdu()) {
+                while (!sendingEnquireLink.compareAndSet(true, false) && !Thread.currentThread().isInterrupted() && isReadPdu()) {
                     synchronized (sendingEnquireLink) {
                         try {
                             sendingEnquireLink.wait(500);
                         } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            break;
                         }
                     }
                 }
-                if (!isReadPdu()) {
+                if (Thread.currentThread().isInterrupted() || !isReadPdu()) {
                     break;
                 }
                 try {
                     sendEnquireLink();
                 } catch (ResponseTimeoutException e) {
-                    logger.error("EnquireLinkSender.run() ResponseTimeoutException", e);
+                    logger.error("Response timeout on enquireLink", e);
                     close();
                 } catch (InvalidResponseException e) {
-                    logger.error("EnquireLinkSender.run() InvalidResponseException", e);
+                    logger.error("Invalid response on enquireLink", e);
                     // lets unbind gracefully
                     unbindAndClose();
                 } catch (IOException e) {
-                    logger.error("EnquireLinkSender.run() IOException", e);
+                    logger.error("I/O exception on enquireLink", e);
                     close();
                 }
             }

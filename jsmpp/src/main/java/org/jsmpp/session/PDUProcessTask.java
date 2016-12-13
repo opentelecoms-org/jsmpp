@@ -35,7 +35,7 @@ public class PDUProcessTask implements Runnable {
     private final ResponseHandler responseHandler;
     private final ActivityNotifier activityNotifier;
     private final Runnable onIOExceptionTask;
-    
+
     public PDUProcessTask(Command pduHeader, byte[] pdu,
     		SMPPSessionContext sessionContext, ResponseHandler responseHandler,
             ActivityNotifier activityNotifier, Runnable onIOExceptionTask) {
@@ -47,6 +47,7 @@ public class PDUProcessTask implements Runnable {
         this.onIOExceptionTask = onIOExceptionTask;
     }
 
+    @Override
     public void run() {
         try {
             if(logger.isDebugEnabled()) {

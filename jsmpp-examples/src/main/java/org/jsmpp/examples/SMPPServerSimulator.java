@@ -94,7 +94,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
     
     public QuerySmResult onAcceptQuerySm(QuerySm querySm,
             SMPPServerSession source) throws ProcessRequestException {
-        logger.info("Accepting query sm, but not implemented");
+        logger.info("Accepting query_sm, but not implemented");
         return null;
     }
     

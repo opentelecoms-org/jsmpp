@@ -3,7 +3,10 @@ package org.jsmpp.bean;
 
 import static org.testng.Assert.assertEquals;
 
+<<<<<<< HEAD
 import org.jsmpp.util.HexUtil;
+=======
+>>>>>>> opentelecoms-org/master
 import org.testng.annotations.Test;
 
 /**
@@ -13,6 +16,7 @@ public class DataCodingsTest {
 
   @Test
   public void testDataCodingsZero() {
+<<<<<<< HEAD
     byte expected = (byte) (0x00);
     DataCoding dataCoding = DataCodings.ZERO;
     assertEquals(dataCoding.toByte(), expected);
@@ -56,12 +60,37 @@ public class DataCodingsTest {
       }
       else {
         assertEquals("org.jsmpp.bean.SimpleDataCoding", DataCodings.newInstance(expected).getClass().getName());
+=======
+    DataCoding dataCoding = DataCodings.ZERO;
+    assertEquals(dataCoding.toByte(), (byte) 0x00);
+  }
+
+  @Test
+  public void testDataCodingsFactories() {
+    for (int i = 0; i < 256; i++) {
+      byte expected = (byte) (0xff & i);
+      DataCoding dataCoding = DataCodings.newInstance(expected);
+      if (i < 64) {
+        assertEquals(DataCodings.newInstance(expected).getClass().getName(), "org.jsmpp.bean.GeneralDataCoding");
+      }
+      else if (i < 192) {
+        assertEquals(DataCodings.newInstance(expected).getClass().getName(), "org.jsmpp.bean.RawDataCoding");
+      }
+      else if (i < 240) {
+        assertEquals(DataCodings.newInstance(expected).getClass().getName(), "org.jsmpp.bean.MessageWaitingDataCoding");
+      }
+      else {
+        assertEquals(DataCodings.newInstance(expected).getClass().getName(), "org.jsmpp.bean.SimpleDataCoding");
+>>>>>>> opentelecoms-org/master
       }
 
       if (i < 192) {
         assertEquals(dataCoding.toByte(), expected);
       }
+<<<<<<< HEAD
       assertEquals(dataCoding, DataCodings.newInstance(expected));
+=======
+>>>>>>> opentelecoms-org/master
     }
   }
 

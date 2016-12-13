@@ -25,7 +25,6 @@ import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
-import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.util.StringParameter;
 import org.jsmpp.util.StringValidator;
 
@@ -49,10 +48,10 @@ public class BindRequest {
     private final int originalSequenceNumber;
     private boolean done;
     
-    private final ServerResponseHandler responseHandler;
+    private final GenericServerResponseHandler responseHandler;
     public BindRequest(int sequenceNumber, BindType bindType, String systemId, String password, 
             String systemType, TypeOfNumber addrTon, NumberingPlanIndicator addrNpi, 
-            String addressRange, InterfaceVersion interfaceVersion, ServerResponseHandler responseHandler) {
+            String addressRange, InterfaceVersion interfaceVersion, GenericServerResponseHandler responseHandler) {
         this.originalSequenceNumber = sequenceNumber;
         this.responseHandler = responseHandler;
         
@@ -66,7 +65,7 @@ public class BindRequest {
         this.interfaceVersion = interfaceVersion;
     }
     
-    public BindRequest(Bind bind, ServerResponseHandler responseHandler) {
+    public BindRequest(Bind bind, GenericServerResponseHandler responseHandler) {
         this(bind.getSequenceNumber(), BindType.valueOf(bind.getCommandId()), bind.getSystemId(), 
                 bind.getPassword(), bind.getSystemType(), 
                 TypeOfNumber.valueOf(bind.getAddrTon()), 
@@ -110,6 +109,7 @@ public class BindRequest {
     public InterfaceVersion getInterfaceVersion() {
     	return interfaceVersion;
     }
+
     /**
      * Accept the bind request. Will not send the optional parameter sc_interface_version in
      * the bind response message.
@@ -118,7 +118,7 @@ public class BindRequest {
      * @throws PDUStringException if the system id is not valid.
      * @throws IllegalStateException if the acceptance or rejection has been made.
      * @throws IOException is the connection already closed.
-     * @see #reject(ProcessRequestException)
+     * @see #reject(int errorCode)
      */
     public void accept(String systemId) throws PDUStringException, IllegalStateException, IOException {
     	accept(systemId, null);
@@ -133,7 +133,7 @@ public class BindRequest {
      * @throws PDUStringException if the system id is not valid.
      * @throws IllegalStateException if the acceptance or rejection has been made.
      * @throws IOException is the connection already closed.
-     * @see #reject(ProcessRequestException)
+     * @see #reject(int errorCode)
      */
     public void accept(String systemId, InterfaceVersion interfaceVersion) throws PDUStringException, IllegalStateException, IOException {
         StringValidator.validateString(systemId, StringParameter.SYSTEM_ID);
@@ -161,7 +161,7 @@ public class BindRequest {
      * @param errorCode is the reason of rejection.
      * @throws IllegalStateException if the acceptance or rejection has been made.
      * @throws IOException if the connection already closed.
-     * @see {@link #accept()}
+     * @see {@link #accept(String systemId, InterfaceVersion interfaceVersion)}
      */
     public void reject(int errorCode) throws IllegalStateException, IOException {
         lock.lock();

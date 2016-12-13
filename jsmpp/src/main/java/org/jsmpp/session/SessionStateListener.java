@@ -33,6 +33,5 @@ public interface SessionStateListener {
      * @param oldState is the old state.
      * @param source is source of changed state.
      */
-    public void onStateChange(SessionState newState, SessionState oldState,
-    		Session source);
+    void onStateChange(SessionState newState, SessionState oldState, Session source);
 }

@@ -39,12 +39,12 @@ import org.jsmpp.extra.ResponseTimeoutException;
  * 
  */
 public interface ServerSession {
-    
+
     /**
      * Submit a short message to specified destination address (ESME). This method will
      * blocks until response received or timeout reached. This method simplify
      * operations of sending DELIVER_SM command and receiving the DELIVER_SM_RESP.
-     * 
+     *
      * @param serviceType is the service_type.
      * @param sourceAddrTon is the source_addr_ton.
      * @param sourceAddrNpi is the source_addr_npi.

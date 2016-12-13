@@ -83,7 +83,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     private ServerMessageReceiverListener messageReceiverListener;
     private ServerResponseDeliveryListener responseDeliveryListener;
     private BindRequestReceiver bindRequestReceiver = new BindRequestReceiver(responseHandler);
-    
+
     public SMPPServerSession(Connection conn,
             SessionStateListener sessionStateListener,
             ServerMessageReceiverListener messageReceiverListener,
@@ -330,11 +330,11 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 // TODO uudashr: we have double checking when accept the bind request
             }
         }
-        
+
         public void processBind(Bind bind) {
-            bindRequestReceiver.notifyAcceptBind(bind);
+            SMPPServerSession.this.bindRequestReceiver.notifyAcceptBind(bind);
         }
-        
+
         public MessageId processSubmitSm(SubmitSm submitSm)
                 throws ProcessRequestException {
             try {
@@ -500,9 +500,10 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     private class PDUReaderWorker extends Thread {
         private ExecutorService executorService = Executors.newFixedThreadPool(getPduProcessorDegree());
         private Runnable onIOExceptionTask = new Runnable() {
+            @Override
             public void run() {
                 close();
-            };
+            }
         };
         
         @Override
@@ -552,7 +553,6 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             enquireLinkSender.enquireLink();
         }
     }
-    
     
     private class BoundStateListener implements SessionStateListener {
         public void onStateChange(SessionState newState, SessionState oldState,
