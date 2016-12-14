@@ -45,7 +45,7 @@ public class AbstractSmCommand extends Command {
     /**
      * Message Type.
      *
-     * @return
+     * @return if the esmClass is the default message type (00)
      */
     public boolean isDefaultMessageType() {
         return isDefaultMessageType(esmClass);
@@ -61,7 +61,7 @@ public class AbstractSmCommand extends Command {
     /**
      * Specific Features.
      *
-     * @return
+     * @return if the esmClass contains the User Data Header Indicator
      */
     public boolean isUdhi() {
         return isUdhi(esmClass);
@@ -289,7 +289,7 @@ public class AbstractSmCommand extends Command {
      * Specific Features.
      *
      * @param esmClass
-     * @return
+     * @return the esmClass with Reply Path
      */
     public static byte composeReplyPath(byte esmClass) {
         return composeSpecificFeatures(esmClass, SMPPConstant.ESMCLS_REPLY_PATH);
@@ -299,7 +299,7 @@ public class AbstractSmCommand extends Command {
      * Specific Features.
      *
      * @param esmClass
-     * @return
+     * @return if the esmClass has User Data Header Indicator and Reply Path
      */
     public static boolean isUdhiAndReplyPath(byte esmClass) {
         return isSpecificFeatures(esmClass, SMPPConstant.ESMCLS_UDHI_REPLY_PATH);
@@ -309,7 +309,7 @@ public class AbstractSmCommand extends Command {
      * Specific Features.
      *
      * @param esmClass
-     * @return
+     * @return the esmClass with User Data Header Indicator and Reply Path
      */
     public static byte composeUdhiAndReplyPath(byte esmClass) {
         return composeSpecificFeatures(esmClass,
@@ -342,7 +342,7 @@ public class AbstractSmCommand extends Command {
      * Clean the Messaging Mode or clean the ESM Class at bits 1 - 0.
      *
      * @param esmClass
-     * @return
+     * @return the esmClass without the Messaging Mode bits
      */
     protected final static byte cleanMessagingMode(byte esmClass) {
         /*
@@ -453,20 +453,17 @@ public class AbstractSmCommand extends Command {
         return (byte)(registeredDelivery & 0x0fc);
     }
 
-    /*
-     * SME originated Acknowledgement.
-     */
     /**
      * SME originated Acknowledgement.
      *
-     * @param registeredDeliery
+     * @param registeredDelivery
      * @param smeOriginatedAckValue
      * @return
      */
-    protected static final boolean isSmeAck(byte registeredDeliery,
+    protected static final boolean isSmeAck(byte registeredDelivery,
             byte smeOriginatedAckValue) {
         // xxxx11xx = 0x0c mask bits 3 - 2
-        return (registeredDeliery & 0x0c) == smeOriginatedAckValue;
+        return (registeredDelivery & 0x0c) == smeOriginatedAckValue;
     }
 
     protected static final byte composeSmeAck(byte registeredDelivery,

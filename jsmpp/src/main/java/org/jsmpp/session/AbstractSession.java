@@ -312,11 +312,7 @@ public abstract class AbstractSession implements Session {
      * Execute send command command task.
      *
      * @param task is the task.
-     * @return the command response.
      * @throws PDUException if there is invalid PDU parameter found.
-     * @throws ResponseTimeoutException if the response has reach it timeout.
-     * @throws InvalidResponseException if invalid response found.
-     * @throws NegativeResponseException if the negative response found.
      * @throws IOException if there is an IO error found.
      */
     protected void executeSendCommandWithNoResponse(SendCommandTask task)
