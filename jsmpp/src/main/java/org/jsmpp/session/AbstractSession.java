@@ -214,11 +214,12 @@ public abstract class AbstractSession implements Session {
 
         // Make sure the enquireLinkThread doesn't wait for itself
         if (Thread.currentThread() != enquireLinkSender) {
-            logger.debug("Stop enquireLinkSender for session {}", sessionId);
             if (enquireLinkSender != null) {
+                logger.debug("Stop enquireLinkSender for session {}", sessionId);
                 try {
                     enquireLinkSender.interrupt();
                     enquireLinkSender.join();
+                    enquireLinkSender = null;
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     logger.warn("Interrupted while waiting for enquireLinkSender thread to exit");
@@ -230,8 +231,6 @@ public abstract class AbstractSession implements Session {
             logger.debug("Close session context {} in state {}", sessionId, sessionState);
             ctx.close();
         }
-
-        logger.debug("Session {} is closed and enquireLinkSender stopped", sessionId);
     }
 
     /**
