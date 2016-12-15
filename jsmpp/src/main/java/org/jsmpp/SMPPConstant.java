@@ -199,49 +199,49 @@ public interface SMPPConstant {
     public static final byte ESMCLS_ESME_MANUAL_ACK = 0x10;
 
     /**
-     * Encoded esm_class parameter for deliver_sm or data_sm (SMSC -> ESME)<br/>
+     * Encoded esm_class parameter for deliver_sm or data_sm (SMSC -> ESME)
      * xx0001xx Short Message contains SMSC Delivery Receipt.
      */
     public static final byte ESMCLS_SMSC_DELIV_RECEIPT = 0x04;
 
     /**
-     * Encoded esm_class parameter for deliver_sm or data_sm (SMSC -> ESME)<br/>
+     * Encoded esm_class parameter for deliver_sm or data_sm (SMSC -> ESME)
      * xx0001xx Short Message contains SME Delivery Acknowledgment.
      */
     public static final byte ESMCLS_SME_DELIV_ACK = 0x08;
 
     /**
-     * Encoded esm_class parameter for deliver_sm or data_sm (SMSC -> ESME)<br/>
+     * Encoded esm_class parameter for deliver_sm or data_sm (SMSC -> ESME)
      * xx0100xx Short Message contains SME Manual/User Acknowledgment.
      */
     public static final byte ESMCLS_SME_MANUAL_ACK = 0x10;
 
     /**
-     * Encoded esm_class parameter for deliver_sm or data_sm (SMSC -> ESME)<br/>
+     * Encoded esm_class parameter for deliver_sm or data_sm (SMSC -> ESME)
      * xx0110xx Short Message contains Conversation Abort (Korean CDMA).
      */
     public static final byte ESMCLS_CONV_ABORT = 0x18;
 
     /**
-     * Encoded esm_class parameter for deliver_sm or data_sm (SMSC -> ESME)<br/>
+     * Encoded esm_class parameter for deliver_sm or data_sm (SMSC -> ESME)
      * xx1000xx Short Message contains Intermediate Delivery Notification.
      */
     public static final byte ESMCLS_INTRMD_DELIV_NOTIF = 0x20;
 
     /**
-     * Encoded esm_class parameter for deliver_sm or data_sm (SMSC -> ESME)<br/>
+     * Encoded esm_class parameter for deliver_sm or data_sm (SMSC -> ESME)
      * 01xxxxxx UDHI Indicator set.
      */
     public static final byte ESMCLS_UDHI_INDICATOR_SET = 0x40;
 
     /**
-     * Encoded esm_class parameter for deliver_sm or data_sm (SMSC -> ESME)<br/>
+     * Encoded esm_class parameter for deliver_sm or data_sm (SMSC -> ESME)
      * 10xxxxxx Reply Path.
      */
     public static final byte ESMCLS_REPLY_PATH = (byte)0x80;
 
     /**
-     * Encoded esm_class parameter for deliver_sm or data_sm (SMSC -> ESME)<br/>
+     * Encoded esm_class parameter for deliver_sm or data_sm (SMSC -> ESME)
      * 11xxxxxx UDHI and Reply Path can use.
      */
     public static final byte ESMCLS_UDHI_REPLY_PATH = (byte)0xc0;

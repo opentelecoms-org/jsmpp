@@ -1,5 +1,8 @@
 Changes:
 
+2.3.3
+- Change the close of session method, to fix deadlock in Apache Camel SMPP component
+
 2.3.2
 - Process optional seconds in delivery receipt
 - Change log level for not recognized optional parameter
