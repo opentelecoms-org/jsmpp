@@ -37,12 +37,13 @@ public class OpenAndBindExample {
         SMPPSession session = new SMPPSession();
         try {
             LOGGER.info("Connect and bind to {} port {}", host, port);
-            session.connectAndBind(host, port, new BindParameter(BindType.BIND_TRX, "test", "test", "cp", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
+            String systemId = session.connectAndBind(host, port, new BindParameter(BindType.BIND_TRX, "test", "test", "cp", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
+            LOGGER.info("Connected with SMSC with system id {}", systemId);
+            try { Thread.sleep(10000); } catch (InterruptedException e) {}
         } catch (IOException e) {
             // Failed connect and bind to SMSC
             LOGGER.error("Failed connect and bind to host", e);
         }
-        try { Thread.sleep(10000); } catch (InterruptedException e) {}
         session.unbindAndClose();
     }
 

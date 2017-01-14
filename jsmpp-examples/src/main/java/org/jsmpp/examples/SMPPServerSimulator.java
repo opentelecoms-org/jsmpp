@@ -65,7 +65,9 @@ import org.slf4j.LoggerFactory;
 public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implements Runnable, ServerMessageReceiverListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(SMPPServerSimulator.class);
     private static final String QUERYSM_NOT_IMPLEMENTED = "query_sm not implemented";
+    private static final String CANCELSM_NOT_IMPLEMENTED = "cancel_sm not implemented";
     private static final String DATASM_NOT_IMPLEMENTED = "data_sm not implemented";
+    private static final String REPLACESM_NOT_IMPLEMENTED = "replace_sm not implemented";
     private static final Integer DEFAULT_PORT = 8056;
     private static final String DEFAULT_SYSID = "j";
     private static final String DEFAULT_PASSWORD = "jpwd";
@@ -134,16 +136,20 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
 
     public DataSmResult onAcceptDataSm(DataSm dataSm, Session source)
             throws ProcessRequestException {
-        LOGGER.info("DataSm not implemented");
-        throw new ProcessRequestException(DATASM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RINVCMDID);
+        LOGGER.info("Accepting DataSm, but not implemented");
+        throw new ProcessRequestException(DATASM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RSYSERR);
     }
 
     public void onAcceptCancelSm(CancelSm cancelSm, SMPPServerSession source)
             throws ProcessRequestException {
+        LOGGER.info("Accepting CancelSm, but not implemented");
+        throw new ProcessRequestException(CANCELSM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RCANCELFAIL);
     }
 
     public void onAcceptReplaceSm(ReplaceSm replaceSm, SMPPServerSession source)
             throws ProcessRequestException {
+        LOGGER.info("AcceptingReplaceSm, but not implemented");
+        throw new ProcessRequestException(REPLACESM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RREPLACEFAIL);
     }
 
     private static class WaitBindTask implements Runnable {

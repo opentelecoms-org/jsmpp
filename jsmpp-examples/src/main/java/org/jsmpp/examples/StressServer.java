@@ -105,7 +105,7 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
     public QuerySmResult onAcceptQuerySm(QuerySm querySm,
             SMPPServerSession source) throws ProcessRequestException {
         LOGGER.warn("QuerySm not implemented");
-        throw new ProcessRequestException(QUERYSM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RINVCMDID);
+        throw new ProcessRequestException(QUERYSM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RQUERYFAIL);
     }
     
     public MessageId onAcceptSubmitSm(SubmitSm submitSm,
@@ -119,13 +119,13 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
     public SubmitMultiResult onAcceptSubmitMulti(SubmitMulti submitMulti,
             SMPPServerSession source) throws ProcessRequestException {
         LOGGER.warn("SubmitMulti not implemented");
-        throw new ProcessRequestException(SUBMITMULTI_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RINVCMDID);
+        throw new ProcessRequestException(SUBMITMULTI_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RSYSERR);
     }
     
     public DataSmResult onAcceptDataSm(DataSm dataSm, Session source)
             throws ProcessRequestException {
         LOGGER.warn("DataSm not implemented");
-        throw new ProcessRequestException(DATASM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RINVCMDID);
+        throw new ProcessRequestException(DATASM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RSYSERR);
     }
     
     public void onAcceptCancelSm(CancelSm cancelSm, SMPPServerSession source)
