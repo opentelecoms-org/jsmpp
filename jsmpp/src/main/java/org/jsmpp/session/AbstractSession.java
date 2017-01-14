@@ -456,7 +456,7 @@ public abstract class AbstractSession implements Session {
 
         @Override
         public void run() {
-            logger.info("Starting EnquireLinkSender for session {}", sessionId);
+            logger.debug("Starting EnquireLinkSender for session {}", sessionId);
             while (isReadPdu()) {
                 while (!sendingEnquireLink.compareAndSet(true, false) && !Thread.currentThread().isInterrupted() && isReadPdu()) {
                     synchronized (sendingEnquireLink) {
