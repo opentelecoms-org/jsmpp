@@ -17,7 +17,6 @@ package org.jsmpp.examples;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.log4j.BasicConfigurator;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.CancelSm;
@@ -38,27 +37,28 @@ import org.jsmpp.session.Session;
 import org.jsmpp.util.MessageIDGenerator;
 import org.jsmpp.util.MessageId;
 import org.jsmpp.util.RandomMessageIDGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author uudashr
  *
  */
 public class ReceiveSubmittedMessageExample {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReceiveSubmittedMessageExample.class);
     
     public static void main(String[] args) {
-        BasicConfigurator.configure();
         try {
-            
-            
+
             // prepare generator of Message ID
             final MessageIDGenerator messageIdGenerator = new RandomMessageIDGenerator();
             
             // prepare the message receiver
             ServerMessageReceiverListener messageReceiverListener = new ServerMessageReceiverListener() {
-                public MessageId onAcceptSubmitSm(SubmitSm submitSm,
-                        SMPPServerSession source)
+                public MessageId onAcceptSubmitSm(SubmitSm submitSm, SMPPServerSession source)
                         throws ProcessRequestException {
-                    System.out.println("Receiving message : " + new String(submitSm.getShortMessage()));
+                    LOGGER.info("Receiving message : {}", new String(submitSm.getShortMessage()));
                     // need message_id to response submit_sm
                     return messageIdGenerator.newMessageId();
                 }
@@ -91,7 +91,7 @@ public class ReceiveSubmittedMessageExample {
                 }
             };
             
-            System.out.println("Listening ...");
+            LOGGER.info("Listening ...");
             SMPPServerSessionListener sessionListener = new SMPPServerSessionListener(8056);
             // set all default ServerMessageReceiverListener for all accepted SMPPServerSessionListener
             sessionListener.setMessageReceiverListener(messageReceiverListener);
@@ -99,38 +99,36 @@ public class ReceiveSubmittedMessageExample {
             // accepting connection, session still in OPEN state
             SMPPServerSession session = sessionListener.accept();
             // or we can set for each accepted session session.setMessageReceiverListener(messageReceiverListener)
-            System.out.println("Accept connection");
+            LOGGER.info("Accept connection");
             
             try {
                 BindRequest request = session.waitForBind(5000);
-                System.out.println("Receive bind request");
+                LOGGER.info("Receive bind request for system id {} and password {}", request.getSystemId(), request.getSystemId(), request.getPassword());
                 
                 if ("test".equals(request.getSystemId()) &&
                         "test".equals(request.getPassword())) {
                     
                     // accepting request and send bind response immediately
-                    System.out.println("Accepting bind request");
+                    LOGGER.info("Accepting bind request");
                     request.accept("sys");
-                    
-                    
+
                     try { Thread.sleep(20000); } catch (InterruptedException e) {}
                 } else {
-                    System.out.println("Rejecting bind request");
+                    LOGGER.info("Rejecting bind request");
                     request.reject(SMPPConstant.STAT_ESME_RINVPASWD);
                 }
             } catch (TimeoutException e) {
-                System.out.println("No binding request made after 5000 millisecond");
-                e.printStackTrace();
+                LOGGER.error("No binding request made after 5000 millisecond", e);
             }
-            
-            System.out.println("Closing session");
+
+            LOGGER.info("Closing session");
             session.unbindAndClose();
-            System.out.println("Closing session listener");
+            LOGGER.info("Closing session listener");
             sessionListener.close();
         } catch (PDUStringException e) {
-            e.printStackTrace();
+            LOGGER.error("PDUString exception", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("I/O exception", e);
         }
     }
 }

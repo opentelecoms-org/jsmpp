@@ -20,7 +20,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.log4j.BasicConfigurator;
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUException;
 import org.jsmpp.bean.AlertNotification;
@@ -46,23 +45,25 @@ import org.jsmpp.session.Session;
 import org.jsmpp.util.AbsoluteTimeFormatter;
 import org.jsmpp.util.InvalidDeliveryReceiptException;
 import org.jsmpp.util.TimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author uudashr
  *
  */
 public class AsyncSubmitReceiveDeliverSmExample {
-    private static TimeFormatter timeFormatter = new AbsoluteTimeFormatter();
+    private static final Logger LOGGER = LoggerFactory.getLogger(AsyncSubmitReceiveDeliverSmExample.class);
+    private static final TimeFormatter TIME_FORMATTER = new AbsoluteTimeFormatter();
+
     public static void main(String[] args) {
         final AtomicInteger counter = new AtomicInteger();
         
-        BasicConfigurator.configure();
         final SMPPSession session = new SMPPSession();
         try {
             session.connectAndBind("localhost", 8056, new BindParameter(BindType.BIND_TRX, "test", "test", "cp", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
         } catch (IOException e) {
-            System.err.println("Failed connect and bind to host");
-            e.printStackTrace();
+            LOGGER.error("Failed connect and bind to host", e);
         }
         
         // Set listener to receive deliver_sm
@@ -76,14 +77,13 @@ public class AsyncSubmitReceiveDeliverSmExample {
                         DeliveryReceipt delReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
                         long id = Long.parseLong(delReceipt.getId()) & 0xffffffff;
                         String messageId = Long.toString(id, 16).toUpperCase();
-                        System.out.println("Receiving delivery receipt for message '" + messageId + "' : " + delReceipt);
+                        LOGGER.info("Receiving delivery receipt for message '{}' : {}", messageId, delReceipt);
                     } catch (InvalidDeliveryReceiptException e) {
-                        System.err.println("Failed getting delivery receipt");
-                        e.printStackTrace();
+                        LOGGER.error("Failed getting delivery receipt", e);
                     }
                 } else {
                     // regular short message
-                    System.out.println("Receiving message : " + new String(deliverSm.getShortMessage()));
+                    LOGGER.info("Receiving message : {}", new String(deliverSm.getShortMessage()));
                 }
             }
             
@@ -110,29 +110,25 @@ public class AsyncSubmitReceiveDeliverSmExample {
             execService.execute(new Runnable() {
                 public void run() {
                     try {
-                        String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "1616", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "628176504657", new ESMClass(), (byte)0, (byte)1,  timeFormatter.format(new Date()), null, registeredDelivery, (byte)0, DataCodings.ZERO, (byte)0, "jSMPP simplify SMPP on Java platform".getBytes());
-                        System.out.println("Message submitted, message_id is " + messageId);
+                        String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "1616", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "628176504657", new ESMClass(), (byte)0, (byte)1,  TIME_FORMATTER
+                            .format(new Date()), null, registeredDelivery, (byte)0, DataCodings.ZERO, (byte)0, "jSMPP simplify SMPP on Java platform".getBytes());
+                        LOGGER.info("Message submitted, message_id is {}", messageId);
                     } catch (PDUException e) {
-                        System.err.println("Invalid PDU parameter");
-                        e.printStackTrace();
+                        LOGGER.error("Invalid PDU parameter", e);
                         counter.incrementAndGet();
                     } catch (ResponseTimeoutException e) {
-                        System.err.println("Response timeout");
-                        e.printStackTrace();
+                        LOGGER.error("Response timeout", e);
                         counter.incrementAndGet();
                     } catch (InvalidResponseException e) {
                         // Invalid response
-                        System.err.println("Receive invalid respose");
-                        e.printStackTrace();
+                        LOGGER.error("Receive invalid respose", e);
                         counter.incrementAndGet();
                     } catch (NegativeResponseException e) {
                         // Receiving negative response (non-zero command_status)
-                        System.err.println("Receive negative response");
-                        e.printStackTrace();
+                        LOGGER.error("Receive negative response", e);
                         counter.incrementAndGet();
                     } catch (IOException e) {
-                        System.err.println("IO error occur");
-                        e.printStackTrace();
+                        LOGGER.error("I/O error occured", e);
                         counter.incrementAndGet();
                     }
                 }
@@ -142,7 +138,7 @@ public class AsyncSubmitReceiveDeliverSmExample {
         while (counter.get() != maxMessage) {
             try { Thread.sleep(1000); }
             catch (InterruptedException e) {
-                System.err.println("Interrupted");
+                LOGGER.error("Interrupted");
             }
         }
         session.unbindAndClose();
