@@ -22,6 +22,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
+import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.DataCodings;
 import org.jsmpp.bean.DataSm;
@@ -165,25 +166,28 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
 
         public void run() {
             try {
-                BindRequest bindRequest = serverSession.waitForBind(1000);
+                BindRequest bindRequest = serverSession.waitForBind(5000);
                 try {
-                    if (systemId.equals(bindRequest.getSystemId())) {
-                      if (password.equals(bindRequest.getPassword())) {
-                        LOGGER.info("Accepting bind for session {}, interface version {}", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
-                        // The systemId identifies the SMSC to the ESME.
-                        bindRequest.accept(SMSC_SYSTEMID, InterfaceVersion.IF_34);
+                    if (BindType.BIND_TRX.equals(bindRequest.getBindType())) {
+                      if (systemId.equals(bindRequest.getSystemId())) {
+                        if (password.equals(bindRequest.getPassword())) {
+                          LOGGER.info("Accepting bind for session {}, interface version {}", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
+                          // The systemId identifies the SMSC to the ESME.
+                          bindRequest.accept(SMSC_SYSTEMID, InterfaceVersion.IF_34);
+                        } else {
+                          LOGGER.info("Rejecting bind for session {}, interface version {}, invalid password", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
+                          bindRequest.reject(SMPPConstant.STAT_ESME_RINVPASWD);
+                        }
+                      } else {
+                        LOGGER.info("Rejecting bind for session {}, interface version {}, invalid system id", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
+                        bindRequest.reject(SMPPConstant.STAT_ESME_RINVSYSID);
                       }
-                      else {
-                        LOGGER.info("Rejecting bind for session {}, interface version {}, invalid password", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
-                        bindRequest.reject(SMPPConstant.STAT_ESME_RINVPASWD);
-                      }
-                    }
-                    else {
-                      LOGGER.info("Rejecting bind for session {}, interface version {}, invalid system id", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
-                      bindRequest.reject(SMPPConstant.STAT_ESME_RINVSYSID);
+                    } else {
+                      LOGGER.info("Rejecting bind for session {}, interface version {}, only accept transceiver", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
+                      bindRequest.reject(SMPPConstant.STAT_ESME_RBINDFAIL);
                     }
                 } catch (PDUStringException e) {
-                  LOGGER.error("Invalid system id", e);
+                  LOGGER.error("Invalid system id: " + SMSC_SYSTEMID, e);
                   bindRequest.reject(SMPPConstant.STAT_ESME_RSYSERR);
                 }
 
