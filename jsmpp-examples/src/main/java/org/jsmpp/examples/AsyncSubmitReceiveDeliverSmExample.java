@@ -121,7 +121,7 @@ public class AsyncSubmitReceiveDeliverSmExample {
                         counter.incrementAndGet();
                     } catch (InvalidResponseException e) {
                         // Invalid response
-                        LOGGER.error("Receive invalid respose", e);
+                        LOGGER.error("Receive invalid response", e);
                         counter.incrementAndGet();
                     } catch (NegativeResponseException e) {
                         // Receiving negative response (non-zero command_status)
