@@ -1,5 +1,11 @@
 Changes:
 
+2.3.4
+- Removed synchronized from close to prevent deadlock
+- When stopping the enquire_link sender, only stop when still alive
+- Use slf4j-simple in test case, instead of log4j and System.Out
+- Improve the SMPP server simulator example
+
 2.3.3
 - Change the close of session method, to fix deadlock in Apache Camel SMPP component
 
