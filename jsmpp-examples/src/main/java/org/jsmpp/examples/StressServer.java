@@ -63,11 +63,16 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class StressServer implements Runnable, ServerMessageReceiverListener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(StressServer.class);
     private static final int DEFAULT_MAX_WAIT_BIND = 10;
     private static final String DEFAULT_LOG4J_PATH = "stress/server-log4j.properties";
     private static final Integer DEFAULT_PORT = 8056;
     private static final Integer DEFAULT_PROCESSOR_DEGREE = 3;
-    private static final Logger logger = LoggerFactory.getLogger(StressServer.class);
+    private static final String CANCELSM_NOT_IMPLEMENTED = "cancel_sm not implemented";
+    private static final String DATASM_NOT_IMPLEMENTED = "data_sm not implemented";
+    private static final String QUERYSM_NOT_IMPLEMENTED = "query_sm not implemented";
+    private static final String REPLACESM_NOT_IMPLEMENTED = "replace_sm not implemented";
+    private static final String SUBMITMULTI_NOT_IMPLEMENTED = "submit_multi not implemented";
     private final ExecutorService waitBindExecService = Executors.newFixedThreadPool(DEFAULT_MAX_WAIT_BIND);
     private final MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
     private final AtomicInteger requestCounter = new AtomicInteger();
@@ -85,54 +90,60 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
             sessionListener.setSessionStateListener(new SessionStateListenerImpl());
             sessionListener.setPduProcessorDegree(processorDegree);
             new TrafficWatcherThread().start();
-            logger.info("Listening on port {}", port);
+            LOGGER.info("Listening on port {}", port);
             while (true) {
                 SMPPServerSession serverSession = sessionListener.accept();
-                logger.info("Accepting connection for session {}", serverSession.getSessionId());
+                LOGGER.info("Accepting connection for session {}", serverSession.getSessionId());
                 serverSession.setMessageReceiverListener(this);
                 waitBindExecService.execute(new WaitBindTask(serverSession));
             }
         } catch (IOException e) {
-            logger.error("IO error occurred", e);
+            LOGGER.error("I/O error occurred", e);
         }
     }
     
     public QuerySmResult onAcceptQuerySm(QuerySm querySm,
             SMPPServerSession source) throws ProcessRequestException {
-        return null;
+        LOGGER.warn("QuerySm not implemented");
+        throw new ProcessRequestException(QUERYSM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RQUERYFAIL);
     }
     
     public MessageId onAcceptSubmitSm(SubmitSm submitSm,
             SMPPServerSession source) throws ProcessRequestException {
         MessageId messageId = messageIDGenerator.newMessageId();
-        logger.debug("Receiving submit_sm {}, and return message id {}", new String(submitSm.getShortMessage()), messageId.getValue());
+        LOGGER.info("Receiving submit_sm {}, and return message id {}", new String(submitSm.getShortMessage()), messageId.getValue());
         requestCounter.incrementAndGet();
         return messageId;
     }
     
     public SubmitMultiResult onAcceptSubmitMulti(SubmitMulti submitMulti,
             SMPPServerSession source) throws ProcessRequestException {
-        return null;
+        LOGGER.warn("SubmitMulti not implemented");
+        throw new ProcessRequestException(SUBMITMULTI_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RSYSERR);
     }
     
     public DataSmResult onAcceptDataSm(DataSm dataSm, Session source)
             throws ProcessRequestException {
-        return null;
+        LOGGER.warn("DataSm not implemented");
+        throw new ProcessRequestException(DATASM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RSYSERR);
     }
     
     public void onAcceptCancelSm(CancelSm cancelSm, SMPPServerSession source)
             throws ProcessRequestException {
+        LOGGER.warn("CancelSm not implemented");
+        throw new ProcessRequestException(CANCELSM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RCANCELFAIL);
     }
     
     public void onAcceptReplaceSm(ReplaceSm replaceSm, SMPPServerSession source)
             throws ProcessRequestException {
+        LOGGER.warn("ReplaceSm not implemented");
+        throw new ProcessRequestException(REPLACESM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RREPLACEFAIL);
     }
     
     private class SessionStateListenerImpl implements SessionStateListener {
-        public void onStateChange(SessionState newState, SessionState oldState,
-        		Session source) {
+        public void onStateChange(SessionState newState, SessionState oldState, Session source) {
             SMPPServerSession session = (SMPPServerSession)source;
-            logger.info("New state of " + session.getSessionId() + " is " + newState);
+            LOGGER.info("New state of {} is {}" , session.getSessionId(), newState);
         }
     }
     
@@ -146,19 +157,19 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
         public void run() {
             try {
                 BindRequest bindRequest = serverSession.waitForBind(1000);
-                logger.debug("Accepting bind for session {}", serverSession.getSessionId());
+                LOGGER.debug("Accepting bind for session {}", serverSession.getSessionId());
                 try {
                     bindRequest.accept("sys", InterfaceVersion.IF_34);
                 } catch (PDUStringException e) {
-                    logger.error("Invalid system id", e);
+                    LOGGER.error("Invalid system id", e);
                     bindRequest.reject(SMPPConstant.STAT_ESME_RSYSERR);
                 }
             } catch (IllegalStateException e) {
-                logger.error("System error", e);
+                LOGGER.error("System error", e);
             } catch (TimeoutException e) {
-                logger.warn("Wait for bind has reach timeout", e);
+                LOGGER.warn("Wait for bind has reach timeout", e);
             } catch (IOException e) {
-                logger.error("Failed accepting bind request for session {}", serverSession.getSessionId());
+                LOGGER.error("Failed accepting bind request for session {}", serverSession.getSessionId());
             }
         }
     }
@@ -168,8 +179,7 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
         private final SubmitSm submitSm;
         private MessageId messageId;
         
-        public DeliveryReceiptTask(SMPPServerSession session,
-                SubmitSm submitSm, MessageId messageId) {
+        public DeliveryReceiptTask(SMPPServerSession session, SubmitSm submitSm, MessageId messageId) {
             this.session = session;
             this.submitSm = submitSm;
             this.messageId = messageId;
@@ -199,30 +209,31 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
                         new RegisteredDelivery(0), 
                         DataCodings.ZERO, 
                         delRec.toString().getBytes());
-                logger.debug("Sending delivery receipt for message id " + messageId + ":" + stringValue);
+                LOGGER.debug("Sending delivery receipt for message id " + messageId + ":" + stringValue);
             } catch (Exception e) {
-                logger.error("Failed sending delivery_receipt for message id " + messageId + ":" + stringValue, e);
+                LOGGER.error("Failed sending delivery_receipt for message id " + messageId + ":" + stringValue, e);
             }
         }
     }
-    
-    
+
     private class TrafficWatcherThread extends Thread {
         @Override
         public void run() {
-            logger.info("Starting traffic watcher...");
+            LOGGER.info("Starting traffic watcher...");
             while (true) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                 }
                 int trafficPerSecond = requestCounter.getAndSet(0);
-                logger.info("Traffic per second : " + trafficPerSecond);
+                LOGGER.info("Traffic per second : " + trafficPerSecond);
             }
         }
     }
     
     public static void main(String[] args) {
+        PropertyConfigurator.configure(System.getProperty("jsmpp.server.log4jPath", DEFAULT_LOG4J_PATH));
+
         int port;
         try {
             port = Integer.parseInt(System.getProperty("jsmpp.server.port", DEFAULT_PORT.toString()));
@@ -236,11 +247,8 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
         } catch (NumberFormatException e) {
             processorDegree = DEFAULT_PROCESSOR_DEGREE;
         }
-        
-        String log4jPath = System.getProperty("jsmpp.server.log4jPath", DEFAULT_LOG4J_PATH);
-        PropertyConfigurator.configure(log4jPath);
-        
-        logger.info("Processor degree: " + processorDegree);
+
+        LOGGER.info("Processor degree: " + processorDegree);
         StressServer stressServer = new StressServer(port, processorDegree);
         stressServer.run();
     }

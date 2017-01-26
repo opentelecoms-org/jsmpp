@@ -200,7 +200,7 @@ public abstract class AbstractSession implements Session {
         return new DataSmResult(resp.getMessageId(), resp.getOptionalParameters());
     }
 
-    public synchronized void close() {
+    public void close() {
         logger.debug("Close session {}", sessionId);
         SessionContext ctx = sessionContext();
         SessionState sessionState = ctx.getSessionState();
@@ -214,12 +214,11 @@ public abstract class AbstractSession implements Session {
 
         // Make sure the enquireLinkThread doesn't wait for itself
         if (Thread.currentThread() != enquireLinkSender) {
-            if (enquireLinkSender != null) {
+            if (enquireLinkSender != null && enquireLinkSender.isAlive()) {
                 logger.debug("Stop enquireLinkSender for session {}", sessionId);
                 try {
                     enquireLinkSender.interrupt();
                     enquireLinkSender.join();
-                    enquireLinkSender = null;
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     logger.warn("Interrupted while waiting for enquireLinkSender thread to exit");
@@ -290,7 +289,7 @@ public abstract class AbstractSession implements Session {
 
         try {
             pendingResp.waitDone();
-            logger.debug("{} response received for session {}", task.getCommandName(), sessionId);
+            logger.debug("{} response with sequence {} received for session {}", task.getCommandName(), seqNum, sessionId);
         } catch (ResponseTimeoutException e) {
             pendingResponse.remove(seqNum);
             throw new ResponseTimeoutException("No response after waiting for "
@@ -305,7 +304,6 @@ public abstract class AbstractSession implements Session {
         Command resp = pendingResp.getResponse();
         validateResponse(resp);
         return resp;
-
     }
 
     /**
@@ -456,7 +454,7 @@ public abstract class AbstractSession implements Session {
 
         @Override
         public void run() {
-            logger.info("Starting EnquireLinkSender for session {}", sessionId);
+            logger.debug("Starting EnquireLinkSender for session {}", sessionId);
             while (isReadPdu()) {
                 while (!sendingEnquireLink.compareAndSet(true, false) && !Thread.currentThread().isInterrupted() && isReadPdu()) {
                     synchronized (sendingEnquireLink) {

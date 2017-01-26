@@ -20,7 +20,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.log4j.BasicConfigurator;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.NumberingPlanIndicator;
@@ -45,8 +44,8 @@ import org.slf4j.LoggerFactory;
  */
 public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
     implements Runnable, OutboundServerMessageReceiverListener {
+  private static final Logger LOGGER = LoggerFactory.getLogger(SMPPOutboundServerSimulator.class);
   private static final Integer DEFAULT_PORT = 8056;
-  private static final Logger logger = LoggerFactory.getLogger(SMPPOutboundServerSimulator.class);
   private final ExecutorService execService = Executors.newFixedThreadPool(100);
   private int port;
 
@@ -64,10 +63,9 @@ public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
     catch (NumberFormatException e) {
       port = DEFAULT_PORT;
     }
-    BasicConfigurator.configure();
 
     SMPPOutboundServerSimulator smppServerSim = new SMPPOutboundServerSimulator(port);
-    logger.info("run {}", smppServerSim);
+    LOGGER.info("run {}", smppServerSim);
     smppServerSim.run();
   }
 
@@ -77,12 +75,12 @@ public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
 
   public void run() {
     try {
-      logger.info("Listening on port {}", port);
+      LOGGER.info("Listening on port {}", port);
       OutboundSMPPServerSessionListener sessionListener = new OutboundSMPPServerSessionListener(port);
 
       while (!exit.get()) {
         final SMPPOutboundServerSession outboundServerSession = sessionListener.accept();
-        logger.info("Accepting connection from {} for session {}", outboundServerSession.getInetAddress(),
+        LOGGER.info("Accepting connection from {} for session {}", outboundServerSession.getInetAddress(),
             outboundServerSession.getSessionId());
         outboundServerSession.setEnquireLinkTimer(30000);
         outboundServerSession.addSessionStateListener(new SessionStateListenerImpl());
@@ -94,24 +92,24 @@ public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
           Thread.sleep(60 * 60 * 1000L);
         }
         catch (InterruptedException e) {
-          logger.info("Thread was interrupted");
+          LOGGER.info("Thread was interrupted");
           shutdown();
         }
         outboundServerSession.close();
       }
 
-      logger.info("close listener {}", sessionListener);
+      LOGGER.info("close listener {}", sessionListener);
       sessionListener.close();
       execService.shutdown();
     }
     catch (IOException e) {
-      logger.error("IO error occurred", e);
+      LOGGER.error("IO error occurred", e);
     }
   }
 
   public void onAcceptDeliverSm(DeliverSm deliverSm, SMPPOutboundServerSession source)
       throws ProcessRequestException {
-    logger.info("deliver_sm: {} {} => {} {}", deliverSm.getSequenceNumber(), deliverSm.getSourceAddr(),
+    LOGGER.info("deliver_sm: {} {} => {} {}", deliverSm.getSequenceNumber(), deliverSm.getSourceAddr(),
         deliverSm.getDestAddress(), new String(deliverSm.getShortMessage()));
   }
 
@@ -124,29 +122,29 @@ public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
 
     public void run() {
       try {
-        logger.info("Waiting for outbind request");
+        LOGGER.info("Waiting for outbind request");
         OutbindRequest outbindRequest = serverSession.waitForOutbind(15000);
-        logger.info("Received outbind for session {}, systemid {}, password {}", serverSession.getSessionId(),
+        LOGGER.info("Received outbind for session {}, systemid {}, password {}", serverSession.getSessionId(),
             outbindRequest.getSystemId(), outbindRequest.getPassword());
 
         serverSession.bind(new BindParameter(BindType.BIND_TRX, "test", "test", "cp", TypeOfNumber.UNKNOWN,
             NumberingPlanIndicator.UNKNOWN, null), 60000);
       }
       catch (IllegalStateException e) {
-        logger.error("System error", e);
+        LOGGER.error("System error", e);
       }
       catch (TimeoutException e) {
-        logger.warn("Wait for outbind has reached timeout", e);
+        LOGGER.warn("Wait for outbind has reached timeout", e);
       }
       catch (IOException e) {
-        logger.warn("IO exception", e);
+        LOGGER.warn("IO exception", e);
       }
     }
   }
 
   private class SessionStateListenerImpl implements SessionStateListener {
     public void onStateChange(SessionState newState, SessionState oldState, Session source) {
-      logger.info("Session state changed from " + oldState + " to " + newState);
+      LOGGER.info("Session state changed from " + oldState + " to " + newState);
     }
   }
 

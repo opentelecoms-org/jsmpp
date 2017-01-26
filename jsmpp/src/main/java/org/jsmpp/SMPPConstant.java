@@ -75,7 +75,6 @@ public interface SMPPConstant {
     /*
      * Command Status constants (STAT prefix).
      */
-
     public static final int STAT_ESME_ROK = 0x00000000;
     public static final int STAT_ESME_RINVMSGLEN = 0x00000001;
     public static final int STAT_ESME_RINVCMDLEN = 0x00000002;

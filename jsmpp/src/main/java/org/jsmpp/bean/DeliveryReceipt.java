@@ -44,8 +44,8 @@ public class DeliveryReceipt {
             "yyMMddHHmm");
 
     private String id;
-    private int submitted;
-    private int delivered;
+    private Integer submitted;
+    private Integer delivered;
     private Date submitDate;
     private Date doneDate;
     private DeliveryReceiptState finalStatus;
@@ -63,10 +63,8 @@ public class DeliveryReceipt {
          */
         try {
             id = getDeliveryReceiptValue(DeliveryReceipt.DELREC_ID, formattedDeliveryReceipt);
-            submitted = Integer.parseInt(getDeliveryReceiptValue(
-                    DeliveryReceipt.DELREC_SUB, formattedDeliveryReceipt));
-            delivered = Integer.parseInt(getDeliveryReceiptValue(
-                    DeliveryReceipt.DELREC_DLVRD, formattedDeliveryReceipt));
+            submitted = getDeliveryReceiptIntValue(DeliveryReceipt.DELREC_SUB, formattedDeliveryReceipt);
+            delivered = getDeliveryReceiptIntValue(DeliveryReceipt.DELREC_DLVRD, formattedDeliveryReceipt);
             submitDate = string2Date(getDeliveryReceiptValue(
                     DeliveryReceipt.DELREC_SUBMIT_DATE, formattedDeliveryReceipt));
             doneDate = string2Date(getDeliveryReceiptValue(
@@ -77,8 +75,7 @@ public class DeliveryReceipt {
             error = getDeliveryReceiptValue(DeliveryReceipt.DELREC_ERR, formattedDeliveryReceipt);
             text = getDeliveryReceiptTextValue(formattedDeliveryReceipt);
         } catch (Exception e) {
-            throw new InvalidDeliveryReceiptException(
-                    "There is an error found when parsing delivery receipt", e);
+            throw new InvalidDeliveryReceiptException("There is an error found when parsing delivery receipt", e);
         }
     }
 
@@ -456,5 +453,13 @@ public class DeliveryReceipt {
         }
         startIndex = startIndex + tmpAttr.length();
         return source.substring(startIndex);
+    }
+
+    private static int getDeliveryReceiptIntValue(String attrName, String formattedDeliveryReceipt){
+        String value = getDeliveryReceiptValue(attrName, formattedDeliveryReceipt);
+        if (value != null) {
+            return Integer.parseInt(value);
+        }
+        return -1;
     }
 }

@@ -20,9 +20,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.log4j.BasicConfigurator;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
+import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.DataCodings;
 import org.jsmpp.bean.DataSm;
@@ -64,61 +64,69 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implements Runnable, ServerMessageReceiverListener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SMPPServerSimulator.class);
+    private static final String QUERYSM_NOT_IMPLEMENTED = "query_sm not implemented";
+    private static final String CANCELSM_NOT_IMPLEMENTED = "cancel_sm not implemented";
+    private static final String DATASM_NOT_IMPLEMENTED = "data_sm not implemented";
+    private static final String REPLACESM_NOT_IMPLEMENTED = "replace_sm not implemented";
     private static final Integer DEFAULT_PORT = 8056;
-    private static final Logger logger = LoggerFactory.getLogger(SMPPServerSimulator.class);
+    private static final String DEFAULT_SYSID = "j";
+    private static final String DEFAULT_PASSWORD = "jpwd";
+    private static final String SMSC_SYSTEMID = "sys";
     private final ExecutorService execService = Executors.newFixedThreadPool(5);
     private final ExecutorService execServiceDelReceipt = Executors.newFixedThreadPool(100);
     private final MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
     private int port;
-    
-    public SMPPServerSimulator(int port) {
+    private String systemId;
+    private String password;
+
+    public SMPPServerSimulator(int port, String systemId, String password) {
         this.port = port;
+        this.systemId = systemId;
+        this.password = password;
     }
-    
+
     public void run() {
         try {
             SMPPServerSessionListener sessionListener = new SMPPServerSessionListener(port);
-            
-            logger.info("Listening on port {}", port);
+            LOGGER.info("Listening on port {}", port);
             while (true) {
                 SMPPServerSession serverSession = sessionListener.accept();
-                logger.info("Accepting connection for session {}", serverSession.getSessionId());
+                LOGGER.info("Accepting connection for session {}", serverSession.getSessionId());
                 serverSession.setMessageReceiverListener(this);
                 serverSession.setResponseDeliveryListener(this);
-                execService.execute(new WaitBindTask(serverSession));
+                execService.execute(new WaitBindTask(serverSession, systemId, password));
             }
         } catch (IOException e) {
-            logger.error("IO error occurred", e);
+            LOGGER.error("IO error occurred", e);
         }
     }
-    
-    public QuerySmResult onAcceptQuerySm(QuerySm querySm,
-            SMPPServerSession source) throws ProcessRequestException {
-        logger.info("Accepting query_sm, but not implemented");
-        return null;
+
+    public QuerySmResult onAcceptQuerySm(QuerySm querySm, SMPPServerSession source) throws ProcessRequestException {
+        LOGGER.info("QuerySm not implemented");
+        throw new ProcessRequestException(QUERYSM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RINVCMDID);
     }
-    
+
     public MessageId onAcceptSubmitSm(SubmitSm submitSm,
             SMPPServerSession source) throws ProcessRequestException {
         MessageId messageId = messageIDGenerator.newMessageId();
-        logger.debug("Receiving submit_sm '{}', and return message id {}", new String(submitSm.getShortMessage()), messageId);
+        LOGGER.info("Receiving submit_sm '{}', and return message id {}", new String(submitSm.getShortMessage()), messageId);
         if (SMSCDeliveryReceipt.FAILURE.containedIn(submitSm.getRegisteredDelivery()) || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitSm.getRegisteredDelivery())) {
             execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitSm, messageId));
         }
         return messageId;
     }
-    
+
     public void onSubmitSmRespSent(MessageId messageId,
             SMPPServerSession source) {
-        logger.debug("submit_sm_resp with message_id {} has been sent", messageId);
+        LOGGER.debug("submit_sm_resp with message_id {} has been sent", messageId);
     }
-    
-    public SubmitMultiResult onAcceptSubmitMulti(SubmitMulti submitMulti,
-            SMPPServerSession source) throws ProcessRequestException {
+
+    public SubmitMultiResult onAcceptSubmitMulti(SubmitMulti submitMulti, SMPPServerSession source)
+        throws ProcessRequestException {
         MessageId messageId = messageIDGenerator.newMessageId();
-        logger.debug("Receiving submit_multi_sm '{}', and return message id {}", 
-                new String(submitMulti.getShortMessage()), 
-                messageId);
+        LOGGER.debug("Receiving submit_multi_sm '{}', and return message id {}",
+                new String(submitMulti.getShortMessage()), messageId);
         if (SMSCDeliveryReceipt.FAILURE.containedIn(submitMulti.getRegisteredDelivery())
                 || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitMulti.getRegisteredDelivery())) {
             execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitMulti, messageId));
@@ -126,151 +134,173 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
 
         return new SubmitMultiResult(messageId.getValue(), new UnsuccessDelivery[0]);
     }
-    
+
     public DataSmResult onAcceptDataSm(DataSm dataSm, Session source)
             throws ProcessRequestException {
-        return null;
+        LOGGER.info("Accepting DataSm, but not implemented");
+        throw new ProcessRequestException(DATASM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RSYSERR);
     }
-    
+
     public void onAcceptCancelSm(CancelSm cancelSm, SMPPServerSession source)
             throws ProcessRequestException {
+        LOGGER.info("Accepting CancelSm, but not implemented");
+        throw new ProcessRequestException(CANCELSM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RCANCELFAIL);
     }
-    
+
     public void onAcceptReplaceSm(ReplaceSm replaceSm, SMPPServerSession source)
             throws ProcessRequestException {
+        LOGGER.info("AcceptingReplaceSm, but not implemented");
+        throw new ProcessRequestException(REPLACESM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RREPLACEFAIL);
     }
-    
+
     private static class WaitBindTask implements Runnable {
         private final SMPPServerSession serverSession;
-        
-        public WaitBindTask(SMPPServerSession serverSession) {
+        private String systemId;
+        private String password;
+
+        public WaitBindTask(SMPPServerSession serverSession, String systemId, String password) {
             this.serverSession = serverSession;
+            this.systemId = systemId;
+            this.password = password;
         }
 
         public void run() {
             try {
-                BindRequest bindRequest = serverSession.waitForBind(1000);
-                logger.info("Accepting bind for session {}, interface version {}", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
+                BindRequest bindRequest = serverSession.waitForBind(5000);
                 try {
-                    bindRequest.accept("sys", InterfaceVersion.IF_34);
+                    if (BindType.BIND_TRX.equals(bindRequest.getBindType())) {
+                      if (systemId.equals(bindRequest.getSystemId())) {
+                        if (password.equals(bindRequest.getPassword())) {
+                          LOGGER.info("Accepting bind for session {}, interface version {}", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
+                          // The systemId identifies the SMSC to the ESME.
+                          bindRequest.accept(SMSC_SYSTEMID, InterfaceVersion.IF_34);
+                        } else {
+                          LOGGER.info("Rejecting bind for session {}, interface version {}, invalid password", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
+                          bindRequest.reject(SMPPConstant.STAT_ESME_RINVPASWD);
+                        }
+                      } else {
+                        LOGGER.info("Rejecting bind for session {}, interface version {}, invalid system id", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
+                        bindRequest.reject(SMPPConstant.STAT_ESME_RINVSYSID);
+                      }
+                    } else {
+                      LOGGER.info("Rejecting bind for session {}, interface version {}, only accept transceiver", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
+                      bindRequest.reject(SMPPConstant.STAT_ESME_RBINDFAIL);
+                    }
                 } catch (PDUStringException e) {
-                    logger.error("Invalid system id", e);
-                    bindRequest.reject(SMPPConstant.STAT_ESME_RSYSERR);
+                  LOGGER.error("Invalid system id: " + SMSC_SYSTEMID, e);
+                  bindRequest.reject(SMPPConstant.STAT_ESME_RSYSERR);
                 }
-            
+
             } catch (IllegalStateException e) {
-                logger.error("System error", e);
+                LOGGER.error("System error", e);
             } catch (TimeoutException e) {
-                logger.warn("Wait for bind has reach timeout", e);
+                LOGGER.warn("Wait for bind has reach timeout", e);
             } catch (IOException e) {
-                logger.error("Failed accepting bind request for session {}", serverSession.getSessionId());
+                LOGGER.error("Failed accepting bind request for session {}", serverSession.getSessionId());
             }
         }
     }
-    
+
     private static class DeliveryReceiptTask implements Runnable {
         private final SMPPServerSession session;
         private final MessageId messageId;
-        
+
         private final TypeOfNumber sourceAddrTon;
         private final NumberingPlanIndicator sourceAddrNpi;
         private final String sourceAddress;
-        
+
         private final TypeOfNumber destAddrTon;
         private final NumberingPlanIndicator destAddrNpi;
         private final String destAddress;
-        
+
         private final int totalSubmitted;
         private final int totalDelivered;
-        
+
         private final byte[] shortMessage;
-        
+
         public DeliveryReceiptTask(SMPPServerSession session,
                 SubmitSm submitSm, MessageId messageId) {
             this.session = session;
             this.messageId = messageId;
-            
+
             // reversing destination to source
             sourceAddrTon = TypeOfNumber.valueOf(submitSm.getDestAddrTon());
             sourceAddrNpi = NumberingPlanIndicator.valueOf(submitSm.getDestAddrNpi());
             sourceAddress = submitSm.getDestAddress();
-            
+
             // reversing source to destination
             destAddrTon = TypeOfNumber.valueOf(submitSm.getSourceAddrTon());
             destAddrNpi = NumberingPlanIndicator.valueOf(submitSm.getSourceAddrNpi());
             destAddress = submitSm.getSourceAddr();
-            
+
             totalSubmitted = totalDelivered = 1;
-            
+
             shortMessage = submitSm.getShortMessage();
         }
-        
+
         public DeliveryReceiptTask(SMPPServerSession session,
                 SubmitMulti submitMulti, MessageId messageId) {
             this.session = session;
             this.messageId = messageId;
-            
+
             // set to unknown and null, since it was submit_multi
             sourceAddrTon = TypeOfNumber.UNKNOWN;
             sourceAddrNpi = NumberingPlanIndicator.UNKNOWN;
             sourceAddress = null;
-            
+
             // reversing source to destination
             destAddrTon = TypeOfNumber.valueOf(submitMulti.getSourceAddrTon());
             destAddrNpi = NumberingPlanIndicator.valueOf(submitMulti.getSourceAddrNpi());
             destAddress = submitMulti.getSourceAddr();
-            
+
             // distribution list assumed only contains single address
             totalSubmitted = totalDelivered = submitMulti.getDestAddresses().length;
-            
+
             shortMessage = submitMulti.getShortMessage();
         }
-        
+
         public void run() {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e1) {
-                e1.printStackTrace();
+                LOGGER.error("Interupted", e1);
             }
             SessionState state = session.getSessionState();
             if (!state.isReceivable()) {
-                logger.debug("Not sending delivery receipt for message id {} since session state is {}", messageId, state);
+                LOGGER.debug("Not sending delivery receipt for message id {} since session state is {}", messageId, state);
                 return;
             }
             String stringValue = Integer.valueOf(messageId.getValue(), 16).toString();
             try {
-                
+
                 DeliveryReceipt delRec = new DeliveryReceipt(stringValue, totalSubmitted, totalDelivered, new Date(), new Date(), DeliveryReceiptState.DELIVRD, "000", new String(shortMessage));
                 session.deliverShortMessage(
-                        "mc", 
-                        sourceAddrTon, 
-                        sourceAddrNpi, 
-                        sourceAddress, 
-                        destAddrTon, 
-                        destAddrNpi, 
-                        destAddress, 
-                        new ESMClass(MessageMode.DEFAULT, MessageType.SMSC_DEL_RECEIPT, GSMSpecificFeature.DEFAULT), 
-                        (byte)0, 
-                        (byte)0, 
-                        new RegisteredDelivery(0), 
-                        DataCodings.ZERO, 
+                        "mc",
+                        sourceAddrTon, sourceAddrNpi, sourceAddress,
+                        destAddrTon, destAddrNpi, destAddress,
+                        new ESMClass(MessageMode.DEFAULT, MessageType.SMSC_DEL_RECEIPT, GSMSpecificFeature.DEFAULT),
+                        (byte)0,
+                        (byte)0,
+                        new RegisteredDelivery(0),
+                        DataCodings.ZERO,
                         delRec.toString().getBytes());
-                logger.debug("Sending delivery receipt for message id {}: {}", messageId, stringValue);
+                LOGGER.debug("Sending delivery receipt for message id {}: {}", messageId, stringValue);
             } catch (Exception e) {
-                logger.error("Failed sending delivery_receipt for message id " + messageId + ":" + stringValue, e);
+                LOGGER.error("Failed sending delivery_receipt for message id " + messageId + ":" + stringValue, e);
             }
         }
     }
-    
+
     public static void main(String[] args) {
+        String systemId = System.getProperty("jsmpp.client.systemId", DEFAULT_SYSID);
+        String password = System.getProperty("jsmpp.client.password", DEFAULT_PASSWORD);
         int port;
         try {
             port = Integer.parseInt(System.getProperty("jsmpp.simulator.port", DEFAULT_PORT.toString()));
         } catch (NumberFormatException e) {
             port = DEFAULT_PORT;
         }
-        BasicConfigurator.configure();
-        SMPPServerSimulator smppServerSim = new SMPPServerSimulator(port);
+        SMPPServerSimulator smppServerSim = new SMPPServerSimulator(port, systemId, password);
         smppServerSim.run();
     }
 }

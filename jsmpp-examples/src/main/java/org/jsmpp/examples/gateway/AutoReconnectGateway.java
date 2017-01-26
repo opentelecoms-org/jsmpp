@@ -16,7 +16,6 @@ package org.jsmpp.examples.gateway;
 
 import java.io.IOException;
 
-import org.apache.log4j.BasicConfigurator;
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUException;
 import org.jsmpp.bean.BindType;
@@ -44,7 +43,7 @@ import org.slf4j.LoggerFactory;
  */
 
 public class AutoReconnectGateway implements Gateway {
-  private static final Logger logger = LoggerFactory.getLogger(AutoReconnectGateway.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(AutoReconnectGateway.class);
   private SMPPSession session = null;
   private String remoteIpAddress;
   private int remotePort;
@@ -67,11 +66,9 @@ public class AutoReconnectGateway implements Gateway {
   }
 
   public static void main(String[] args) throws IOException {
-    BasicConfigurator.configure();
     Gateway gateway = new AutoReconnectGateway("localhost", 8056,
         new BindParameter(BindType.BIND_TRX, "sms", "sms", "sms",
             TypeOfNumber.UNKNOWN, NumberingPlanIndicator.ISDN, "8080"));
-
     while (true) {
       try {
         Thread.sleep(1000);
@@ -124,7 +121,7 @@ public class AutoReconnectGateway implements Gateway {
    */
   private SMPPSession getSession() throws IOException {
     if (session == null) {
-      logger.info("Initiate session for the first time to {}:{}", remoteIpAddress, remotePort);
+      LOGGER.info("Initiate session for the first time to {}:{}", remoteIpAddress, remotePort);
       session = newSession();
     }
     else if (!session.getSessionState().isBound()) {
@@ -142,7 +139,7 @@ public class AutoReconnectGateway implements Gateway {
     new Thread() {
       @Override
       public void run() {
-        logger.info("Schedule reconnect after {} millis", timeInMillis);
+        LOGGER.info("Schedule reconnect after {} millis", timeInMillis);
         try {
           Thread.sleep(timeInMillis);
         }
@@ -152,11 +149,11 @@ public class AutoReconnectGateway implements Gateway {
         int attempt = 0;
         while (session == null || session.getSessionState().equals(SessionState.CLOSED)) {
           try {
-            logger.info("Reconnecting attempt #{} ...", ++attempt);
+            LOGGER.info("Reconnecting attempt #{} ...", ++attempt);
             session = newSession();
           }
           catch (IOException e) {
-            logger.error("Failed opening connection and bind to " + remoteIpAddress + ":" + remotePort, e);
+            LOGGER.error("Failed opening connection and bind to " + remoteIpAddress + ":" + remotePort, e);
             // wait for a second
             try {
               Thread.sleep(1000);
@@ -177,8 +174,9 @@ public class AutoReconnectGateway implements Gateway {
    */
   private class SessionStateListenerImpl implements SessionStateListener {
     public void onStateChange(SessionState newState, SessionState oldState, Session source) {
+      LOGGER.debug("State changed from {} to {}",oldState , newState);
       if (newState.equals(SessionState.CLOSED)) {
-        logger.info("Session {} closed", source.getSessionId());
+        LOGGER.info("Session {} closed", source.getSessionId());
         reconnectAfter(reconnectInterval);
       }
     }

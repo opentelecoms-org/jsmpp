@@ -2,6 +2,7 @@
 target/
 out/
 classes/
+stress/logs/
 syntax:glob
 *.swp
 

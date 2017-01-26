@@ -17,7 +17,6 @@ package org.jsmpp.examples;
 import java.io.IOException;
 import java.util.Date;
 
-import org.apache.log4j.BasicConfigurator;
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUException;
 import org.jsmpp.bean.AlertNotification;
@@ -45,109 +44,103 @@ import org.jsmpp.session.Session;
 import org.jsmpp.util.AbsoluteTimeFormatter;
 import org.jsmpp.util.InvalidDeliveryReceiptException;
 import org.jsmpp.util.TimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author terukizm
  * 
  */
 public class SimpleSubmitSimpleReceiveExample {
-    private static TimeFormatter timeFormatter = new AbsoluteTimeFormatter();;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSubmitExample.class);
+    private static final TimeFormatter TIME_FORMATTER = new AbsoluteTimeFormatter();;
 
     public static void main(String[] args) {
         String server = "localhost";
         int port = 8056;
         String message = "jSMPP simplify SMPP on Java platform";
 
-        // bind(connect)
         SMPPSession session = new SMPPSession();
         try {
-            session.connectAndBind(server, port, new BindParameter(BindType.BIND_TRX, "test", "test", "cp",
+            String systemId = session.connectAndBind(server, port, new BindParameter(BindType.BIND_TRX, "test", "test", "cp",
                     TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
-        } catch (IOException e) {
-            System.err.println("Failed connect and bind to host");
-            e.printStackTrace();
-        }
+            LOGGER.info("Connected with SMSC with system id {}", systemId);
 
-        // send Message
-        try {
-            // set RegisteredDelivery
-            final RegisteredDelivery registeredDelivery = new RegisteredDelivery();
-            registeredDelivery.setSMSCDeliveryReceipt(SMSCDeliveryReceipt.SUCCESS_FAILURE);
+            // send Message
+            try {
+                // set RegisteredDelivery
+                final RegisteredDelivery registeredDelivery = new RegisteredDelivery();
+                registeredDelivery.setSMSCDeliveryReceipt(SMSCDeliveryReceipt.SUCCESS_FAILURE);
 
-            String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL,
+                String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL,
                     NumberingPlanIndicator.UNKNOWN, "1616", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN,
-                    "628176504657", new ESMClass(), (byte)0, (byte)1, timeFormatter.format(new Date()), null,
+                    "628176504657", new ESMClass(), (byte)0, (byte)1, TIME_FORMATTER.format(new Date()), null,
                     registeredDelivery, (byte)0, new GeneralDataCoding(Alphabet.ALPHA_DEFAULT, MessageClass.CLASS1,
-                            false), (byte)0, message.getBytes());
+                        false), (byte)0, message.getBytes());
 
-            System.out.println("Message submitted, message_id is " + messageId);
+                LOGGER.info("Message submitted, message_id is {}", messageId);
 
-        } catch (PDUException e) {
-            // Invalid PDU parameter
-            System.err.println("Invalid PDU parameter");
-            e.printStackTrace();
-        } catch (ResponseTimeoutException e) {
-            // Response timeout
-            System.err.println("Response timeout");
-            e.printStackTrace();
-        } catch (InvalidResponseException e) {
-            // Invalid response
-            System.err.println("Receive invalid respose");
-            e.printStackTrace();
-        } catch (NegativeResponseException e) {
-            // Receiving negative response (non-zero command_status)
-            System.err.println("Receive negative response");
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.err.println("IO error occur");
-            e.printStackTrace();
-        }
+            } catch (PDUException e) {
+                // Invalid PDU parameter
+                LOGGER.error("Invalid PDU parameter", e);
+            } catch (ResponseTimeoutException e) {
+                // Response timeout
+                LOGGER.error("Response timeout", e);
+            } catch (InvalidResponseException e) {
+                // Invalid response
+                LOGGER.error("Receive invalid response", e);
+            } catch (NegativeResponseException e) {
+                // Receiving negative response (non-zero command_status)
+                LOGGER.error("Receive negative response", e);
+            } catch (IOException e) {
+                LOGGER.error("I/O error occured", e);
+            }
 
-        // receive Message
-        BasicConfigurator.configure();
+            // Set listener to receive deliver_sm
+            session.setMessageReceiverListener(new MessageReceiverListener() {
 
-        // Set listener to receive deliver_sm
-        session.setMessageReceiverListener(new MessageReceiverListener() {
-
-            public void onAcceptDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
-                if (MessageType.SMSC_DEL_RECEIPT.containedIn(deliverSm.getEsmClass())) {
-                    // delivery receipt
-                    try {
-                        DeliveryReceipt delReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
-                        long id = Long.parseLong(delReceipt.getId()) & 0xffffffff;
-                        String messageId = Long.toString(id, 16).toUpperCase();
-                        System.out.println("received '" + messageId + "' : " + delReceipt);
-                    } catch (InvalidDeliveryReceiptException e) {
-                        System.err.println("receive faild");
-                        e.printStackTrace();
+                public void onAcceptDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
+                    if (MessageType.SMSC_DEL_RECEIPT.containedIn(deliverSm.getEsmClass())) {
+                        // delivery receipt
+                        try {
+                            DeliveryReceipt delReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
+                            long id = Long.parseLong(delReceipt.getId()) & 0xffffffff;
+                            String messageId = Long.toString(id, 16).toUpperCase();
+                            LOGGER.info("received '{}' : {}", messageId, delReceipt);
+                        } catch (InvalidDeliveryReceiptException e) {
+                            LOGGER.error("receive failed, e");
+                        }
+                    } else {
+                        // regular short message
+                        LOGGER.info("Receiving message : {}", new String(deliverSm.getShortMessage()));
                     }
-                } else {
-                    // regular short message
-                    System.out.println("Receiving message : " + new String(deliverSm.getShortMessage()));
                 }
+
+                public void onAcceptAlertNotification(AlertNotification alertNotification) {
+                    LOGGER.info("onAcceptAlertNotification");
+                }
+
+                public DataSmResult onAcceptDataSm(DataSm dataSm, Session source) throws ProcessRequestException {
+                    LOGGER.info("onAcceptDataSm");
+                    return null;
+                }
+            });
+
+            // wait 3 second
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                LOGGER.info("Interrupted exception", e);
             }
 
-            public void onAcceptAlertNotification(AlertNotification alertNotification) {
-                System.out.println("onAcceptAlertNotification");
-            }
+            // unbind(disconnect)
+            session.unbindAndClose();
 
-            public DataSmResult onAcceptDataSm(DataSm dataSm, Session source) throws ProcessRequestException {
-                System.out.println("onAcceptDataSm");
-                return null;
-            }
-        });
-
-        // wait 3 second
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            LOGGER.error("Failed connect and bind to host", e);
         }
 
-        // unbind(disconnect)
-        session.unbindAndClose();
-
-        System.out.println("finish!");
+        LOGGER.info("Finish!");
     }
 
 }

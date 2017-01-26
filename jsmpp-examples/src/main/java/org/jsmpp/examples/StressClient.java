@@ -57,11 +57,11 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class StressClient implements Runnable {
-    private static final String DEFAULT_PASSWORD = "jpwd";
+    private static final Logger LOGGER = LoggerFactory.getLogger(StressClient.class);
     private static final String DEFAULT_SYSID = "j";
-    private static final String DEFAULT_DESTADDR = "62161616";
+    private static final String DEFAULT_PASSWORD = "jpwd";
     private static final String DEFAULT_SOURCEADDR = "1616";
-    private static final Logger logger = LoggerFactory.getLogger(StressClient.class);
+    private static final String DEFAULT_DESTADDR = "62161616";
     private static final String DEFAULT_LOG4J_PATH = "stress/client-log4j.properties";
     private static final String DEFAULT_HOST = "localhost";
     private static final Integer DEFAULT_PORT = 8056;
@@ -114,14 +114,14 @@ public class StressClient implements Runnable {
             smppSession.connectAndBind(host, port, BindType.BIND_TRX, systemId,
                     password, "cln", TypeOfNumber.UNKNOWN,
                     NumberingPlanIndicator.UNKNOWN, null);
-            logger.info("Bound to {}:{}", host, port);
+            LOGGER.info("Bound to {}:{}", host, port);
         } catch (IOException e) {
-            logger.error("Failed initialize connection or bind", e);
+            LOGGER.error("Failed initialize connection or bind", e);
             return;
         }
         new TrafficWatcherThread().start();
 
-        logger.info("Starting to send {} bulk messages", bulkSize);
+        LOGGER.info("Starting to send {} bulk messages", bulkSize);
         for (int i = 0; i < bulkSize && !exit.get(); i++) {
             execService.execute(newSendTask("Hello " + id + " idx=" + i));
         }
@@ -132,7 +132,7 @@ public class StressClient implements Runnable {
             } catch (InterruptedException e) {
             }
         }
-        logger.info("Done");
+        LOGGER.info("Done");
         smppSession.unbindAndClose();
     }
     
@@ -155,19 +155,19 @@ public class StressClient implements Runnable {
                         maxDelay.set(delay);
                     }
                 } catch (PDUException e) {
-                    logger.error("Failed submit short message '" + message + "'", e);
+                    LOGGER.error("Failed submit short message '" + message + "'", e);
                     shutdown();
                 } catch (ResponseTimeoutException e) {
-                    logger.error("Failed submit short message '" + message + "'", e);
+                    LOGGER.error("Failed submit short message '" + message + "'", e);
                     shutdown();
                 } catch (InvalidResponseException e) {
-                    logger.error("Failed submit short message '" + message + "'", e);
+                    LOGGER.error("Failed submit short message '" + message + "'", e);
                     shutdown();
                 } catch (NegativeResponseException e) {
-                    logger.error("Failed submit short message '" + message + "'", e);
+                    LOGGER.error("Failed submit short message '" + message + "'", e);
                     shutdown();
                 } catch (IOException e) {
-                    logger.error("Failed submit short message '" + message + "'", e);
+                    LOGGER.error("Failed submit short message '" + message + "'", e);
                     shutdown();
                 }
             }
@@ -177,7 +177,7 @@ public class StressClient implements Runnable {
     private class TrafficWatcherThread extends Thread {
         @Override
         public void run() {
-            logger.info("Starting traffic watcher...");
+            LOGGER.info("Starting traffic watcher...");
             while (!exit.get()) {
                 try {
                     Thread.sleep(1000);
@@ -188,7 +188,7 @@ public class StressClient implements Runnable {
                 long maxDelayPerSecond = maxDelay.getAndSet(0);
                 totalRequestCounter.addAndGet(requestPerSecond);
                 int total = totalResponseCounter.addAndGet(responsePerSecond);
-                logger.info("Request/Response per second: {}/{} of {} maxDelay={}",
+                LOGGER.info("Request/Response per second: {}/{} of {} maxDelay={}",
                     requestPerSecond, responsePerSecond, total, maxDelayPerSecond);
                 if (total == bulkSize) {
                     shutdown();
@@ -198,6 +198,9 @@ public class StressClient implements Runnable {
     }
     
     public static void main(String[] args) {
+
+        PropertyConfigurator.configure(System.getProperty("jsmpp.server.log4jPath", DEFAULT_LOG4J_PATH));
+
         String host = System.getProperty("jsmpp.client.host", DEFAULT_HOST);
         String systemId = System.getProperty("jsmpp.client.systemId", DEFAULT_SYSID);
         String password = System.getProperty("jsmpp.client.password", DEFAULT_PASSWORD);
@@ -238,20 +241,16 @@ public class StressClient implements Runnable {
         } catch (NumberFormatException e) {
             maxOutstanding = DEFAULT_MAX_OUTSTANDING;
         }
-        
-        String log4jPath = System.getProperty("jsmpp.client.log4jPath", DEFAULT_LOG4J_PATH);
-        PropertyConfigurator.configure(log4jPath);
-        
-        
-        logger.info("Target server {}:{}", host, port);
-        logger.info("System ID: {}", systemId);
-        logger.info("Password: {}", password);
-        logger.info("Source address: {}", sourceAddr);
-        logger.info("Destination address: {}", destinationAddr);
-        logger.info("Transaction timer: {}", transactionTimer);
-        logger.info("Bulk size: {}", bulkSize);
-        logger.info("Max outstanding: {}", maxOutstanding);
-        logger.info("Processor degree: {}", processorDegree);
+
+        LOGGER.info("Target server {}:{}", host, port);
+        LOGGER.info("System ID: {}", systemId);
+        LOGGER.info("Password: {}", password);
+        LOGGER.info("Source address: {}", sourceAddr);
+        LOGGER.info("Destination address: {}", destinationAddr);
+        LOGGER.info("Transaction timer: {}", transactionTimer);
+        LOGGER.info("Bulk size: {}", bulkSize);
+        LOGGER.info("Max outstanding: {}", maxOutstanding);
+        LOGGER.info("Processor degree: {}", processorDegree);
         
         StressClient stressClient = new StressClient(0, host, port, bulkSize,
                 systemId, password, sourceAddr, destinationAddr,
