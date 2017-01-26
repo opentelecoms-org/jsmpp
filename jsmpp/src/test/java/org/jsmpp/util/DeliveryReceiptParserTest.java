@@ -15,7 +15,7 @@ import org.testng.annotations.Test;
  */
 public class DeliveryReceiptParserTest {
     private PDUDecomposer decomposer = new DefaultDecomposer();
-    private static final String ORIGINAL_MESSAGE = "testing jsmpp bow";
+    private static final String ORIGINAL_MESSAGE = "testing jSMPP bow";
     
     @Test
     public void parseTextWithLowerCase() {
@@ -85,6 +85,28 @@ public class DeliveryReceiptParserTest {
             Date doneDate = delReceipt.getDoneDate();
             Date expectedDoneDate = createDate(2008, 9, 1, 11, 31, 47);
             assertEquals(doneDate, expectedDoneDate);
+        } catch (InvalidDeliveryReceiptException e) {
+            e.printStackTrace();
+            fail("Failed parsing delivery receipt:" + e.getMessage());
+        }
+    }
+
+    @Test
+    public void parseWithoutSubAndDelivered() {
+        try {
+            DeliveryReceipt delReceipt = decomposer.deliveryReceipt("id:1526758174 submit date:1701240904 done date:1701250907 stat:DELIVRD err:000 text:" + ORIGINAL_MESSAGE);
+            assertEquals(delReceipt.getText(), ORIGINAL_MESSAGE);
+
+            Date submitDate = delReceipt.getSubmitDate();
+            Date expectedSubmitDate = createDate(2017, 1, 24, 9, 4, 0);
+            assertEquals(submitDate, expectedSubmitDate);
+
+            Date doneDate = delReceipt.getDoneDate();
+            Date expectedDoneDate = createDate(2017, 1, 25, 9, 7, 0);
+            assertEquals(doneDate, expectedDoneDate);
+
+            assertEquals(delReceipt.getSubmitted(), -1);
+            assertEquals(delReceipt.getDelivered(), -1);
         } catch (InvalidDeliveryReceiptException e) {
             e.printStackTrace();
             fail("Failed parsing delivery receipt:" + e.getMessage());
