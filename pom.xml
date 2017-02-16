@@ -46,7 +46,7 @@
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
         <buildNumber>${maven.build.timestamp}</buildNumber>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j.version>1.7.22</slf4j.version>
+        <slf4j.version>1.7.23</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
         <junit.version>4.12</junit.version>
         <testng.version>6.8.21</testng.version>
