@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.examples;
 
@@ -42,9 +42,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author Maciej Pigulski <maciej.pigulski[at]gmail.com>
- * 
+ *
  */
 public class SubmitMultipartMultilangualExample {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SubmitMultipartMultilangualExample.class);
@@ -238,7 +238,7 @@ class Gsm0338 {
 			{ 47, 92 }, { 60, 91 }, { 61, 126 }, { 62, 93 }, { 64, 124 }, { 101, 164 } };
 
 	public static boolean isEncodeableInGsm0338(String isoString) {
-		byte[] isoBytes = isoString.getBytes();
+		byte[] isoBytes = isoString.toCharArray();
 		outer: for (int i = 0; i < isoBytes.length; i++) {
 			for (int j = 0; j < isoGsm0338Array.length; j++) {
 				if (isoGsm0338Array[j] == isoBytes[i]) {
