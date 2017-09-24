@@ -174,8 +174,8 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
   public BindRequest connectAndOutbind(String host, int port, OutbindParameter outbindParameter, long timeout)
       throws IOException {
     logger.debug("Connect and bind to {} port {}", host, port);
-    if (sequence().currentValue() != 1) {
-      throw new IOException("Connection is already used");
+    if (getSessionState() != SessionState.CLOSED) {
+      throw new IOException("Session state is not closed");
     }
 
     conn = connFactory.createConnection(host, port);
