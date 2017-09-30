@@ -1,5 +1,10 @@
 Changes:
 
+2.3.5
+- Rewrote the GSM 03.38 class
+- Don't check explicitly the sequence 1, but the session state
+- Add custom delivery receipt stripper
+
 2.3.4
 - Removed synchronized from close to prevent deadlock
 - When stopping the enquire_link sender, only stop when still alive

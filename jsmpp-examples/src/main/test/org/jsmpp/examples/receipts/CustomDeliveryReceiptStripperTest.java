@@ -16,13 +16,13 @@ import org.jsmpp.util.InvalidDeliveryReceiptException;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ExampleDeliveryReceiptStripperTest {
+public class CustomDeliveryReceiptStripperTest {
 
-  private ExampleDeliveryReceiptStripper exampleDeliveryReceiptStripper;
+  private CustomDeliveryReceiptStripper customDeliveryReceiptStripper;
 
   @Before
   public void setUp() throws Exception {
-    exampleDeliveryReceiptStripper = new ExampleDeliveryReceiptStripper();
+    customDeliveryReceiptStripper = new CustomDeliveryReceiptStripper();
   }
 
   @Test
@@ -32,7 +32,7 @@ public class ExampleDeliveryReceiptStripperTest {
       deliverSm.setEsmClass(new ESMClass(MessageMode.DEFAULT, MessageType.SMSC_DEL_RECEIPT, GSMSpecificFeature.DEFAULT).value());
       deliverSm.setShortMessage(
           ("id:0123456789 sub:001 dlvrd:001 submit date:0809011130 done date:0809021131 stat:DELIVRD").getBytes());
-      DeliveryReceipt delReceipt = exampleDeliveryReceiptStripper.strip(deliverSm);
+      DeliveryReceipt delReceipt = customDeliveryReceiptStripper.strip(deliverSm);
       assertEquals("", delReceipt.getText());
 
       assertEquals(1, delReceipt.getSubmitted());
