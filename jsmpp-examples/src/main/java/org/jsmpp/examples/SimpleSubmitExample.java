@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SimpleSubmitExample {
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSubmitExample.class);
-    private static final TimeFormatter TIME_FORMATTER = new AbsoluteTimeFormatter();;
+    private static final TimeFormatter TIME_FORMATTER = new AbsoluteTimeFormatter();
     
     public static void main(String[] args) {
         SMPPSession session = new SMPPSession();
