@@ -1,13 +1,14 @@
 package org.jsmpp.examples.receipts;
 
+import static org.jsmpp.examples.receipts.CustomDeliveryReceiptState.DND_REJECTED;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
 
 import org.jsmpp.bean.DeliverSm;
-import org.jsmpp.bean.DeliveryReceipt;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.GSMSpecificFeature;
 import org.jsmpp.bean.MessageMode;
@@ -31,21 +32,19 @@ public class CustomDeliveryReceiptStripperTest {
       DeliverSm deliverSm = new DeliverSm();
       deliverSm.setEsmClass(new ESMClass(MessageMode.DEFAULT, MessageType.SMSC_DEL_RECEIPT, GSMSpecificFeature.DEFAULT).value());
       deliverSm.setShortMessage(
-          ("id:0123456789 sub:001 dlvrd:001 submit date:0809011130 done date:0809021131 stat:DELIVRD").getBytes());
-      DeliveryReceipt delReceipt = customDeliveryReceiptStripper.strip(deliverSm);
-      assertEquals("", delReceipt.getText());
-
-      assertEquals(1, delReceipt.getSubmitted());
-
-      Date submitDate = delReceipt.getSubmitDate();
-      Date expectedSubmitDate = createDate(2008, 9, 1, 11, 30);
-      assertEquals(expectedSubmitDate, submitDate);
-
-      Date doneDate = delReceipt.getDoneDate();
-      Date expectedDoneDate = createDate(2008, 9, 2, 11, 31);
-      assertEquals(expectedDoneDate, doneDate);
+          ("id:0123456789 sub:002 dlvrd:003 submit date:0809011130 done date:0809021131 err:123 stat:DND_REJECTED text:Hello World")
+              .getBytes(Charset.forName("US-ASCII")));
+      CustomDeliveryReceipt delReceipt = customDeliveryReceiptStripper.strip(deliverSm);
+      assertEquals("0123456789", delReceipt.getId());
+      assertEquals(2, delReceipt.getSubmitted());
+      assertEquals(3, delReceipt.getDelivered());
+      assertEquals(createDate(2008, 9, 1, 11, 30), delReceipt.getSubmitDate());
+      assertEquals(createDate(2008, 9, 2, 11, 31), delReceipt.getDoneDate());
+      assertEquals("123", delReceipt.getError());
+      assertEquals(DND_REJECTED, delReceipt.getFinalStatus());
+      assertEquals("Hello World", delReceipt.getText());
     } catch (InvalidDeliveryReceiptException e) {
-      fail("Failed parsing delivery receipt:" + e.getMessage());
+      fail("Failed parsing delivery receipt: " + e.getMessage());
     }
   }
 
