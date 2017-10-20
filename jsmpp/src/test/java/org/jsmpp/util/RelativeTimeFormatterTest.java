@@ -96,7 +96,7 @@ public class RelativeTimeFormatterTest {
     GregorianCalendar date = new GregorianCalendar(TimeZone.getTimeZone("America/Denver"));
     date.add(Calendar.YEAR, 101);
 
-    String relativeTime = timeFormatter.format(date);
+    timeFormatter.format(date);
     fail("Expected IllegalArgumentException not thrown");
   }
 

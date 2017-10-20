@@ -20,8 +20,6 @@ import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.OutboundServerResponseHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class is bound_tx state implementation of {@link SMPPOutboundServerSessionState}. This
@@ -35,19 +33,10 @@ import org.slf4j.LoggerFactory;
  */
 class SMPPOutboundServerSessionBoundTX extends SMPPOutboundServerSessionBound
     implements SMPPOutboundServerSessionState {
-    private static final String NO_REQUEST_FIND_FOR_SEQUENCE_NUMBER = "No request find for sequence number ";
-    private static final Logger logger = LoggerFactory.getLogger(SMPPOutboundServerSessionBoundTX.class);
     
     public SessionState getSessionState() {
         return SessionState.BOUND_TX;
     }
-
-//    public void processBind(Command pduHeader, byte[] pdu,
-//                            OutboundServerResponseHandler responseHandler) throws IOException
-//    {
-//        responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
-//            SMPPConstant.STAT_ESME_RALYBND, pduHeader.getSequenceNumber());
-//    }
 
     public void processDeliverSm(Command pduHeader, byte[] pdu,
                                  OutboundServerResponseHandler responseHandler) throws IOException {
