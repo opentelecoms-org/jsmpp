@@ -26,7 +26,7 @@ import org.jsmpp.util.InvalidDeliveryReceiptException;
  * @author uudashr
  *
  */
-public class DeliveryReceipt {
+public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceiptState> {
     // attributes of delivery receipt
     public static final String DELREC_ID = "id";
     public static final String DELREC_SUB = "sub";
