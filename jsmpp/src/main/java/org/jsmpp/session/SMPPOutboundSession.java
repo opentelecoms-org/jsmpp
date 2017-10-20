@@ -452,11 +452,11 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
         notifyNoActivity();
       }
       catch (IOException e) {
-        logger.warn("IOException while reading: {}", e.getMessage());
+        logger.warn("IOException while reading:", e);
         close();
       }
       catch (RuntimeException e) {
-        logger.warn("RuntimeException: {}", e.getMessage());
+        logger.warn("RuntimeException:", e);
         unbindAndClose();
       }
     }
