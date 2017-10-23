@@ -20,8 +20,6 @@ import org.jsmpp.bean.Command;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BaseResponseHandler;
 import org.jsmpp.session.OutboundResponseHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class is closed state implementation of {@link SMPPOutboundSessionState}. This
@@ -35,7 +33,6 @@ import org.slf4j.LoggerFactory;
  */
 class SMPPOutboundSessionClosed implements SMPPOutboundSessionState {
     private static final String INVALID_PROCESS_FOR_CLOSED_SESSION = "Invalid process for closed session state";
-    private static final Logger logger = LoggerFactory.getLogger(SMPPOutboundSessionClosed.class);
     
     public SessionState getSessionState() {
         return SessionState.CLOSED;

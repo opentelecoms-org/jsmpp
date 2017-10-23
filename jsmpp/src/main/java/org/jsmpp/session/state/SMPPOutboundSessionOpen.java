@@ -27,8 +27,6 @@ import org.jsmpp.session.BaseResponseHandler;
 import org.jsmpp.session.OutboundResponseHandler;
 import org.jsmpp.util.DefaultDecomposer;
 import org.jsmpp.util.PDUDecomposer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class is open state implementation of {@link SMPPOutboundSessionState}. When
@@ -39,7 +37,6 @@ import org.slf4j.LoggerFactory;
  * @since 2.3
  */
 class SMPPOutboundSessionOpen implements SMPPOutboundSessionState {
-  private static final Logger logger = LoggerFactory.getLogger(SMPPOutboundSessionOpen.class);
   private static final String INVALID_PROCESS_FOR_OPEN_SESSION = "Invalid process for open session state";
   private static final PDUDecomposer pduDecomposer = new DefaultDecomposer();
 

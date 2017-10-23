@@ -19,7 +19,6 @@ import java.io.IOException;
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUException;
 import org.jsmpp.PDUSender;
-import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.Address;
 import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.BindType;

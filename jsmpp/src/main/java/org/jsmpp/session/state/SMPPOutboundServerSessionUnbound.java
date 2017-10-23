@@ -20,8 +20,6 @@ import org.jsmpp.bean.Command;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BaseResponseHandler;
 import org.jsmpp.session.OutboundServerResponseHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class is unbound state implementation of {@link SMPPSessionState}. All
@@ -35,7 +33,6 @@ import org.slf4j.LoggerFactory;
  */
 class SMPPOutboundServerSessionUnbound implements SMPPOutboundServerSessionState {
     private static final String INVALID_PROCESS_FOR_UNBOUND_SESSION = "Invalid process for unbound session state";
-    private static final Logger logger = LoggerFactory.getLogger(SMPPOutboundServerSessionUnbound.class);
     
     public SessionState getSessionState() {
         return SessionState.UNBOUND;

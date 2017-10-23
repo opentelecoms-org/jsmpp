@@ -19,7 +19,6 @@ import java.io.IOException;
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUException;
 import org.jsmpp.PDUSender;
-import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.MessageState;

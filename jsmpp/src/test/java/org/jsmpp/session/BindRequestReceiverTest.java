@@ -41,7 +41,7 @@ public class BindRequestReceiverTest {
     public void testWaitTimeout() {
         
         try {
-            BindRequest request = requestReceiver.waitForRequest(1000);
+            requestReceiver.waitForRequest(1000);
             fail("Should fail since no request for 1000 millis");
         } catch (IllegalStateException e) {
             e.printStackTrace();
@@ -55,7 +55,7 @@ public class BindRequestReceiverTest {
         
         try {
             requestReceiver.notifyAcceptBind(dummyBind());
-            BindRequest request = requestReceiver.waitForRequest(1000);
+            requestReceiver.waitForRequest(1000);
         } catch (IllegalStateException e) {
             fail("Should not fail waitForRequest and success accepting request");
         } catch (TimeoutException e) {
@@ -97,7 +97,7 @@ public class BindRequestReceiverTest {
     public void testNonSingleWait() {
         
         try {
-            BindRequest request = requestReceiver.waitForRequest(1000);
+            requestReceiver.waitForRequest(1000);
             fail("Should throw TimeoutException");
         } catch (IllegalStateException e) {
             fail("Should throw TimeoutException");
