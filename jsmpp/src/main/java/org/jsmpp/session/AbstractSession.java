@@ -208,7 +208,7 @@ public abstract class AbstractSession implements Session {
             try {
                 connection().close();
             } catch (IOException e) {
-                logger.warn("Failed to close connection: {}", e.getMessage());
+                logger.warn("Failed to close connection:", e);
             }
         }
 

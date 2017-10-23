@@ -25,15 +25,12 @@ import org.jsmpp.session.BaseResponseHandler;
 import org.jsmpp.session.ServerResponseHandler;
 import org.jsmpp.util.DefaultDecomposer;
 import org.jsmpp.util.PDUDecomposer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author uudashr
  *
  */
 class SMPPServerSessionOpen implements SMPPServerSessionState {
-    private static final Logger logger = LoggerFactory.getLogger(SMPPServerSessionOpen.class);
     private static final String INVALID_PROCESS_FOR_OPEN_SESSION = "Invalid process for open session state";
     private static final PDUDecomposer pduDecomposer = new DefaultDecomposer();
     

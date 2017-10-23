@@ -275,23 +275,6 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
 
   private class OutboundServerResponseHandlerImpl implements OutboundServerResponseHandler {
 
-    public void sendBindResp(String systemId, InterfaceVersion interfaceVersion, BindType bindType, int sequenceNumber)
-        throws IOException {
-      SMPPOutboundServerSession.this.sessionContext.bound(bindType);
-      sessionContext.bound(bindType);
-      logger.info("sendBindResp Bound!!!!!");
-      try {
-        logger.info("OutboundServerResponseHandlerImpl sendBindResp");
-        pduSender()
-            .sendBindResp(SMPPOutboundServerSession.this.out, bindType.responseCommandId(), sequenceNumber, systemId,
-                interfaceVersion);
-      }
-      catch (PDUStringException e) {
-        logger.error("Failed sending bind response", e);
-        // TODO uudashr: we have double checking when accept the bind request
-      }
-    }
-
     public void processOutbind(Outbind outbind) throws ProcessRequestException {
       SMPPOutboundServerSession.this.outbindRequestReceiver.notifyAcceptOutbind(outbind);
       sessionContext.outbind();
@@ -441,11 +424,11 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
         notifyNoActivity();
       }
       catch (IOException e) {
-        logger.warn("IOException while reading: {}", e.getMessage());
+        logger.warn("IOException while reading:", e);
         close();
       }
       catch (RuntimeException e) {
-        logger.warn("RuntimeException: {}", e.getMessage());
+        logger.warn("RuntimeException:", e);
         unbindAndClose();
       }
     }
@@ -457,16 +440,6 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
       logger.debug("No activity notified, sending enquireLink");
       if (sessionContext().getSessionState().isBound()) {
         enquireLinkSender.enquireLink();
-      }
-    }
-  }
-
-  private class BoundStateListener implements SessionStateListener {
-    public void onStateChange(SessionState newState, SessionState oldState, Session source) {
-      logger.info("Session state changed from " + oldState + " to " + newState);
-      if (newState.isBound()) {
-        logger.info("Start enquireLinkSender");
-        enquireLinkSender.start();
       }
     }
   }

@@ -125,6 +125,6 @@ public class SimpleDataCodingTest {
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testIllegalAlphabetUcs2() {
-        SimpleDataCoding dataCoding = new SimpleDataCoding(Alphabet.ALPHA_UCS2, MessageClass.CLASS1);
+        new SimpleDataCoding(Alphabet.ALPHA_UCS2, MessageClass.CLASS1);
     }
 }
