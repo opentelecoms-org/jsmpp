@@ -409,7 +409,9 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
      *         format is less than 10.
      */
     private static Date string2Date(String date) {
-
+        if (date == null) {
+          return null;
+        }
         int year = Integer.parseInt(date.substring(0, 2));
         int month = Integer.parseInt(date.substring(2, 4));
         int day = Integer.parseInt(date.substring(4, 6));
