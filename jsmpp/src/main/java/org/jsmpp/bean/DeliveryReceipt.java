@@ -40,8 +40,7 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
     /**
      * Date format for the <b>submit date</b> and <b>done date</b> attribute
      */
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat(
-            "yyMMddHHmm");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmm");
 
     private String id;
     private Integer submitted;
@@ -380,12 +379,14 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
             throws IndexOutOfBoundsException {
         String tmpAttr = attrName + ":";
         int startIndex = source.indexOf(tmpAttr);
-        if (startIndex < 0)
+        if (startIndex < 0) {
             return null;
+        }
         startIndex = startIndex + tmpAttr.length();
         int endIndex = source.indexOf(" ", startIndex);
-        if (endIndex > 0)
+        if (endIndex > 0) {
             return source.substring(startIndex, endIndex);
+        }
         return source.substring(startIndex);
     }
     
