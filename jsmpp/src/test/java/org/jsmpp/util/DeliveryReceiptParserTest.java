@@ -1,6 +1,7 @@
 package org.jsmpp.util;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
 
 import java.util.Calendar;
@@ -111,6 +112,20 @@ public class DeliveryReceiptParserTest {
             e.printStackTrace();
             fail("Failed parsing delivery receipt:" + e.getMessage());
         }
+    }
+
+    @Test
+    public void parseWithOnlyStatus() throws Exception{
+        DeliveryReceipt delReceipt = decomposer.deliveryReceipt("stat:DELIVRD");
+        assertNull(delReceipt.getId());
+        assertEquals(delReceipt.getFinalStatus(), DeliveryReceiptState.DELIVRD);
+        assertNull(delReceipt.getSubmitDate());
+        assertNull(delReceipt.getDoneDate());
+
+        assertEquals(delReceipt.getSubmitted(), -1);
+        assertEquals(delReceipt.getDelivered(), -1);
+        assertNull(delReceipt.getError());
+        assertNull(delReceipt.getText());
     }
     
     private static Date createDate(int year, int month, int day, int hour, int minute) {
