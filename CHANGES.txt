@@ -1,5 +1,12 @@
 Changes:
 
+2.3.6
+- Add descriptions to negative response exceptions.
+- Added custom delivery receipt examples
+- Fix NPE in DeliveryReceipt constructor when date was blank
+- Removed unused code
+- Fix typo in composeSmeManualAcknowledgment method name
+
 2.3.5
 - Rewrote the GSM 03.38 class
 - Don't check explicitly the sequence 1, but the session state
