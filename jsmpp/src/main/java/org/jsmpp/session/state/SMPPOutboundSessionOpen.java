@@ -64,7 +64,7 @@ class SMPPOutboundSessionOpen implements SMPPOutboundSessionState {
   public void processEnquireLink(Command pduHeader, byte[] pdu,
                                  BaseResponseHandler responseHandler) throws IOException {
     PendingResponse<Command> pendingResp = responseHandler
-        .removeSentItem(1);
+        .removeSentItem(pduHeader.getSequenceNumber());
     if (pendingResp != null) {
       pendingResp.doneWithInvalidResponse(new InvalidResponseException(
           "Receive unexpected enquire_link"));
