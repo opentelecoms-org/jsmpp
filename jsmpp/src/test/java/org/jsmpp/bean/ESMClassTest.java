@@ -33,8 +33,6 @@ public class ESMClassTest {
     @Test(groups="checkintest")
 	public void testSpecificFeature() {
 		assertTrue(GSMSpecificFeature.DEFAULT.containedIn(esmClass));
-		
-		
 		esmClass.setSpecificFeature(GSMSpecificFeature.UDHI);
 		assertTrue(GSMSpecificFeature.UDHI.containedIn(esmClass));
 	}
@@ -42,7 +40,6 @@ public class ESMClassTest {
     @Test(groups="checkintest")
 	public void testMessageType() {
 		assertTrue(MessageType.DEFAULT.containedIn(esmClass));
-		
 		esmClass.setMessageType(MessageType.SMSC_DEL_RECEIPT);
 		assertTrue(MessageType.SMSC_DEL_RECEIPT.containedIn(esmClass));
 	}
