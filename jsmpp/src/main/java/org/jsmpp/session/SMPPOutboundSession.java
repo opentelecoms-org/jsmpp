@@ -494,8 +494,8 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
         }
 
         logger.info("Changing processor degree to {}", getPduProcessorDegree());
-        ((ThreadPoolExecutor) pduReaderWorker.executorService).setCorePoolSize(getPduProcessorDegree());
         ((ThreadPoolExecutor) pduReaderWorker.executorService).setMaximumPoolSize(getPduProcessorDegree());
+        ((ThreadPoolExecutor) pduReaderWorker.executorService).setCorePoolSize(getPduProcessorDegree());
       }
     }
   }
