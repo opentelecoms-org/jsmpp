@@ -660,8 +660,8 @@ public class SMPPSession extends AbstractSession implements ClientSession {
                 }
     	        
                	logger.info("Changing processor degree to {}", getPduProcessorDegree());
-               	((ThreadPoolExecutor)pduReaderWorker.executorService).setCorePoolSize(getPduProcessorDegree());
                	((ThreadPoolExecutor)pduReaderWorker.executorService).setMaximumPoolSize(getPduProcessorDegree());
+               	((ThreadPoolExecutor)pduReaderWorker.executorService).setCorePoolSize(getPduProcessorDegree());
 	        }
 	    }
 	}
