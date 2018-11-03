@@ -439,7 +439,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
 
       }
       catch (InvalidCommandLengthException e) {
-        logger.warn("Receive invalid command length", e);
+        logger.warn("Received invalid command length: {}", e.getMessage());
         try {
           pduSender().sendGenericNack(out, SMPPConstant.STAT_ESME_RINVCMDLEN, 0);
         }
@@ -452,12 +452,12 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
         notifyNoActivity();
       }
       catch (IOException e) {
-        logger.warn("IOException while reading:", e);
+        logger.info("Reading PDU session {} in state {}: {}", getSessionId(), getSessionState(), e.getMessage());
         close();
       }
       catch (RuntimeException e) {
-        logger.warn("RuntimeException:", e);
-        unbindAndClose();
+        logger.warn("Runtime error while reading", e);
+        close();
       }
     }
 

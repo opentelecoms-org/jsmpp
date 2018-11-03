@@ -201,7 +201,7 @@ public abstract class AbstractSession implements Session {
     }
 
     public void close() {
-        logger.debug("Close session {}", sessionId);
+        logger.debug("Close session {} in state {}", sessionId, getSessionState());
         SessionContext ctx = sessionContext();
         SessionState sessionState = ctx.getSessionState();
         if (!sessionState.equals(SessionState.CLOSED)) {
@@ -385,7 +385,7 @@ public abstract class AbstractSession implements Session {
     }
 
     public void unbindAndClose() {
-        logger.debug("Unbind and close sesssion {}", sessionId);
+        logger.debug("Unbind and close session {}", sessionId);
         if (sessionContext().getSessionState().isBound()) {
             try {
                 unbind();

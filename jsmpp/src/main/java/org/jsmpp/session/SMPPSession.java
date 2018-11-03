@@ -609,7 +609,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	            executorService.execute(task);
 
 	        } catch (InvalidCommandLengthException e) {
-	            logger.warn("Receive invalid command length", e);
+						logger.warn("Received invalid command length: {}", e.getMessage());
 	            try {
 	                pduSender().sendGenericNack(out, SMPPConstant.STAT_ESME_RINVCMDLEN, 0);
 	            } catch (IOException ee) {
@@ -618,12 +618,12 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	            unbindAndClose();
 	        } catch (SocketTimeoutException e) {
 	            notifyNoActivity();
-	        } catch (IOException e) {
-	            logger.warn("IOException while reading:", e);
+					} catch (IOException e) {
+	        	  logger.info("Reading PDU session {} in state {}: {}", getSessionId(), getSessionState(), e.getMessage());
 	            close();
 	        } catch (RuntimeException e) {
-			        logger.warn("RuntimeException:", e);
-						  unbindAndClose();
+			        logger.warn("Runtime error while reading PDU", e);
+						  close();
 		      }
 	    }
 		

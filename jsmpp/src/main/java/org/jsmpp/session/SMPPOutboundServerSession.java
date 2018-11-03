@@ -15,6 +15,7 @@
 package org.jsmpp.session;
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
@@ -409,9 +410,8 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
             sessionContext, onIOExceptionTask);
         executorService.execute(task);
 
-      }
-      catch (InvalidCommandLengthException e) {
-        logger.warn("Receive invalid command length", e);
+      } catch (InvalidCommandLengthException e) {
+        logger.warn("Received invalid command length: {}", e.getMessage());
         try {
           pduSender().sendGenericNack(out, SMPPConstant.STAT_ESME_RINVCMDLEN, 0);
         }
@@ -419,17 +419,21 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
           logger.warn("Failed sending generic nack", ee);
         }
         unbindAndClose();
-      }
-      catch (SocketTimeoutException e) {
+      } catch (SocketTimeoutException e) {
         notifyNoActivity();
-      }
-      catch (IOException e) {
-        logger.warn("IOException while reading:", e);
+      } catch (EOFException e) {
+        if (sessionContext.getSessionState() == SessionState.UNBOUND){
+          logger.debug("Unbound session {} socket closed", getSessionId());
+        } else {
+          logger.warn("Session {} socket closed unexpected", getSessionId());
+        }
         close();
-      }
-      catch (RuntimeException e) {
-        logger.warn("RuntimeException:", e);
-        unbindAndClose();
+      } catch (IOException e) {
+        logger.info("Reading PDU session {} in state {}: {}", getSessionId(), getSessionState(), e.getMessage());
+        close();
+      } catch (RuntimeException e) {
+        logger.warn("Runtime error while reading", e);
+        close();
       }
     }
 
