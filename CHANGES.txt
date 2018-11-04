@@ -1,5 +1,12 @@
 Changes:
 
+2.3.7
+- Specify maven-surefire-plugin version to fix maven warning about non-repeatable builds.
+- Do not throw exception when socket is closed, handle EOFExceptions for server and lower log level.
+- Fixes IllegalArgumentException in BoundSessionStateListener.onStateChange (issue #89) for Java 9 and later.
+- Also change the order of ThreadPoolExecutor adjustments to run on Java 9 or later when increasing the PDU processor degree.
+- Update dependency commons-codec to 1.11.
+
 2.3.6
 - Add descriptions to negative response exceptions.
 - Added custom delivery receipt examples
