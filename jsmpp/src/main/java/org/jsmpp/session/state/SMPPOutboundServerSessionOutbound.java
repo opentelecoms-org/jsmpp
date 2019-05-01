@@ -72,7 +72,7 @@ class SMPPOutboundServerSessionOutbound implements SMPPOutboundServerSessionStat
                         message, e));
             }
         } else {
-            logger.error("No request with sequence number {} found", pduHeader.getSequenceNumber() );
+            logger.error("No request with sequence_number {} found", pduHeader.getSequenceNumber() );
             responseHandler.sendGenerickNack(
                 SMPPConstant.STAT_ESME_RINVDFTMSGID, pduHeader
                     .getSequenceNumber());

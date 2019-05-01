@@ -289,13 +289,13 @@ public abstract class AbstractSession implements Session {
 
         try {
             pendingResp.waitDone();
-            logger.debug("{} response with sequence {} received for session {}", task.getCommandName(), seqNum, sessionId);
+            logger.debug("{} response with sequence_number {} received for session {}", task.getCommandName(), seqNum, sessionId);
         } catch (ResponseTimeoutException e) {
             pendingResponse.remove(seqNum);
             throw new ResponseTimeoutException("No response after waiting for "
                     + timeout + " millis when executing "
-                    + task.getCommandName() + " with sessionId " + sessionId
-                    + " and sequenceNumber " + seqNum, e);
+                    + task.getCommandName() + " with session " + sessionId
+                    + " and sequence_number " + seqNum, e);
         } catch (InvalidResponseException e) {
             pendingResponse.remove(seqNum);
             throw e;

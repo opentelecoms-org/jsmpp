@@ -360,7 +360,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
     @Override
     public void sendDeliverSmResp(int commandStatus, int sequenceNumber, String messageId) throws IOException {
       pduSender().sendDeliverSmResp(out, commandStatus, sequenceNumber, messageId);
-      logger.debug("deliver_sm_resp with seq_number {} has been sent", sequenceNumber);
+      logger.debug("deliver_sm_resp with sequence_number {} has been sent", sequenceNumber);
     }
 
     public void sendEnquireLinkResp(int sequenceNumber) throws IOException {

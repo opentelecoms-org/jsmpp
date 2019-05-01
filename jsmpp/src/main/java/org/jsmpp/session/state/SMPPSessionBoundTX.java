@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
-    private static final String NO_REQUEST_FIND_FOR_SEQUENCE_NUMBER = "No request find for sequence number ";
+    private static final String NO_REQUEST_FIND_FOR_SEQUENCE_NUMBER = "No request found for sequence_number ";
     private static final Logger logger = LoggerFactory.getLogger(SMPPSessionBoundTX.class);
     
     public SessionState getSessionState() {
@@ -63,7 +63,7 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
                         .getSequenceNumber());
             }
         } else {
-            logger.warn("No request with sequence number "
+            logger.warn("No request with sequence_number "
                     + pduHeader.getSequenceNumber() + " found");
         }
     }
@@ -82,7 +82,7 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
                         .getSequenceNumber());
             }
         } else {
-            logger.warn("No request with sequence number "
+            logger.warn("No request with sequence_number "
                     + pduHeader.getSequenceNumber() + " found");
         }
     }

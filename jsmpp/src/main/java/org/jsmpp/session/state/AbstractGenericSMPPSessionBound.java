@@ -131,7 +131,7 @@ abstract class AbstractGenericSMPPSessionBound implements GenericSMPPSessionStat
                         .getSequenceNumber());
             }
         } else {
-            logger.warn("No request with sequence number {} found", pduHeader.getSequenceNumber());
+            logger.warn("No request with sequence_number {} found", pduHeader.getSequenceNumber());
         }
     }
 }
