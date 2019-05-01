@@ -55,7 +55,7 @@ class SMPPOutboundSessionBoundRX extends SMPPOutboundSessionBound implements SMP
             DeliverSmResp resp = pduDecomposer.deliverSmResp(pdu);
             pendingResp.done(resp);
         } else {
-            logger.warn("No request with sequence number {} found", pduHeader.getSequenceNumber());
+            logger.warn("No request with sequence_number {} found", pduHeader.getSequenceNumber());
         }
     }
 }

@@ -105,7 +105,7 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
             logger.debug("{} response received", task.getCommandName() );
         } catch (ResponseTimeoutException e) {
             pendingResponse.remove(seqNum);
-            logger.debug("Response timeout for {} with sessionIdSequence number {}", task.getCommandName(), seqNum);
+            logger.debug("Response timeout for {} with sequence_number {}", task.getCommandName(), seqNum);
             throw e;
         } catch (InvalidResponseException e) {
             pendingResponse.remove(seqNum);
