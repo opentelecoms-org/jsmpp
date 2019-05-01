@@ -294,7 +294,7 @@ public abstract class AbstractSession implements Session {
             pendingResponse.remove(seqNum);
             throw new ResponseTimeoutException("No response after waiting for "
                     + timeout + " millis when executing "
-                    + task.getCommandName() + " with sessionId " + sessionId
+                    + task.getCommandName() + " with session " + sessionId
                     + " and sequence_number " + seqNum, e);
         } catch (InvalidResponseException e) {
             pendingResponse.remove(seqNum);
