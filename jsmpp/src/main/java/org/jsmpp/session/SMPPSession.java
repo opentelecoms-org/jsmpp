@@ -252,7 +252,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			close();
 			throw new IOException(message + ": " + e.getMessage(), e);
 		} catch (ResponseTimeoutException e) {
-			String message = "Waiting bind response take time too long";
+			String message = "Wait for bind response timed out";
 			logger.error(message, e);
 			close();
 			throw new IOException(message + ": " + e.getMessage(), e);

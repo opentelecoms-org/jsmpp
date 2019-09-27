@@ -214,7 +214,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
       throw new IOException(message + ": " + e.getMessage(), e);
     }
     catch (TimeoutException e) {
-      String message = "Waiting bind response take time too long";
+      String message = "Wait for bind response timed out";
       logger.error(message, e);
       throw new IOException(message + ": " + e.getMessage(), e);
     }
