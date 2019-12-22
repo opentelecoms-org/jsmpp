@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import org.jsmpp.bean.DeliveryReceiptInterface;
 import org.jsmpp.util.InvalidDeliveryReceiptException;
+import org.jsmpp.util.ObjectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -360,56 +361,26 @@ public class CustomDeliveryReceipt implements DeliveryReceiptInterface<CustomDel
   }
 
   private boolean hasEqualId(CustomDeliveryReceipt other) {
-    if (id == null) {
-      if (other.id != null) {
-        return false;
-      }
-    }
-    return id.equals(other.id);
+      return ObjectUtil.equals(id, other.id);
   }
 
   private boolean hasEqualDoneDate(CustomDeliveryReceipt other) {
-    if (doneDate == null) {
-      if (other.doneDate != null) {
-        return false;
-      }
-    }
-    return doneDate.equals(other.doneDate);
+      return ObjectUtil.equals(doneDate, other.doneDate);
   }
 
   private boolean hasEqualError(CustomDeliveryReceipt other) {
-    if (error == null) {
-      if (other.error != null) {
-        return false;
-      }
-    }
-    return error.equals(other.error);
+      return ObjectUtil.equals(error, other.error);
   }
 
   private boolean hasEqualFinalStatus(CustomDeliveryReceipt other) {
-    if (finalStatus == null) {
-      if (other.finalStatus != null) {
-        return false;
-      }
-    }
-    return finalStatus.equals(other.finalStatus);
+      return ObjectUtil.equals(finalStatus, other.finalStatus);
   }
 
   private boolean hasEqualSubmitDate(CustomDeliveryReceipt other) {
-    if (submitDate == null) {
-      if (other.submitDate != null) {
-        return false;
-      }
-    }
-    return submitDate.equals(other.submitDate);
+      return ObjectUtil.equals(submitDate, other.submitDate);
   }
 
   private boolean hasEqualText(CustomDeliveryReceipt other) {
-    if (text == null) {
-      if (other.text != null) {
-        return false;
-      }
-    }
-    return text.equals(other.text);
+      return ObjectUtil.equals(text, other.text);
   }
 }

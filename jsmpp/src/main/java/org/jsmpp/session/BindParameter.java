@@ -18,6 +18,7 @@ import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.util.ObjectUtil;
 
 /**
  * This class is wraps all bind parameter that will be send as PDU.
@@ -116,52 +117,31 @@ public class BindParameter {
     }
 
     private boolean hasEqualAddrNpi(BindParameter other) {
-        if (addrNpi == null && other.addrNpi != null) {
-            return false;
-        }
-        return addrNpi.equals(other.addrNpi);
+        return ObjectUtil.equals(addrNpi, other.addrNpi);
     }
 
     private boolean hasEqualAddrTon(BindParameter other) {
-        if (addrTon == null && other.addrTon != null) {
-            return false;
-        }
-        return addrTon.equals(other.addrTon);
+        return ObjectUtil.equals(addrTon, other.addrTon);
     }
 
     private boolean hasEqualAddressRange(BindParameter other) {
-        if (addressRange == null && other.addressRange != null) {
-            return false;
-        }
-        return addressRange.equals(other.addressRange);
+        return ObjectUtil.equals(addressRange, other.addressRange);
     }
 
     private boolean hasEqualBindType(BindParameter other) {
-        if (bindType == null && other.bindType != null) {
-            return false;
-        }
-        return bindType.equals(other.bindType);
+        return ObjectUtil.equals(bindType, other.bindType);
     }
 
     private boolean hasEqualPassword(BindParameter other) {
-        if (password == null && other.password != null) {
-            return false;
-        }
-        return password.equals(other.password);
+        return ObjectUtil.equals(password, other.password);
     }
 
     private boolean hasEqualSystemId(BindParameter other) {
-        if (systemId == null && other.systemId != null) {
-            return false;
-        }
-        return systemId.equals(other.systemId);
+        return ObjectUtil.equals(systemId, other.systemId);
     }
 
     private boolean hasEqualSystemType(BindParameter other) {
-        if (systemType == null && other.systemType != null) {
-            return false;
-        }
-        return systemType.equals(other.systemType);
+        return ObjectUtil.equals(systemType, other.systemType);
     }
 
     @Override

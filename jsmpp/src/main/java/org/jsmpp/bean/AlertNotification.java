@@ -17,6 +17,7 @@ package org.jsmpp.bean;
 import java.util.Arrays;
 
 import org.jsmpp.bean.OptionalParameter.Tag;
+import org.jsmpp.util.ObjectUtil;
 
 /**
  * @author uudashr
@@ -116,21 +117,11 @@ public class AlertNotification extends Command {
     }
     
     private boolean hasEqualSourceAddr(AlertNotification other) {
-        if (sourceAddr == null) {
-            if (other.sourceAddr != null) {
-                return false;
-            }
-        }
-        return sourceAddr.equals(other.sourceAddr);
+        return ObjectUtil.equals(sourceAddr, other.sourceAddr);
     }
     
     private boolean hasEqualEsmeAddr(AlertNotification other) {
-        if (esmeAddr == null) {
-            if (other.esmeAddr != null) {
-                return false;
-            }
-        }
-        return esmeAddr.equals(other.esmeAddr);
+        return ObjectUtil.equals(esmeAddr, other.esmeAddr);
     }
     @Override
     public boolean equals(Object obj) {

@@ -17,6 +17,7 @@ package org.jsmpp.bean;
 import java.util.Arrays;
 
 import org.jsmpp.bean.OptionalParameter.Tag;
+import org.jsmpp.util.ObjectUtil;
 
 /**
  * @author uudashr
@@ -205,37 +206,19 @@ public class SubmitMulti extends Command {
     }
 
     private boolean hasEqualSourceAddr(SubmitMulti other) {
-        if (sourceAddr == null) {
-            if (other.sourceAddr != null) {
-                return false;
-            }
-        }
-        return sourceAddr.equals(other.sourceAddr);
+        return ObjectUtil.equals(sourceAddr, other.sourceAddr);
     }
 
     private boolean hasEqualScheduleDeliveryTime(SubmitMulti other) {
-        if (scheduleDeliveryTime == null) {
-            if (other.scheduleDeliveryTime != null)
-                return false;
-        }
-        return scheduleDeliveryTime.equals(other.scheduleDeliveryTime);
+        return ObjectUtil.equals(scheduleDeliveryTime, other.scheduleDeliveryTime);
     }
 
     private boolean hasEqualValidityPeriod(SubmitMulti other) {
-        if (validityPeriod == null) {
-            if (other.validityPeriod != null) {
-                return false;
-            }
-        }
-        return validityPeriod.equals(other.validityPeriod);
+        return ObjectUtil.equals(validityPeriod, other.validityPeriod);
     }
 
     private boolean hasEqualSystemType(SubmitMulti other) {
-        if (serviceType == null) {
-            if (other.serviceType != null)
-                return false;
-        }
-        return serviceType.equals(other.serviceType);
+        return ObjectUtil.equals(serviceType, other.serviceType);
     }
 
     @Override

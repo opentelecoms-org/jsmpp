@@ -18,6 +18,7 @@ import java.util.Arrays;
 
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.OptionalParameter.Tag;
+import org.jsmpp.util.ObjectUtil;
 
 /**
  * @author uudashr
@@ -492,27 +493,15 @@ public class AbstractSmCommand extends Command {
     }
 
     private boolean hasEqualDestAddress(AbstractSmCommand other) {
-        if (destAddress == null) {
-            if (other.destAddress != null)
-                return false;
-        }
-        return destAddress.equals(other.destAddress);
+        return ObjectUtil.equals(destAddress, other.destAddress);
     }
 
     private boolean hasEqualSourceAddr(AbstractSmCommand other) {
-        if (sourceAddr == null) {
-            if (other.sourceAddr != null)
-                return false;
-        }
-        return sourceAddr.equals(other.sourceAddr);
+        return ObjectUtil.equals(sourceAddr, other.sourceAddr);
     }
 
     private boolean hasEqualServiceType(AbstractSmCommand other) {
-        if (serviceType == null) {
-            if (other.serviceType != null)
-                return false;
-        }
-        return serviceType.equals(other.serviceType);
+        return ObjectUtil.equals(serviceType, other.serviceType);
     }
 
     @Override
