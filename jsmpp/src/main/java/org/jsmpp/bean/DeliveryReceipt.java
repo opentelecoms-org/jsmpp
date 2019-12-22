@@ -271,10 +271,10 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
         if (!hasEqualId(other)) {
             return false;
         }
-        if (submitted != other.submitted) {
+        if (!ObjectUtil.equals(submitted, other.submitted)) {
             return false;
         }
-        if (delivered != other.delivered) {
+        if (!ObjectUtil.equals(delivered, other.delivered)) {
             return false;
         }
         if (!hasEqualSubmitDate(other)) {
