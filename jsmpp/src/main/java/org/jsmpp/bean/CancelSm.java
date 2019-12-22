@@ -14,6 +14,7 @@
  */
 package org.jsmpp.bean;
 
+import org.jsmpp.util.ObjectUtil;
 
 /**
  * @author uudashr
@@ -117,37 +118,19 @@ public class CancelSm extends Command {
     }
     
     private boolean hasEqualDestAddress(CancelSm other) {
-        if (destinationAddress == null) {
-            if (other.destinationAddress != null)
-                return false;
-        } 
-        return destinationAddress.equals(other.destinationAddress);
+        return ObjectUtil.equals(destinationAddress, other.destinationAddress);
     }
     
     private boolean hasEqualServiceType(CancelSm other) {
-        if (serviceType == null) {
-            if (other.serviceType != null) {
-                return false;
-            }
-        }
-        return serviceType.equals(other.serviceType);
+        return ObjectUtil.equals(serviceType, other.serviceType);
     }
     
     private boolean hasEqualSourceAddr(CancelSm other) {
-        if (sourceAddr == null) {
-            if (other.sourceAddr != null) {
-                return false;
-            }
-        }
-        return sourceAddr.equals(other.sourceAddr);
+        return ObjectUtil.equals(sourceAddr, other.sourceAddr);
     }
     
     private boolean hasEqualMessageId(CancelSm other) {
-        if (messageId == null) {
-            if (other.messageId != null)
-                return false;
-        } 
-        return messageId.equals(other.messageId);
+        return ObjectUtil.equals(messageId, other.messageId);
     }
     
     @Override

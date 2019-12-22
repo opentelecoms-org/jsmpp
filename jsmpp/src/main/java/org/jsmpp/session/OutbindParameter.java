@@ -15,6 +15,7 @@
 package org.jsmpp.session;
 
 import org.jsmpp.bean.InterfaceVersion;
+import org.jsmpp.util.ObjectUtil;
 
 /**
  * This class is wraps all bind parameter that will be send as PDU.
@@ -77,17 +78,11 @@ public class OutbindParameter {
 
 
     private boolean hasEqualPassword(OutbindParameter other) {
-        if ((this.password == null) && (other.password != null)) {
-            return false;
-        }
-        return this.password.equals(other.password);
+        return ObjectUtil.equals(password, other.password);
     }
 
     private boolean hasEqualSystemId(OutbindParameter other) {
-        if ((this.systemId == null) && (other.systemId != null)) {
-            return false;
-        }
-        return this.systemId.equals(other.systemId);
+        return ObjectUtil.equals(systemId , other.systemId);
     }
 
 

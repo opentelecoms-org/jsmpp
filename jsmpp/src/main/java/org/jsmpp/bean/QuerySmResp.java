@@ -14,6 +14,8 @@
  */
 package org.jsmpp.bean;
 
+import org.jsmpp.util.ObjectUtil;
+
 /**
  * @author uudashr
  * 
@@ -100,30 +102,15 @@ public class QuerySmResp extends Command {
     }
     
     private boolean hasEqualFinalDate(QuerySmResp other) {
-        if (finalDate == null) {
-            if (other.finalDate != null) {
-                return false;
-            }
-        }
-        return finalDate.equals(other.finalDate);
+        return ObjectUtil.equals(finalDate, other.finalDate);
     }
     
     private boolean hasEqualMessageId(QuerySmResp other) {
-        if (messageId == null) {
-            if (other.messageId != null) {
-                return false;
-            }
-        }
-        return messageId.equals(other.messageId);
+        return ObjectUtil.equals(messageId, other.messageId);
     }
     
     private boolean hasEqualMessageState(QuerySmResp other) {
-        if (messageState == null) {
-            if (other.messageState != null) {
-                return false;
-            }
-        }
-        return messageState.equals(other.messageState);
+        return ObjectUtil.equals(messageState, other.messageState);
     }
     
     @Override

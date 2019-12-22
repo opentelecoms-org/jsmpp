@@ -16,6 +16,7 @@ package org.jsmpp.bean;
 
 import java.util.Arrays;
 
+import org.jsmpp.util.ObjectUtil;
 
 /**
  * @author uudashr
@@ -148,21 +149,11 @@ public class MessageRequest extends AbstractSmCommand {
     }
     
     private boolean hasEqualScheduleDeliveryTime(MessageRequest other) {
-        if (scheduleDeliveryTime == null) {
-            if (other.scheduleDeliveryTime != null) {
-                return false;
-            }
-        }
-        return scheduleDeliveryTime.equals(other.scheduleDeliveryTime);
+        return ObjectUtil.equals(scheduleDeliveryTime, other.scheduleDeliveryTime);
     }
     
     private boolean hasEqualValidityPeriod(MessageRequest other) {
-        if (validityPeriod == null) {
-            if (other.validityPeriod != null) {
-                return false;
-            }
-        }
-        return validityPeriod.equals(other.validityPeriod);
+        return ObjectUtil.equals(validityPeriod, other.validityPeriod);
     }
     
     @Override

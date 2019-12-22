@@ -14,6 +14,7 @@
  */
 package org.jsmpp.bean;
 
+import org.jsmpp.util.ObjectUtil;
 
 /**
  * @author uudashr
@@ -81,21 +82,11 @@ public class QuerySm extends Command {
     }
     
     private boolean hasEqualMessageId(QuerySm other) {
-        if (messageId == null) {
-            if (other.messageId != null) {
-                return false;
-            }
-        }
-        return messageId.equals(other.messageId);
+        return ObjectUtil.equals(messageId, other.messageId);
     }
     
     private boolean hasEqualSourceAddr(QuerySm other) {
-        if (sourceAddr == null) {
-            if (other.sourceAddr != null) {
-                return false;
-            }
-        }
-        return sourceAddr.equals(other.sourceAddr);
+        return ObjectUtil.equals(sourceAddr, other.sourceAddr);
     }
     
     @Override

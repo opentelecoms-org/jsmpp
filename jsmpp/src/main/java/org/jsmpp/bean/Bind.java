@@ -14,6 +14,8 @@
  */
 package org.jsmpp.bean;
 
+import org.jsmpp.util.ObjectUtil;
+
 /**
  * This class represent SMPP bind command.
  * 
@@ -178,39 +180,19 @@ public class Bind extends Command {
     }
     
     private boolean hasEqualAddressRange(Bind other) {
-        if (addressRange == null) {
-            if (other.addressRange != null) {
-                return false;
-            }
-        }
-        return addressRange.equals(other.addressRange);
+        return ObjectUtil.equals(addressRange, other.addressRange);
     }
     
     private boolean hasEqualPassword(Bind other) {
-        if (password == null) {
-            if (other.password != null) {
-                return false;
-            }
-        }
-        return password.equals(other.password);
+        return ObjectUtil.equals(password, other.password);
     }
     
     private boolean hasEqualSystemId(Bind other) {
-        if (systemId == null) {
-            if (other.systemId != null) {
-                return false;
-            }
-        }
-        return systemId.equals(other.systemId);
+        return ObjectUtil.equals(systemId, other.systemId);
     }
     
     private boolean hasEqualSystemType(Bind other) {
-        if (systemType == null) {
-            if (other.systemType != null) {
-                return false;
-            }
-        }
-        return systemType.equals(other.systemType);
+        return ObjectUtil.equals(systemType, other.systemType);
     }
     
     @Override
