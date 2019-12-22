@@ -35,7 +35,7 @@ public class StrictBufferedInputStream extends BufferedInputStream {
 
     /** Workaround for an unexpected behavior of 'BufferedInputStream'! */
     @Override
-    public int read(final byte[] buffer, final int bufPos, final int length)
+    public synchronized int read(final byte[] buffer, final int bufPos, final int length)
             throws IOException {
         int i = super.read(buffer, bufPos, length);
         if ((i == length) || (i == -1))
