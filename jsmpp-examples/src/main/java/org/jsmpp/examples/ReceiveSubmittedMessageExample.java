@@ -103,7 +103,7 @@ public class ReceiveSubmittedMessageExample {
             
             try {
                 BindRequest request = session.waitForBind(5000);
-                LOGGER.info("Receive bind request for system id {} and password {}", request.getSystemId(), request.getSystemId(), request.getPassword());
+                LOGGER.info("Receive bind request for system id {} and password {}", request.getSystemId(), request.getPassword());
                 
                 if ("test".equals(request.getSystemId()) &&
                         "test".equals(request.getPassword())) {
