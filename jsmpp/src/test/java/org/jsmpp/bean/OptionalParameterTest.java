@@ -175,4 +175,11 @@ public class OptionalParameterTest {
     COctetString op = new OptionalParameter.Additional_status_info_text(content);
     assertEquals("more additional text", op.getValueAsString());
   }
+
+  @Test
+  public void testReceiptedMessageId() {
+    byte[] content = "123456\0".getBytes();
+    OptionalParameter.Receipted_message_id op = new OptionalParameter.Receipted_message_id(content);
+    assertEquals("123456", op.getValueAsString());
+  }
 }
