@@ -95,7 +95,7 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
         try {
             task.executeTask(connection().getOutputStream(), seqNum);
         } catch (IOException e) {
-            logger.error("Failed sending " + task.getCommandName() + " command", e);
+            logger.error("Failed sending {} command", task.getCommandName(), e);
             pendingResponse.remove(seqNum);
             throw e;
         }
@@ -141,7 +141,7 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
             logger.warn("PDU String should be always valid", e);
         } catch (NegativeResponseException e) {
             // ignore the negative response
-            logger.warn("Receive non-ok command_status (" + e.getCommandStatus() + ") for unbind_resp");
+            logger.warn("Receive non-ok command_status ({}) for unbind_resp", e.getCommandStatus(), e);
         }
     }
 

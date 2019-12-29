@@ -276,7 +276,7 @@ public abstract class AbstractSession implements Session {
         try {
             task.executeTask(connection().getOutputStream(), seqNum);
         } catch (IOException e) {
-            logger.error("Failed sending " + task.getCommandName() + " command", e);
+            logger.error("Failed sending {} command", task.getCommandName(), e);
 
             if("enquire_link".equals(task.getCommandName())) {
                 logger.info("Tomas: Ignore failure of sending enquire_link, wait to see if connection is restored");
@@ -320,7 +320,7 @@ public abstract class AbstractSession implements Session {
         try {
             task.executeTask(connection().getOutputStream(), seqNum);
         } catch (IOException e) {
-            logger.error("Failed sending " + task.getCommandName() + " command", e);
+            logger.error("Failed sending {} command", task.getCommandName(), e);
             close();
             throw e;
         }
