@@ -491,12 +491,6 @@ public class DefaultDecomposer implements PDUDecomposer {
                 StringParameter.SOURCE_ADDR);
 
         int totalDest = 0xff & reader.readByte();
-        if (totalDest > 255) {
-            throw new InvalidNumberOfDestinationsException(
-                    "Number of destination is invalid. Should be no more than 255. Actual number is "
-                            + totalDest, totalDest);
-        }
-        
         DestinationAddress[] destAddresses = new DestinationAddress[totalDest];
         for (int i = 0; i < totalDest; i++) {
             byte flag = reader.readByte();
