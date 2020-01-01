@@ -522,7 +522,7 @@ public class DefaultComposer implements PDUComposer {
                 DistributionList dl = (DistributionList)destAddr;
                 StringValidator.validateString(dl.getName(), StringParameter.DL_NAME);
             } else {
-                logger.warn("Unknown destination address flag: " + destAddr.getClass());
+                logger.warn("Unknown destination address flag: {}", destAddr.getClass());
             }
             
         }
