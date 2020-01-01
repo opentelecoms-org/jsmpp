@@ -279,7 +279,7 @@ public abstract class AbstractSession implements Session {
             logger.error("Failed sending {} command", task.getCommandName(), e);
 
             if("enquire_link".equals(task.getCommandName())) {
-                logger.info("Tomas: Ignore failure of sending enquire_link, wait to see if connection is restored");
+                logger.info("Ignore failure of sending enquire_link, wait to see if connection is restored");
             } else {
                 pendingResponse.remove(seqNum);
                 close();

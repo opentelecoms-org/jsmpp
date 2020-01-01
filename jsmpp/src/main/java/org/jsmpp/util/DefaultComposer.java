@@ -498,7 +498,7 @@ public class DefaultComposer implements PDUComposer {
         if (destinationAddresses.length > 255) {
             throw new InvalidNumberOfDestinationsException(
                     "Number of destination is invalid. Should be no more than 255. Actual number is "
-                            + destinationAddresses, destinationAddresses.length);
+                            + destinationAddresses.length, destinationAddresses.length);
         }
         
         PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_SUBMIT_MULTI, 0,
