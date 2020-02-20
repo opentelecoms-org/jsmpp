@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 public class OctetUtilTest {
     
     /**
-     * Test the int2bytes and bytes2int conversion.
+     * Test the intToBytes and bytesToInt conversions.
      */
     @Test
     public void intConversion() {
@@ -35,9 +35,31 @@ public class OctetUtilTest {
         int out = OctetUtil.bytesToInt(bytes);
         assertEquals(out, in);
     }
+
+    @Test
+    public void testIntConversions() {
+        assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00}), 0);
+        assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x01}), 1);
+        assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0x00, (byte)0x00, (byte)0x00, (byte)0xff}), 255);
+        assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0x00, (byte)0x00, (byte)0x01, (byte)0x00}), 256);
+        assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0x00, (byte)0x00, (byte)0xff, (byte)0xff}), 65535);
+        assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0x00, (byte)0x01, (byte)0x00, (byte)0x00}), 65536);
+        assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0x00, (byte)0xff, (byte)0xff, (byte)0xff}), 16777215);
+        assertEquals( OctetUtil.bytesToInt(new byte[]{(byte)0x7f, (byte)0xff, (byte)0xff, (byte)0xff}), 2147483647);
+
+        assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0x00, (byte)0x00, (byte)0x00}), 0);
+        assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0x00, (byte)0x00, (byte)0x01}), 1);
+        assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0xff, (byte)0xff, (byte)0xff}), 16777215);
+
+        assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0x00, (byte)0x00}), 0);
+        assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0xff, (byte)0xff}), 65535);
+
+        assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0x00}), 0);
+        assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0xff}), 255);
+    }
     
     /**
-     * Test the short2bytes and bytes2short conversion.
+     * Test the shortToBytes and bytesToShort conversions.
      */
     @Test
     public void shortConversion() {
@@ -49,7 +71,7 @@ public class OctetUtilTest {
     }
     
     /**
-     * Test another short2bytes and bytes2short conversion. 
+     * Test another shortToBytes and bytesToShort conversions.
      */
     @Test
     public void testAnotherShortConversion() {
