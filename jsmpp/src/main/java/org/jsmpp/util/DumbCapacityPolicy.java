@@ -16,7 +16,7 @@ package org.jsmpp.util;
 
 /**
  * It's a dumb capacity policy. It calculate nothing, just return the new
- * capacity same as requeiredCapacity.
+ * capacity same as requiredCapacity.
  * 
  * @author uudashr
  * 
