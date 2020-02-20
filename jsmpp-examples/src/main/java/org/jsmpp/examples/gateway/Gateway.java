@@ -65,7 +65,7 @@ public interface Gateway {
      * @throws NegativeResponseException
      * @throws IOException
      */
-    public String submitShortMessage(String serviceType,
+    String submitShortMessage(String serviceType,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, TypeOfNumber destAddrTon,
             NumberingPlanIndicator destAddrNpi, String destinationAddr,

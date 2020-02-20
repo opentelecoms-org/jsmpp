@@ -40,7 +40,7 @@ public interface PDUReader {
      * @throws InvalidCommandLengthException if command_length is too short.
      * @throws IOException if an I/O error occurs.
      */
-    public Command readPDUHeader(DataInputStream in)
+    Command readPDUHeader(DataInputStream in)
             throws InvalidCommandLengthException, IOException;
 
     /**
@@ -52,7 +52,7 @@ public interface PDUReader {
      * @return the complete byte of smpp command.
      * @throws IOException if an I/O error occurs.
      */
-    public byte[] readPDU(DataInputStream in, Command pduHeader) throws IOException;
+    byte[] readPDU(DataInputStream in, Command pduHeader) throws IOException;
 
     /**
      * Read all smpp pdu (excluding the command header) with specified pdu
@@ -66,7 +66,7 @@ public interface PDUReader {
      * @return the complete byte of smpp command.
      * @throws IOException if an I/O error occurs.
      */
-    public byte[] readPDU(DataInputStream in, int commandLength, int commandId,
+    byte[] readPDU(DataInputStream in, int commandLength, int commandId,
             int commandStatus, int sequenceNumber) throws IOException;
 
 }
