@@ -119,14 +119,20 @@ public class SMPPSession extends AbstractSession implements ClientSession {
         this(new SynchronizedPDUSender(new DefaultPDUSender(new DefaultComposer())), 
                 new DefaultPDUReader(), 
                 SocketConnectionFactory.getInstance());
-    }
+	}
+
+	public SMPPSession(ConnectionFactory connFactory) {
+		    this(new SynchronizedPDUSender(new DefaultPDUSender(new DefaultComposer())),
+						    new DefaultPDUReader(),
+						    connFactory);
+	}
 	
 	public SMPPSession(PDUSender pduSender, PDUReader pduReader, 
 	        ConnectionFactory connFactory) {
 	    super(pduSender);
 	    this.pduReader = pduReader;
 	    this.connFactory = connFactory;
-    }
+	}
 	
 	public SMPPSession(String host, int port, BindParameter bindParam,
             PDUSender pduSender, PDUReader pduReader,
@@ -138,7 +144,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	public SMPPSession(String host, int port, BindParameter bindParam) throws IOException {
         this();
         connectAndBind(host, port, bindParam);
-    }
+	}
 	
 	/**
      * Open connection and bind immediately.
