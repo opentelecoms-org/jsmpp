@@ -20,9 +20,9 @@ import java.net.ServerSocket;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
-import javax.net.ServerSocketFactory;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocketFactory;
 
 import org.jsmpp.session.connection.ServerConnection;
 import org.jsmpp.session.connection.ServerConnectionFactory;
@@ -36,7 +36,7 @@ public class KeyStoreSSLServerSocketConnectionFactory implements ServerConnectio
   private static final String KEY_STORE_PATH = "jsmpp-examples/src/main/resources/ssl/keystore.p12";
   private static final char[] KEY_STORE_PASSWORD = "password".toCharArray();
 
-  private ServerSocketFactory serverSocketFactory;
+  private SSLServerSocketFactory sslServerSocketFactory;
 
   public KeyStoreSSLServerSocketConnectionFactory() {
     try {
@@ -46,7 +46,7 @@ public class KeyStoreSSLServerSocketConnectionFactory implements ServerConnectio
       keyManagerFactory.init(keyStore, KEY_STORE_PASSWORD);
       SSLContext sslContext = SSLContext.getInstance("TLS");
       sslContext.init(keyManagerFactory.getKeyManagers(), null, null);
-      serverSocketFactory = sslContext.getServerSocketFactory();
+      sslServerSocketFactory = sslContext.getServerSocketFactory();
     } catch (IOException e) {
       throw new RuntimeException(e);
     } catch (GeneralSecurityException e) {
@@ -55,18 +55,18 @@ public class KeyStoreSSLServerSocketConnectionFactory implements ServerConnectio
   }
 
   public ServerConnection listen(int port) throws IOException {
-    ServerSocket serverSocket = serverSocketFactory.createServerSocket(port);
+    ServerSocket serverSocket = sslServerSocketFactory.createServerSocket(port);
     return new ServerSocketConnection(serverSocket);
   }
 
   public ServerConnection listen(int port, int timeout) throws IOException {
-    ServerSocket serverSocket = serverSocketFactory.createServerSocket(port);
+    ServerSocket serverSocket = sslServerSocketFactory.createServerSocket(port);
     serverSocket.setSoTimeout(timeout);
     return new ServerSocketConnection(serverSocket);
   }
 
   public ServerConnection listen(int port, int timeout, int backlog) throws IOException {
-    ServerSocket serverSocket = serverSocketFactory.createServerSocket(port, backlog);
+    ServerSocket serverSocket = sslServerSocketFactory.createServerSocket(port, backlog);
     serverSocket.setSoTimeout(timeout);
     return new ServerSocketConnection(serverSocket);
   }

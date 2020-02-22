@@ -18,10 +18,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
-import java.security.SecureRandom;
 
-import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.jsmpp.session.connection.Connection;
@@ -38,7 +37,7 @@ public class TrustStoreSSLSocketConnectionFactory implements ConnectionFactory {
   private static final String KEY_STORE_PATH = "/Users/pim/github/opentelecoms-org/jsmpp/jsmpp-examples/src/main/resources/ssl/keystore.p12";
   private static final char[] KEY_STORE_PASSWORD = "password".toCharArray();
 
-  private SocketFactory socketFactory;
+  private SSLSocketFactory sslSocketFactory;
 
   public TrustStoreSSLSocketConnectionFactory() {
     try {
@@ -47,8 +46,8 @@ public class TrustStoreSSLSocketConnectionFactory implements ConnectionFactory {
       TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
       trustManagerFactory.init(keyStore);
       SSLContext sslContext = SSLContext.getInstance("TLS");
-      sslContext.init(null, trustManagerFactory.getTrustManagers(), new SecureRandom());
-      socketFactory = sslContext.getSocketFactory();
+      sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
+      sslSocketFactory = sslContext.getSocketFactory();
     } catch (IOException e) {
       throw new RuntimeException(e);
     } catch (GeneralSecurityException e) {
@@ -59,6 +58,6 @@ public class TrustStoreSSLSocketConnectionFactory implements ConnectionFactory {
   @Override
   public Connection createConnection(String host, int port)
       throws IOException {
-    return new SocketConnection(socketFactory.createSocket(host, port));
+    return new SocketConnection(sslSocketFactory.createSocket(host, port));
   }
 }
