@@ -78,7 +78,7 @@ public abstract class AbstractSessionContext implements SessionContext {
             try {
                 l.onStateChange(newState, oldState, source);
             } catch (Exception e) {
-                logger.error("Invalid runtime exception thrown when calling onStateChange for " + source, e);
+                logger.error("Invalid runtime exception thrown when calling onStateChange for {}", source, e);
             }
         }
 

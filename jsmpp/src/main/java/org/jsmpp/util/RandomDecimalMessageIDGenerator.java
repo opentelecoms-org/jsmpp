@@ -48,7 +48,7 @@ public class RandomDecimalMessageIDGenerator implements MessageIDGenerator {
          */
         try {
             synchronized (random) {
-                return new MessageId(String.format("%010d", random.nextInt(Integer.MAX_VALUE), 10));
+                return new MessageId(String.format("%010d", random.nextInt(Integer.MAX_VALUE)));
             }
         } catch (PDUStringException e) {
             throw new RuntimeException("Failed creating message id", e);

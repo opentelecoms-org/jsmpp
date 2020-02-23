@@ -119,14 +119,20 @@ public class SMPPSession extends AbstractSession implements ClientSession {
         this(new SynchronizedPDUSender(new DefaultPDUSender(new DefaultComposer())), 
                 new DefaultPDUReader(), 
                 SocketConnectionFactory.getInstance());
-    }
+	}
+
+	public SMPPSession(ConnectionFactory connFactory) {
+		    this(new SynchronizedPDUSender(new DefaultPDUSender(new DefaultComposer())),
+						    new DefaultPDUReader(),
+						    connFactory);
+	}
 	
 	public SMPPSession(PDUSender pduSender, PDUReader pduReader, 
 	        ConnectionFactory connFactory) {
 	    super(pduSender);
 	    this.pduReader = pduReader;
 	    this.connFactory = connFactory;
-    }
+	}
 	
 	public SMPPSession(String host, int port, BindParameter bindParam,
             PDUSender pduSender, PDUReader pduReader,
@@ -138,7 +144,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	public SMPPSession(String host, int port, BindParameter bindParam) throws IOException {
         this();
         connectAndBind(host, port, bindParam);
-    }
+	}
 	
 	/**
      * Open connection and bind immediately.
@@ -252,7 +258,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			close();
 			throw new IOException(message + ": " + e.getMessage(), e);
 		} catch (ResponseTimeoutException e) {
-			String message = "Waiting bind response take time too long";
+			String message = "Wait for bind response timed out";
 			logger.error(message, e);
 			close();
 			throw new IOException(message + ": " + e.getMessage(), e);
@@ -534,7 +540,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		@Override
 		public void sendDeliverSmResp(int commandStatus, int sequenceNumber, String messageId) throws IOException {
 			pduSender().sendDeliverSmResp(out, commandStatus, sequenceNumber, messageId);
-			logger.debug("deliver_sm_resp with seq_number {} has been sent", sequenceNumber);
+			logger.debug("deliver_sm_resp with sequence_number {} has been sent", sequenceNumber);
 		}
 		
 		public void sendEnquireLinkResp(int sequenceNumber) throws IOException {
@@ -609,7 +615,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	            executorService.execute(task);
 
 	        } catch (InvalidCommandLengthException e) {
-	            logger.warn("Receive invalid command length", e);
+						logger.warn("Received invalid command length: {}", e.getMessage());
 	            try {
 	                pduSender().sendGenericNack(out, SMPPConstant.STAT_ESME_RINVCMDLEN, 0);
 	            } catch (IOException ee) {
@@ -618,12 +624,12 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	            unbindAndClose();
 	        } catch (SocketTimeoutException e) {
 	            notifyNoActivity();
-	        } catch (IOException e) {
-	            logger.warn("IOException while reading:", e);
+					} catch (IOException e) {
+	        	  logger.info("Reading PDU session {} in state {}: {}", getSessionId(), getSessionState(), e.getMessage());
 	            close();
 	        } catch (RuntimeException e) {
-			        logger.warn("RuntimeException:", e);
-						  unbindAndClose();
+			        logger.warn("Runtime error while reading PDU", e);
+						  close();
 		      }
 	    }
 		
@@ -660,8 +666,8 @@ public class SMPPSession extends AbstractSession implements ClientSession {
                 }
     	        
                	logger.info("Changing processor degree to {}", getPduProcessorDegree());
-               	((ThreadPoolExecutor)pduReaderWorker.executorService).setCorePoolSize(getPduProcessorDegree());
                	((ThreadPoolExecutor)pduReaderWorker.executorService).setMaximumPoolSize(getPduProcessorDegree());
+               	((ThreadPoolExecutor)pduReaderWorker.executorService).setCorePoolSize(getPduProcessorDegree());
 	        }
 	    }
 	}

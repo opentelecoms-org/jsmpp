@@ -61,16 +61,15 @@ public class LongSMS {
         int lengthOfData;
         byte[] referenceNumber = copyShort2Bytes(getReferenceNumber());
         for (int i = 0; i < segmentNum; i++) {
-            logger.debug("i = " + i);
+            logger.debug("i = {}", i);
             if (segmentNum - i == 1)
                 lengthOfData = messageLength - i * MAX_MESSAGE_SEGMENT_8BIT;
             else
                 lengthOfData = MAX_MESSAGE_SEGMENT_8BIT;
-            logger.debug("Length of data = " + lengthOfData);
+            logger.debug("Length of data = {}", lengthOfData);
 
             segments[i] = new byte[7 + lengthOfData];
-            logger.debug("segments[" + i + "].length = "
-                    + segments[i].length);
+            logger.debug("segments[{}].length = {}", i, segments[i].length);
 
             segments[i][0] = 6; // doesn't include itself, is header length
             // SAR identifier

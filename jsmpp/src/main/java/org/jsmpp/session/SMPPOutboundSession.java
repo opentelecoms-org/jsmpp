@@ -214,7 +214,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
       throw new IOException(message + ": " + e.getMessage(), e);
     }
     catch (TimeoutException e) {
-      String message = "Waiting bind response take time too long";
+      String message = "Wait for bind response timed out";
       logger.error(message, e);
       throw new IOException(message + ": " + e.getMessage(), e);
     }
@@ -360,7 +360,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
     @Override
     public void sendDeliverSmResp(int commandStatus, int sequenceNumber, String messageId) throws IOException {
       pduSender().sendDeliverSmResp(out, commandStatus, sequenceNumber, messageId);
-      logger.debug("deliver_sm_resp with seq_number {} has been sent", sequenceNumber);
+      logger.debug("deliver_sm_resp with sequence_number {} has been sent", sequenceNumber);
     }
 
     public void sendEnquireLinkResp(int sequenceNumber) throws IOException {
@@ -439,7 +439,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
 
       }
       catch (InvalidCommandLengthException e) {
-        logger.warn("Receive invalid command length", e);
+        logger.warn("Received invalid command length: {}", e.getMessage());
         try {
           pduSender().sendGenericNack(out, SMPPConstant.STAT_ESME_RINVCMDLEN, 0);
         }
@@ -452,12 +452,12 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
         notifyNoActivity();
       }
       catch (IOException e) {
-        logger.warn("IOException while reading:", e);
+        logger.info("Reading PDU session {} in state {}: {}", getSessionId(), getSessionState(), e.getMessage());
         close();
       }
       catch (RuntimeException e) {
-        logger.warn("RuntimeException:", e);
-        unbindAndClose();
+        logger.warn("Runtime error while reading", e);
+        close();
       }
     }
 
@@ -494,8 +494,8 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
         }
 
         logger.info("Changing processor degree to {}", getPduProcessorDegree());
-        ((ThreadPoolExecutor) pduReaderWorker.executorService).setCorePoolSize(getPduProcessorDegree());
         ((ThreadPoolExecutor) pduReaderWorker.executorService).setMaximumPoolSize(getPduProcessorDegree());
+        ((ThreadPoolExecutor) pduReaderWorker.executorService).setCorePoolSize(getPduProcessorDegree());
       }
     }
   }

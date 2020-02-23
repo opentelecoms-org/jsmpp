@@ -20,6 +20,7 @@ import java.util.Date;
 
 import org.jsmpp.util.DeliveryReceiptState;
 import org.jsmpp.util.InvalidDeliveryReceiptException;
+import org.jsmpp.util.ObjectUtil;
 
 
 /**
@@ -270,10 +271,10 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
         if (!hasEqualId(other)) {
             return false;
         }
-        if (submitted != other.submitted) {
+        if (!ObjectUtil.equals(submitted, other.submitted)) {
             return false;
         }
-        if (delivered != other.delivered) {
+        if (!ObjectUtil.equals(delivered, other.delivered)) {
             return false;
         }
         if (!hasEqualSubmitDate(other)) {
@@ -312,57 +313,27 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
     }
 
     private boolean hasEqualId(DeliveryReceipt other) {
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        }
-        return id.equals(other.id);
+        return ObjectUtil.equals(id, other.id);
     }
 
     private boolean hasEqualDoneDate(DeliveryReceipt other) {
-        if (doneDate == null) {
-            if (other.doneDate != null) {
-                return false;
-            }
-        }
-        return doneDate.equals(other.doneDate);
+        return ObjectUtil.equals(doneDate, other.doneDate);
     }
 
     private boolean hasEqualError(DeliveryReceipt other) {
-        if (error == null) {
-            if (other.error != null) {
-                return false;
-            }
-        }
-        return error.equals(other.error);
+        return ObjectUtil.equals(error, other.error);
     }
 
     private boolean hasEqualFinalStatus(DeliveryReceipt other) {
-        if (finalStatus == null) {
-            if (other.finalStatus != null) {
-                return false;
-            }
-        }
-        return finalStatus.equals(other.finalStatus);
+        return ObjectUtil.equals(finalStatus, other.finalStatus);
     }
 
     private boolean hasEqualSubmitDate(DeliveryReceipt other) {
-        if (submitDate == null) {
-            if (other.submitDate != null) {
-                return false;
-            }
-        }
-        return submitDate.equals(other.submitDate);
+        return ObjectUtil.equals(submitDate, submitDate);
     }
 
     private boolean hasEqualText(DeliveryReceipt other) {
-        if (text == null) {
-            if (other.text != null) {
-                return false;
-            }
-        }
-        return text.equals(other.text);
+        return ObjectUtil.equals(text, other.text);
     }
 
     /**

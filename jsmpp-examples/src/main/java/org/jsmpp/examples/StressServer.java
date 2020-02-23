@@ -32,8 +32,10 @@ import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.GSMSpecificFeature;
 import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.MessageMode;
+import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.MessageType;
 import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceSm;
@@ -51,6 +53,7 @@ import org.jsmpp.session.SMPPServerSessionListener;
 import org.jsmpp.session.ServerMessageReceiverListener;
 import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
+import org.jsmpp.util.AbsoluteTimeFormatter;
 import org.jsmpp.util.DeliveryReceiptState;
 import org.jsmpp.util.MessageIDGenerator;
 import org.jsmpp.util.MessageId;
@@ -66,15 +69,13 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(StressServer.class);
     private static final int DEFAULT_MAX_WAIT_BIND = 10;
     private static final String DEFAULT_LOG4J_PATH = "stress/server-log4j.properties";
-    private static final Integer DEFAULT_PORT = 8056;
-    private static final Integer DEFAULT_PROCESSOR_DEGREE = 3;
+    private static final int DEFAULT_PORT = 8056;
+    private static final int DEFAULT_PROCESSOR_DEGREE = 3;
     private static final String CANCELSM_NOT_IMPLEMENTED = "cancel_sm not implemented";
-    private static final String DATASM_NOT_IMPLEMENTED = "data_sm not implemented";
-    private static final String QUERYSM_NOT_IMPLEMENTED = "query_sm not implemented";
     private static final String REPLACESM_NOT_IMPLEMENTED = "replace_sm not implemented";
-    private static final String SUBMITMULTI_NOT_IMPLEMENTED = "submit_multi not implemented";
     private final ExecutorService waitBindExecService = Executors.newFixedThreadPool(DEFAULT_MAX_WAIT_BIND);
     private final MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
+    private final AbsoluteTimeFormatter timeFormatter = new AbsoluteTimeFormatter();
     private final AtomicInteger requestCounter = new AtomicInteger();
     private int processorDegree;
     private int port;
@@ -104,8 +105,10 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
     
     public QuerySmResult onAcceptQuerySm(QuerySm querySm,
             SMPPServerSession source) throws ProcessRequestException {
-        LOGGER.warn("QuerySm not implemented");
-        throw new ProcessRequestException(QUERYSM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RQUERYFAIL);
+        String finalDate = timeFormatter.format(new Date());
+        LOGGER.info("Receiving query_sm, and return {}", finalDate);
+        QuerySmResult querySmResult = new QuerySmResult(finalDate, MessageState.DELIVERED, (byte)0x00);
+        return querySmResult;
     }
     
     public MessageId onAcceptSubmitSm(SubmitSm submitSm,
@@ -118,14 +121,21 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
     
     public SubmitMultiResult onAcceptSubmitMulti(SubmitMulti submitMulti,
             SMPPServerSession source) throws ProcessRequestException {
-        LOGGER.warn("SubmitMulti not implemented");
-        throw new ProcessRequestException(SUBMITMULTI_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RSYSERR);
+        MessageId messageId = messageIDGenerator.newMessageId();
+        LOGGER.info("Receiving submit_multi {}, and return message id {}", new String(submitMulti.getShortMessage()), messageId.getValue());
+        requestCounter.incrementAndGet();
+        SubmitMultiResult submitMultiResult = new SubmitMultiResult(messageId.getValue());
+        return submitMultiResult;
     }
     
     public DataSmResult onAcceptDataSm(DataSm dataSm, Session source)
             throws ProcessRequestException {
-        LOGGER.warn("DataSm not implemented");
-        throw new ProcessRequestException(DATASM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RSYSERR);
+        MessageId messageId = messageIDGenerator.newMessageId();
+        OptionalParameter.Message_payload messagePayload = (OptionalParameter.Message_payload)dataSm.getOptionalParameter(OptionalParameter.Tag.MESSAGE_PAYLOAD);
+        LOGGER.info("Receiving data_sm {}, and return message id {}", messagePayload.getValueAsString(), messageId.getValue());
+        requestCounter.incrementAndGet();
+        DataSmResult dataSmResult = new DataSmResult(messageId, new OptionalParameter[]{});
+        return dataSmResult;
     }
     
     public void onAcceptCancelSm(CancelSm cancelSm, SMPPServerSession source)
@@ -209,7 +219,7 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
                         new RegisteredDelivery(0), 
                         DataCodings.ZERO, 
                         delRec.toString().getBytes());
-                LOGGER.debug("Sending delivery receipt for message id " + messageId + ":" + stringValue);
+                LOGGER.debug("Sending delivery receipt for message id {}: {}", messageId, stringValue);
             } catch (Exception e) {
                 LOGGER.error("Failed sending delivery_receipt for message id " + messageId + ":" + stringValue, e);
             }
@@ -225,8 +235,8 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                 }
-                int trafficPerSecond = requestCounter.getAndSet(0);
-                LOGGER.info("Traffic per second : " + trafficPerSecond);
+                int requestsPerSecond = requestCounter.getAndSet(0);
+                LOGGER.info("Requests per second: {}", requestsPerSecond);
             }
         }
     }
@@ -236,19 +246,19 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
 
         int port;
         try {
-            port = Integer.parseInt(System.getProperty("jsmpp.server.port", DEFAULT_PORT.toString()));
+            port = Integer.parseInt(System.getProperty("jsmpp.server.port", Integer.toString(DEFAULT_PORT)));
         } catch (NumberFormatException e) {
             port = DEFAULT_PORT;
         }
         
         int processorDegree;
         try {
-            processorDegree = Integer.parseInt(System.getProperty("jsmpp.server.procDegree", DEFAULT_PROCESSOR_DEGREE.toString()));
+            processorDegree = Integer.parseInt(System.getProperty("jsmpp.server.procDegree",  Integer.toString(DEFAULT_PROCESSOR_DEGREE)));
         } catch (NumberFormatException e) {
             processorDegree = DEFAULT_PROCESSOR_DEGREE;
         }
 
-        LOGGER.info("Processor degree: " + processorDegree);
+        LOGGER.info("Processor degree: {}", processorDegree);
         StressServer stressServer = new StressServer(port, processorDegree);
         stressServer.run();
     }

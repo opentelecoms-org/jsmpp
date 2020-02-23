@@ -16,6 +16,8 @@ package org.jsmpp.bean;
 
 import java.util.Arrays;
 
+import org.jsmpp.util.ObjectUtil;
+
 /**
  * @author uudashr
  *
@@ -128,35 +130,19 @@ public class ReplaceSm extends Command {
     }
 
     private boolean hasEqualMessageId(ReplaceSm other) {
-        if (messageId == null) {
-            if (other.messageId != null)
-                return false;
-        }
-        return messageId.equals(other.messageId);
+        return ObjectUtil.equals(messageId , other.messageId);
     }
 
     private boolean hasEqualScheduleDeliveryTime(ReplaceSm other) {
-        if (scheduleDeliveryTime == null) {
-            if (other.scheduleDeliveryTime != null)
-                return false;
-        }
-        return scheduleDeliveryTime.equals(other.scheduleDeliveryTime);
+        return ObjectUtil.equals(scheduleDeliveryTime, other.scheduleDeliveryTime);
     }
 
     private boolean hasEqualSourceAddr(ReplaceSm other) {
-        if (sourceAddr == null) {
-            if (other.sourceAddr != null)
-                return false;
-        }
-        return sourceAddr.equals(other.sourceAddr);
+        return ObjectUtil.equals(sourceAddr, other.sourceAddr);
     }
 
     private boolean hasEqualValidityPeriod(ReplaceSm other) {
-        if (validityPeriod == null) {
-            if (other.validityPeriod != null)
-                return false;
-        }
-        return validityPeriod.equals(other.validityPeriod);
+        return ObjectUtil.equals(validityPeriod, other.validityPeriod);
     }
 
     @Override

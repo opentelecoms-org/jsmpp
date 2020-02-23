@@ -15,6 +15,7 @@
 package org.jsmpp.session;
 
 import org.jsmpp.bean.MessageState;
+import org.jsmpp.util.ObjectUtil;
 
 /**
  * Result of query short message.
@@ -69,21 +70,11 @@ public class QuerySmResult {
 	}
 	
 	private boolean hasEqualFinalDate(QuerySmResult other) {
-	    if (finalDate == null) {
-            if (other.finalDate != null) {
-                return false;
-            }
-        }
-	    return finalDate.equals(other.finalDate);
+	    return ObjectUtil.equals(finalDate, other.finalDate);
 	}
 	
 	private boolean hasEqualMessageState(QuerySmResult other) {
-	    if (messageState == null) {
-            if (other.messageState != null) {
-                return false;
-            }
-        }
-	    return messageState.equals(other.messageState);
+	    return ObjectUtil.equals(messageState, other.messageState);
 	}
 	
 	/* (non-Javadoc)

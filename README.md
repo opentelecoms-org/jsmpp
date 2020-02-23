@@ -10,8 +10,7 @@ traffic of 3000-5000 messages per second.
 
 jSMPP is not a high-level library. People looking for a quick way to
 get started with SMPP may be better of using an abstraction layer such
-as the Apache Camel SMPP component:
-  http://camel.apache.org/smpp.html
+as the Apache Camel SMPP component [Apache Camel SMPP component](https://camel.apache.org/smpp.html)
 
 Travis-CI status:
 -----------------
@@ -43,6 +42,6 @@ License
 Copyright (C) 2007-2013, Nuruddin Ashr <uudashr@gmail.com>
 Copyright (C) 2012-2013, Denis Kostousov <denis.kostousov@gmail.com>
 Copyright (C) 2014, Daniel Pocock http://danielpocock.com
-Copyright (C) 2016, Pim Moerenhout <pim.moerenhout@gmail.com>
+Copyright (C) 2016-2020, Pim Moerenhout <pim.moerenhout@gmail.com>
 
 This project is licensed under the Apache Software License 2.0.

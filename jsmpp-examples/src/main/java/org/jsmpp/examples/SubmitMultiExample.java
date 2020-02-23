@@ -31,6 +31,7 @@ import org.jsmpp.bean.ReplaceIfPresentFlag;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.session.BindParameter;
@@ -42,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * Sample example for Submit Multi SMS
+ * Example for Submit Multi SMS
  *
  */
 public class SubmitMultiExample {
@@ -73,8 +74,11 @@ public class SubmitMultiExample {
                     addresses, new ESMClass(), (byte)0, (byte)1, TIME_FORMATTER.format(new Date()), null,
                     new RegisteredDelivery(SMSCDeliveryReceipt.FAILURE), ReplaceIfPresentFlag.REPLACE,
                     new GeneralDataCoding(Alphabet.ALPHA_DEFAULT, MessageClass.CLASS1, false), (byte)0,
-                    "jSMPP simplify SMPP on Java platform".getBytes());
-                LOGGER.info("Messages submitted, result is {}", result);
+                    "jSMPP simplifies SMPP on Java platform".getBytes());
+                LOGGER.info("{} messages submitted, result message id {}", addresses.length, result.getMessageId());
+                for (UnsuccessDelivery unsuccessDelivery: result.getUnsuccessDeliveries()){
+                    LOGGER.info("Unsuccessful delivery to {}: {}", unsuccessDelivery.getDestinationAddress(), unsuccessDelivery.getErrorStatusCode());
+                }
                 Thread.sleep(2000);
             } catch (PDUException e) {
                 // Invalid PDU parameter

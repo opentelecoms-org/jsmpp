@@ -17,7 +17,7 @@ package org.jsmpp.bean;
 import org.jsmpp.SMPPConstant;
 
 /**
- * Enum represent the interface version of SMPP.
+ * Enum represent the SMPP interface version.
  * 
  * @author uudashr
  * @version 1.0
@@ -47,7 +47,7 @@ public enum InterfaceVersion {
     }
 
     /**
-     * Get the value of interface version as defined on SMPP spesification.
+     * Get the value of interface version as defined in SMPP specification.
      * 
      * @return the value of interface version.
      */
@@ -59,7 +59,7 @@ public enum InterfaceVersion {
      * Get the <tt>InterfaceVersion</tt> by specified value.
      * 
      * @param value is the value associated by the enum constant.
-     * @return the enum const assiciated with specified <tt>value</tt>.
+     * @return the enum const associated with specified <tt>value</tt>.
      * @throws IllegalArgumentException if there is <tt>InterfaceVersion</tt>
      *         associated with specified <tt>value</tt>.
      */

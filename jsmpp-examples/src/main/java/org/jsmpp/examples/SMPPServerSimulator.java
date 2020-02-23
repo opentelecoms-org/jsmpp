@@ -52,6 +52,7 @@ import org.jsmpp.session.SMPPServerSessionListener;
 import org.jsmpp.session.ServerMessageReceiverListener;
 import org.jsmpp.session.ServerResponseDeliveryAdapter;
 import org.jsmpp.session.Session;
+import org.jsmpp.examples.session.connection.socket.KeyStoreSSLServerSocketConnectionFactory;
 import org.jsmpp.util.DeliveryReceiptState;
 import org.jsmpp.util.MessageIDGenerator;
 import org.jsmpp.util.MessageId;
@@ -76,11 +77,13 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
     private final ExecutorService execService = Executors.newFixedThreadPool(5);
     private final ExecutorService execServiceDelReceipt = Executors.newFixedThreadPool(100);
     private final MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
+    private boolean useSsl;
     private int port;
     private String systemId;
     private String password;
 
-    public SMPPServerSimulator(int port, String systemId, String password) {
+    public SMPPServerSimulator(boolean useSsl, int port, String systemId, String password) {
+        this.useSsl = useSsl;
         this.port = port;
         this.systemId = systemId;
         this.password = password;
@@ -88,8 +91,13 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
 
     public void run() {
         try {
-            SMPPServerSessionListener sessionListener = new SMPPServerSessionListener(port);
-            LOGGER.info("Listening on port {}", port);
+            /*
+             * for SSL use the SSLServerSocketConnectionFactory() or DefaultSSLServerSocketConnectionFactory()
+             */
+            SMPPServerSessionListener sessionListener = useSsl ?
+                new SMPPServerSessionListener(port, new KeyStoreSSLServerSocketConnectionFactory())
+                : new SMPPServerSessionListener(port);
+            LOGGER.info("Listening on port {}{}", port, useSsl ? " (SSL)" : "");
             while (true) {
                 SMPPServerSession serverSession = sessionListener.accept();
                 LOGGER.info("Accepting connection for session {}", serverSession.getSessionId());
@@ -292,6 +300,11 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
     }
 
     public static void main(String[] args) {
+        // System.setProperty("javax.net.debug", "ssl");
+        /*
+         * To use SSL, add -Djsmpp.simulator.ssl=true
+         * To debug SSL, add -Djavax.net.debug=ssl
+         */
         String systemId = System.getProperty("jsmpp.client.systemId", DEFAULT_SYSID);
         String password = System.getProperty("jsmpp.client.password", DEFAULT_PASSWORD);
         int port;
@@ -300,7 +313,8 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
         } catch (NumberFormatException e) {
             port = DEFAULT_PORT;
         }
-        SMPPServerSimulator smppServerSim = new SMPPServerSimulator(port, systemId, password);
+        boolean useSsl = Boolean.parseBoolean(System.getProperty("jsmpp.simulator.ssl", "false"));
+        SMPPServerSimulator smppServerSim = new SMPPServerSimulator(useSsl, port, systemId, password);
         smppServerSim.run();
     }
 }

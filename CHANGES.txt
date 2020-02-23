@@ -1,5 +1,38 @@
 Changes:
 
+Please note that this release is the latest using Java 1.6. The next release will require at minumum Java 1.8.
+
+2.3.8
+- Update dependency Slf4j to 1.7.30.
+- Update dependency commons-codec to 1.14
+- Always use placeholders instead of string concatenation for log state.
+- AbstractSMPPOperation: Delete pendingResponse field, which is never r.
+- DefaultComposer#submitMulti: Fix InvalidNumberOfDestinationsException.
+- DefaultDecomposer#submitMulti: Remove check which is always false.
+- Add unit test for deliver_sm with optional parameters.
+- Add test for receipted message id optional parameter.
+- DefaultComposer#submitMulti: Fix InvalidNumberOfDestinationsException message.
+- AbstractSession#executeSendCommand: Remove "Tomas: " prefix of info log statement.
+- Always use placeholders instead of string concatenation for log statements.
+- DefaultComposer#submitMulti: Fix InvalidNumberOfDestinationsException message.
+- DefaultDecomposer#submitMulti: Remove check which is always false.
+- Fix unused arguments passed to String#format and Logger#info.
+- StrictBufferedInputStream#read: Methods overriding synchronized methods should be synchronized, otherwise the thread-safety of the subclass may be broken.
+- Avoid comparing boxed primitive values using the == operator.
+- Avoid NullPointerException in equals methods if receiver field is null but argument field is not null.
+- Improve grammar of bind response timeout exception message.
+- Fix Travis CI build by using openjdk8 and openjdk11 (instead of no the longer available openjdk7, oraclejdk8 and oraclejdk9 JDKs).
+- Improve grammar of bind response timeout exception message.
+- Uniformly use "session" as identifier for sessions in logging and exception messages.
+- Uniformly use "sequence_number" as identifier for sequence numbers in logging and exception messages.
+
+2.3.7
+- Specify maven-surefire-plugin version to fix maven warning about non-repeatable builds.
+- Do not throw exception when socket is closed, handle EOFExceptions for server and lower log level.
+- Fixes IllegalArgumentException in BoundSessionStateListener.onStateChange (issue #89) for Java 9 and later.
+- Also change the order of ThreadPoolExecutor adjustments to run on Java 9 or later when increasing the PDU processor degree.
+- Update dependency commons-codec to 1.11.
+
 2.3.6
 - Add descriptions to negative response exceptions.
 - Added custom delivery receipt examples

@@ -19,7 +19,7 @@ import org.jsmpp.extra.SessionState;
 
 /**
  * Context defined session life cycle.<br/>
- * OPEN -> BOUND_TX | BOUND_RX | BOUND_TRX -> UNBOUND -> CLOSE.
+ * OPEN -> BOUND_TX | BOUND_RX | BOUND_TRX -> UNBOUND -> CLOSED.
  * 
  * @author uudashr
  *

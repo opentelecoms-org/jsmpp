@@ -14,6 +14,8 @@
  */
 package org.jsmpp.bean;
 
+import org.jsmpp.util.ObjectUtil;
+
 /**
  * This are SME (Short Message Entity) Address.
  * 
@@ -78,30 +80,15 @@ public class Address implements DestinationAddress {
     }
     
     private boolean hasEqualAddress(Address other) {
-        if (address == null) {
-            if (other.address != null) {
-                return false;
-            }
-        }
-        return address.equals(other.address);
+        return ObjectUtil.equals(address, other.address);
     }
     
     private boolean hasEqualNumberingPlanIndicator(Address other) {
-        if (numberingPlanIndicator == null) {
-            if (other.numberingPlanIndicator != null) {
-                return false;
-            }
-        }
-        return numberingPlanIndicator.equals(other.numberingPlanIndicator);
+        return ObjectUtil.equals(numberingPlanIndicator, other.numberingPlanIndicator);
     }
     
     private boolean hasEqualTypeOfNumber(Address other) {
-        if (typeOfNumber == null) {
-            if (other.typeOfNumber != null) {
-                return false;
-            }
-        }
-        return typeOfNumber.equals(other.typeOfNumber);
+        return ObjectUtil.equals(typeOfNumber , other.typeOfNumber);
     }
     
     @Override

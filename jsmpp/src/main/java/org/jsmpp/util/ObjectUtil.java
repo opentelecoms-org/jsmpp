@@ -14,19 +14,22 @@
  */
 package org.jsmpp.util;
 
-/**
- * It's a dumb capacity policy. It calculate nothing, just return the new
- * capacity same as requiredCapacity.
- * 
- * @author uudashr
- * 
- */
-public class DumbCapacityPolicy implements CapacityPolicy {
-    
-    /* (non-Javadoc)
-     * @see org.jsmpp.util.CapacityPolicy#ensureCapacity(int, int)
+public class ObjectUtil {
+
+    private ObjectUtil() {
+        throw new InstantiationError("This class must not be instantiated");
+    }
+
+    /**
+     * Null-safe comparison of two objects for equality
      */
-    public int ensureCapacity(int requiredCapacity, int currentCapacity) {
-        return requiredCapacity;
+    public static boolean equals(Object object1, Object object2) {
+        if (object1 == object2) {
+            return true;
+        }
+        if (object1 == null || object2 == null) {
+            return false;
+        }
+        return object1.equals(object2);
     }
 }

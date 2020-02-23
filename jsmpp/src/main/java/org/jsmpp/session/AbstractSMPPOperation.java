@@ -15,8 +15,6 @@
 package org.jsmpp.session;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUException;
@@ -46,7 +44,6 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractSMPPOperation implements SMPPOperation {
     private static final Logger logger = LoggerFactory.getLogger(AbstractSMPPOperation.class);
 
-    private final Map<Integer, PendingResponse<Command>> pendingResponse = new HashMap<Integer, PendingResponse<Command>>();
     private final Sequence sequence = new Sequence(1);
     private final PDUSender pduSender;
     private final Connection connection;
@@ -91,12 +88,10 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
 
         int seqNum = sequence.nextValue();
         PendingResponse<Command> pendingResp = new PendingResponse<Command>(timeout);
-        pendingResponse.put(seqNum, pendingResp);
         try {
             task.executeTask(connection().getOutputStream(), seqNum);
         } catch (IOException e) {
-            logger.error("Failed sending " + task.getCommandName() + " command", e);
-            pendingResponse.remove(seqNum);
+            logger.error("Failed sending {} command", task.getCommandName(), e);
             throw e;
         }
 
@@ -104,11 +99,7 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
             pendingResp.waitDone();
             logger.debug("{} response received", task.getCommandName() );
         } catch (ResponseTimeoutException e) {
-            pendingResponse.remove(seqNum);
-            logger.debug("Response timeout for {} with sessionIdSequence number {}", task.getCommandName(), seqNum);
-            throw e;
-        } catch (InvalidResponseException e) {
-            pendingResponse.remove(seqNum);
+            logger.debug("Response timeout for {} with sequence_number {}", task.getCommandName(), seqNum);
             throw e;
         }
 
@@ -141,7 +132,7 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
             logger.warn("PDU String should be always valid", e);
         } catch (NegativeResponseException e) {
             // ignore the negative response
-            logger.warn("Receive non-ok command_status (" + e.getCommandStatus() + ") for unbind_resp");
+            logger.warn("Receive non-ok command_status ({}) for unbind_resp", e.getCommandStatus(), e);
         }
     }
 

@@ -201,7 +201,7 @@ public abstract class AbstractSession implements Session {
     }
 
     public void close() {
-        logger.debug("Close session {}", sessionId);
+        logger.debug("Close session {} in state {}", sessionId, getSessionState());
         SessionContext ctx = sessionContext();
         SessionState sessionState = ctx.getSessionState();
         if (!sessionState.equals(SessionState.CLOSED)) {
@@ -276,10 +276,10 @@ public abstract class AbstractSession implements Session {
         try {
             task.executeTask(connection().getOutputStream(), seqNum);
         } catch (IOException e) {
-            logger.error("Failed sending " + task.getCommandName() + " command", e);
+            logger.error("Failed sending {} command", task.getCommandName(), e);
 
             if("enquire_link".equals(task.getCommandName())) {
-                logger.info("Tomas: Ignore failure of sending enquire_link, wait to see if connection is restored");
+                logger.info("Ignore failure of sending enquire_link, wait to see if connection is restored");
             } else {
                 pendingResponse.remove(seqNum);
                 close();
@@ -289,13 +289,13 @@ public abstract class AbstractSession implements Session {
 
         try {
             pendingResp.waitDone();
-            logger.debug("{} response with sequence {} received for session {}", task.getCommandName(), seqNum, sessionId);
+            logger.debug("{} response with sequence_number {} received for session {}", task.getCommandName(), seqNum, sessionId);
         } catch (ResponseTimeoutException e) {
             pendingResponse.remove(seqNum);
             throw new ResponseTimeoutException("No response after waiting for "
                     + timeout + " millis when executing "
-                    + task.getCommandName() + " with sessionId " + sessionId
-                    + " and sequenceNumber " + seqNum, e);
+                    + task.getCommandName() + " with session " + sessionId
+                    + " and sequence_number " + seqNum, e);
         } catch (InvalidResponseException e) {
             pendingResponse.remove(seqNum);
             throw e;
@@ -320,7 +320,7 @@ public abstract class AbstractSession implements Session {
         try {
             task.executeTask(connection().getOutputStream(), seqNum);
         } catch (IOException e) {
-            logger.error("Failed sending " + task.getCommandName() + " command", e);
+            logger.error("Failed sending {} command", task.getCommandName(), e);
             close();
             throw e;
         }
@@ -385,7 +385,7 @@ public abstract class AbstractSession implements Session {
     }
 
     public void unbindAndClose() {
-        logger.debug("Unbind and close sesssion {}", sessionId);
+        logger.debug("Unbind and close session {}", sessionId);
         if (sessionContext().getSessionState().isBound()) {
             try {
                 unbind();

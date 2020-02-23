@@ -36,7 +36,7 @@ public interface SMPPOutboundServerSessionState extends GenericSMPPSessionState 
     SMPPOutboundServerSessionState BOUND_TX = new SMPPOutboundServerSessionBoundTX();
     SMPPOutboundServerSessionState BOUND_TRX = new SMPPOutboundServerSessionBoundTRX();
     SMPPOutboundServerSessionState UNBOUND = new SMPPOutboundServerSessionUnbound();
-    public static final SMPPOutboundServerSessionState CLOSED = new SMPPOutboundServerSessionClosed();
+    SMPPOutboundServerSessionState CLOSED = new SMPPOutboundServerSessionClosed();
 
     void processOutbind(Command pduHeader, byte[] pdu, OutboundServerResponseHandler responseHandler)
         throws IOException;
