@@ -14,6 +14,9 @@
  */
 package org.jsmpp.util;
 
+import static org.jsmpp.SMPPConstant.PDU_HEADER_LENGTH;
+import static org.jsmpp.SMPPConstant.STAT_ESME_ROK;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,7 +128,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         BindResp resp = new BindResp();
         SequentialBytesReader reader = new SequentialBytesReader(b);
         assignHeader(resp, reader);
-        if (resp.getCommandLength() > 16 && resp.getCommandStatus() == 0) {
+        if (resp.getCommandLength() > PDU_HEADER_LENGTH && resp.getCommandStatus() == STAT_ESME_ROK) {
             resp.setSystemId(reader.readCString());
             StringValidator.validateString(resp.getSystemId(),
                     StringParameter.SYSTEM_ID);
@@ -266,7 +269,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         SubmitSmResp resp = new SubmitSmResp();
         SequentialBytesReader reader = new SequentialBytesReader(b);
         assignHeader(resp, reader);
-        if (resp.getCommandLength() > 16 && resp.getCommandStatus() == 0) {
+        if (resp.getCommandLength() > PDU_HEADER_LENGTH && resp.getCommandStatus() == STAT_ESME_ROK) {
             resp.setMessageId(reader.readCString());
             StringValidator.validateString(resp.getMessageId(),
                     StringParameter.MESSAGE_ID);
@@ -305,7 +308,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         QuerySmResp resp = new QuerySmResp();
         SequentialBytesReader reader = new SequentialBytesReader(b);
         assignHeader(resp, reader);
-        if (resp.getCommandLength() > 16 && resp.getCommandStatus() == 0) {
+        if (resp.getCommandLength() > PDU_HEADER_LENGTH && resp.getCommandStatus() == STAT_ESME_ROK) {
             resp.setMessageId(reader.readCString());
             StringValidator.validateString(resp.getMessageId(),
                     StringParameter.MESSAGE_ID);
@@ -433,7 +436,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         DataSmResp resp = new DataSmResp();
         SequentialBytesReader reader = new SequentialBytesReader(data);
         assignHeader(resp, reader);
-        if (resp.getCommandLength() > 16 && resp.getCommandStatus() == 0) {
+        if (resp.getCommandLength() > PDU_HEADER_LENGTH && resp.getCommandStatus() == STAT_ESME_ROK) {
             resp.setMessageId(reader.readCString());
             StringValidator.validateString(resp.getMessageId(),
                     StringParameter.MESSAGE_ID);
@@ -536,23 +539,24 @@ public class DefaultDecomposer implements PDUDecomposer {
         SubmitMultiResp resp = new SubmitMultiResp();
         SequentialBytesReader reader = new SequentialBytesReader(data);
         assignHeader(resp, reader);
-        resp.setMessageId(reader.readCString());
-        StringValidator.validateString(resp.getMessageId(),
+        if (resp.getCommandLength() > PDU_HEADER_LENGTH && resp.getCommandStatus() == STAT_ESME_ROK) {
+            resp.setMessageId(reader.readCString());
+            StringValidator.validateString(resp.getMessageId(),
                 StringParameter.MESSAGE_ID);
-
-        int noUnsuccess = 0xff & reader.readByte();
-        UnsuccessDelivery[] unsuccessSmes = new UnsuccessDelivery[noUnsuccess];
-        for (int i = 0; i < noUnsuccess; i++) {
-            byte ton = reader.readByte();
-            byte npi = reader.readByte();
-            String addr = reader.readCString();
-            StringValidator.validateString(addr,
+            int noUnsuccess = 0xff & reader.readByte();
+            UnsuccessDelivery[] unsuccessSmes = new UnsuccessDelivery[noUnsuccess];
+            for (int i = 0; i < noUnsuccess; i++) {
+                byte ton = reader.readByte();
+                byte npi = reader.readByte();
+                String addr = reader.readCString();
+                StringValidator.validateString(addr,
                     StringParameter.DESTINATION_ADDR);
-            int errorStatusCode = reader.readInt();
-            unsuccessSmes[i] = new UnsuccessDelivery(ton, npi, addr,
+                int errorStatusCode = reader.readInt();
+                unsuccessSmes[i] = new UnsuccessDelivery(ton, npi, addr,
                     errorStatusCode);
+            }
+            resp.setUnsuccessSmes(unsuccessSmes);
         }
-        resp.setUnsuccessSmes(unsuccessSmes);
         return resp;
     }
     
