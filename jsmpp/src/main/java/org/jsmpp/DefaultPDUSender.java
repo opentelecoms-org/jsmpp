@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultPDUSender implements PDUSender {
     private static final Logger logger = LoggerFactory.getLogger(DefaultPDUSender.class);
+    private static final byte[] EMPTY_SHORT_MESSAGE = new byte[]{};
     private final PDUComposer pduComposer;
 
     /**
@@ -57,7 +58,7 @@ public class DefaultPDUSender implements PDUSender {
 
     /**
      * Construct with specified PDU composer.
-     * 
+     *
      * @param pduComposer is the PDU composer.
      */
     public DefaultPDUSender(PDUComposer pduComposer) {
@@ -66,7 +67,7 @@ public class DefaultPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendHeader(java.io.OutputStream, int, int, int)
      */
     public byte[] sendHeader(OutputStream os, int commandId, int commandStatus,
@@ -80,7 +81,7 @@ public class DefaultPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendBind(java.io.OutputStream,
      *      org.jsmpp.BindType, int, java.lang.String, java.lang.String,
      *      java.lang.String, org.jsmpp.InterfaceVersion,
@@ -102,23 +103,23 @@ public class DefaultPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendBindResp(java.io.OutputStream, int, int,
      *      java.lang.String)
      */
     public byte[] sendBindResp(OutputStream os, int commandId,
             int sequenceNumber, String systemId, InterfaceVersion interfaceVersion) throws PDUStringException,
             IOException {
-        
-        OptionalParameter[] p;
-        if(interfaceVersion != null) {
+
+        OptionalParameter[] optionalParameters;
+        if (interfaceVersion != null) {
             OptionalParameter interfaceVersionParam = new OptionalParameter.Byte(Tag.SC_INTERFACE_VERSION, interfaceVersion.value());
-            p = new OptionalParameter[] {interfaceVersionParam};
+            optionalParameters = new OptionalParameter[] {interfaceVersionParam};
         } else {
-            p = new OptionalParameter[] {};
+            optionalParameters = new OptionalParameter[] {};
         }
-        
-        byte[] b = pduComposer.bindResp(commandId, sequenceNumber, systemId, p);
+
+        byte[] b = pduComposer.bindResp(commandId, sequenceNumber, systemId, optionalParameters);
         writeAndFlush(os, b);
         return b;
     }
@@ -139,7 +140,7 @@ public class DefaultPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendUnbind(java.io.OutputStream, int)
      */
     public byte[] sendUnbind(OutputStream os, int sequenceNumber)
@@ -151,7 +152,7 @@ public class DefaultPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendGenericNack(java.io.OutputStream, int, int)
      */
     public byte[] sendGenericNack(OutputStream os, int commandStatus,
@@ -163,7 +164,7 @@ public class DefaultPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendUnbindResp(java.io.OutputStream, int, int)
      */
     public byte[] sendUnbindResp(OutputStream os, int commandStatus,
@@ -175,7 +176,7 @@ public class DefaultPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendEnquireLink(java.io.OutputStream, int)
      */
     public byte[] sendEnquireLink(OutputStream os, int sequenceNumber)
@@ -188,7 +189,7 @@ public class DefaultPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendEnquireLinkResp(java.io.OutputStream, int)
      */
     public byte[] sendEnquireLinkResp(OutputStream os, int sequenceNumber)
@@ -200,7 +201,7 @@ public class DefaultPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendSubmitSm(java.io.OutputStream, int,
      *      java.lang.String, org.jsmpp.TypeOfNumber,
      *      org.jsmpp.NumberingPlanIndicator, java.lang.String,
@@ -224,16 +225,16 @@ public class DefaultPDUSender implements PDUSender {
                 sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr,
                 destAddrTon.value(), destAddrNpi.value(), destinationAddr,
                 esmClass.value(), protocoId, priorityFlag,
-                scheduleDeliveryTime, validityPeriod, registeredDelivery
-                        .value(), replaceIfPresent, dataCoding.toByte(),
-                smDefaultMsgId, shortMessage, optionalParameters);
+                scheduleDeliveryTime, validityPeriod,
+                registeredDelivery.value(), replaceIfPresent, dataCoding.toByte(),
+                smDefaultMsgId, checkShortMessage(shortMessage), optionalParameters);
         writeAndFlush(os, b);
         return b;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendSubmitSmResp(java.io.OutputStream, int,
      *      java.lang.String)
      */
@@ -246,7 +247,7 @@ public class DefaultPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendQuerySm(java.io.OutputStream, int,
      *      java.lang.String, org.jsmpp.TypeOfNumber,
      *      org.jsmpp.NumberingPlanIndicator, java.lang.String)
@@ -263,7 +264,7 @@ public class DefaultPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendQuerySmResp(java.io.OutputStream, int,
      *      java.lang.String, java.lang.String, org.jsmpp.bean.MessageState,
      *      byte)
@@ -279,7 +280,7 @@ public class DefaultPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendDeliverSm(java.io.OutputStream, int,
      *      java.lang.String, org.jsmpp.TypeOfNumber,
      *      org.jsmpp.NumberingPlanIndicator, java.lang.String,
@@ -295,22 +296,21 @@ public class DefaultPDUSender implements PDUSender {
             String destinationAddr, ESMClass esmClass, byte protocoId,
             byte priorityFlag, RegisteredDelivery registeredDelivery,
             DataCoding dataCoding, byte[] shortMessage,
-            OptionalParameter... optionalParameters) throws PDUStringException,
-            IOException {
+            OptionalParameter... optionalParameters)
+        throws PDUStringException, IOException {
 
         byte[] b = pduComposer.deliverSm(sequenceNumber, serviceType,
                 sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr,
                 destAddrTon.value(), destAddrNpi.value(), destinationAddr,
-                esmClass.value(), protocoId, priorityFlag, registeredDelivery
-                        .value(), dataCoding.toByte(), shortMessage,
-                optionalParameters);
+                esmClass.value(), protocoId, priorityFlag, registeredDelivery.value(),
+                dataCoding.toByte(), checkShortMessage(shortMessage), optionalParameters);
         writeAndFlush(os, b);
         return b;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendDeliverSmResp(java.io.OutputStream, int, int, String)
      */
     @Override
@@ -323,7 +323,7 @@ public class DefaultPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendDataSm(java.io.OutputStream, int,
      *      java.lang.String, org.jsmpp.TypeOfNumber,
      *      org.jsmpp.NumberingPlanIndicator, java.lang.String,
@@ -338,8 +338,8 @@ public class DefaultPDUSender implements PDUSender {
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
             String destinationAddr, ESMClass esmClass,
             RegisteredDelivery registeredDelivery, DataCoding dataCoding,
-            OptionalParameter... optionalParameters) throws PDUStringException,
-            IOException {
+            OptionalParameter... optionalParameters)
+        throws PDUStringException, IOException {
         byte[] b = pduComposer.dataSm(sequenceNumber, serviceType,
                 sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr,
                 destAddrTon.value(), destAddrNpi.value(), destinationAddr,
@@ -363,7 +363,6 @@ public class DefaultPDUSender implements PDUSender {
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
             String destinationAddr) throws PDUStringException, IOException {
-
         byte[] b = pduComposer.cancelSm(sequenceNumber, serviceType, messageId,
                 sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr,
                 destAddrTon.value(), destAddrNpi.value(), destinationAddr);
@@ -373,7 +372,6 @@ public class DefaultPDUSender implements PDUSender {
 
     public byte[] sendCancelSmResp(OutputStream os, int sequenceNumber)
             throws IOException {
-
         byte[] b = pduComposer.cancelSmResp(sequenceNumber);
         writeAndFlush(os, b);
         return b;
@@ -387,8 +385,9 @@ public class DefaultPDUSender implements PDUSender {
             byte[] shortMessage) throws PDUStringException, IOException {
         byte[] b = pduComposer.replaceSm(sequenceNumber, messageId,
                 sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr,
-                scheduleDeliveryTime, validityPeriod, registeredDelivery
-                        .value(), smDefaultMsgId, shortMessage);
+                scheduleDeliveryTime, validityPeriod,
+                registeredDelivery.value(), smDefaultMsgId,
+                checkShortMessage(shortMessage));
         writeAndFlush(os, b);
         return b;
     }
@@ -415,7 +414,7 @@ public class DefaultPDUSender implements PDUSender {
                 destinationAddresses, esmClass.value(), protocolId,
                 priorityFlag, scheduleDeliveryTime, validityPeriod,
                 registeredDelivery.value(), replaceIfPresentFlag.value(),
-                dataCoding.toByte(), smDefaultMsgId, shortMessage,
+                dataCoding.toByte(), smDefaultMsgId, checkShortMessage(shortMessage),
                 optionalParameters);
         writeAndFlush(os, b);
         return b;
@@ -429,19 +428,19 @@ public class DefaultPDUSender implements PDUSender {
         writeAndFlush(os, b);
         return b;
     }
-    
+
     public byte[] sendAlertNotification(OutputStream os, int sequenceNumber,
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
             byte esmeAddrTon, byte esmeAddrNpi, String esmeAddr,
-            OptionalParameter... optionalParameters) throws PDUStringException,
-            IOException {
+            OptionalParameter... optionalParameters)
+        throws PDUStringException, IOException {
         byte[] b = pduComposer.alertNotification(sequenceNumber, sourceAddrTon,
                 sourceAddrNpi, sourceAddr, esmeAddrTon, esmeAddrNpi, esmeAddr,
                 optionalParameters);
         writeAndFlush(os, b);
         return b;
     }
-    
+
     private static void writeAndFlush(OutputStream out, byte[] b)
             throws IOException {
         if(logger.isDebugEnabled())
@@ -451,5 +450,9 @@ public class DefaultPDUSender implements PDUSender {
         }
         out.write(b);
         out.flush();
+    }
+
+    private byte[] checkShortMessage(byte[] shortMessage) {
+        return shortMessage != null ? shortMessage : EMPTY_SHORT_MESSAGE;
     }
 }
