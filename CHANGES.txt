@@ -1,6 +1,14 @@
 Changes:
 
-Please note that this release is the latest using Java 1.6. The next release will require at minumum Java 1.8.
+Please note that this release is the latest using Java 1.6. The next release will require at minimum Java 1.7.
+
+2.3.9
+- Ignore the PDU body in the handling of submit_multi_resp with non-zero command status.
+- Clearify the log in submit_multi_sm example.
+- Update JUnit dependency to 4.13.
+- Optimize OctetUtil and add extra unit tests.
+- Add SSL connection factories and examples.
+- Implement additional request handlers in StressClient.
 
 2.3.8
 - Update dependency Slf4j to 1.7.30.
