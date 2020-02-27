@@ -1,18 +1,20 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp;
+
+import static org.jsmpp.SMPPConstant.PDU_HEADER_LENGTH;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -39,7 +41,7 @@ public class DefaultPDUReader implements PDUReader {
         Command header = new Command();
         header.setCommandLength(in.readInt());
 
-        if (header.getCommandLength() < 16) {
+        if (header.getCommandLength() < PDU_HEADER_LENGTH) {
             // command length too short, read the left dump anyway
             byte[] dump = new byte[header.getCommandLength()];
             if (header.getCommandLength() >= 4) {
@@ -75,9 +77,9 @@ public class DefaultPDUReader implements PDUReader {
         System.arraycopy(OctetUtil.intToBytes(commandStatus), 0, b, 8, 4);
         System.arraycopy(OctetUtil.intToBytes(sequenceNumber), 0, b, 12, 4);
 
-        if (commandLength > 16) {
+        if (commandLength > PDU_HEADER_LENGTH) {
             synchronized (in) {
-                in.readFully(b, 16, commandLength - 16);
+                in.readFully(b, PDU_HEADER_LENGTH, commandLength - PDU_HEADER_LENGTH);
             }
         }
         return b;
