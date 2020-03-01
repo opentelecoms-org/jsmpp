@@ -136,9 +136,12 @@ public class AsyncSubmitReceiveDeliverSmExample {
         }
         
         while (counter.get() != maxMessage) {
-            try { Thread.sleep(1000); }
-            catch (InterruptedException e) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
                 LOGGER.error("Interrupted");
+                //re-interrupt the current thread
+                Thread.currentThread().interrupt();
             }
         }
         session.unbindAndClose();

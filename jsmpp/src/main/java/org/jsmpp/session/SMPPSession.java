@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.session;
 
@@ -62,6 +62,7 @@ import org.jsmpp.session.connection.Connection;
 import org.jsmpp.session.connection.ConnectionFactory;
 import org.jsmpp.session.connection.socket.SocketConnectionFactory;
 import org.jsmpp.util.DefaultComposer;
+import org.jsmpp.util.HexUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,20 +77,20 @@ import org.slf4j.LoggerFactory;
  * <li>ENQUIRE_LINK_RESP, should be called only as response to ENQUIRE_LINK</li>
  * <li>GENERIC_NACK, should be called only as response to GENERIC_NACK</li>
  * </ul>
- * 
+ *
  * All SMPP operations (request-response) are blocking, for an example: SUBMIT_SM
  * will be blocked until SUBMIT_SM_RESP received or timeout. This looks like
  * synchronous communication, but the {@link SMPPSession} implementation give
  * ability to the asynchronous way by executing the SUBMIT_SM operation parallel
  * on a different thread. The very simple implementation by using Thread pool,
  * {@link ExecutorService} will do.
- * 
+ *
  * To receive the incoming message such as DELIVER_SM or DATA_SM will be managed
  * by internal thread. User code only have to set listener
  * {@link MessageReceiverListener}.
- * 
+ *
  * @author uudashr
- * 
+ *
  */
 public class SMPPSession extends AbstractSession implements ClientSession {
 	private static final Logger logger = LoggerFactory.getLogger(SMPPSession.class);
@@ -112,7 +113,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	/**
      * Default constructor of {@link SMPPSession}. The next action might be
      * connect and bind to a destination message center.
-     * 
+     *
      * @see #connectAndBind(String, int, BindType, String, String, String, TypeOfNumber, NumberingPlanIndicator, String)
      */
 	public SMPPSession() {
@@ -148,7 +149,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	
 	/**
      * Open connection and bind immediately.
-     * 
+     *
      * @param host is the SMSC host address.
      * @param port is the SMSC listen port.
      * @param bindType is the bind type.
@@ -171,7 +172,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	/**
      * Open connection and bind immediately with specified timeout. The default
      * timeout is 1 minutes.
-     * 
+     *
      * @param host is the SMSC host address.
      * @param port is the SMSC listen port.
      * @param bindType is the bind type.
@@ -194,7 +195,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	
 	/**
      * Open connection and bind immediately.
-     * 
+     *
      * @param host is the SMSC host address.
      * @param port is the SMSC listen port.
      * @param bindParam is the bind parameters.
@@ -206,10 +207,47 @@ public class SMPPSession extends AbstractSession implements ClientSession {
             throws IOException {
         return connectAndBind(host, port, bindParam, 60000);
     }
+
+	/**
+	 * Open connection and bind immediately.
+	 *
+	 * @param host is the SMSC host address.
+	 * @param port is the SMSC listen port.
+	 * @return the SMSC system id.
+	 * @throws IOException if there is an IO error found.
+	 */
+	public void connect(String host, int port)
+			throws IOException {
+		logger.debug("Connect to {} port {}", host, port);
+		if (getSessionState() != SessionState.CLOSED) {
+			throw new IOException("Session state is not closed");
+		}
+
+		conn = connFactory.createConnection(host, port);
+		logger.info("Connected to {}", conn.getInetAddress());
+
+		logger.info("getEnquireLinkTimer {}", getEnquireLinkTimer());
+		conn.setSoTimeout(getEnquireLinkTimer());
+
+		sessionContext.open();
+			in = new DataInputStream(conn.getInputStream());
+			out = conn.getOutputStream();
+
+			pduReaderWorker = new PDUReaderWorker();
+			pduReaderWorker.start();
+//			String smscSystemId = sendBind(bindParam.getBindType(), bindParam.getSystemId(), bindParam.getPassword(), bindParam.getSystemType(),
+//					bindParam.getInterfaceVersion(), bindParam.getAddrTon(), bindParam.getAddrNpi(), bindParam.getAddressRange(), timeout);
+//			sessionContext.bound(bindParam.getBindType());
+
+		logger.info("enquireLinkSender start");
+			enquireLinkSender = new EnquireLinkSender();
+			enquireLinkSender.start();
+			return;
+	}
 	
 	/**
 	 * Open connection and bind immediately.
-	 * 
+	 *
 	 * @param host is the SMSC host address.
 	 * @param port is the SMSC listen port.
 	 * @param bindParam is the bind parameters.
@@ -217,6 +255,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	 * @return the SMSC system id.
 	 * @throws IOException if there is an IO error found.
 	 */
+	@Override
 	public String connectAndBind(String host, int port,
             BindParameter bindParam, long timeout) 
 	        throws IOException {
@@ -253,17 +292,17 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			close();
 			throw new IOException(message + ": " + e.getMessage(), e);
 		} catch (InvalidResponseException e) {
-			String message = "Receive invalid response of bind";
+			String message = "Receive invalid bind response";
 			logger.error(message, e);
 			close();
 			throw new IOException(message + ": " + e.getMessage(), e);
 		} catch (ResponseTimeoutException e) {
-			String message = "Wait for bind response timed out";
+			String message = "Time out waiting for bind response";
 			logger.error(message, e);
 			close();
 			throw new IOException(message + ": " + e.getMessage(), e);
 		} catch (IOException e) {
-			logger.error("IO error occurred", e);
+			logger.error("I/O error occurred", e);
 			close();
 			throw e;
 		}
@@ -271,7 +310,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	
 	/**
 	 * Sending bind.
-	 * 
+	 *
 	 * @param bindType is the bind type.
 	 * @param systemId is the system id.
 	 * @param password is the password.
@@ -310,6 +349,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
     /* (non-Javadoc)
      * @see org.jsmpp.session.ClientSession#submitShortMessage(java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.ESMClass, byte, byte, java.lang.String, java.lang.String, org.jsmpp.bean.RegisteredDelivery, byte, org.jsmpp.bean.DataCoding, byte, byte[], org.jsmpp.bean.OptionalParameter[])
      */
+		@Override
     public String submitShortMessage(String serviceType,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, TypeOfNumber destAddrTon,
@@ -338,6 +378,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
     /* (non-Javadoc)
      * @see org.jsmpp.session.ClientSession#submitMultiple(java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.Address[], org.jsmpp.bean.ESMClass, byte, byte, java.lang.String, java.lang.String, org.jsmpp.bean.RegisteredDelivery, org.jsmpp.bean.ReplaceIfPresentFlag, org.jsmpp.bean.DataCoding, byte, byte[], org.jsmpp.bean.OptionalParameter[])
      */
+		@Override
     public SubmitMultiResult submitMultiple(String serviceType,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, Address[] destinationAddresses,
@@ -369,6 +410,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
     /* (non-Javadoc)
      * @see org.jsmpp.session.ClientSession#queryShortMessage(java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String)
      */
+		@Override
     public QuerySmResult queryShortMessage(String messageId,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr) throws PDUException, ResponseTimeoutException,
@@ -395,6 +437,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
     /* (non-Javadoc)
      * @see org.jsmpp.session.ClientSession#replaceShortMessage(java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, java.lang.String, java.lang.String, org.jsmpp.bean.RegisteredDelivery, byte, byte[])
      */
+		@Override
     public void replaceShortMessage(String messageId,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, String scheduleDeliveryTime,
@@ -416,6 +459,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
     /* (non-Javadoc)
      * @see org.jsmpp.session.ClientSession#cancelShortMessage(java.lang.String, java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String)
      */
+		@Override
     public void cancelShortMessage(String serviceType, String messageId,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, TypeOfNumber destAddrTon,
@@ -435,7 +479,8 @@ public class SMPPSession extends AbstractSession implements ClientSession {
     public MessageReceiverListener getMessageReceiverListener() {
         return messageReceiverListener;
     }
-    
+
+	@Override
 	public void setMessageReceiverListener(
 			MessageReceiverListener messageReceiverListener) {
 		this.messageReceiverListener = messageReceiverListener;
@@ -525,7 +570,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
             * There should be no PDUStringException thrown since creation
             * of MessageId should be save.
             */
-						logger.error("SYSTEM ERROR. Failed sending dataSmResp", e);
+						logger.error("SYSTEM ERROR. Failed sending data_sm_resp", e);
 				}
 		}
 		
@@ -544,7 +589,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		}
 		
 		public void sendEnquireLinkResp(int sequenceNumber) throws IOException {
-		    logger.debug("Sending enquire_link_resp");
+		    logger.info("Sending enquire_link_resp");
 			pduSender().sendEnquireLinkResp(out, sequenceNumber);
 		}
 		
@@ -563,21 +608,20 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	
 	/**
 	 * Worker to read the PDU.
-	 * 
+	 *
 	 * @author uudashr
 	 *
 	 */
 	private class PDUReaderWorker extends Thread {
 		// start with serial execution of pdu processing, when the session is bound the pool will be enlarge up to the PduProcessorDegree
-	    private ExecutorService executorService = Executors.newFixedThreadPool(1); 
-	    private Runnable onIOExceptionTask = new Runnable() {
+		private ExecutorService executorService = Executors.newFixedThreadPool(1);
+		private Runnable onIOExceptionTask = new Runnable() {
 		    @Override
 		    public void run() {
 		        close();
 		    }
 		};
-		
-		 private PDUReaderWorker() {
+		private PDUReaderWorker() {
         	super("PDUReaderWorker: " + SMPPSession.this);
 	    }
 		
@@ -603,6 +647,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	        try {
                 Command pduHeader = pduReader.readPDUHeader(in);
                 byte[] pdu = pduReader.readPDU(in, pduHeader);
+								logger.info("Received PDU in session {} in state {}: {}", getSessionId(), getSessionState(), HexUtil.conventBytesToHexString(pdu));
 
                 /*
                  * When the processing PDU is need user interaction via event,
@@ -619,7 +664,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	            try {
 	                pduSender().sendGenericNack(out, SMPPConstant.STAT_ESME_RINVCMDLEN, 0);
 	            } catch (IOException ee) {
-	                logger.warn("Failed sending generic nack", ee);
+	                logger.warn("Failed sending generic_nack", ee);
 	            }
 	            unbindAndClose();
 	        } catch (SocketTimeoutException e) {
@@ -637,7 +682,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	     * Notify for no activity.
 	     */
 	    private void notifyNoActivity() {
-	        logger.debug("No activity notified, sending enquireLink");
+	        logger.debug("No activity notified, sending enquire_link");
 	        if (sessionContext().getSessionState().isBound()) {
 	            enquireLinkSender.enquireLink();
 	        }
@@ -646,11 +691,12 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 
 	/**
 	 * Session state listener for internal class use.
-	 * 
+	 *
 	 * @author uudashr
 	 *
 	 */
 	private class BoundSessionStateListener implements SessionStateListener {
+			@Override
 	    public void onStateChange(SessionState newState, SessionState oldState,
 	    		Session source) {
 	        /*

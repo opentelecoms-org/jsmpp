@@ -74,6 +74,8 @@ public class AutoReconnectGateway implements Gateway {
         Thread.sleep(1000);
       }
       catch (InterruptedException e) {
+        //re-interrupt the current thread
+        Thread.currentThread().interrupt();
       }
     }
   }
@@ -159,6 +161,8 @@ public class AutoReconnectGateway implements Gateway {
               Thread.sleep(1000);
             }
             catch (InterruptedException ee) {
+              //re-interrupt the current thread
+              Thread.currentThread().interrupt();
             }
           }
         }

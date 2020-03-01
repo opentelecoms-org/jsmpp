@@ -1,24 +1,24 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.bean;
 
-import org.jsmpp.util.ObjectUtil;
+import java.util.Objects;
 
 /**
  * @author uudashr
- * 
+ *
  */
 public class QuerySmResp extends Command {
     private static final long serialVersionUID = 8491715207469144080L;
@@ -89,52 +89,26 @@ public class QuerySmResp extends Command {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                + ((finalDate == null) ? 0 : finalDate.hashCode());
-        result = prime * result
-                + ((messageId == null) ? 0 : messageId.hashCode());
-        result = prime * result
-                + ((messageState == null) ? 0 : messageState.hashCode());
-        return result;
-    }
-    
-    private boolean hasEqualFinalDate(QuerySmResp other) {
-        return ObjectUtil.equals(finalDate, other.finalDate);
-    }
-    
-    private boolean hasEqualMessageId(QuerySmResp other) {
-        return ObjectUtil.equals(messageId, other.messageId);
-    }
-    
-    private boolean hasEqualMessageState(QuerySmResp other) {
-        return ObjectUtil.equals(messageState, other.messageState);
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final QuerySmResp other = (QuerySmResp)obj;
-        if (errorCode != other.errorCode)
-            return false;
-        if (!hasEqualFinalDate(other)) {
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!hasEqualMessageId(other)) {
+        if (!super.equals(o)) {
             return false;
         }
-        if (!hasEqualMessageState(other)) {
-            return false;
-        }
-        return true;
+        final QuerySmResp that = (QuerySmResp) o;
+        return errorCode == that.errorCode &&
+            Objects.equals(messageId, that.messageId) &&
+            Objects.equals(finalDate, that.finalDate) &&
+            messageState == that.messageState;
     }
-    
-    
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), messageId, finalDate, messageState, errorCode);
+    }
+
 }

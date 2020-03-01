@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -18,20 +18,20 @@ import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.util.MessageId;
 
 /**
- * @author uudashr
+ * @author pmoerenhout
  *
  */
-public class DataSmResult {
+public class SubmitSmResult {
 
     private final String messageId;
     private final OptionalParameter[] optionalParameters;
 
-    DataSmResult(String messageId, OptionalParameter[] optionalParameters) {
+    SubmitSmResult(String messageId, OptionalParameter[] optionalParameters) {
         this.messageId = messageId;
         this.optionalParameters = optionalParameters;
     }
-    
-    public DataSmResult(MessageId messageId, OptionalParameter[] optionalParameters) {
+
+    public SubmitSmResult(MessageId messageId, OptionalParameter[] optionalParameters) {
         this(messageId.getValue(), optionalParameters);
     }
 

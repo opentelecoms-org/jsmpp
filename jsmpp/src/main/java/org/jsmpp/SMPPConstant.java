@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp;
 
@@ -20,11 +20,11 @@ package org.jsmpp;
  *  <li><b>"CID"</b> prefix is for <b>command_id</b></li>
  *  <li><b>"STAT"</b> prefix is for <b>command_status</b></li>
  * </ul>
- * 
+ *
  * @author uudashr
- * @version 1.0
- * @version 1.0
- * 
+ * @version 3.0
+ * @since 1.0
+ *
  */
 public interface SMPPConstant {
     /*
@@ -85,10 +85,9 @@ public interface SMPPConstant {
 
     /**
      * Incorrect BIND Status for given command.
-     * <p>
-     * PDU has been sent in the wrong session state.<br>
-     * E.g. sending a submit_sm without first establishing a Bound_TX session
-     * state.
+     *
+     * PDU has been sent in the wrong session state.
+     * E.g. sending a submit_sm without first establishing a Bound_TX session state.
      */
     int STAT_ESME_RINVBNDSTS = 0x00000004;
 
@@ -99,15 +98,15 @@ public interface SMPPConstant {
     int STAT_ESME_RINVPRTFLG = 0x00000006;
     int STAT_ESME_RINVREGDLVFLG = 0x00000007;
     int STAT_ESME_RSYSERR = 0x00000008;
-    int STAT_ESME_RINVSRCADR = 0x0000000A;
-    int STAT_ESME_RINVDSTADR = 0x0000000B;
-    int STAT_ESME_RINVMSGID = 0x0000000C;
+    int STAT_ESME_RINVSRCADR = 0x0000000a;
+    int STAT_ESME_RINVDSTADR = 0x0000000b;
+    int STAT_ESME_RINVMSGID = 0x0000000c;
     /**
      * Bind Failed.
      */
-    int STAT_ESME_RBINDFAIL = 0x0000000D;
-    int STAT_ESME_RINVPASWD = 0x0000000E;
-    int STAT_ESME_RINVSYSID = 0x0000000F;
+    int STAT_ESME_RBINDFAIL = 0x0000000d;
+    int STAT_ESME_RINVPASWD = 0x0000000e;
+    int STAT_ESME_RINVSYSID = 0x0000000f;
     int STAT_ESME_RCANCELFAIL = 0x00000011;
     int STAT_ESME_RREPLACEFAIL = 0x00000013;
     /**
@@ -149,13 +148,13 @@ public interface SMPPConstant {
      */
     int STAT_ESME_RX_R_APPN = 0x00000066;
     int STAT_ESME_RQUERYFAIL = 0x00000067;
-    int STAT_ESME_RINVTLVSTREAM = 0x000000C0;
-    int STAT_ESME_RTLVNOTALLWD = 0x000000C1;
-    int STAT_ESME_RINVTLVLEN = 0x000000C2;
-    int STAT_ESME_RMISSINGTLV = 0x000000C3;
-    int STAT_ESME_RINVTLVVAL = 0x000000C4;
-    int STAT_ESME_RDELIVERYFAILURE = 0x000000FE;
-    int STAT_ESME_RUNKNOWNERR = 0x000000FF;
+    int STAT_ESME_RINVTLVSTREAM = 0x000000c0;
+    int STAT_ESME_RTLVNOTALLWD = 0x000000c1;
+    int STAT_ESME_RINVTLVLEN = 0x000000c2;
+    int STAT_ESME_RMISSINGTLV = 0x000000c3;
+    int STAT_ESME_RINVTLVVAL = 0x000000c4;
+    int STAT_ESME_RDELIVERYFAILURE = 0x000000fe;
+    int STAT_ESME_RUNKNOWNERR = 0x000000ff;
     int STAT_ESME_RSERTYPUNAUTH = 0x00000100;
     int STAT_ESME_RPROHIBITED = 0x00000101;
     int STAT_ESME_RSERTYPUNAVAIL = 0x00000102;
@@ -166,12 +165,12 @@ public interface SMPPConstant {
     int STAT_ESME_RINVBCASTFREQINT = 0x00000107;
     int STAT_ESME_RINVBCASTALIAS_NAME = 0x00000108;
     int STAT_ESME_RINVBCASTAREAFMT = 0x00000109;
-    int STAT_ESME_RINVNUMBCAST_AREAS = 0x0000010A;
-    int STAT_ESME_RINVBCASTCNTTYPE = 0x0000010B;
-    int STAT_ESME_RINVBCASTMSGCLASS = 0x0000010C;
-    int STAT_ESME_RBCASTFAIL = 0x0000010D;
-    int STAT_ESME_RBCASTQUERYFAIL = 0x0000010E;
-    int STAT_ESME_RBCASTCANCELFAIL = 0x0000010F;
+    int STAT_ESME_RINVNUMBCAST_AREAS = 0x0000010a;
+    int STAT_ESME_RINVBCASTCNTTYPE = 0x0000010b;
+    int STAT_ESME_RINVBCASTMSGCLASS = 0x0000010c;
+    int STAT_ESME_RBCASTFAIL = 0x0000010d;
+    int STAT_ESME_RBCASTQUERYFAIL = 0x0000010e;
+    int STAT_ESME_RBCASTCANCELFAIL = 0x0000010f;
     int STAT_ESME_RINVBCAST_REP = 0x00000110;
     int STAT_ESME_RINVBCASTSRVGRP = 0x00000111;
     int STAT_ESME_RINVBCASTCHANIND = 0x00000112;
@@ -370,7 +369,7 @@ public interface SMPPConstant {
     byte NPI_WAP = 0x12;
 
     short TAG_SC_INTERFACE_VERSION = 0x0210;
-    short TAG_SAR_MSG_REF_NUM = 0X020C;
+    short TAG_SAR_MSG_REF_NUM = 0X020c;
     short TAG_SAR_TOTAL_SEGMENTS = 0x020e;
     short TAG_SAR_SEGMENT_SEQNUM = 0x020f;
 

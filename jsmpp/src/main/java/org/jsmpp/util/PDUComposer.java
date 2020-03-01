@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.util;
 
@@ -22,9 +22,9 @@ import org.jsmpp.bean.UnsuccessDelivery;
 
 /**
  * This is utility to compose the PDU from parameter values to byte.
- * 
+ *
  * @author uudashr
- * 
+ *
  */
 public interface PDUComposer {
 
@@ -60,7 +60,7 @@ public interface PDUComposer {
     // SUBMIT_SM OPERATION
     /**
      * Submit short message (submit_sm).
-     * 
+     *
      * @param sequenceNumber
      * @param serviceType
      * @param sourceAddrTon
@@ -94,7 +94,7 @@ public interface PDUComposer {
 
     /**
      * Submit short message response (submit_sm_resp).
-     * 
+     *
      * @param sequenceNumber
      * @param messageId
      * @return the composed byte values.
@@ -122,7 +122,7 @@ public interface PDUComposer {
 
     /**
      * Compose data short message (data_sm) PDU.
-     * 
+     *
      * @param sequenceNumber
      * @param serviceType
      * @param sourceAddrTon
@@ -146,7 +146,7 @@ public interface PDUComposer {
 
     /**
      * Compose data short message response (submit_sm_resp) PDU.
-     * 
+     *
      * @param sequenceNumber is the sequence number.
      * @param messageId is the the message identifier.
      * @param optionalParameters is the optional parameter(s).
@@ -158,7 +158,7 @@ public interface PDUComposer {
 
     /**
      * Compose cancel short message (cancel_sm) PDU.
-     * 
+     *
      * @param sequenceNumber
      * @param serviceType
      * @param messageId
@@ -178,7 +178,7 @@ public interface PDUComposer {
 
     /**
      * Compose cancel short message response (cancel_sm_resp) PDU.
-     * 
+     *
      * @param sequenceNumber
      * @return the composed byte values.
      */
@@ -207,4 +207,30 @@ public interface PDUComposer {
             byte sourceAddrNpi, String sourceAddr, byte esmeAddrTon,
             byte esmeAddrNpi, String esmeAddr,
             OptionalParameter... optionalParameters) throws PDUStringException;
+
+    byte[] broadcastSm(int sequenceNumber,
+            String serviceType, byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
+            String messageId, byte priorityFlag, String scheduleDeliveryTime,
+            String validityPeriod, byte replaceIfPresentFlag, byte dataCoding, byte smDefaultMsgId,
+            OptionalParameter... optionalParameters) throws PDUStringException;
+
+    byte[] broadcastSmResp(int sequenceNumber,
+            String messageId, OptionalParameter... optionalParameters) throws PDUStringException;
+
+    byte[] cancelBroadcastSm(int sequenceNumber,
+               String serviceType, String messageId,
+               byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
+               OptionalParameter... optionalParameters) throws PDUStringException;
+
+    byte[] cancelBroadcastSmResp(int sequenceNumber);
+
+    byte[] queryBroadcastSm(int sequenceNumber,
+            String messageId,
+            byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
+            OptionalParameter... optionalParameters) throws PDUStringException;
+
+    byte[] queryBroadcastSmResp(int sequenceNumber,
+            String messageId,
+            OptionalParameter... optionalParameters) throws PDUStringException;
+
 }

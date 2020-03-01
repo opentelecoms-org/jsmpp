@@ -2,26 +2,25 @@
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.bean;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 import org.jsmpp.util.DeliveryReceiptState;
 import org.jsmpp.util.InvalidDeliveryReceiptException;
-import org.jsmpp.util.ObjectUtil;
-
 
 /**
  * @author uudashr
@@ -239,62 +238,6 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
         return stringBuilder.toString();
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((dateFormat == null) ? 0 : dateFormat.hashCode());
-        result = prime * result + delivered;
-        result = prime * result
-                + ((doneDate == null) ? 0 : doneDate.hashCode());
-        result = prime * result + ((error == null) ? 0 : error.hashCode());
-        result = prime * result
-                + ((finalStatus == null) ? 0 : finalStatus.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result
-                + ((submitDate == null) ? 0 : submitDate.hashCode());
-        result = prime * result + submitted;
-        result = prime * result + ((text == null) ? 0 : text.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final DeliveryReceipt other = (DeliveryReceipt)obj;
-        if (!hasEqualId(other)) {
-            return false;
-        }
-        if (!ObjectUtil.equals(submitted, other.submitted)) {
-            return false;
-        }
-        if (!ObjectUtil.equals(delivered, other.delivered)) {
-            return false;
-        }
-        if (!hasEqualSubmitDate(other)) {
-            return false;
-        }
-        if (!hasEqualDoneDate(other)) {
-            return false;
-        }
-        if (!hasEqualFinalStatus(other)) {
-            return false;
-        }
-        if (!hasEqualError(other)) {
-            return false;
-        }
-        if (!hasEqualText(other)) {
-            return false;
-        }
-        return true;
-    }
-
     /**
      * Create String representation of integer. Preceding 0 will be add as
      * needed.
@@ -312,30 +255,6 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
         return stringBuilder.toString();
     }
 
-    private boolean hasEqualId(DeliveryReceipt other) {
-        return ObjectUtil.equals(id, other.id);
-    }
-
-    private boolean hasEqualDoneDate(DeliveryReceipt other) {
-        return ObjectUtil.equals(doneDate, other.doneDate);
-    }
-
-    private boolean hasEqualError(DeliveryReceipt other) {
-        return ObjectUtil.equals(error, other.error);
-    }
-
-    private boolean hasEqualFinalStatus(DeliveryReceipt other) {
-        return ObjectUtil.equals(finalStatus, other.finalStatus);
-    }
-
-    private boolean hasEqualSubmitDate(DeliveryReceipt other) {
-        return ObjectUtil.equals(submitDate, submitDate);
-    }
-
-    private boolean hasEqualText(DeliveryReceipt other) {
-        return ObjectUtil.equals(text, other.text);
-    }
-    
     /**
      * Get the delivery receipt attribute value.
      * 
@@ -412,7 +331,7 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
     
     /**
      * @param source
-     * @return
+     * @return the text part of delivery receipt
      * @throws IndexOutOfBoundsException
      */
     private static String getDeliveryReceiptTextValue(String source) {
@@ -435,5 +354,30 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
             return Integer.parseInt(value);
         }
         return -1;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final DeliveryReceipt that = (DeliveryReceipt) o;
+        return Objects.equals(dateFormat, that.dateFormat) &&
+            Objects.equals(id, that.id) &&
+            Objects.equals(submitted, that.submitted) &&
+            Objects.equals(delivered, that.delivered) &&
+            Objects.equals(submitDate, that.submitDate) &&
+            Objects.equals(doneDate, that.doneDate) &&
+            finalStatus == that.finalStatus &&
+            Objects.equals(error, that.error) &&
+            Objects.equals(text, that.text);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(dateFormat, id, submitted, delivered, submitDate, doneDate, finalStatus, error, text);
     }
 }

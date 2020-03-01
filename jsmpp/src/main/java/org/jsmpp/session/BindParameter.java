@@ -14,19 +14,21 @@
  */
 package org.jsmpp.session;
 
+import java.util.Objects;
+
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
-import org.jsmpp.util.ObjectUtil;
 
 /**
- * This class is wraps all bind parameter that will be send as PDU.
+ * This class wraps all bind parameters that will be send as PDU.
  *
  * @author uudashr
  *
  */
 public class BindParameter {
+
     private BindType bindType;
     private String systemId;
     private String password;
@@ -94,91 +96,32 @@ public class BindParameter {
         return addressRange;
     }
 
+    public InterfaceVersion getInterfaceVersion() {
+		    return interfaceVersion;
+	  }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final BindParameter that = (BindParameter) o;
+        return bindType == that.bindType &&
+            Objects.equals(systemId, that.systemId) &&
+            Objects.equals(password, that.password) &&
+            Objects.equals(systemType, that.systemType) &&
+            addrTon == that.addrTon &&
+            addrNpi == that.addrNpi &&
+            Objects.equals(addressRange, that.addressRange) &&
+            interfaceVersion == that.interfaceVersion;
+    }
+
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((addrNpi == null) ? 0 : addrNpi.hashCode());
-        result = prime * result + ((addrTon == null) ? 0 : addrTon.hashCode());
-        result = prime * result
-                + ((addressRange == null) ? 0 : addressRange.hashCode());
-        result = prime * result
-                + ((bindType == null) ? 0 : bindType.hashCode());
-        result = prime * result
-                + ((password == null) ? 0 : password.hashCode());
-        result = prime * result
-                + ((systemId == null) ? 0 : systemId.hashCode());
-        result = prime * result
-                + ((systemType == null) ? 0 : systemType.hashCode());
-        result = prime * result
-                + ((interfaceVersion == null) ? 0 : interfaceVersion.hashCode());
-        
-        return result;
+        return Objects.hash(bindType, systemId, password, systemType, addrTon, addrNpi, addressRange, interfaceVersion);
     }
-
-    private boolean hasEqualAddrNpi(BindParameter other) {
-        return ObjectUtil.equals(addrNpi, other.addrNpi);
-    }
-
-    private boolean hasEqualAddrTon(BindParameter other) {
-        return ObjectUtil.equals(addrTon, other.addrTon);
-    }
-
-    private boolean hasEqualAddressRange(BindParameter other) {
-        return ObjectUtil.equals(addressRange, other.addressRange);
-    }
-
-    private boolean hasEqualBindType(BindParameter other) {
-        return ObjectUtil.equals(bindType, other.bindType);
-    }
-
-    private boolean hasEqualPassword(BindParameter other) {
-        return ObjectUtil.equals(password, other.password);
-    }
-
-    private boolean hasEqualSystemId(BindParameter other) {
-        return ObjectUtil.equals(systemId, other.systemId);
-    }
-
-    private boolean hasEqualSystemType(BindParameter other) {
-        return ObjectUtil.equals(systemType, other.systemType);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final BindParameter other = (BindParameter)obj;
-        if (!hasEqualAddrNpi(other)) {
-            return false;
-        }
-        if (!hasEqualAddrTon(other)) {
-            return false;
-        }
-        if (!hasEqualAddressRange(other)) {
-            return false;
-        }
-        if (!hasEqualBindType(other)) {
-            return false;
-        }
-        if (!hasEqualPassword(other)) {
-            return false;
-        }
-        if (!hasEqualSystemId(other)) {
-            return false;
-        }
-        if (!hasEqualSystemType(other)) {
-            return false;
-        }
-        return true;
-    }
-
-	public InterfaceVersion getInterfaceVersion() {
-		return interfaceVersion;
-	}
 
 }

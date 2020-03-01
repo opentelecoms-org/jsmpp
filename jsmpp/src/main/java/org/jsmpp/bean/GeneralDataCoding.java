@@ -1,23 +1,25 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.bean;
 
 
+import java.util.Objects;
+
 /**
  * This General Data Coding. 
- * 
+ *
  * @author uudashr
  *
  */
@@ -43,14 +45,14 @@ public class GeneralDataCoding implements DataCoding {
     /**
      * Construct the GeneralDataCoding with specified alphabet, messageClass and
      * compression flag.
-     * 
+     *
      * @param alphabet is the alphabet.
      * @param messageClass is the message class. This is nullable. If
      *        <code>null</code> means the DataCoding doesn't has meaning
      *        MessageClass.
      * @param compressed is the compression flag. Value is
      *        <code>true</tt> if the user message is compressed, otherwise set to <code>false</code>.
-     * 
+     *
      * @throws IllegalArgumentException if the alphabet is <code>null</code>,
      *         since Alphabet is mandatory.
      */
@@ -87,43 +89,26 @@ public class GeneralDataCoding implements DataCoding {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((alphabet == null) ? 0 : alphabet.hashCode());
-        result = prime * result + (compressed ? 1231 : 1237);
-        result = prime * result
-                + ((messageClass == null) ? 0 : messageClass.hashCode());
-        return result;
+    public String toString() {
+        return "DataCoding:" + (0xff & toByte());
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
-        if (obj == null)
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
-        GeneralDataCoding other = (GeneralDataCoding)obj;
-        if (alphabet == null) {
-            if (other.alphabet != null)
-                return false;
-        } else if (!alphabet.equals(other.alphabet))
-            return false;
-        if (compressed != other.compressed)
-            return false;
-        if (messageClass == null) {
-            if (other.messageClass != null)
-                return false;
-        } else if (!messageClass.equals(other.messageClass))
-            return false;
-        return true;
+        }
+        final GeneralDataCoding that = (GeneralDataCoding) o;
+        return compressed == that.compressed &&
+            alphabet == that.alphabet &&
+            messageClass == that.messageClass;
     }
-    
+
     @Override
-    public String toString() {
-        return "DataCoding:" + (0xff & toByte());
+    public int hashCode() {
+        return Objects.hash(compressed, alphabet, messageClass);
     }
 }

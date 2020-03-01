@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.examples;
 
@@ -189,14 +189,15 @@ public class OpenAndOutbindExample implements Runnable {
         LOG.warn("Negative response received", e);
       }
       catch (IOException e) {
-        LOG.warn("IO exception", e);
+        LOG.warn("I/O exception", e);
       }
 
       try {
         Thread.sleep(500);
-      }
-      catch (InterruptedException e) {
-        LOG.error("Thread was interrupted", e);
+      } catch (InterruptedException e) {
+        LOG.error("SMPP Server simulator was interrupted", e);
+        //re-interrupt the current thread
+        Thread.currentThread().interrupt();
       }
 
       if (!session.getSessionState().isBound()) {
@@ -209,7 +210,7 @@ public class OpenAndOutbindExample implements Runnable {
 
   private class SessionStateListenerImpl implements SessionStateListener {
     public void onStateChange(SessionState newState, SessionState oldState, Session source) {
-      LOG.info("Session state changed from " + oldState + " to " + newState);
+      LOG.info("Session state changed from {} to {}",oldState, newState);
     }
   }
 

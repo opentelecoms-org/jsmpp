@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.examples;
 
@@ -19,23 +19,30 @@ import java.util.concurrent.TimeoutException;
 
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
+import org.jsmpp.bean.BroadcastSm;
+import org.jsmpp.bean.CancelBroadcastSm;
 import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.DataSm;
+import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.QueryBroadcastSm;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SubmitMulti;
 import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
+import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.session.BindRequest;
+import org.jsmpp.session.BroadcastSmResult;
 import org.jsmpp.session.DataSmResult;
+import org.jsmpp.session.QueryBroadcastSmResult;
 import org.jsmpp.session.QuerySmResult;
 import org.jsmpp.session.SMPPServerSession;
 import org.jsmpp.session.SMPPServerSessionListener;
 import org.jsmpp.session.ServerMessageReceiverListener;
 import org.jsmpp.session.Session;
+import org.jsmpp.session.SubmitSmResult;
 import org.jsmpp.util.MessageIDGenerator;
-import org.jsmpp.util.MessageId;
 import org.jsmpp.util.RandomMessageIDGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,38 +63,64 @@ public class ReceiveSubmittedMessageExample {
             
             // prepare the message receiver
             ServerMessageReceiverListener messageReceiverListener = new ServerMessageReceiverListener() {
-                public MessageId onAcceptSubmitSm(SubmitSm submitSm, SMPPServerSession source)
+
+                @Override
+                public SubmitSmResult onAcceptSubmitSm(SubmitSm submitSm, SMPPServerSession source)
                         throws ProcessRequestException {
                     LOGGER.info("Receiving message : {}", new String(submitSm.getShortMessage()));
-                    // need message_id to response submit_sm
-                    return messageIdGenerator.newMessageId();
+                    // need message_id to response submit_sm, optional parameters add in SMPP 5.0
+                    return new SubmitSmResult(messageIdGenerator.newMessageId(), new OptionalParameter[0]);
                 }
-                
+
+                @Override
                 public QuerySmResult onAcceptQuerySm(QuerySm querySm,
                         SMPPServerSession source)
                         throws ProcessRequestException {
                     return null;
                 }
-                
+
+                @Override
                 public SubmitMultiResult onAcceptSubmitMulti(
                         SubmitMulti submitMulti, SMPPServerSession source)
                         throws ProcessRequestException {
-                    return null;
+                    return new SubmitMultiResult(messageIdGenerator.newMessageId().getValue(), new UnsuccessDelivery[]{});
                 }
-                
+
+                @Override
                 public DataSmResult onAcceptDataSm(DataSm dataSm, Session source)
                         throws ProcessRequestException {
-                    return null;
+                    return new DataSmResult(messageIdGenerator.newMessageId(), new OptionalParameter[]{});
                 }
-                
+
+                @Override
                 public void onAcceptCancelSm(CancelSm cancelSm,
                         SMPPServerSession source)
                         throws ProcessRequestException {
                 }
-                
+
+                @Override
                 public void onAcceptReplaceSm(ReplaceSm replaceSm,
                         SMPPServerSession source)
                         throws ProcessRequestException {
+                }
+
+                @Override
+                public BroadcastSmResult onAcceptBroadcastSm(final BroadcastSm broadcastSm, final SMPPServerSession source)
+                    throws ProcessRequestException {
+                    return new BroadcastSmResult(messageIdGenerator.newMessageId(), new OptionalParameter[]{});
+                }
+
+                @Override
+                public void onAcceptCancelBroadcastSm(final CancelBroadcastSm cancelBroadcastSm,
+                                                      final SMPPServerSession source)
+                    throws ProcessRequestException {
+                }
+
+                @Override
+                public QueryBroadcastSmResult onAcceptQueryBroadcastSm(final QueryBroadcastSm queryBroadcastSm,
+                                                                       final SMPPServerSession source)
+                    throws ProcessRequestException {
+                    return null;
                 }
             };
             
@@ -112,7 +145,12 @@ public class ReceiveSubmittedMessageExample {
                     LOGGER.info("Accepting bind request");
                     request.accept("sys");
 
-                    try { Thread.sleep(20000); } catch (InterruptedException e) {}
+                    try {
+                        Thread.sleep(20000);
+                    } catch (InterruptedException e) {
+                        //re-interrupt the current thread
+                        Thread.currentThread().interrupt();
+                    }
                 } else {
                     LOGGER.info("Rejecting bind request");
                     request.reject(SMPPConstant.STAT_ESME_RINVPASWD);

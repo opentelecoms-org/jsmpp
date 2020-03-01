@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp;
 
@@ -32,13 +32,14 @@ import org.jsmpp.bean.UnsuccessDelivery;
 
 /**
  * PDU sender with synchronized the {@link OutputStream}.
- * 
+ *
  * @author uudashr
  * @version 1.1
  * @since 1.0
- * 
+ *
  */
 public class SynchronizedPDUSender implements PDUSender {
+
     private final PDUSender pduSender;
 
     /**
@@ -50,7 +51,7 @@ public class SynchronizedPDUSender implements PDUSender {
 
     /**
      * Construct with specified {@link PDUSender}.
-     * 
+     *
      * @param pduSender
      */
     public SynchronizedPDUSender(PDUSender pduSender) {
@@ -59,9 +60,10 @@ public class SynchronizedPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendHeader(java.io.OutputStream, int, int, int)
      */
+    @Override
     public byte[] sendHeader(OutputStream os, int commandId, int commandStatus,
             int sequenceNumber) throws IOException {
         synchronized (os) {
@@ -72,13 +74,14 @@ public class SynchronizedPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendBind(java.io.OutputStream,
      *      org.jsmpp.BindType, int, java.lang.String, java.lang.String,
      *      java.lang.String, org.jsmpp.InterfaceVersion,
      *      org.jsmpp.TypeOfNumber, org.jsmpp.NumberingPlanIndicator,
      *      java.lang.String)
      */
+    @Override
     public byte[] sendBind(OutputStream os, BindType bindType,
             int sequenceNumber, String systemId, String password,
             String systemType, InterfaceVersion interfaceVersion,
@@ -93,10 +96,11 @@ public class SynchronizedPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendBindResp(java.io.OutputStream, int, int,
      *      java.lang.String)
      */
+    @Override
     public byte[] sendBindResp(OutputStream os, int commandId,
             int sequenceNumber, String systemId, InterfaceVersion interfaceVersion) throws PDUStringException,
             IOException {
@@ -108,9 +112,10 @@ public class SynchronizedPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendUnbind(java.io.OutputStream, int)
      */
+    @Override
     public byte[] sendUnbind(OutputStream os, int sequenceNumber)
             throws IOException {
         synchronized (os) {
@@ -120,9 +125,10 @@ public class SynchronizedPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendGenericNack(java.io.OutputStream, int, int)
      */
+    @Override
     public byte[] sendGenericNack(OutputStream os, int commandStatus,
             int sequenceNumber) throws IOException {
         synchronized (os) {
@@ -132,9 +138,10 @@ public class SynchronizedPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendUnbindResp(java.io.OutputStream, int, int)
      */
+    @Override
     public byte[] sendUnbindResp(OutputStream os, int commandStatus,
             int sequenceNumber) throws IOException {
         synchronized (os) {
@@ -144,9 +151,10 @@ public class SynchronizedPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendEnquireLink(java.io.OutputStream, int)
      */
+    @Override
     public byte[] sendEnquireLink(OutputStream out, int sequenceNumber)
             throws IOException {
         synchronized (out) {
@@ -156,9 +164,10 @@ public class SynchronizedPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendEnquireLinkResp(java.io.OutputStream, int)
      */
+    @Override
     public byte[] sendEnquireLinkResp(OutputStream os, int sequenceNumber)
             throws IOException {
         synchronized (os) {
@@ -168,7 +177,7 @@ public class SynchronizedPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendSubmitSm(java.io.OutputStream, int,
      *      java.lang.String, org.jsmpp.TypeOfNumber,
      *      org.jsmpp.NumberingPlanIndicator, java.lang.String,
@@ -178,6 +187,7 @@ public class SynchronizedPDUSender implements PDUSender {
      *      org.jsmpp.bean.RegisteredDelivery, byte, org.jsmpp.bean.DataCoding,
      *      byte, byte[], org.jsmpp.bean.OptionalParameter[])
      */
+    @Override
     public byte[] sendSubmitSm(OutputStream os, int sequenceNumber,
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
@@ -196,15 +206,15 @@ public class SynchronizedPDUSender implements PDUSender {
                     registeredDelivery, replaceIfPresent, dataCoding,
                     smDefaultMsgId, shortMessage, optionalParameters);
         }
-
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendSubmitSmResp(java.io.OutputStream, int,
      *      java.lang.String)
      */
+    @Override
     public byte[] sendSubmitSmResp(OutputStream os, int sequenceNumber,
             String messageId) throws PDUStringException, IOException {
         return pduSender.sendSubmitSmResp(os, sequenceNumber, messageId);
@@ -212,11 +222,12 @@ public class SynchronizedPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendQuerySm(java.io.OutputStream, int,
      *      java.lang.String, org.jsmpp.TypeOfNumber,
      *      org.jsmpp.NumberingPlanIndicator, java.lang.String)
      */
+    @Override
     public byte[] sendQuerySm(OutputStream os, int sequenceNumber,
             String messageId, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr)
@@ -229,11 +240,12 @@ public class SynchronizedPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendQuerySmResp(java.io.OutputStream, int,
      *      java.lang.String, java.lang.String, org.jsmpp.bean.MessageState,
      *      byte)
      */
+    @Override
     public byte[] sendQuerySmResp(OutputStream os, int sequenceNumber,
             String messageId, String finalDate, MessageState messageState,
             byte errorCode) throws PDUStringException, IOException {
@@ -245,7 +257,7 @@ public class SynchronizedPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendDeliverSm(java.io.OutputStream, int,
      *      java.lang.String, org.jsmpp.TypeOfNumber,
      *      org.jsmpp.NumberingPlanIndicator, java.lang.String,
@@ -254,6 +266,7 @@ public class SynchronizedPDUSender implements PDUSender {
      *      org.jsmpp.bean.RegisteredDelivery, org.jsmpp.bean.DataCoding,
      *      byte[], org.jsmpp.bean.OptionalParameter[])
      */
+    @Override
     public byte[] sendDeliverSm(OutputStream os, int sequenceNumber,
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
@@ -272,6 +285,7 @@ public class SynchronizedPDUSender implements PDUSender {
         }
     }
 
+    @Override
     public byte[] sendDeliverSmResp(OutputStream os, int commandStatus, int sequenceNumber, String messageId)
             throws IOException {
         synchronized (os) {
@@ -281,7 +295,7 @@ public class SynchronizedPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendDataSm(java.io.OutputStream, int,
      *      java.lang.String, org.jsmpp.TypeOfNumber,
      *      org.jsmpp.NumberingPlanIndicator, java.lang.String,
@@ -290,6 +304,7 @@ public class SynchronizedPDUSender implements PDUSender {
      *      org.jsmpp.bean.RegisteredDelivery, org.jsmpp.bean.DataCoding,
      *      org.jsmpp.bean.OptionalParameter[])
      */
+    @Override
     public byte[] sendDataSm(OutputStream os, int sequenceNumber,
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
@@ -308,10 +323,11 @@ public class SynchronizedPDUSender implements PDUSender {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jsmpp.PDUSender#sendDataSmResp(java.io.OutputStream, int,
      *      java.lang.String, org.jsmpp.bean.OptionalParameter[])
      */
+    @Override
     public byte[] sendDataSmResp(OutputStream os, int sequenceNumber,
             String messageId, OptionalParameter... optionalParameters)
             throws PDUStringException, IOException {
@@ -321,6 +337,7 @@ public class SynchronizedPDUSender implements PDUSender {
         }
     }
 
+    @Override
     public byte[] sendCancelSm(OutputStream os, int sequenceNumber,
             String serviceType, String messageId, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
@@ -333,6 +350,7 @@ public class SynchronizedPDUSender implements PDUSender {
         }
     }
 
+    @Override
     public byte[] sendCancelSmResp(OutputStream os, int sequenceNumber)
             throws IOException {
         synchronized (os) {
@@ -340,6 +358,7 @@ public class SynchronizedPDUSender implements PDUSender {
         }
     }
 
+    @Override
     public byte[] sendReplaceSm(OutputStream os, int sequenceNumber,
             String messageId, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
@@ -354,6 +373,7 @@ public class SynchronizedPDUSender implements PDUSender {
         }
     }
 
+    @Override
     public byte[] sendReplaceSmResp(OutputStream os, int sequenceNumber)
             throws IOException {
         synchronized (os) {
@@ -361,6 +381,7 @@ public class SynchronizedPDUSender implements PDUSender {
         }
     }
 
+    @Override
     public byte[] sendSubmiMulti(OutputStream os, int sequenceNumber,
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
@@ -381,6 +402,7 @@ public class SynchronizedPDUSender implements PDUSender {
         }
     }
 
+    @Override
     public byte[] sendSubmitMultiResp(OutputStream os, int sequenceNumber,
             String messageId, UnsuccessDelivery... unsuccessDeliveries)
             throws PDUStringException, IOException {
@@ -390,11 +412,80 @@ public class SynchronizedPDUSender implements PDUSender {
         }
     }
 
+    @Override
+    public byte[] sendBroadcastSm(final OutputStream os, final int sequenceNumber, final String serviceType, final TypeOfNumber sourceAddrTon,
+                                  final NumberingPlanIndicator sourceAddrNpi,
+                                  final String sourceAddr, final String messageId, final byte priorityFlag, final String scheduleDeliveryTime,
+                                  final String validityPeriod,
+                                  final ReplaceIfPresentFlag replaceIfPresentFlag, final DataCoding dataCoding, final byte smDefaultMsgId,
+                                  final OptionalParameter... optionalParameters)
+        throws PDUStringException, IOException {
+        synchronized (os) {
+            return pduSender.sendBroadcastSm(os, sequenceNumber, serviceType,
+                sourceAddrTon, sourceAddrNpi, sourceAddr, messageId,
+                priorityFlag, scheduleDeliveryTime, validityPeriod, replaceIfPresentFlag, dataCoding, smDefaultMsgId,
+                optionalParameters);
+        }
+    }
+
+    @Override
+    public byte[] sendBroadcastSmResp(final OutputStream os, final int sequenceNumber, final String messageId,
+                                      final OptionalParameter... optionalParameters)
+        throws PDUStringException, IOException {
+        synchronized (os) {
+            return pduSender.sendBroadcastSmResp(os, sequenceNumber,
+                messageId, optionalParameters);
+        }
+    }
+
+    @Override
+    public byte[] sendCancelBroadcastSmResp(final OutputStream os, final int sequenceNumber)
+        throws IOException {
+        synchronized (os) {
+            return pduSender.sendCancelBroadcastSmResp(os, sequenceNumber);
+        }
+    }
+
+    @Override
+    public byte[] sendCancelBroadcastSm(final OutputStream os, final int sequenceNumber, final String serviceType,
+                                        final String messageId, final TypeOfNumber sourceAddrTon,
+                                        final NumberingPlanIndicator sourceAddrNpi, final String sourceAddr,
+                                        final OptionalParameter... optionalParameters)
+        throws PDUStringException, IOException {
+        synchronized (os) {
+            return pduSender.sendCancelBroadcastSm(os, sequenceNumber,
+                serviceType, messageId, sourceAddrTon, sourceAddrNpi, sourceAddr,
+                optionalParameters);
+        }
+    }
+
+    @Override
+    public byte[] sendQueryBroadcastSmResp(final OutputStream os, final int sequenceNumber, final String messageId,
+                                           final OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+        synchronized (os) {
+            return pduSender.sendQueryBroadcastSmResp(os, sequenceNumber,
+                messageId, optionalParameters);
+        }
+    }
+
+    @Override
+    public byte[] sendQueryBroadcastSm(final OutputStream os, final int sequenceNumber, final String messageId,
+                                       final TypeOfNumber sourceAddrTon, final NumberingPlanIndicator sourceAddrNpi,
+                                       final String sourceAddr, final OptionalParameter... optionalParameters)
+        throws PDUStringException, IOException {
+        synchronized (os) {
+            return pduSender.sendQueryBroadcastSm(os, sequenceNumber,
+                messageId, sourceAddrTon, sourceAddrNpi, sourceAddr,
+                optionalParameters);
+        }
+    }
+
+    @Override
     public byte[] sendAlertNotification(OutputStream os, int sequenceNumber,
-            byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
-            byte esmeAddrTon, byte esmeAddrNpi, String esmeAddr,
-            OptionalParameter... optionalParameters) throws PDUStringException,
-            IOException {
+                                        byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
+                                        byte esmeAddrTon, byte esmeAddrNpi, String esmeAddr,
+                                        OptionalParameter... optionalParameters)
+        throws PDUStringException, IOException {
         synchronized (os) {
             return pduSender.sendAlertNotification(os, sequenceNumber,
                     sourceAddrTon, sourceAddrNpi, sourceAddr, esmeAddrTon,
@@ -402,6 +493,7 @@ public class SynchronizedPDUSender implements PDUSender {
         }
     }
 
+    @Override
     public byte[] sendOutbind(OutputStream os, int sequenceNumber, String systemId, String password)
         throws PDUStringException, IOException
     {

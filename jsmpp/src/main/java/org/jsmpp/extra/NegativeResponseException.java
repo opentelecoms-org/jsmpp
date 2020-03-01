@@ -8,11 +8,11 @@ import org.jsmpp.util.IntUtil;
 
 /**
  * This exception is thrown if we receive an negative response.
- * 
+ *
  * @author uudashr
  * @version 1.0
  * @since 1.0
- * 
+ *
  */
 public class NegativeResponseException extends Exception {
     static {
@@ -75,6 +75,29 @@ public class NegativeResponseException extends Exception {
         // 197 - 253 are reserved
         mapping.put(254, "Delivery Failure (used for data_sm_resp)");
         mapping.put(255, "Unknown Error");
+
+        // SMPP 5.0
+        mapping.put(0x0100, "Not authorised to use specified service_type");
+        mapping.put(0x0101, "Prohibited from using specified operation");
+        mapping.put(0x0102, "Specified service_type is unavailable");
+        mapping.put(0x0103, "Specified service_type is denied");
+        mapping.put(0x0104, "Invalid Data Coding Scheme");
+        mapping.put(0x0105, "Source Address Sub unit is invalid");
+        mapping.put(0x0106, "Destination Address Sub unit is invalid");
+        mapping.put(0x0107, "Broadcast Frequency Interval is invalid");
+        mapping.put(0x0108, "Broadcast Alias Name is invalid");
+        mapping.put(0x0109, "Broadcast Area Format is invalid");
+        mapping.put(0x010a, "Number of Broadcast Areas is invalid");
+        mapping.put(0x010b, "Broadcast Content Type is invalid");
+        mapping.put(0x010c, "Broadcast Message Class is invalid");
+        mapping.put(0x010d, "broadcast_sm operation failed");
+        mapping.put(0x010e, "query_broadcast_sm operation failed");
+        mapping.put(0x010f, "cancel_broadcast_sm operation failed");
+        mapping.put(0x0110, "Number of Repeated Broadcasts is invalid");
+        mapping.put(0x0111, "Broadcast Service Group is invalid");
+        mapping.put(0x0112, "Broadcast Channel Indicator is invalid");
+
+        // 0x400 - 0x4ff Reserved for MC vendor specific errors
         commandStatusToDescription = Collections.unmodifiableMap(mapping);
     }
     private static final Map<Integer, String> commandStatusToDescription;
@@ -83,7 +106,7 @@ public class NegativeResponseException extends Exception {
 
     /**
      * Construct with specified command_status.
-     * 
+     *
      * @param commandStatus is the command_status.
      */
     public NegativeResponseException(int commandStatus) {
@@ -103,7 +126,7 @@ public class NegativeResponseException extends Exception {
 
     /**
      * Get the command_status.
-     * 
+     *
      * @return is the command_status.
      */
     public int getCommandStatus() {

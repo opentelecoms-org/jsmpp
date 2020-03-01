@@ -14,7 +14,7 @@
  */
 package org.jsmpp.bean;
 
-import org.jsmpp.util.ObjectUtil;
+import java.util.Objects;
 
 /**
  * @author uudashr
@@ -101,69 +101,29 @@ public class CancelSm extends Command {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime
-                * result
-                + ((destinationAddress == null) ? 0 : destinationAddress
-                        .hashCode());
-        result = prime * result
-                + ((messageId == null) ? 0 : messageId.hashCode());
-        result = prime * result
-                + ((serviceType == null) ? 0 : serviceType.hashCode());
-        result = prime * result
-                + ((sourceAddr == null) ? 0 : sourceAddr.hashCode());
-        return result;
-    }
-    
-    private boolean hasEqualDestAddress(CancelSm other) {
-        return ObjectUtil.equals(destinationAddress, other.destinationAddress);
-    }
-    
-    private boolean hasEqualServiceType(CancelSm other) {
-        return ObjectUtil.equals(serviceType, other.serviceType);
-    }
-    
-    private boolean hasEqualSourceAddr(CancelSm other) {
-        return ObjectUtil.equals(sourceAddr, other.sourceAddr);
-    }
-    
-    private boolean hasEqualMessageId(CancelSm other) {
-        return ObjectUtil.equals(messageId, other.messageId);
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final CancelSm other = (CancelSm)obj;
-        if (destAddrNpi != other.destAddrNpi)
-            return false;
-        if (destAddrTon != other.destAddrTon)
-            return false;
-        if (!hasEqualDestAddress(other)) {
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!hasEqualMessageId(other)) { 
+        if (!super.equals(o)) {
             return false;
         }
-        if (!hasEqualServiceType(other)) {
-            return false;
-        }
-        if (sourceAddrNpi != other.sourceAddrNpi)
-            return false;
-        if (sourceAddrTon != other.sourceAddrTon)
-            return false;
-        if (!hasEqualSourceAddr(other)) {
-            return false;
-        }
-        return true;
+        final CancelSm cancelSm = (CancelSm) o;
+        return sourceAddrTon == cancelSm.sourceAddrTon &&
+            sourceAddrNpi == cancelSm.sourceAddrNpi &&
+            destAddrTon == cancelSm.destAddrTon &&
+            destAddrNpi == cancelSm.destAddrNpi &&
+            Objects.equals(serviceType, cancelSm.serviceType) &&
+            Objects.equals(messageId, cancelSm.messageId) &&
+            Objects.equals(sourceAddr, cancelSm.sourceAddr) &&
+            Objects.equals(destinationAddress, cancelSm.destinationAddress);
     }
-    
-    
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), serviceType, messageId, sourceAddrTon, sourceAddrNpi, sourceAddr, destAddrTon, destAddrNpi, destinationAddress);
+    }
 }

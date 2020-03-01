@@ -83,10 +83,12 @@ public abstract class AbstractSession implements Session {
         return pendingResponse.remove(sequenceNumber);
     }
 
+    @Override
     public String getSessionId() {
         return sessionId;
     }
 
+    @Override
     public void setEnquireLinkTimer(int enquireLinkTimer) {
         if (sessionContext().getSessionState().isBound()) {
             try {
@@ -98,18 +100,22 @@ public abstract class AbstractSession implements Session {
         this.enquireLinkTimer = enquireLinkTimer;
     }
 
+    @Override
     public int getEnquireLinkTimer() {
         return enquireLinkTimer;
     }
 
+    @Override
     public void setTransactionTimer(long transactionTimer) {
         this.transactionTimer = transactionTimer;
     }
 
+    @Override
     public long getTransactionTimer() {
         return transactionTimer;
     }
 
+    @Override
     public SessionState getSessionState() {
         return sessionContext().getSessionState();
     }
@@ -119,16 +125,19 @@ public abstract class AbstractSession implements Session {
 		    return sessionState.isBound() || sessionState.equals(SessionState.OPEN) || sessionState.equals(SessionState.OUTBOUND);
 	  }
 
+    @Override
     public void addSessionStateListener(SessionStateListener listener) {
         if (listener != null) {
             sessionContext().addSessionStateListener(listener);
         }
     }
 
+    @Override
     public void removeSessionStateListener(SessionStateListener listener) {
         sessionContext().removeSessionStateListener(listener);
     }
 
+    @Override
     public long getLastActivityTimestamp() {
         return sessionContext().getLastActivityTimestamp();
     }
@@ -180,6 +189,7 @@ public abstract class AbstractSession implements Session {
      * @throws NegativeResponseException if the response return NON-OK command_status.
      * @throws IOException if there is an IO error found.
      */
+    @Override
     public DataSmResult dataShortMessage(String serviceType,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, TypeOfNumber destAddrTon,
@@ -200,6 +210,7 @@ public abstract class AbstractSession implements Session {
         return new DataSmResult(resp.getMessageId(), resp.getOptionalParameters());
     }
 
+    @Override
     public void close() {
         logger.debug("Close session {} in state {}", sessionId, getSessionState());
         SessionContext ctx = sessionContext();

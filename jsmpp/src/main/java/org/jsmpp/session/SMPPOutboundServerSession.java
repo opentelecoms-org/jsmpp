@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.session;
 
@@ -389,9 +389,8 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
         executorService.awaitTermination(getTransactionTimer(), TimeUnit.MILLISECONDS);
       }
       catch (InterruptedException e) {
-        logger.warn("interrupted while waiting for executor service pool to finish");
+        logger.warn("Interrupted while waiting for executor service pool to finish");
         Thread.currentThread().interrupt();
-        throw new RuntimeException("Interrupted");
       }
       logger.info("PDUReaderWorker stop");
     }
@@ -400,11 +399,11 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
       try {
         Command pduHeader = pduReader.readPDUHeader(in);
         byte[] pdu = pduReader.readPDU(in, pduHeader);
-                /*
-                 * When the processing PDU is need user interaction via event,
-                 * the code on event might take non-short time, so we need to
-                 * process it concurrently.
-                 */
+        /*
+        * When the processing PDU is need user interaction via event,
+        * the code on event might take non-short time, so we need to
+        * process it concurrently.
+        */
         PDUProcessOutboundServerTask task = new PDUProcessOutboundServerTask(pduHeader, pdu,
             sessionContext, responseHandler,
             sessionContext, onIOExceptionTask);
@@ -416,7 +415,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
           pduSender().sendGenericNack(out, SMPPConstant.STAT_ESME_RINVCMDLEN, 0);
         }
         catch (IOException ee) {
-          logger.warn("Failed sending generic nack", ee);
+          logger.warn("Failed sending generic_nack", ee);
         }
         unbindAndClose();
       } catch (SocketTimeoutException e) {
@@ -441,7 +440,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
      * Notify for no activity.
      */
     private void notifyNoActivity() {
-      logger.debug("No activity notified, sending enquireLink");
+      logger.debug("No activity notified, sending enquire_link");
       if (sessionContext().getSessionState().isBound()) {
         enquireLinkSender.enquireLink();
       }

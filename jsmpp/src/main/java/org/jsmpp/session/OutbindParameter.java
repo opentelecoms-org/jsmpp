@@ -14,106 +14,77 @@
  */
 package org.jsmpp.session;
 
+import java.util.Objects;
+
 import org.jsmpp.bean.InterfaceVersion;
-import org.jsmpp.util.ObjectUtil;
 
 /**
  * This class is wraps all bind parameter that will be send as PDU.
  *
  * @author pmoerenhout
- *
  */
 public class OutbindParameter {
 
-    private String systemId;
-    private String password;
-    private InterfaceVersion interfaceVersion;
+  private String systemId;
+  private String password;
+  private InterfaceVersion interfaceVersion;
+
+  /**
+   * Construct with all mandatory parameters.
+   *
+   * @param systemId is the system id.
+   * @param password is the password.
+   */
+  public OutbindParameter(String systemId,
+                          String password) {
+    this(systemId, password, InterfaceVersion.IF_34);
+  }
 
     /**
      * Construct with all mandatory parameters.
      *
-     * @param systemId
-     *            is the system id.
-     * @param password
-     *            is the password.
+     * @param systemId is the system id
+     * @param password is the password.
+     * @param interfaceVersion is the interface version
      */
-    public OutbindParameter(String systemId,
-                            String password)
-    {
-        this(systemId, password, InterfaceVersion.IF_34);
-    }
+  public OutbindParameter(String systemId,
+                          String password,
+                          InterfaceVersion interfaceVersion) {
 
-    public OutbindParameter(String systemId,
-                            String password,
-                            InterfaceVersion interfaceVersion)
-    {
+    this.systemId = systemId;
+    this.password = password;
+    this.interfaceVersion = interfaceVersion;
+  }
 
-        this.systemId = systemId;
-        this.password = password;
-        this.interfaceVersion = interfaceVersion;
-    }
+  public String getSystemId() {
+    return this.systemId;
+  }
 
+  public String getPassword() {
+    return this.password;
+  }
 
-    public String getSystemId() {
-        return this.systemId;
-    }
+  public InterfaceVersion getInterfaceVersion() {
+    return this.interfaceVersion;
+  }
 
-    public String getPassword() {
-        return this.password;
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final OutbindParameter that = (OutbindParameter) o;
+        return Objects.equals(systemId, that.systemId) &&
+            Objects.equals(password, that.password) &&
+            interfaceVersion == that.interfaceVersion;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = (prime * result)
-                + ((this.password == null) ? 0 : this.password.hashCode());
-        result = (prime * result)
-                + ((this.systemId == null) ? 0 : this.systemId.hashCode());
-        result = (prime * result)
-                + ((this.interfaceVersion == null) ? 0 : this.interfaceVersion.hashCode());
-
-        return result;
-    }
-
-
-    private boolean hasEqualPassword(OutbindParameter other) {
-        return ObjectUtil.equals(password, other.password);
-    }
-
-    private boolean hasEqualSystemId(OutbindParameter other) {
-        return ObjectUtil.equals(systemId , other.systemId);
-    }
-
-
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-        {
-            return true;
-        }
-        if (obj == null)
-        {
-            return false;
-        }
-        if (getClass() != obj.getClass())
-        {
-            return false;
-        }
-        final OutbindParameter other = (OutbindParameter)obj;
-
-        if (!hasEqualPassword(other)) {
-            return false;
-        }
-        if (!hasEqualSystemId(other)) {
-            return false;
-        }
-        return true;
-    }
-
-    public InterfaceVersion getInterfaceVersion() {
-        return this.interfaceVersion;
+        return Objects.hash(systemId, password, interfaceVersion);
     }
 
 }

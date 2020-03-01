@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.session.state;
 
@@ -34,11 +34,11 @@ import org.slf4j.LoggerFactory;
 /**
  * This class is open state implementation of {@link SMPPSessionState}. When
  * the session state is open, we only give positive response to bind related intention.
- * 
+ *
  * @author uudashr
- * @version 1.0
+ * @version 2.0
  * @since 2.0
- * 
+ *
  */
 class SMPPSessionOpen implements SMPPSessionState {
     private static final Logger logger = LoggerFactory.getLogger(SMPPSessionOpen.class);
@@ -90,8 +90,10 @@ class SMPPSessionOpen implements SMPPSessionState {
 
     public void processEnquireLink(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
+        logger.warn("processEnquireLink: {}", pduHeader.getSequenceNumber());
         PendingResponse<Command> pendingResp = responseHandler
                 .removeSentItem(1);
+        responseHandler.sendEnquireLinkResp(pduHeader.getSequenceNumber());
         if (pendingResp != null) {
             pendingResp.doneWithInvalidResponse(new InvalidResponseException(
                     "Receive unexpected enquire_link"));
@@ -227,4 +229,65 @@ class SMPPSessionOpen implements SMPPSessionState {
                     "Receive unexpected alert_notification"));
         }
     }
+
+//    public void processBroadcastSm(Command pduHeader, byte[] pdu,
+//                              BaseResponseHandler responseHandler) throws IOException {
+//        PendingResponse<Command> pendingResp = responseHandler
+//            .removeSentItem(1);
+//        if (pendingResp != null) {
+//            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+//                "Receive unexpected broadcast_sm"));
+//        }
+//    }
+
+    public void processBroadcastSmResp(Command pduHeader, byte[] pdu,
+                                  ResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
+            .removeSentItem(1);
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                "Receive unexpected broadcast_sm_resp"));
+        }
+    }
+
+//    public void processCancelBroadcastSm(Command pduHeader, byte[] pdu,
+//                                   ResponseHandler responseHandler) throws IOException {
+//        PendingResponse<Command> pendingResp = responseHandler
+//            .removeSentItem(1);
+//        if (pendingResp != null) {
+//            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+//                "Receive unexpected cancel_broadcast_sm"));
+//        }
+//    }
+
+    public void processCancelBroadcastSmResp(Command pduHeader, byte[] pdu,
+                                       ResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
+            .removeSentItem(1);
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                "Receive unexpected cancel_broadcast_sm_resp"));
+        }
+    }
+
+//    public void processQueryBroadcastSm(Command pduHeader, byte[] pdu,
+//                                         ResponseHandler responseHandler) throws IOException {
+//        PendingResponse<Command> pendingResp = responseHandler
+//            .removeSentItem(1);
+//        if (pendingResp != null) {
+//            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+//                "Receive unexpected query_broadcast_sm"));
+//        }
+//    }
+
+    public void processQueryBroadcastSmResp(Command pduHeader, byte[] pdu,
+                                             ResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
+            .removeSentItem(1);
+        if (pendingResp != null) {
+            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
+                "Receive unexpected query_broadcast_sm_resp"));
+        }
+    }
+
 }

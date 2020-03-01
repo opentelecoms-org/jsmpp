@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.session.state;
 
@@ -30,13 +30,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is bound_rx state implementation of {@link SMPPSessionState}.
+ * This class is Bound_RX state implementation of {@link SMPPSessionState}.
  * Response to receiver related transaction.
- * 
+ *
  * @author uudashr
  * @version 1.0
  * @since 2.0
- * 
+ *
  */
 class SMPPSessionBoundRX extends SMPPSessionBound implements SMPPSessionState {
     private static final Logger logger = LoggerFactory.getLogger(SMPPSessionBoundRX.class);
@@ -117,6 +117,26 @@ class SMPPSessionBoundRX extends SMPPSessionBound implements SMPPSessionState {
             responseHandler.sendDeliverSmResp(e.getErrorCode(), pduHeader.getSequenceNumber(), null);
         }
     }
-    
-    
+
+    public void processBroadcastSmResp(Command pduHeader, byte[] pdu,
+                                    ResponseHandler responseHandler) throws IOException {
+        responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
+            SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
+                .getSequenceNumber());
+    }
+
+    public void processCancelBroadcastSmResp(Command pduHeader, byte[] pdu,
+                                       ResponseHandler responseHandler) throws IOException {
+        responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
+            SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
+                .getSequenceNumber());
+    }
+
+    public void processQueryBroadcastSmResp(Command pduHeader, byte[] pdu,
+                                            ResponseHandler responseHandler) throws IOException {
+        responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
+            SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
+                .getSequenceNumber());
+    }
+
 }

@@ -1,22 +1,21 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.bean;
 
 import java.util.Arrays;
-
-import org.jsmpp.util.ObjectUtil;
+import java.util.Objects;
 
 /**
  * @author uudashr
@@ -112,70 +111,34 @@ public class ReplaceSm extends Command {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                + ((messageId == null) ? 0 : messageId.hashCode());
-        result = prime
-                * result
-                + ((scheduleDeliveryTime == null) ? 0 : scheduleDeliveryTime
-                        .hashCode());
-        result = prime * result + Arrays.hashCode(shortMessage);
-        result = prime * result
-                + ((sourceAddr == null) ? 0 : sourceAddr.hashCode());
-        result = prime * result
-                + ((validityPeriod == null) ? 0 : validityPeriod.hashCode());
-        return result;
-    }
-
-    private boolean hasEqualMessageId(ReplaceSm other) {
-        return ObjectUtil.equals(messageId , other.messageId);
-    }
-
-    private boolean hasEqualScheduleDeliveryTime(ReplaceSm other) {
-        return ObjectUtil.equals(scheduleDeliveryTime, other.scheduleDeliveryTime);
-    }
-
-    private boolean hasEqualSourceAddr(ReplaceSm other) {
-        return ObjectUtil.equals(sourceAddr, other.sourceAddr);
-    }
-
-    private boolean hasEqualValidityPeriod(ReplaceSm other) {
-        return ObjectUtil.equals(validityPeriod, other.validityPeriod);
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final ReplaceSm replaceSm = (ReplaceSm) o;
+        return sourceAddrTon == replaceSm.sourceAddrTon &&
+            sourceAddrNpi == replaceSm.sourceAddrNpi &&
+            registeredDelivery == replaceSm.registeredDelivery &&
+            smDefaultMsgId == replaceSm.smDefaultMsgId &&
+            Objects.equals(messageId, replaceSm.messageId) &&
+            Objects.equals(sourceAddr, replaceSm.sourceAddr) &&
+            Objects.equals(scheduleDeliveryTime, replaceSm.scheduleDeliveryTime) &&
+            Objects.equals(validityPeriod, replaceSm.validityPeriod) &&
+            Arrays.equals(shortMessage, replaceSm.shortMessage);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final ReplaceSm other = (ReplaceSm)obj;
-        if (!hasEqualMessageId(other)) {
-            return false;
-        }
-        if (registeredDelivery != other.registeredDelivery)
-            return false;
-        if (!hasEqualScheduleDeliveryTime(other)) {
-            return false;
-        }
-        if (!Arrays.equals(shortMessage, other.shortMessage))
-            return false;
-        if (smDefaultMsgId != other.smDefaultMsgId)
-            return false;
-        if (!hasEqualSourceAddr(other)) {
-            return false;
-        }
-        if (sourceAddrNpi != other.sourceAddrNpi)
-            return false;
-        if (sourceAddrTon != other.sourceAddrTon)
-            return false;
-        if (!hasEqualValidityPeriod(other)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        int result = Objects
+            .hash(super.hashCode(), messageId, sourceAddrTon, sourceAddrNpi, sourceAddr, scheduleDeliveryTime, validityPeriod, registeredDelivery,
+                smDefaultMsgId);
+        result = 31 * result + Arrays.hashCode(shortMessage);
+        return result;
     }
 }

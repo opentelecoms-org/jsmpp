@@ -27,9 +27,6 @@ import org.jsmpp.extra.ProcessRequestException;
  */
 public interface BaseResponseHandler {
 
-//    void sendBindResp(String systemId, InterfaceVersion interfaceVersion, BindType bindType, int sequenceNumber)
-//        throws IOException;
-
     /**
      * Remove the previously {@link PendingResponse} that set when the request
      * was sent.
@@ -82,7 +79,7 @@ public interface BaseResponseHandler {
      * Process the data short message.
      * 
      * @param dataSm is the data short message.
-     * @return the result for response.
+     * @return the result for data_sm_resp.
      * @throws ProcessRequestException if there is a failure when processing
      *         data_sm.
      */

@@ -26,6 +26,10 @@ import org.jsmpp.bean.Address;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.BindResp;
+import org.jsmpp.bean.BroadcastSm;
+import org.jsmpp.bean.BroadcastSmResp;
+import org.jsmpp.bean.CancelBroadcastSm;
+import org.jsmpp.bean.CancelBroadcastSmResp;
 import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.CancelSmResp;
 import org.jsmpp.bean.Command;
@@ -44,6 +48,8 @@ import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.OptionalParameters;
 import org.jsmpp.bean.Outbind;
+import org.jsmpp.bean.QueryBroadcastSm;
+import org.jsmpp.bean.QueryBroadcastSmResp;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.QuerySmResp;
 import org.jsmpp.bean.ReplaceSm;
@@ -62,6 +68,7 @@ import org.slf4j.LoggerFactory;
  * Default implementation of SMPP PDU PDUDecomposer.
  * 
  * @author uudashr
+ * @author pmoerenhout
  * @version 1.0
  * @since 1.0
  * 
@@ -591,7 +598,99 @@ public class DefaultDecomposer implements PDUDecomposer {
         assignHeader(resp, data);
         return resp;
     }
-    
+
+    public BroadcastSm broadcastSm(byte[] data) throws PDUStringException {
+        BroadcastSm req = new BroadcastSm();
+        SequentialBytesReader reader = new SequentialBytesReader(data);
+        assignHeader(req, reader);
+        req.setServiceType(reader.readCString());
+        StringValidator.validateString(req.getServiceType(),
+            StringParameter.SERVICE_TYPE);
+        req.setSourceAddrTon(reader.readByte());
+        req.setSourceAddrNpi(reader.readByte());
+        req.setSourceAddr(reader.readCString());
+        StringValidator.validateString(req.getSourceAddr(),
+            StringParameter.SOURCE_ADDR);
+        req.setMessageId(reader.readCString());
+        StringValidator.validateString(req.getMessageId(),
+            StringParameter.MESSAGE_ID);
+        req.setPriorityFlag(reader.readByte());
+        req.setScheduleDeliveryTime(reader.readCString());
+        StringValidator.validateString(req.getScheduleDeliveryTime(),
+            StringParameter.SCHEDULE_DELIVERY_TIME);
+        req.setValidityPeriod(reader.readCString());
+        StringValidator.validateString(req.getValidityPeriod(),
+            StringParameter.VALIDITY_PERIOD);
+        req.setDataCoding(reader.readByte());
+        req.setSmDefaultMsgId(reader.readByte());
+        req.setOptionalParameters(readOptionalParameters(reader));
+        return req;
+    }
+
+    public BroadcastSmResp broadcastSmResp(byte[] data) throws PDUStringException {
+        BroadcastSmResp resp = new BroadcastSmResp();
+        SequentialBytesReader reader = new SequentialBytesReader(data);
+        assignHeader(resp, reader);
+        resp.setMessageId(reader.readCString());
+        StringValidator.validateString(resp.getMessageId(),
+            StringParameter.MESSAGE_ID);
+        resp.setOptionalParameters(readOptionalParameters(reader));
+        return resp;
+    }
+
+    public CancelBroadcastSm cancelBroadcastSm(byte[] data) throws PDUStringException {
+        CancelBroadcastSm req = new CancelBroadcastSm();
+        SequentialBytesReader reader = new SequentialBytesReader(data);
+        assignHeader(req, reader);
+        req.setServiceType(reader.readCString());
+        StringValidator.validateString(req.getServiceType(),
+            StringParameter.SERVICE_TYPE);
+        req.setMessageId(reader.readCString());
+        StringValidator.validateString(req.getMessageId(),
+            StringParameter.MESSAGE_ID);
+        req.setSourceAddrTon(reader.readByte());
+        req.setSourceAddrNpi(reader.readByte());
+        req.setSourceAddr(reader.readCString());
+        StringValidator.validateString(req.getSourceAddr(),
+            StringParameter.SOURCE_ADDR);
+        req.setOptionalParameters(readOptionalParameters(reader));
+        return req;
+    }
+
+    public CancelBroadcastSmResp cancelBroadcastSmResp(byte[] data) throws PDUStringException {
+        CancelBroadcastSmResp resp = new CancelBroadcastSmResp();
+        SequentialBytesReader reader = new SequentialBytesReader(data);
+        assignHeader(resp, reader);
+        return resp;
+    }
+
+    public QueryBroadcastSm queryBroadcastSm(byte[] data) throws PDUStringException {
+        QueryBroadcastSm req = new QueryBroadcastSm();
+        SequentialBytesReader reader = new SequentialBytesReader(data);
+        assignHeader(req, reader);
+        req.setMessageId(reader.readCString());
+        StringValidator.validateString(req.getMessageId(),
+            StringParameter.MESSAGE_ID);
+        req.setSourceAddrTon(reader.readByte());
+        req.setSourceAddrNpi(reader.readByte());
+        req.setSourceAddr(reader.readCString());
+        StringValidator.validateString(req.getSourceAddr(),
+            StringParameter.SOURCE_ADDR);
+        req.setOptionalParameters(readOptionalParameters(reader));
+        return req;
+    }
+
+    public QueryBroadcastSmResp queryBroadcastSmResp(byte[] data) throws PDUStringException {
+        QueryBroadcastSmResp resp = new QueryBroadcastSmResp();
+        SequentialBytesReader reader = new SequentialBytesReader(data);
+        assignHeader(resp, reader);
+        resp.setMessageId(reader.readCString());
+        StringValidator.validateString(resp.getMessageId(),
+            StringParameter.MESSAGE_ID);
+        resp.setOptionalParameters(readOptionalParameters(reader));
+        return resp;
+    }
+
     public AlertNotification alertNotification(byte[] data) throws PDUStringException {
         AlertNotification req = new AlertNotification();
         SequentialBytesReader reader = new SequentialBytesReader(data);
@@ -604,8 +703,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setEsmeAddrNpi(reader.readByte());
         /*
          * No validation on esme_addr.
-         * There is no response to alert_notificaion command, so error will be 
-         * ignored.
+         * There is no response to alert_notification command, so error will be ignored.
          */
         req.setEsmeAddr(reader.readCString());
         req.setOptionalParameters(readOptionalParameters(reader));

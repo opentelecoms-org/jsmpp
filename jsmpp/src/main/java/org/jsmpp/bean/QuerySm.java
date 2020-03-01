@@ -1,24 +1,24 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.bean;
 
-import org.jsmpp.util.ObjectUtil;
+import java.util.Objects;
 
 /**
  * @author uudashr
- * 
+ *
  */
 public class QuerySm extends Command {
     private static final long serialVersionUID = 393203012792088078L;
@@ -71,45 +71,26 @@ public class QuerySm extends Command {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                + ((messageId == null) ? 0 : messageId.hashCode());
-        result = prime * result
-                + ((sourceAddr == null) ? 0 : sourceAddr.hashCode());
-        return result;
-    }
-    
-    private boolean hasEqualMessageId(QuerySm other) {
-        return ObjectUtil.equals(messageId, other.messageId);
-    }
-    
-    private boolean hasEqualSourceAddr(QuerySm other) {
-        return ObjectUtil.equals(sourceAddr, other.sourceAddr);
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final QuerySm other = (QuerySm)obj;
-        if (!hasEqualMessageId(other)) {
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!hasEqualSourceAddr(other)) {
+        if (!super.equals(o)) {
             return false;
         }
-        if (sourceAddrNpi != other.sourceAddrNpi)
-            return false;
-        if (sourceAddrTon != other.sourceAddrTon)
-            return false;
-        return true;
+        final QuerySm querySm = (QuerySm) o;
+        return sourceAddrTon == querySm.sourceAddrTon &&
+            sourceAddrNpi == querySm.sourceAddrNpi &&
+            Objects.equals(messageId, querySm.messageId) &&
+            Objects.equals(sourceAddr, querySm.sourceAddr);
     }
-    
-    
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), messageId, sourceAddrTon, sourceAddrNpi, sourceAddr);
+    }
+
 }
