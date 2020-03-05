@@ -35,7 +35,7 @@ public class OpenAndBindExample {
 
     System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
 
-    boolean useSsl = true;
+    boolean useSsl = false;
 
     String host = "localhost";
     int port = 8056;
@@ -52,6 +52,8 @@ public class OpenAndBindExample {
         Thread.sleep(60000);
       } catch (InterruptedException e) {
         LOGGER.debug("Interrupted");
+        //re-interrupt the current thread
+        Thread.currentThread().interrupt();
       }
     } catch (IOException e) {
       // Failed connect and bind to SMSC

@@ -468,8 +468,9 @@ public abstract class AbstractSession implements Session {
         @Override
         public void run() {
             logger.debug("Starting EnquireLinkSender for session {}", sessionId);
-            while (isReadPdu()) {
-                while (!sendingEnquireLink.compareAndSet(true, false) && !Thread.currentThread().isInterrupted() && isReadPdu()) {
+            while (getSessionState().isNotClosed()) {
+
+                while (!sendingEnquireLink.compareAndSet(true, false) && !Thread.currentThread().isInterrupted() && getSessionState() != SessionState.CLOSED) {
                     synchronized (sendingEnquireLink) {
                         try {
                             sendingEnquireLink.wait(500);
@@ -479,7 +480,7 @@ public abstract class AbstractSession implements Session {
                         }
                     }
                 }
-                if (Thread.currentThread().isInterrupted() || !isReadPdu()) {
+                if (Thread.currentThread().isInterrupted() || (getSessionState() == SessionState.CLOSED)) {
                     break;
                 }
                 try {
