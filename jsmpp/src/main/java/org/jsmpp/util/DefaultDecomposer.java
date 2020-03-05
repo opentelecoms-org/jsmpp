@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.util;
 
@@ -75,6 +75,8 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultDecomposer implements PDUDecomposer {
     private static final Logger logger = LoggerFactory.getLogger(DefaultDecomposer.class);
+    private static final OptionalParameter[] EMPTY_OPTIONAL_PARAMETERS = new OptionalParameter[]{};
+
     private static final PDUDecomposer instance = new DefaultDecomposer();
 
     public static final PDUDecomposer getInstance() {
@@ -280,6 +282,7 @@ public class DefaultDecomposer implements PDUDecomposer {
             resp.setMessageId(reader.readCString());
             StringValidator.validateString(resp.getMessageId(),
                     StringParameter.MESSAGE_ID);
+            resp.setOptionalParameters(readOptionalParameters(reader));
         }
         return resp;
     }
@@ -621,6 +624,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setValidityPeriod(reader.readCString());
         StringValidator.validateString(req.getValidityPeriod(),
             StringParameter.VALIDITY_PERIOD);
+        req.setReplaceIfPresentFlag(reader.readByte());
         req.setDataCoding(reader.readByte());
         req.setSmDefaultMsgId(reader.readByte());
         req.setOptionalParameters(readOptionalParameters(reader));
@@ -712,8 +716,9 @@ public class DefaultDecomposer implements PDUDecomposer {
     
     private static OptionalParameter[] readOptionalParameters(
             SequentialBytesReader reader) {
-        if (!reader.hasMoreBytes())
-            return new OptionalParameter[] {};
+        if (!reader.hasMoreBytes()) {
+            return EMPTY_OPTIONAL_PARAMETERS;
+        }
         List<OptionalParameter> params = new ArrayList<OptionalParameter>();
         while (reader.hasMoreBytes()) {
             short tag = reader.readShort();

@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -48,6 +48,7 @@ public class DefaultPDUSender implements PDUSender {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultPDUSender.class);
     private static final byte[] EMPTY_SHORT_MESSAGE = new byte[]{};
+    private static final OptionalParameter[] EMPTY_OPTIONAL_PARAMETERS = new OptionalParameter[]{};
     private final PDUComposer pduComposer;
 
     /**
@@ -120,7 +121,7 @@ public class DefaultPDUSender implements PDUSender {
             OptionalParameter interfaceVersionParam = new OptionalParameter.Byte(Tag.SC_INTERFACE_VERSION, interfaceVersion.value());
             optionalParameters = new OptionalParameter[] {interfaceVersionParam};
         } else {
-            optionalParameters = new OptionalParameter[] {};
+            optionalParameters = EMPTY_OPTIONAL_PARAMETERS;
         }
 
         byte[] b = pduComposer.bindResp(commandId, sequenceNumber, systemId, optionalParameters);
@@ -251,8 +252,8 @@ public class DefaultPDUSender implements PDUSender {
      */
     @Override
     public byte[] sendSubmitSmResp(OutputStream os, int sequenceNumber,
-            String messageId) throws PDUStringException, IOException {
-        byte[] b = pduComposer.submitSmResp(sequenceNumber, messageId);
+            String messageId, OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+        byte[] b = pduComposer.submitSmResp(sequenceNumber, messageId, optionalParameters);
         writeAndFlush(os, b);
         return b;
     }
@@ -528,7 +529,7 @@ public class DefaultPDUSender implements PDUSender {
 
     private static void writeAndFlush(OutputStream out, byte[] b)
             throws IOException {
-        if(log.isDebugEnabled())
+        if (log.isDebugEnabled())
         {
             String hexmsg = HexUtil.convertBytesToHexString(b, 0, b.length, " ");
             log.debug("Sending SMPP message {}", hexmsg);

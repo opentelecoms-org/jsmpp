@@ -66,4 +66,5 @@ public class NoTrustSSLSocketConnectionFactory implements ConnectionFactory {
       throws IOException {
     return new SocketConnection(socketFactory.createSocket(host, port));
   }
+
 }

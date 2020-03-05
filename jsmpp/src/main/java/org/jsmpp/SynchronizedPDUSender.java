@@ -212,12 +212,12 @@ public class SynchronizedPDUSender implements PDUSender {
      * (non-Javadoc)
      *
      * @see org.jsmpp.PDUSender#sendSubmitSmResp(java.io.OutputStream, int,
-     *      java.lang.String)
+     *      java.lang.String, OptionalParameter...)
      */
     @Override
     public byte[] sendSubmitSmResp(OutputStream os, int sequenceNumber,
-            String messageId) throws PDUStringException, IOException {
-        return pduSender.sendSubmitSmResp(os, sequenceNumber, messageId);
+            String messageId, OptionalParameter... optionalParameters) throws PDUStringException, IOException {
+        return pduSender.sendSubmitSmResp(os, sequenceNumber, messageId, optionalParameters);
     }
 
     /*

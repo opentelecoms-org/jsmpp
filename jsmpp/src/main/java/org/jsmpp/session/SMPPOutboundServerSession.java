@@ -243,8 +243,6 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
       String smscSystemId = sendBind(bindParam.getBindType(), bindParam.getSystemId(), bindParam.getPassword(), bindParam.getSystemType(),
           bindParam.getInterfaceVersion(), bindParam.getAddrTon(), bindParam.getAddrNpi(), bindParam.getAddressRange(), timeout);
       sessionContext.bound(bindParam.getBindType());
-
-      logger.info("Start EnquireLinkSender");
       enquireLinkSender = new EnquireLinkSender();
       enquireLinkSender.start();
 
@@ -268,7 +266,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
       close();
       throw new IOException(message + ": " + e.getMessage(), e);
     } catch (IOException e) {
-      logger.error("IO error occurred", e);
+      logger.error("I/O error occurred", e);
       close();
       throw e;
     }
@@ -373,7 +371,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
     };
 
     PDUReaderWorker() {
-      super("PDUReaderWorker: " + SMPPOutboundServerSession.this);
+      super("PDUReaderWorker-" + SMPPOutboundServerSession.this);
     }
 
     @Override

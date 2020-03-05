@@ -21,6 +21,7 @@ import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.Command;
+import org.jsmpp.bean.EnquireLinkResp;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BaseResponseHandler;
@@ -90,23 +91,18 @@ class SMPPSessionOpen implements SMPPSessionState {
 
     public void processEnquireLink(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-        logger.warn("processEnquireLink: {}", pduHeader.getSequenceNumber());
-        PendingResponse<Command> pendingResp = responseHandler
-                .removeSentItem(1);
         responseHandler.sendEnquireLinkResp(pduHeader.getSequenceNumber());
-        if (pendingResp != null) {
-            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
-                    "Receive unexpected enquire_link"));
-        }
     }
 
     public void processEnquireLinkResp(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         PendingResponse<Command> pendingResp = responseHandler
-                .removeSentItem(1);
+            .removeSentItem(pduHeader.getSequenceNumber());
         if (pendingResp != null) {
-            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
-                    "Receive unexpected enquire_link_resp"));
+            EnquireLinkResp resp = pduDecomposer.enquireLinkResp(pdu);
+            pendingResp.done(resp);
+        } else {
+            logger.error("No request found for {}", pduHeader);
         }
     }
 

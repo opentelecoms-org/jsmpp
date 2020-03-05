@@ -20,17 +20,22 @@ import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.Command;
+import org.jsmpp.bean.EnquireLinkResp;
+import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BaseResponseHandler;
 import org.jsmpp.session.ServerResponseHandler;
 import org.jsmpp.util.DefaultDecomposer;
 import org.jsmpp.util.PDUDecomposer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author uudashr
  *
  */
 class SMPPServerSessionOpen implements SMPPServerSessionState {
+    private static final Logger logger = LoggerFactory.getLogger(SMPPServerSessionOpen.class);
     private static final String INVALID_PROCESS_FOR_OPEN_SESSION = "Invalid process for open session state";
     private static final PDUDecomposer pduDecomposer = new DefaultDecomposer();
 
@@ -82,14 +87,21 @@ class SMPPServerSessionOpen implements SMPPServerSessionState {
 
     @Override
     public void processEnquireLink(Command pduHeader, byte[] pdu,
-            BaseResponseHandler sessionHandler) throws IOException {
-        throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
+            BaseResponseHandler responseHandler) throws IOException {
+        responseHandler.sendEnquireLinkResp(pduHeader.getSequenceNumber());
     }
 
     @Override
     public void processEnquireLinkResp(Command pduHeader, byte[] pdu,
-            BaseResponseHandler sessionHandler) throws IOException {
-        throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
+            BaseResponseHandler responseHandler) throws IOException {
+        PendingResponse<Command> pendingResp = responseHandler
+            .removeSentItem(pduHeader.getSequenceNumber());
+        if (pendingResp != null) {
+            EnquireLinkResp resp = pduDecomposer.enquireLinkResp(pdu);
+            pendingResp.done(resp);
+        } else {
+            logger.error("No request found for {}", pduHeader);
+        }
     }
 
     @Override

@@ -50,7 +50,7 @@ public class PDUProcessTask implements Runnable {
     @Override
     public void run() {
         try {
-            if(logger.isDebugEnabled()) {
+            if (logger.isDebugEnabled()) {
                 logger.debug("Received SMPP message {} {}", pduHeader, 
                         HexUtil.convertBytesToHexString(pdu, SMPPConstant.PDU_HEADER_LENGTH, pdu.length, " "));
             }

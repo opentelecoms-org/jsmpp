@@ -33,6 +33,8 @@ public class OpenAndBindExample {
 
   public static void main(String[] args) throws Exception {
 
+    System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
+
     boolean useSsl = true;
 
     String host = "localhost";
@@ -47,7 +49,7 @@ public class OpenAndBindExample {
           .connectAndBind(host, port, new BindParameter(BindType.BIND_TRX, "j", "jpwd", "cp", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
       LOGGER.info("Connected with SMSC with system id {}", systemId);
       try {
-        Thread.sleep(10000);
+        Thread.sleep(60000);
       } catch (InterruptedException e) {
         LOGGER.debug("Interrupted");
       }
@@ -55,6 +57,7 @@ public class OpenAndBindExample {
       // Failed connect and bind to SMSC
       LOGGER.error("Failed connect and bind to host", e);
     }
+    LOGGER.debug("Unbind and close session");
     session.unbindAndClose();
   }
 

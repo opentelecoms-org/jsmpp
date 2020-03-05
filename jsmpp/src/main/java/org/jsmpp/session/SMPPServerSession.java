@@ -481,7 +481,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                  * There should be no PDUStringException thrown since creation
                  * of parsed messageId has been validated.
                  */
-                logger.error("SYSTEM ERROR. Failed sending cancel_sm_resp", e);
+                logger.error("Failed sending cancel_sm_resp", e);
             }
         }
 
@@ -645,7 +645,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         
         @Override
         public void run() {
-            logger.info("Starting PDUReaderWorker with processor degree:{} ...", getPduProcessorDegree());
+            logger.info("Starting PDUReaderWorker with processor degree {}", getPduProcessorDegree());
             while (isReadPdu()) {
                 readPDU();
             }
@@ -675,7 +675,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 notifyNoActivity();
             } catch (EOFException e) {
                 if (sessionContext.getSessionState() == SessionState.UNBOUND){
-                    logger.debug("Unbound session {} socket closed", getSessionId());
+                    logger.info("Unbound session {} socket closed", getSessionId());
                 } else {
                     logger.warn("Session {} socket closed unexpected", getSessionId());
                 }
@@ -702,7 +702,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         @Override
         public void onStateChange(SessionState newState, SessionState oldState,
         		Session source) {
-            if (newState.isBound()) {
+            if (newState.isNotClosed()) {
                 enquireLinkSender.start();
             }
         }

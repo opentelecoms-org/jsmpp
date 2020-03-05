@@ -82,7 +82,6 @@ public class SMPPServerSessionListener {
         return serverConn.getSoTimeout();
     }
     
-    
     /**
      * Timeout listening. When timeout reach and connection request didn't
      * arrive then {@link SocketTimeoutException} will be thrown but the

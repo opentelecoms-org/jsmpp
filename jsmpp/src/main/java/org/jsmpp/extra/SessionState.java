@@ -73,4 +73,13 @@ public enum SessionState {
     public boolean isReceivable() {
         return equals(BOUND_RX) || equals(BOUND_TRX);
     }
+
+    /**
+     * Check whether the session state is not closed.
+     *
+     * @return <tt>true</tt> if session is not closed.
+     */
+    public boolean isNotClosed() {
+        return !equals(CLOSED);
+    }
 }

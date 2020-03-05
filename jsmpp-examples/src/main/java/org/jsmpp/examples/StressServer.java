@@ -152,14 +152,14 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
     @Override
     public void onAcceptCancelSm(CancelSm cancelSm, SMPPServerSession source)
             throws ProcessRequestException {
-        LOGGER.warn("CancelSm not implemented");
+        LOGGER.warn("cancel_sm not implemented");
         throw new ProcessRequestException(CANCELSM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RCANCELFAIL);
     }
 
     @Override
     public void onAcceptReplaceSm(ReplaceSm replaceSm, SMPPServerSession source)
             throws ProcessRequestException {
-        LOGGER.warn("ReplaceSm not implemented");
+        LOGGER.warn("replace_sm not implemented");
         throw new ProcessRequestException(REPLACESM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RREPLACEFAIL);
     }
 
@@ -206,18 +206,19 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
         @Override
         public void run() {
             try {
-                BindRequest bindRequest = serverSession.waitForBind(1000);
-                LOGGER.debug("Accepting bind for session {}", serverSession.getSessionId());
+                LOGGER.info("Waiting for bind for session {}", serverSession.getSessionId());
+                BindRequest bindRequest = serverSession.waitForBind(60000);
+                LOGGER.info("Accepting bind for session {}", serverSession.getSessionId());
                 try {
                     bindRequest.accept("sys", InterfaceVersion.IF_34);
                 } catch (PDUStringException e) {
                     LOGGER.error("Invalid system id", e);
-                    bindRequest.reject(SMPPConstant.STAT_ESME_RSYSERR);
+                    bindRequest.reject(SMPPConstant.STAT_ESME_RINVSYSID);
                 }
             } catch (IllegalStateException e) {
                 LOGGER.error("System error", e);
             } catch (TimeoutException e) {
-                LOGGER.warn("Wait for bind has reach timeout", e);
+                LOGGER.warn("Wait for bind has reached timeout", e);
             } catch (IOException e) {
                 LOGGER.error("Failed accepting bind request for session {}", serverSession.getSessionId());
             }
@@ -239,8 +240,8 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
         public void run() {
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException e1) {
-                e1.printStackTrace();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
             String stringValue = Integer.valueOf(messageId.getValue(), 16).toString();
             try {
@@ -275,9 +276,12 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
                 int requestsPerSecond = requestCounter.getAndSet(0);
-                LOGGER.info("Requests per second: {}", requestsPerSecond);
+                if (requestsPerSecond != 0) {
+                    LOGGER.debug("Requests per second: {}", requestsPerSecond);
+                }
             }
         }
     }

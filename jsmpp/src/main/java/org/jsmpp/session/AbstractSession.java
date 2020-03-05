@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.session;
 
@@ -90,7 +90,7 @@ public abstract class AbstractSession implements Session {
 
     @Override
     public void setEnquireLinkTimer(int enquireLinkTimer) {
-        if (sessionContext().getSessionState().isBound()) {
+        if (sessionContext().getSessionState().isNotClosed()) {
             try {
                 connection().setSoTimeout(enquireLinkTimer);
             } catch (IOException e) {
@@ -143,8 +143,7 @@ public abstract class AbstractSession implements Session {
     }
 
     /**
-     * Set total thread can read PDU and process it in parallel. It's defaulted to
-     * 3.
+     * Set total thread can read PDU and process it in parallel. It's defaulted to 3.
      *
      * @param pduProcessorDegree is the total thread can handle read and process
      *        PDU in parallel.
@@ -356,8 +355,8 @@ public abstract class AbstractSession implements Session {
             // should never happen, since it doesn't have any String parameter.
             logger.warn("PDU String should be always valid", e);
         } catch (NegativeResponseException e) {
-            // the command_status of the response should be always 0
-            logger.warn("command_status of response should be always 0", e);
+            // the command_status of the enquire_link response should be always 0
+            logger.warn("command_status of enquire_link_resp should be always 0", e);
         }
     }
 
@@ -450,6 +449,9 @@ public abstract class AbstractSession implements Session {
     protected void ensureTransmittable(String activityName, boolean only) throws IOException {
         // TODO uudashr: do we have to use another exception for this checking?
         SessionState currentState = getSessionState();
+        if (currentState.isNotClosed() && "enquire_link".equals(activityName)) {
+            return;
+        }
         if (!currentState.isTransmittable() || (only && currentState.isReceivable())) {
             throw new IOException("Cannot " + activityName + " while session " + sessionId + " in state " + currentState);
         }
@@ -460,7 +462,7 @@ public abstract class AbstractSession implements Session {
 
         public EnquireLinkSender()
         {
-        	super("EnquireLinkSender: " + AbstractSession.this);
+        	super("EnquireLinkSender-" + AbstractSession.this);
         }
 
         @Override
@@ -483,14 +485,14 @@ public abstract class AbstractSession implements Session {
                 try {
                     sendEnquireLink();
                 } catch (ResponseTimeoutException e) {
-                    logger.error("Response timeout on enquireLink", e);
+                    logger.error("Response timeout on enquire_link", e);
                     close();
                 } catch (InvalidResponseException e) {
-                    logger.error("Invalid response on enquireLink", e);
+                    logger.error("Invalid response on enquire_link", e);
                     // lets unbind gracefully
                     unbindAndClose();
                 } catch (IOException e) {
-                    logger.error("I/O exception on enquireLink", e);
+                    logger.error("I/O exception on enquire_link", e);
                     close();
                 }
             }

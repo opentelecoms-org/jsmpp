@@ -97,10 +97,11 @@ public interface PDUComposer {
      *
      * @param sequenceNumber
      * @param messageId
+     * @param optionalParameters the Message Submission Response TLVs (SMPP 5.0)
      * @return the composed byte values.
      * @throws PDUStringException
      */
-    byte[] submitSmResp(int sequenceNumber, String messageId)
+    byte[] submitSmResp(int sequenceNumber, String messageId, OptionalParameter... optionalParameters)
             throws PDUStringException;
 
     // QUERY_SM OPERATION
@@ -189,6 +190,12 @@ public interface PDUComposer {
             String validityPeriod, byte registeredDelivery,
             byte smDefaultMsgId, byte[] shortMessage) throws PDUStringException;
 
+    /**
+     * Compose replace short message response (replace_sm_resp) PDU.
+     *
+     * @param sequenceNumber
+     * @return the composed byte values.
+     */
     byte[] replaceSmResp(int sequenceNumber);
 
     byte[] submitMulti(int sequenceNumber, String serviceType,
@@ -222,6 +229,12 @@ public interface PDUComposer {
                byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
                OptionalParameter... optionalParameters) throws PDUStringException;
 
+    /**
+     * Compose cancel broadcast short message response (cancel_broadcast_sm_resp) PDU.
+     *
+     * @param sequenceNumber
+     * @return the composed byte values.
+     */
     byte[] cancelBroadcastSmResp(int sequenceNumber);
 
     byte[] queryBroadcastSm(int sequenceNumber,

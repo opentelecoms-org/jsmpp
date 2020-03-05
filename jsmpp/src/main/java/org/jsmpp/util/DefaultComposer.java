@@ -95,7 +95,9 @@ public class DefaultComposer implements PDUComposer {
         PDUByteBuffer buf = new PDUByteBuffer(commandId,
             SMPPConstant.STAT_ESME_ROK, sequenceNumber);
         buf.append(systemId);
-        buf.appendAll(optionalParameters);
+        if (optionalParameters != null) {
+            buf.appendAll(optionalParameters);
+        }
         return buf.toBytes();
     }
 
@@ -178,7 +180,7 @@ public class DefaultComposer implements PDUComposer {
             SMPPConstant.STAT_ESME_ROK, sequenceNumber);
     }
 
-    // GENEICK_NACK OPERATION
+    // GENERIC_NACK OPERATION
     /*
      * (non-Javadoc)
      * 
@@ -239,7 +241,9 @@ public class DefaultComposer implements PDUComposer {
         buf.append(smDefaultMsgId);
         buf.append((byte)shortMessage.length);
         buf.append(shortMessage);
-        buf.appendAll(optionalParameters);
+        if (optionalParameters != null) {
+            buf.appendAll(optionalParameters);
+        }
         return buf.toBytes();
     }
 
@@ -248,13 +252,16 @@ public class DefaultComposer implements PDUComposer {
      * 
      * @see org.jsmpp.util.PDUComposer#submitSmResp(int, java.lang.String)
      */
-    public byte[] submitSmResp(int sequenceNumber, String messageId)
+    public byte[] submitSmResp(int sequenceNumber, String messageId, OptionalParameter... optionalParameters)
             throws PDUStringException {
         StringValidator.validateString(messageId, StringParameter.MESSAGE_ID);
 
         PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_SUBMIT_SM_RESP,
             SMPPConstant.STAT_ESME_ROK, sequenceNumber);
         buf.append(messageId);
+        if (optionalParameters != null) {
+            buf.appendAll(optionalParameters);
+        }
         return buf.toBytes();
     }
 
@@ -344,7 +351,9 @@ public class DefaultComposer implements PDUComposer {
         buf.append((byte)0); // sm default msg id
         buf.append((byte)shortMessage.length);
         buf.append(shortMessage);
-        buf.appendAll(optionalParameters);
+        if (optionalParameters != null) {
+            buf.appendAll(optionalParameters);
+        }
         return buf.toBytes();
     }
 
@@ -361,6 +370,7 @@ public class DefaultComposer implements PDUComposer {
         return buf.toBytes();
     }
 
+    // DATA_SM OPERATION
     /*
      * (non-Javadoc)
      * 
@@ -392,7 +402,9 @@ public class DefaultComposer implements PDUComposer {
         buf.append(esmClass);
         buf.append(registeredDelivery);
         buf.append(dataCoding);
-        buf.appendAll(optionalParameters);
+        if (optionalParameters != null) {
+            buf.appendAll(optionalParameters);
+        }
         return buf.toBytes();
     }
 
@@ -412,6 +424,7 @@ public class DefaultComposer implements PDUComposer {
         return buf.toBytes();
     }
 
+    // CANCEL_SM OPERATION
     public byte[] cancelSm(int sequenceNumber, String serviceType,
             String messageId, byte sourceAddrTon, byte sourceAddrNpi,
             String sourceAddr, byte destAddrTon, byte destAddrNpi,
@@ -442,6 +455,7 @@ public class DefaultComposer implements PDUComposer {
                 SMPPConstant.STAT_ESME_ROK, sequenceNumber);
     }
 
+    // REPLACE_SM OPERATION
     public byte[] replaceSm(int sequenceNumber, String messageId,
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
             String scheduleDeliveryTime, String validityPeriod,
@@ -476,6 +490,7 @@ public class DefaultComposer implements PDUComposer {
             SMPPConstant.STAT_ESME_ROK, sequenceNumber);
     }
 
+    // SUBMIT_MULTI OPERATION
     public byte[] submitMulti(int sequenceNumber, String serviceType,
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
             DestinationAddress[] destinationAddresses, byte esmClass, byte protocolId,
@@ -537,7 +552,9 @@ public class DefaultComposer implements PDUComposer {
         buf.append(smDefaultMsgId);
         buf.append((byte)shortMessage.length);
         buf.append(shortMessage);
-        buf.appendAll(optionalParameters);
+        if (optionalParameters != null) {
+            buf.appendAll(optionalParameters);
+        }
         return buf.toBytes();
     }
     
@@ -560,7 +577,8 @@ public class DefaultComposer implements PDUComposer {
         }
         return buf.toBytes();
     }
-    
+
+    // ALERT_NOTIFICATION OPERATION
     public byte[] alertNotification(int sequenceNumber, byte sourceAddrTon,
             byte sourceAddrNpi, String sourceAddr, byte esmeAddrTon,
             byte esmeAddrNpi, String esmeAddr,
@@ -575,10 +593,13 @@ public class DefaultComposer implements PDUComposer {
         buf.append(esmeAddrTon);
         buf.append(esmeAddrNpi);
         buf.append(esmeAddr);
-        buf.appendAll(optionalParameters);
+        if (optionalParameters != null) {
+            buf.appendAll(optionalParameters);
+        }
         return buf.toBytes();
     }
 
+    // BROADCAST_SM OPERATION
     public byte[] broadcastSm(int sequenceNumber,
                        String serviceType, byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
                        String messageId, byte priorityFlag, String scheduleDeliveryTime,
@@ -604,7 +625,9 @@ public class DefaultComposer implements PDUComposer {
         buf.append(replaceIfPresentFlag);
         buf.append(dataCoding);
         buf.append(smDefaultMsgId);
-        buf.appendAll(optionalParameters);
+        if (optionalParameters != null) {
+            buf.appendAll(optionalParameters);
+        }
         return buf.toBytes();
     }
 
@@ -619,6 +642,7 @@ public class DefaultComposer implements PDUComposer {
         return buf.toBytes();
     }
 
+    // CANCEL_BROADCAST_SM OPERATION
     public byte[] cancelBroadcastSm(int sequenceNumber,
                               String serviceType, String messageId,
                               byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
@@ -633,7 +657,9 @@ public class DefaultComposer implements PDUComposer {
         buf.append(sourceAddrTon);
         buf.append(sourceAddrNpi);
         buf.append(sourceAddr);
-        buf.appendAll(optionalParameters);
+        if (optionalParameters != null) {
+            buf.appendAll(optionalParameters);
+        }
         return buf.toBytes();
     }
 
@@ -643,6 +669,7 @@ public class DefaultComposer implements PDUComposer {
         return buf.toBytes();
     }
 
+    // QUERY_BROADCAST_SM OPERATION
     public byte[] queryBroadcastSm(int sequenceNumber,
                             String messageId,
                             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
@@ -656,7 +683,9 @@ public class DefaultComposer implements PDUComposer {
         buf.append(sourceAddrTon);
         buf.append(sourceAddrNpi);
         buf.append(sourceAddr);
-        buf.appendAll(optionalParameters);
+        if (optionalParameters != null) {
+            buf.appendAll(optionalParameters);
+        }
         return buf.toBytes();
     }
 
@@ -668,7 +697,9 @@ public class DefaultComposer implements PDUComposer {
         PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_QUERY_BROADCAST_SM_RESP,
             SMPPConstant.STAT_ESME_ROK, sequenceNumber);
         buf.append(messageId);
-        buf.appendAll(optionalParameters);
+        if (optionalParameters != null) {
+            buf.appendAll(optionalParameters);
+        }
         return buf.toBytes();
     }
 

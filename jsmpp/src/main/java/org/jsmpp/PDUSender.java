@@ -1,6 +1,6 @@
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License. 
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -208,13 +208,14 @@ public interface PDUSender {
      * @param os is the {@link OutputStream}.
      * @param sequenceNumber is the sequence_number.
      * @param messageId is the message_id.
+     * @param optionalParameters are the message submission response tlv.
      * @return the composed bytes.
      * @throws PDUStringException if there is an invalid string constraint
      *         found.
      * @throws IOException if there is an IO error occur.
      */
     byte[] sendSubmitSmResp(OutputStream os, int sequenceNumber,
-            String messageId) throws PDUStringException, IOException;
+            String messageId, OptionalParameter... optionalParameters) throws PDUStringException, IOException;
 
     /**
      * Send query short message command.

@@ -209,40 +209,35 @@ public class SMPPSession extends AbstractSession implements ClientSession {
     }
 
 	/**
-	 * Open connection and bind immediately.
+	 * Open connection.
 	 *
 	 * @param host is the SMSC host address.
 	 * @param port is the SMSC listen port.
-	 * @return the SMSC system id.
 	 * @throws IOException if there is an IO error found.
 	 */
 	public void connect(String host, int port)
 			throws IOException {
 		logger.debug("Connect to {} port {}", host, port);
-		if (getSessionState() != SessionState.CLOSED) {
+		if (getSessionState().isNotClosed()) {
 			throw new IOException("Session state is not closed");
 		}
 
 		conn = connFactory.createConnection(host, port);
 		logger.info("Connected to {}", conn.getInetAddress());
 
-		logger.info("getEnquireLinkTimer {}", getEnquireLinkTimer());
 		conn.setSoTimeout(getEnquireLinkTimer());
 
 		sessionContext.open();
-			in = new DataInputStream(conn.getInputStream());
-			out = conn.getOutputStream();
+		in = new DataInputStream(conn.getInputStream());
+		out = conn.getOutputStream();
 
-			pduReaderWorker = new PDUReaderWorker();
-			pduReaderWorker.start();
-//			String smscSystemId = sendBind(bindParam.getBindType(), bindParam.getSystemId(), bindParam.getPassword(), bindParam.getSystemType(),
-//					bindParam.getInterfaceVersion(), bindParam.getAddrTon(), bindParam.getAddrNpi(), bindParam.getAddressRange(), timeout);
-//			sessionContext.bound(bindParam.getBindType());
+		pduReaderWorker = new PDUReaderWorker();
+		pduReaderWorker.start();
 
-		logger.info("enquireLinkSender start");
-			enquireLinkSender = new EnquireLinkSender();
-			enquireLinkSender.start();
-			return;
+		logger.debug("Start enquireLinkSender");
+		enquireLinkSender = new EnquireLinkSender();
+		enquireLinkSender.start();
+		return;
 	}
 	
 	/**
@@ -570,7 +565,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
             * There should be no PDUStringException thrown since creation
             * of MessageId should be save.
             */
-						logger.error("SYSTEM ERROR. Failed sending data_sm_resp", e);
+						logger.error("Failed sending data_sm_resp", e);
 				}
 		}
 		
@@ -589,7 +584,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		}
 		
 		public void sendEnquireLinkResp(int sequenceNumber) throws IOException {
-		    logger.info("Sending enquire_link_resp");
+			logger.debug("Sending enquire_link_resp");
 			pduSender().sendEnquireLinkResp(out, sequenceNumber);
 		}
 		
