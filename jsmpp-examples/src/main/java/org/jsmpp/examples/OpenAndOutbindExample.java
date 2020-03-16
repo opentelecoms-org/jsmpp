@@ -15,6 +15,7 @@
 package org.jsmpp.examples;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -67,7 +68,6 @@ public class OpenAndOutbindExample implements Runnable {
   private MessageIDGenerator messageIDGenerator = new RandomDecimalMessageIDGenerator();
   private String host;
   private int port;
-  private int id;
   private String systemId;
   private String password;
   private String sourceAddr;
@@ -75,11 +75,10 @@ public class OpenAndOutbindExample implements Runnable {
 
   private AtomicBoolean exit = new AtomicBoolean();
 
-  private OpenAndOutbindExample(int id, String host, int port,
+  private OpenAndOutbindExample(String host, int port,
                                String systemId, String password, String sourceAddr,
                                String destinationAddr, long transactionTimer,
                                int pduProcessorDegree) {
-    this.id = id;
     this.host = host;
     this.port = port;
     this.systemId = systemId;
@@ -125,7 +124,7 @@ public class OpenAndOutbindExample implements Runnable {
     }
 
     LOG.info("Processor degree: " + processorDegree);
-    OpenAndOutbindExample openAndOutbindExample = new OpenAndOutbindExample(0, host, port, systemId, password,
+    OpenAndOutbindExample openAndOutbindExample = new OpenAndOutbindExample(host, port, systemId, password,
         sourceAddr, destinationAddr, transactionTimer, processorDegree);
     openAndOutbindExample.run();
   }
@@ -170,7 +169,7 @@ public class OpenAndOutbindExample implements Runnable {
             TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, destinationAddr,
             new ESMClass(MessageMode.DEFAULT, MessageType.SMSC_DEL_RECEIPT, GSMSpecificFeature.DEFAULT),
             (byte) 0x00, PriorityFlag.GsmSms.NORMAL.value(), new RegisteredDelivery(0),
-            DataCodings.ZERO, delRec.toString().getBytes("ISO-8859-1"));
+            DataCodings.ZERO, delRec.toString().getBytes(StandardCharsets.ISO_8859_1));
         LOG.info("The deliver_sm request #{} was sent", deliverSmCount);
       }
       catch (IllegalStateException e) {
@@ -210,7 +209,7 @@ public class OpenAndOutbindExample implements Runnable {
 
   private class SessionStateListenerImpl implements SessionStateListener {
     public void onStateChange(SessionState newState, SessionState oldState, Session source) {
-      LOG.info("Session state changed from {} to {}",oldState, newState);
+      LOG.info("Session state changed from {} to {}", oldState, newState);
     }
   }
 

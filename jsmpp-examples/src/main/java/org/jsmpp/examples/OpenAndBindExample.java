@@ -43,6 +43,8 @@ public class OpenAndBindExample {
      * For SSL, use NoTrustSSLSocketConnectionFactory to accept all selfsigned certs, use SSLSocketConnectionFactory otherwise.
      */
     SMPPSession session = useSsl ? new SMPPSession(new TrustStoreSSLSocketConnectionFactory()) : new SMPPSession();
+    session.setEnquireLinkTimer(30000);
+    session.setTransactionTimer(2000);
     try {
       LOGGER.info("Connect and bind to {} port {}{}", host, port, useSsl ? " (SSL)" : "");
       String systemId = session

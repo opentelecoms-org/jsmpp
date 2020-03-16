@@ -178,9 +178,9 @@ public class AutoReconnectGateway implements Gateway {
    */
   private class SessionStateListenerImpl implements SessionStateListener {
     public void onStateChange(SessionState newState, SessionState oldState, Session source) {
-      LOGGER.debug("State changed from {} to {}",oldState , newState);
+      LOGGER.debug("State changed from {} to {}", oldState , newState);
       if (newState.equals(SessionState.CLOSED)) {
-        LOGGER.info("Session {} closed", source.getSessionId());
+        LOGGER.info("Session {} closed, reconnect after {} ms", source.getSessionId(), reconnectInterval);
         reconnectAfter(reconnectInterval);
       }
     }

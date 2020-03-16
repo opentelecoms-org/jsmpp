@@ -69,7 +69,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class SMPPServerSession extends AbstractSession implements ServerSession {
-    private static final String MESSAGE_RECEIVER_LISTENER_IS_NULL = "Received SubmitMultiSm but MessageReceiverListener is null, returning SMPP error";
+    private static final String MESSAGE_RECEIVER_LISTENER_IS_NULL = "Received {} but message receiver listener is null";
     private static final String NO_MESSAGE_RECEIVER_LISTENER_REGISTERED = "No message receiver listener registered";
 
     private static final Logger logger = LoggerFactory.getLogger(SMPPServerSession.class);
@@ -207,7 +207,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptSubmitMulti(submitMulti, this);
         }
-        logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL);
+        logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "submit_multi");
         throw new ProcessRequestException(NO_MESSAGE_RECEIVER_LISTENER_REGISTERED,
                 SMPPConstant.STAT_ESME_RX_R_APPN);
     }
@@ -216,7 +216,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptQuerySm(querySm, this);
         }
-        logger.warn("Received submit_query_sm but MessageReceiverListener is null, returning SMPP error");
+        logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "query_sm");
         throw new ProcessRequestException(NO_MESSAGE_RECEIVER_LISTENER_REGISTERED, 
                 SMPPConstant.STAT_ESME_RX_R_APPN);
     }
@@ -225,7 +225,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             messageReceiverListener.onAcceptReplaceSm(replaceSm, this);
         } else {
-            logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL);
+            logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "replace_sm");
             throw new ProcessRequestException(NO_MESSAGE_RECEIVER_LISTENER_REGISTERED,
                     SMPPConstant.STAT_ESME_RX_R_APPN);
         }
@@ -235,7 +235,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             messageReceiverListener.onAcceptCancelSm(cancelSm, this);
         } else {
-            logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL);
+            logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "cancel_sm");
             throw new ProcessRequestException(NO_MESSAGE_RECEIVER_LISTENER_REGISTERED,
                     SMPPConstant.STAT_ESME_RX_R_APPN);
         }
@@ -245,7 +245,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptBroadcastSm(broadcastSm, this);
         }
-        logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL);
+        logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "broadcast_sm");
         throw new ProcessRequestException(NO_MESSAGE_RECEIVER_LISTENER_REGISTERED,
             SMPPConstant.STAT_ESME_RX_R_APPN);
     }
@@ -254,7 +254,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             messageReceiverListener.onAcceptCancelBroadcastSm(cancelBroadcastSm, this);
         } else {
-            logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL);
+            logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "cancel_broadcast_sm");
             throw new ProcessRequestException(NO_MESSAGE_RECEIVER_LISTENER_REGISTERED,
                 SMPPConstant.STAT_ESME_RX_R_APPN);
         }
@@ -264,7 +264,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptQueryBroadcastSm(queryBroadcastSm, this);
         }
-        logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL);
+        logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "query_broadcast_sm");
         throw new ProcessRequestException(NO_MESSAGE_RECEIVER_LISTENER_REGISTERED,
             SMPPConstant.STAT_ESME_RX_R_APPN);
     }
@@ -700,10 +700,9 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     
     private class BoundStateListener implements SessionStateListener {
         @Override
-        public void onStateChange(SessionState newState, SessionState oldState,
-        		Session source) {
-            if (newState.isNotClosed()) {
-                enquireLinkSender.start();
+        public void onStateChange(SessionState newState, SessionState oldState, Session source) {
+            if (newState.equals(SessionState.OPEN)) {
+                    enquireLinkSender.start();
             }
         }
     }

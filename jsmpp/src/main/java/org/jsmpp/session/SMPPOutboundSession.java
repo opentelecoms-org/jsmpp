@@ -485,14 +485,14 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
 	    * a SocketTimeoutException will be raised. When Exception raised we
 	    * can send an enquireLinkCommand.
 	    */
-      if (newState.isBound()) {
+      if (newState.equals(SessionState.OPEN)) {
         try {
           conn.setSoTimeout(getEnquireLinkTimer());
         }
         catch (IOException e) {
           logger.error("Failed setting so_timeout for session timer", e);
         }
-
+      } else if (newState.isBound()) {
         logger.info("Changing processor degree to {}", getPduProcessorDegree());
         ((ThreadPoolExecutor) pduReaderWorker.executorService).setMaximumPoolSize(getPduProcessorDegree());
         ((ThreadPoolExecutor) pduReaderWorker.executorService).setCorePoolSize(getPduProcessorDegree());

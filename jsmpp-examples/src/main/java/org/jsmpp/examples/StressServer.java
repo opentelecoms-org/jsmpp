@@ -192,7 +192,7 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
     private class SessionStateListenerImpl implements SessionStateListener {
         public void onStateChange(SessionState newState, SessionState oldState, Session source) {
             SMPPServerSession session = (SMPPServerSession)source;
-            LOGGER.info("New state of {} is {}" , session.getSessionId(), newState);
+            LOGGER.info("New state of session {} is {}" , session.getSessionId(), newState);
         }
     }
     
