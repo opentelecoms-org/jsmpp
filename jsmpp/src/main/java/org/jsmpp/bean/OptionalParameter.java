@@ -1964,13 +1964,43 @@ public abstract class OptionalParameter {
 
 	/**
 	 * The ussd_service_op parameter is required to define the USSD service operation when SMPP
-	 * is being used as an interface to a (GSM) USSD system. <br>
-	 * <br>
+	 * is being used as an interface to a (GSM) USSD system.
+	 *
 	 * Wireless Network Technology: GSM (USSD)
 	 * @author stefanth
 	 *
 	 */
 	public static class Ussd_service_op extends OptionalParameter.Byte {
+
+		public enum Ussd_service_op_enum {
+			PSSD_INDICATION(0),
+			PSSR_INDICATION(1),
+			USSR_REQUEST(2),
+			USSN_REQUEST(3),
+			PSSD_RESPONSE(16),
+			PSSR_RESPONSE(17),
+			USSR_CONFIRM(18),
+			USSN_CONFIRM(19);
+
+			protected byte value;
+
+			Ussd_service_op_enum(int value) {
+				this.value = (byte)value;
+			}
+
+			public byte value() {
+				return value;
+			}
+
+			public static Ussd_service_op.Ussd_service_op_enum toEnum(byte value) {
+				for (Ussd_service_op.Ussd_service_op_enum v : Ussd_service_op.Ussd_service_op_enum.values()) {
+					if (v.value == value) {
+						return v;
+					}
+				}
+				return null;
+			}
+		}
 
 		public Ussd_service_op(byte value) {
 			super(Tag.USSD_SERVICE_OP, value);
@@ -1978,6 +2008,14 @@ public abstract class OptionalParameter {
 
 		public Ussd_service_op(byte[] content) {
 			super(Tag.USSD_SERVICE_OP.code, content);
+		}
+
+		/**
+		 * Get the ussd_service_op value as an enum.
+		 * @return An enum of type Ussd_service_op_enum
+		 */
+		public Ussd_service_op.Ussd_service_op_enum getUssdServiceOperation() {
+			return Ussd_service_op.Ussd_service_op_enum.toEnum(value);
 		}
 	}
 	
