@@ -578,6 +578,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         req.setValidityPeriod(reader.readCString());
         StringValidator.validateString(req.getValidityPeriod(),
                 StringParameter.VALIDITY_PERIOD);
+        req.setRegisteredDelivery(reader.readByte());
         req.setSmDefaultMsgId(reader.readByte());
         byte smLength = reader.readByte();
         req.setShortMessage(reader.readBytes(smLength));
