@@ -14,6 +14,8 @@
  */
 package org.jsmpp.session;
 
+import static org.jsmpp.SMPPConstant.PDU_HEADER_LENGTH;
+
 import java.io.IOException;
 
 import org.jsmpp.SMPPConstant;
@@ -52,15 +54,15 @@ public class PDUProcessTask implements Runnable {
         try {
             if(logger.isDebugEnabled()) {
                 logger.debug("Received SMPP message {} {}", pduHeader, 
-                        HexUtil.convertBytesToHexString(pdu, 16, pdu.length, " "));
+                        HexUtil.convertBytesToHexString(pdu, PDU_HEADER_LENGTH, pdu.length, " "));
             }
-            
+
             switch (pduHeader.getCommandId()) {
             case SMPPConstant.CID_BIND_RECEIVER_RESP:
             case SMPPConstant.CID_BIND_TRANSMITTER_RESP:
             case SMPPConstant.CID_BIND_TRANSCEIVER_RESP:
                 activityNotifier.notifyActivity();
-                sessionContext.getStateProcessor().processBindResp(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processBindResp(sessionContext, pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_GENERIC_NACK:
                 activityNotifier.notifyActivity();
@@ -124,5 +126,9 @@ public class PDUProcessTask implements Runnable {
         } catch (IOException e) {
             onIOExceptionTask.run();
         }
+    }
+
+    public Command getPduHeader() {
+        return pduHeader;
     }
 }

@@ -34,7 +34,6 @@ public class OpenAndBindExample {
   public static void main(String[] args) throws Exception {
 
     boolean useSsl = true;
-
     String host = "localhost";
     int port = 8056;
     /*
@@ -49,7 +48,7 @@ public class OpenAndBindExample {
       try {
         Thread.sleep(10000);
       } catch (InterruptedException e) {
-        LOGGER.debug("Interrupted");
+        Thread.currentThread().interrupt();
       }
     } catch (IOException e) {
       // Failed connect and bind to SMSC

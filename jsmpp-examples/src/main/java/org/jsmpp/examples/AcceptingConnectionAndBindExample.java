@@ -49,10 +49,14 @@ public class AcceptingConnectionAndBindExample {
                         "test".equals(request.getPassword())) {
 
                     // accepting request and send bind response immediately
-                    LOGGER.info("Accepting bind request, interface version is " + request.getInterfaceVersion());
+                    LOGGER.info("Accepting bind request, interface version is {}", request.getInterfaceVersion());
                     request.accept("sys");
                     
-                    try { Thread.sleep(20000); } catch (InterruptedException e) {}
+                    try {
+                        Thread.sleep(20000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
                 } else {
                     LOGGER.info("Rejecting bind request");
                     request.reject(SMPPConstant.STAT_ESME_RINVPASWD);

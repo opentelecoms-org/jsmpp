@@ -37,11 +37,13 @@ public abstract class AbstractSessionContext implements SessionContext {
     public AbstractSessionContext(SessionStateListener sessionStateListener) {
         sessionStateListeners.add(sessionStateListener);
     }
-    
+
+    @Override
     public synchronized void open() {
         changeState(SessionState.OPEN);
     }
 
+    @Override
     public synchronized void bound(BindType bindType) {
         if (bindType.equals(BindType.BIND_TX)) {
             changeState(SessionState.BOUND_TX);
@@ -53,18 +55,19 @@ public abstract class AbstractSessionContext implements SessionContext {
             throw new IllegalArgumentException("Bind type " + bindType + " not supported");
         }
     }
-    
+
+    @Override
     public synchronized void unbound() {
         changeState(SessionState.UNBOUND);
     }
-    
+
+    @Override
     public synchronized void close() {
         changeState(SessionState.CLOSED);
     }
     
-    public void addSessionStateListener(
-            SessionStateListener l) {
-        sessionStateListeners.add(l);
+    public void addSessionStateListener(SessionStateListener listener) {
+        sessionStateListeners.add(listener);
     }
     
     public void removeSessionStateListener(SessionStateListener l) {
@@ -75,6 +78,9 @@ public abstract class AbstractSessionContext implements SessionContext {
                                     SessionState oldState, Session source) {
 
         for (SessionStateListener l : sessionStateListeners) {
+            if (newState.equals(oldState)){
+                throw new IllegalStateException("State is already " + newState);
+            }
             try {
                 l.onStateChange(newState, oldState, source);
             } catch (Exception e) {
@@ -91,6 +97,6 @@ public abstract class AbstractSessionContext implements SessionContext {
     public long getLastActivityTimestamp() {
         return lastActivityTimestamp;
     }
-    
+
     protected abstract void changeState(SessionState newState);
 }

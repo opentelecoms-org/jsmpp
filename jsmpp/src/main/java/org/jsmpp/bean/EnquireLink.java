@@ -25,9 +25,9 @@ public class EnquireLink extends Command {
 
     public EnquireLink(int sequenceNumber) {
         super();
-        commandLength = 16;
-        commandId = SMPPConstant.CID_ENQUIRE_LINK;
-        commandStatus = 0;
+        this.commandLength = SMPPConstant.PDU_HEADER_LENGTH;
+        this.commandId = SMPPConstant.CID_ENQUIRE_LINK;
+        this.commandStatus = SMPPConstant.STAT_ESME_ROK;
         this.sequenceNumber = sequenceNumber;
     }
 

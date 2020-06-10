@@ -45,25 +45,20 @@ class OutbindRequestReceiver {
     try {
       if (this.alreadyWaitForRequest) {
         throw new IllegalStateException("waitForRequest(long) method already invoked");
-      }
-      else if (this.request == null) {
+      } else if (this.request == null) {
         try {
           this.requestCondition.await(timeout, TimeUnit.MILLISECONDS);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
-          throw new RuntimeException("waitForRequest was interrupted");
         }
       }
 
       if (this.request != null) {
         return this.request;
-      }
-      else {
+      } else {
         throw new TimeoutException("Waiting for outbind request take time too long");
       }
-    }
-    finally {
+    } finally {
       this.alreadyWaitForRequest = true;
       this.lock.unlock();
     }
@@ -81,12 +76,10 @@ class OutbindRequestReceiver {
       if (this.request == null) {
         this.request = new OutbindRequest(outbind);
         this.requestCondition.signal();
-      }
-      else {
+      } else {
         throw new IllegalStateException("Already waiting for acceptance outbind");
       }
-    }
-    finally {
+    } finally {
       this.lock.unlock();
     }
   }

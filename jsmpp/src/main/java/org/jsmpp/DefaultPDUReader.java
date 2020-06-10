@@ -36,6 +36,7 @@ public class DefaultPDUReader implements PDUReader {
     /* (non-Javadoc)
      * @see org.jsmpp.PDUReader#readPDUHeader(java.io.DataInputStream)
      */
+    @Override
     public Command readPDUHeader(DataInputStream in)
             throws InvalidCommandLengthException, IOException {
         Command header = new Command();
@@ -59,6 +60,7 @@ public class DefaultPDUReader implements PDUReader {
     /* (non-Javadoc)
      * @see org.jsmpp.PDUReader#readPDU(java.io.InputStream, org.jsmpp.bean.Command)
      */
+    @Override
     public byte[] readPDU(DataInputStream in, Command pduHeader) throws IOException {
         return readPDU(in, pduHeader.getCommandLength(), pduHeader
                 .getCommandId(), pduHeader.getCommandStatus(), pduHeader
@@ -68,6 +70,7 @@ public class DefaultPDUReader implements PDUReader {
     /* (non-Javadoc)
      * @see org.jsmpp.PDUReader#readPDU(java.io.InputStream, int, int, int, int)
      */
+    @Override
     public byte[] readPDU(DataInputStream in, int commandLength, int commandId,
             int commandStatus, int sequenceNumber) throws IOException {
 
