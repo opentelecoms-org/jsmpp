@@ -1,6 +1,13 @@
 Changes:
 
-Please note that this release is the latest using Java 1.6. The next release will require at minimum Java 1.7.
+Please note that the 2.9.x release is the latest using Java 1.6. The next release (3.x.x) will require at minimum Java 1.7.
+
+2.3.10
+- Implement queue capacity with default 100 include throttle response, handle bound state inside the handler of the bind request.
+- Fix decompose of replace_sm PDU.
+- Extend the Connection interface to show all local and remote socket addresses and ports.
+- Send correct response when request is received.
+- Fix the decode of the replace_sm.
 
 2.3.9
 - Ignore the PDU body in the handling of submit_multi_resp with non-zero command status.
