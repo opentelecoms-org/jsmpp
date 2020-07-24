@@ -90,6 +90,16 @@ public abstract class AbstractSession implements Session {
     }
 
     @Override
+    public int getNextSequenceNumber() {
+	    return sequence.nextValue();
+    }
+
+    @Override
+    public int getCurrentSequenceNumber() {
+	    return sequence.currentValue();
+    }
+
+    @Override
     public void setEnquireLinkTimer(int enquireLinkTimer) {
         if (sessionContext().getSessionState().isBound()) {
             try {

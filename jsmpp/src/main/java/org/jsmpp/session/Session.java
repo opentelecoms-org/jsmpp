@@ -105,7 +105,9 @@ public interface Session {
     SessionState getSessionState();
     void addSessionStateListener(SessionStateListener l);
     void removeSessionStateListener(SessionStateListener l);
-    
+    int getNextSequenceNumber();
+    int getCurrentSequenceNumber();
+
     /**
      * Get the last reading valid PDU from remote host.
      * 
