@@ -41,4 +41,9 @@ class SMPPSessionBoundTRX extends SMPPSessionBoundTX implements SMPPSessionState
             ResponseHandler responseHandler) throws IOException {
         SMPPSessionBoundRX.processDeliverSm0(pduHeader, pdu, responseHandler);
     }
+
+    public void processAlertNotification(Command pduHeader, byte[] pdu,
+            ResponseHandler responseHandler) {
+        SMPPSessionBoundRX.processAlertNotification0(pduHeader, pdu, responseHandler);
+    }
 }
