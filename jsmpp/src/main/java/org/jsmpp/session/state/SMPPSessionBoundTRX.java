@@ -42,6 +42,7 @@ class SMPPSessionBoundTRX extends SMPPSessionBoundTX implements SMPPSessionState
         SMPPSessionBoundRX.processDeliverSm0(pduHeader, pdu, responseHandler);
     }
 
+    @Override
     public void processAlertNotification(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) {
         SMPPSessionBoundRX.processAlertNotification0(pduHeader, pdu, responseHandler);
