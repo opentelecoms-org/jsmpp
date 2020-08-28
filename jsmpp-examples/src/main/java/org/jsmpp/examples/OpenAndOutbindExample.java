@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.examples;
 
@@ -62,32 +62,33 @@ public class OpenAndOutbindExample implements Runnable {
 
   private static final Long DEFAULT_TRANSACTIONTIMER = 2000L;
   private static final Integer DEFAULT_PROCESSOR_DEGREE = 3;
+  private static final Integer DEFAULT_DELIVER_SM_COUNT = 25;
 
   private SMPPOutboundSession session = new SMPPOutboundSession();
   private MessageIDGenerator messageIDGenerator = new RandomDecimalMessageIDGenerator();
   private String host;
   private int port;
-  private int id;
   private String systemId;
   private String password;
   private String sourceAddr;
   private String destinationAddr;
+  private int deliverSmCount;
 
   private AtomicBoolean exit = new AtomicBoolean();
 
-  private OpenAndOutbindExample(int id, String host, int port,
-                               String systemId, String password, String sourceAddr,
-                               String destinationAddr, long transactionTimer,
-                               int pduProcessorDegree) {
-    this.id = id;
+  private OpenAndOutbindExample(String host, int port,
+                                String systemId, String password, String sourceAddr,
+                                String destinationAddr, int deliverSmCount,
+                                long transactionTimer, int pduProcessorDegree) {
     this.host = host;
     this.port = port;
     this.systemId = systemId;
     this.password = password;
     this.sourceAddr = sourceAddr;
     this.destinationAddr = destinationAddr;
-    session.setPduProcessorDegree(pduProcessorDegree);
+    this.deliverSmCount = deliverSmCount;
     session.setTransactionTimer(transactionTimer);
+    session.setPduProcessorDegree(pduProcessorDegree);
   }
 
   public static void main(String[] args) {
@@ -101,8 +102,7 @@ public class OpenAndOutbindExample implements Runnable {
     int port;
     try {
       port = Integer.parseInt(System.getProperty("jsmpp.client.port", DEFAULT_PORT.toString()));
-    }
-    catch (NumberFormatException e) {
+    } catch (NumberFormatException e) {
       port = DEFAULT_PORT;
     }
 
@@ -110,23 +110,31 @@ public class OpenAndOutbindExample implements Runnable {
     try {
       transactionTimer = Integer
           .parseInt(System.getProperty("jsmpp.client.transactionTimer", DEFAULT_TRANSACTIONTIMER.toString()));
-    }
-    catch (NumberFormatException e) {
+    } catch (NumberFormatException e) {
       transactionTimer = DEFAULT_TRANSACTIONTIMER;
     }
+    LOG.info("Transaction timer: {} ms", transactionTimer);
 
     int processorDegree;
     try {
       processorDegree = Integer
           .parseInt(System.getProperty("jsmpp.server.procDegree", DEFAULT_PROCESSOR_DEGREE.toString()));
-    }
-    catch (NumberFormatException e) {
+    } catch (NumberFormatException e) {
       processorDegree = DEFAULT_PROCESSOR_DEGREE;
     }
+    LOG.info("Processor degree: {}", processorDegree);
 
-    LOG.info("Processor degree: " + processorDegree);
-    OpenAndOutbindExample openAndOutbindExample = new OpenAndOutbindExample(0, host, port, systemId, password,
-        sourceAddr, destinationAddr, transactionTimer, processorDegree);
+    int deliverSmCount;
+    try {
+      deliverSmCount = Integer
+          .parseInt(System.getProperty("jsmpp.server.deliverSmCount", DEFAULT_DELIVER_SM_COUNT.toString()));
+    } catch (NumberFormatException e) {
+      deliverSmCount = DEFAULT_DELIVER_SM_COUNT;
+    }
+    LOG.info("Number of deliver_sm to send: {}", deliverSmCount);
+
+    OpenAndOutbindExample openAndOutbindExample = new OpenAndOutbindExample(host, port, systemId, password,
+        sourceAddr, destinationAddr, deliverSmCount, transactionTimer, processorDegree);
     openAndOutbindExample.run();
   }
 
@@ -136,8 +144,6 @@ public class OpenAndOutbindExample implements Runnable {
 
   public void run() {
     try {
-      session.setEnquireLinkTimer(30000);
-      session.setTransactionTimer(2000);
       session.addSessionStateListener(new SessionStateListenerImpl());
 
       LOG.info("Connect and outbind to {} port {}", host, port);
@@ -146,57 +152,42 @@ public class OpenAndOutbindExample implements Runnable {
 
       try {
         bindRequest.accept("sys", InterfaceVersion.IF_34);
-      }
-      catch (PDUStringException e) {
+      } catch (PDUStringException e) {
         LOG.error("Invalid system id", e);
         bindRequest.reject(SMPPConstant.STAT_ESME_RSYSERR);
       }
 
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       LOG.error("Failed initialize connection, outbind, or bind", e);
       return;
     }
 
-    int deliverSmCount = 0;
-    while (!exit.get()) {
+    int count = 0;
+    while (!exit.get() && count < deliverSmCount) {
       /* now send some deliver_sm receipts to the ESME */
-      deliverSmCount++;
+      count++;
       try {
         MessageId messageId = messageIDGenerator.newMessageId();
         DeliveryReceipt delRec = new DeliveryReceipt(messageId.getValue(), 1, 1, new Date(),
-            new Date(), DeliveryReceiptState.DELIVRD, "000", "#" + deliverSmCount);
+            new Date(), DeliveryReceiptState.DELIVRD, "000", "#" + count);
         session.deliverShortMessage("cm", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, sourceAddr,
             TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, destinationAddr,
             new ESMClass(MessageMode.DEFAULT, MessageType.SMSC_DEL_RECEIPT, GSMSpecificFeature.DEFAULT),
             (byte) 0x00, PriorityFlag.GsmSms.NORMAL.value(), new RegisteredDelivery(0),
             DataCodings.ZERO, delRec.toString().getBytes("ISO-8859-1"));
-        LOG.info("The deliver_sm request #{} was sent", deliverSmCount);
-      }
-      catch (IllegalStateException e) {
+        LOG.info("The deliver_sm request #{} with message id {} was sent", count, messageId);
+      } catch (IllegalStateException e) {
         LOG.error("IllegalStateException error", e);
-      }
-      catch (PDUException e) {
+      } catch (PDUException e) {
         LOG.error("PDUException error", e);
-      }
-      catch (ResponseTimeoutException e) {
+      } catch (ResponseTimeoutException e) {
         LOG.warn("Response reached timeout", e);
-      }
-      catch (InvalidResponseException e) {
+      } catch (InvalidResponseException e) {
         LOG.warn("Invalid response received", e);
-      }
-      catch (NegativeResponseException e) {
+      } catch (NegativeResponseException e) {
         LOG.warn("Negative response received", e);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         LOG.warn("IO exception", e);
-      }
-
-      try {
-        Thread.sleep(500);
-      }
-      catch (InterruptedException e) {
-        LOG.error("Thread was interrupted", e);
       }
 
       if (!session.getSessionState().isBound()) {

@@ -14,10 +14,10 @@
  */
 package org.jsmpp.extra;
 
+import static org.testng.Assert.fail;
+
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.bean.Command;
-import static org.testng.Assert.*;
-
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -88,6 +88,7 @@ public class PendingResponseTest {
                     Thread.sleep(timemillis);
                     pendingResponse.done(new Command());
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
             }
         }.start();
@@ -109,8 +110,8 @@ public class PendingResponseTest {
                     pendingResponse.doneWithInvalidResponse(
                             new InvalidResponseException("Invalid response message"));
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
-                
             }
         }.start();
     }

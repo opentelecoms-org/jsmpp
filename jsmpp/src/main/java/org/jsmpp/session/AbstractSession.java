@@ -56,9 +56,10 @@ public abstract class AbstractSession implements Session {
     private final Sequence sequence = new Sequence(1);
     private final PDUSender pduSender;
     private int pduProcessorDegree = 3;
+    private int queueCapacity = 100;
 
     private String sessionId = generateSessionId();
-    private int enquireLinkTimer = 5000;
+    private int enquireLinkTimer = 60000;
     private long transactionTimer = 2000;
 
     protected EnquireLinkSender enquireLinkSender;
@@ -83,10 +84,12 @@ public abstract class AbstractSession implements Session {
         return pendingResponse.remove(sequenceNumber);
     }
 
+    @Override
     public String getSessionId() {
         return sessionId;
     }
 
+    @Override
     public void setEnquireLinkTimer(int enquireLinkTimer) {
         if (sessionContext().getSessionState().isBound()) {
             try {
@@ -98,18 +101,22 @@ public abstract class AbstractSession implements Session {
         this.enquireLinkTimer = enquireLinkTimer;
     }
 
+    @Override
     public int getEnquireLinkTimer() {
         return enquireLinkTimer;
     }
 
+    @Override
     public void setTransactionTimer(long transactionTimer) {
         this.transactionTimer = transactionTimer;
     }
 
+    @Override
     public long getTransactionTimer() {
         return transactionTimer;
     }
 
+    @Override
     public SessionState getSessionState() {
         return sessionContext().getSessionState();
     }
@@ -119,16 +126,19 @@ public abstract class AbstractSession implements Session {
 		    return sessionState.isBound() || sessionState.equals(SessionState.OPEN) || sessionState.equals(SessionState.OUTBOUND);
 	  }
 
+    @Override
     public void addSessionStateListener(SessionStateListener listener) {
         if (listener != null) {
             sessionContext().addSessionStateListener(listener);
         }
     }
 
+    @Override
     public void removeSessionStateListener(SessionStateListener listener) {
         sessionContext().removeSessionStateListener(listener);
     }
 
+    @Override
     public long getLastActivityTimestamp() {
         return sessionContext().getLastActivityTimestamp();
     }
@@ -157,6 +167,22 @@ public abstract class AbstractSession implements Session {
      */
     public int getPduProcessorDegree() {
         return pduProcessorDegree;
+    }
+
+    /**
+     * Get the capacity of the working queue for PDU processing.
+     *
+     * @return the ThreadPoolExecutor queue capacity.
+     */
+    public int getQueueCapacity() {
+        return queueCapacity;
+    }
+
+    /**
+     * Set the capacity of the working queue for PDU processing.
+     */
+    public void setQueueCapacity(final int queueCapacity) {
+        this.queueCapacity = queueCapacity;
     }
 
     /**
@@ -200,6 +226,7 @@ public abstract class AbstractSession implements Session {
         return new DataSmResult(resp.getMessageId(), resp.getOptionalParameters());
     }
 
+    @Override
     public void close() {
         logger.debug("Close session {} in state {}", sessionId, getSessionState());
         SessionContext ctx = sessionContext();
@@ -384,6 +411,7 @@ public abstract class AbstractSession implements Session {
         }
     }
 
+    @Override
     public void unbindAndClose() {
         logger.debug("Unbind and close session {}", sessionId);
         if (sessionContext().getSessionState().isBound()) {
@@ -449,7 +477,7 @@ public abstract class AbstractSession implements Session {
 
         public EnquireLinkSender()
         {
-        	super("EnquireLinkSender: " + AbstractSession.this);
+        	super("EnquireLinkSender-" + sessionId);
         }
 
         @Override

@@ -25,7 +25,8 @@ class OutboundSMPPServerSessionContext extends AbstractSessionContext {
     private SMPPOutboundServerSessionState stateProcessor = SMPPOutboundServerSessionState.CLOSED;
     private final SMPPOutboundServerSession smppSession;
 
-    public OutboundSMPPServerSessionContext(SMPPOutboundServerSession smppSession) {
+    public OutboundSMPPServerSessionContext(SMPPOutboundServerSession smppSession, SessionStateListener sessionStateListener) {
+        super(sessionStateListener);
         this.smppSession = smppSession;
     }
     

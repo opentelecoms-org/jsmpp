@@ -20,6 +20,7 @@ import org.jsmpp.bean.Command;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BaseResponseHandler;
 import org.jsmpp.session.ResponseHandler;
+import org.jsmpp.session.SMPPSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,86 +37,103 @@ import org.slf4j.LoggerFactory;
 class SMPPSessionClosed implements SMPPSessionState {
     private static final String INVALID_PROCESS_FOR_CLOSED_SESSION = "Invalid process for closed session state";
     private static final Logger logger = LoggerFactory.getLogger(SMPPSessionClosed.class);
-    
+
+    @Override
     public SessionState getSessionState() {
         return SessionState.CLOSED;
     }
 
-    public void processBindResp(Command pduHeader, byte[] pdu,
-            ResponseHandler responseHandler) throws IOException {
+    @Override
+    public void processBindResp(SMPPSessionContext sessionContext, Command pduHeader, byte[] pdu,
+                                ResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_CLOSED_SESSION);
     }
 
+    @Override
     public void processDeliverSm(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_CLOSED_SESSION);
     }
 
+    @Override
     public void processEnquireLink(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_CLOSED_SESSION);
     }
 
+    @Override
     public void processEnquireLinkResp(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_CLOSED_SESSION);
     }
 
+    @Override
     public void processGenericNack(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_CLOSED_SESSION);
     }
 
+    @Override
     public void processQuerySmResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_CLOSED_SESSION);
     }
 
+    @Override
     public void processSubmitSmResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_CLOSED_SESSION);
     }
-    
+
+    @Override
     public void processSubmitMultiResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_CLOSED_SESSION);
     }
-    
+
+    @Override
     public void processUnbind(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_CLOSED_SESSION);
     }
 
+    @Override
     public void processUnbindResp(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_CLOSED_SESSION);
     }
 
+    @Override
     public void processUnknownCid(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_CLOSED_SESSION);
     }
-    
+
+    @Override
     public void processDataSm(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_CLOSED_SESSION);
     }
-    
+
+    @Override
     public void processDataSmResp(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_CLOSED_SESSION);
     }
-    
+
+    @Override
     public void processCancelSmResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_CLOSED_SESSION);
     }
-    
+
+    @Override
     public void processReplaceSmResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_CLOSED_SESSION);
     }
-    
+
+    @Override
     public void processAlertNotification(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) {
         logger.error("SYSTEM ERROR. Receiving alert_notification while on invalid closed state");

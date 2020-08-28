@@ -30,11 +30,16 @@ import org.jsmpp.session.connection.ConnectionFactory;
  * -Djavax.net.ssl.trustStoreType=PKCS12
  */
 public class SSLSocketConnectionFactory implements ConnectionFactory {
+  private static final SSLSocketConnectionFactory connFactory = new SSLSocketConnectionFactory();
 
   private SocketFactory socketFactory;
 
-  private SSLSocketConnectionFactory() {
+  public SSLSocketConnectionFactory() {
     socketFactory = SSLSocketFactory.getDefault();
+  }
+
+  public static SSLSocketConnectionFactory getInstance() {
+    return connFactory;
   }
 
   @Override
