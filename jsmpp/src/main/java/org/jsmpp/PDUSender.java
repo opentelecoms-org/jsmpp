@@ -400,8 +400,8 @@ public interface PDUSender {
             throws PDUStringException, IOException;
 
     byte[] sendAlertNotification(OutputStream os, int sequenceNumber,
-            byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
-            byte esmeAddrTon, byte esmeAddrNpi, String esmeAddr,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            TypeOfNumber esmeAddrTon, NumberingPlanIndicator esmeAddrNpi, String esmeAddr,
             OptionalParameter... optionalParameters) throws PDUStringException,
             IOException;
 }

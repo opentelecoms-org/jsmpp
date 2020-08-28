@@ -531,7 +531,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			try {
 				fireAcceptAlertNotification(alertNotification);
 			} catch(Exception e) {
-				logger.error("Invalid runtime exception thrown when processing alert_sm", e);
+				logger.error("Invalid runtime exception thrown when processing alert_notification", e);
 			}
 		}
 

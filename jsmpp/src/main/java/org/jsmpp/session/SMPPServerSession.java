@@ -181,22 +181,22 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     }
     
     /* (non-Javadoc)
-     * @see org.jsmpp.session.ServerSession#alertNotification(int, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.OptionalParameter[])
+     * @see org.jsmpp.session.ServerSession#alertNotification(org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.OptionalParameter[])
      */
     @Override
-    public void alertNotification(int sequenceNumber,
-            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
-            String sourceAddr, TypeOfNumber esmeAddrTon,
-            NumberingPlanIndicator esmeAddrNpi, String esmeAddr,
-            OptionalParameter... optionalParameters) throws PDUStringException,
+    public void alertNotification(TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            TypeOfNumber esmeAddrTon, NumberingPlanIndicator esmeAddrNpi, String esmeAddr,
+            OptionalParameter... optionalParameters) throws PDUException,
             IOException {
         
         ensureReceivable("alertNotification");
-        
-        pduSender().sendAlertNotification(connection().getOutputStream(),
-                sequenceNumber, sourceAddrTon.value(), sourceAddrNpi.value(),
-                sourceAddr, esmeAddrTon.value(), esmeAddrNpi.value(), esmeAddr,
-                optionalParameters);
+
+        AlertNotificationCommandTask task = new AlertNotificationCommandTask(pduSender(),
+             sourceAddrTon, sourceAddrNpi, sourceAddr,
+             esmeAddrTon, esmeAddrNpi, esmeAddr,
+             optionalParameters);
+
+        executeSendCommandWithNoResponse(task);
     }
     
     private MessageId fireAcceptSubmitSm(SubmitSm submitSm) throws ProcessRequestException {

@@ -430,13 +430,13 @@ public class DefaultPDUSender implements PDUSender {
     }
 
     public byte[] sendAlertNotification(OutputStream os, int sequenceNumber,
-            byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
-            byte esmeAddrTon, byte esmeAddrNpi, String esmeAddr,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            TypeOfNumber esmeAddrTon, NumberingPlanIndicator esmeAddrNpi, String esmeAddr,
             OptionalParameter... optionalParameters)
         throws PDUStringException, IOException {
-        byte[] b = pduComposer.alertNotification(sequenceNumber, sourceAddrTon,
-                sourceAddrNpi, sourceAddr, esmeAddrTon, esmeAddrNpi, esmeAddr,
-                optionalParameters);
+        byte[] b = pduComposer.alertNotification(sequenceNumber,
+            sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr,
+            esmeAddrTon.value(), esmeAddrNpi.value(), esmeAddr, optionalParameters);
         writeAndFlush(os, b);
         return b;
     }
