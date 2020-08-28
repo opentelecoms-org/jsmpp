@@ -334,7 +334,7 @@ public abstract class AbstractSession implements Session {
     }
 
     /**
-     * Execute send command command task.
+     * Execute send command command task without response.
      *
      * @param task is the task.
      * @throws PDUException if there is invalid PDU parameter found.

@@ -62,16 +62,18 @@ public class DefaultSMPPServerOperation extends AbstractSMPPOperation implements
         executeSendCommand(task, getTransactionTimer());
     }
 
-    public void alertNotification(int sequenceNumber,
-            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
+    public void alertNotification(TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, TypeOfNumber esmeAddrTon,
             NumberingPlanIndicator esmeAddrNpi, String esmeAddr,
-            OptionalParameter... optionalParameters) throws PDUException,
-            IOException {
-        pduSender().sendAlertNotification(connection().getOutputStream(),
-                sequenceNumber, sourceAddrTon.value(), sourceAddrNpi.value(),
-                sourceAddr, esmeAddrTon.value(), esmeAddrNpi.value(), esmeAddr,
-                optionalParameters);
+            OptionalParameter... optionalParameters)
+        throws PDUException, IOException {
+
+        AlertNotificationCommandTask task = new AlertNotificationCommandTask(pduSender(),
+            sourceAddrTon, sourceAddrNpi, sourceAddr,
+            esmeAddrTon, esmeAddrNpi, esmeAddr,
+            optionalParameters);
+
+        executeSendCommandWithNoResponse(task);
     }
 
     public void querySmResp(String messageId, String finalDate,

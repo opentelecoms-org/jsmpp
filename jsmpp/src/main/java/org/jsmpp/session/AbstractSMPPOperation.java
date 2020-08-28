@@ -106,7 +106,18 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
         Command resp = pendingResp.getResponse();
         validateResponse(resp);
         return resp;
+    }
 
+    protected void executeSendCommandWithNoResponse(SendCommandTask task)
+        throws PDUException, IOException {
+
+        int seqNum = sequence.nextValue();
+        try {
+            task.executeTask(connection().getOutputStream(), seqNum);
+        } catch (IOException e) {
+            logger.error("Failed sending {} command", task.getCommandName(), e);
+            throw e;
+        }
     }
 
     /**

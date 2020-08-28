@@ -79,7 +79,6 @@ public interface ServerSession {
      * Send alert notification to ESME in order to notify the particular mobile
      * subscriber has become available.
      * 
-     * @param sequenceNumber is the sequence_number.
      * @param sourceAddrTon is the source_addr_ton.
      * @param sourceAddrNpi is the source_addr_npi.
      * @param sourceAddr is the source_addr.
@@ -93,11 +92,11 @@ public interface ServerSession {
      * @throws NegativeResponseException if negative response received.
      * @throws IOException if there is an I/O error found.
      */
-    void alertNotification(int sequenceNumber, TypeOfNumber sourceAddrTon,
+    void alertNotification(TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber esmeAddrTon, NumberingPlanIndicator esmeAddrNpi,
             String esmeAddr, OptionalParameter... optionalParameters)
-            throws PDUStringException, ResponseTimeoutException,
+            throws PDUException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException;
 
 }
