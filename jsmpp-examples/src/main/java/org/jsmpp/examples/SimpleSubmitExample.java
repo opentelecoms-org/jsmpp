@@ -73,7 +73,7 @@ public class SimpleSubmitExample {
                 // Receiving negative response (non-zero command_status)
                 LOGGER.error("Receive negative response, e");
             } catch (IOException e) {
-                LOGGER.error("IO error occured", e);
+                LOGGER.error("IO error occurred", e);
             }
 
             session.unbindAndClose();

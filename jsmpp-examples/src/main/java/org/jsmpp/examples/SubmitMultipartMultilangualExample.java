@@ -183,7 +183,7 @@ public class SubmitMultipartMultilangualExample {
 		try {
 			System.in.read();
 		} catch (IOException e) {
-			LOGGER.error("I/O error occured", e);
+			LOGGER.error("I/O error occurred", e);
 		}
 
 		session.unbindAndClose();
@@ -210,7 +210,7 @@ public class SubmitMultipartMultilangualExample {
 			// Receiving negative response (non-zero command_status)
 			LOGGER.error("Receive negative response", e);
 		} catch (IOException e) {
-			LOGGER.error("I/O error occured", e);
+			LOGGER.error("I/O error occurred", e);
 		}
 		return messageId;
 	}

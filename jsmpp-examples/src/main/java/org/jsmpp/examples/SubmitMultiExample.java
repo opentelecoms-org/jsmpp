@@ -93,7 +93,7 @@ public class SubmitMultiExample {
                 // Receiving negative response (non-zero command_status)
                 LOGGER.error("Receive negative response", e);
             } catch (IOException e) {
-                LOGGER.error("I/O error occured", e);
+                LOGGER.error("I/O error occurred", e);
             } catch (InterruptedException e) {
                 LOGGER.error("Thread interrupted", e);
             }
