@@ -443,10 +443,9 @@ public class DefaultPDUSender implements PDUSender {
 
     private static void writeAndFlush(OutputStream out, byte[] b)
             throws IOException {
-        if(logger.isDebugEnabled())
+        if (logger.isDebugEnabled())
         {
-            String hexmsg = HexUtil.convertBytesToHexString(b, 0, b.length, " ");
-            logger.debug("Sending SMPP message {}", hexmsg);
+            logger.debug("Sending PDU {}", HexUtil.convertBytesToHexString(b, 0, b.length));
         }
         out.write(b);
         out.flush();

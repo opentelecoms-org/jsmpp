@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.session;
 
@@ -52,11 +52,11 @@ public class PDUProcessServerTask implements Runnable {
     @Override
     public void run() {
         try {
-            if(logger.isDebugEnabled())
+            if (logger.isDebugEnabled())
         	  {
-                String hexmsg = HexUtil.convertBytesToHexString(pdu, 0, pdu.length, " ");
-                logger.debug("Received SMPP message {} {}", pduHeader, hexmsg);
+                logger.debug("Received PDU {}", HexUtil.convertBytesToHexString(pdu, 0, pdu.length));
             }
+
             switch (pduHeader.getCommandId()) {
             case SMPPConstant.CID_BIND_RECEIVER:
             case SMPPConstant.CID_BIND_TRANSMITTER:

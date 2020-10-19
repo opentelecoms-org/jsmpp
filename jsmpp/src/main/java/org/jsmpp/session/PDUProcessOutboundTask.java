@@ -50,9 +50,8 @@ class PDUProcessOutboundTask implements Runnable {
     @Override
     public void run() {
         try {
-            if(logger.isDebugEnabled()) {
-                logger.debug("Received SMPP message {} {}", pduHeader, 
-                        HexUtil.convertBytesToHexString(pdu, 16, pdu.length, " "));
+            if (logger.isDebugEnabled()) {
+                logger.debug("Received PDU {}", HexUtil.convertBytesToHexString(pdu, 0, pdu.length));
             }
 
             switch (pduHeader.getCommandId()) {
