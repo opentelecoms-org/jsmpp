@@ -21,7 +21,7 @@ import org.jsmpp.bean.Outbind;
 import org.jsmpp.extra.ProcessRequestException;
 
 /**
- * <tt>OutboundServerResponseHandler</tt> provide interface to handle response of the session
+ * {@code OutboundServerResponseHandler} provide interface to handle response of the session
  * routines.
  * 
  * @author uudashr
@@ -34,7 +34,7 @@ public interface OutboundServerResponseHandler extends BaseResponseHandler {
     /**
      * Process the outbind
      *
-     * @param outbind
+     * @param outbind the outbind systemId and password
      * @throws ProcessRequestException
      */
     void processOutbind(Outbind outbind)
