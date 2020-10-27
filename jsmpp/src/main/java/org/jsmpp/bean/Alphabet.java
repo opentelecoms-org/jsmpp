@@ -2,15 +2,15 @@
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.bean;
 
@@ -18,11 +18,10 @@ package org.jsmpp.bean;
  * This is enum of the alphabet type.
  *
  * Alphabet represents the lower 4 bits of the data_coding field in the PDU,
- * as specified in s5.2.19 of the SMPP v3.4 specification.
+ * as specified in section 5.2.19 of the SMPP v3.4 specification.
  * 
  * @author uudashr
  * @version 1.0
- * 
  */
 public enum Alphabet {
 
@@ -125,7 +124,9 @@ public enum Alphabet {
     /**
      * Default constructor.
      * 
-     * @param value is the alphabet value.
+     * @param value is the alphabet value
+     * @param valid is the alphabet validity
+     * @param unspecified is the unspecified value
      */
     Alphabet(byte value, boolean valid, boolean unspecified) {
         this.value = value;
@@ -173,8 +174,7 @@ public enum Alphabet {
     /**
      * Get the enum constant associated with specified value.
      * 
-     * @param value is the value associated with the <tt>Alphabet</tt> enum
-     *        constant.
+     * @param value is the value associated with the {@code Alphabet} enum constant.
      * @return the associated enum constant.
      * @throws IllegalArgumentException if there is no associated enum constant
      *         for given value.
@@ -195,8 +195,9 @@ public enum Alphabet {
         }
         byte value = (byte)(dataCoding & mask);
         for (Alphabet val : values()) {
-            if (val.value == value)
+            if (val.value == value) {
                 return val;
+            }
         }
         throw new IllegalArgumentException("No enum const Alphabet with value "
                 + value + " for dataCoding " + dataCoding);

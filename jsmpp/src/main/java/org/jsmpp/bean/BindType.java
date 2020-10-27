@@ -17,7 +17,8 @@ package org.jsmpp.bean;
 import org.jsmpp.SMPPConstant;
 
 /**
- * Enum represent bind type of SMPP. There are 3 bind type provided by SMPP:
+ * Enum represent bind type of SMPP. There are 3 bind types provided by SMPP:
+ *
  * <ul>
  * <li>receiver (BIND_RX) - receive only</li>
  * <li>transmitter (BIND_TX) - transmit only</li>
@@ -27,7 +28,6 @@ import org.jsmpp.SMPPConstant;
  * @author uudashr
  * @version 1.0
  * @since 1.0
- * 
  */
 public enum BindType {
 
@@ -73,8 +73,7 @@ public enum BindType {
     /**
      * Inform whether the bind type is transmittable.
      * 
-     * @return <tt>true</tt> f the bind type is transmittable, otherwise
-     *         <tt>false</tt>.
+     * @return {@code true} if the bind type is transmittable, otherwise {@code false}.
      */
     public boolean isTransmittable() {
         return this == BIND_TX || this == BIND_TRX;
@@ -83,21 +82,20 @@ public enum BindType {
     /**
      * Inform whether the bind type is receivable.
      * 
-     * @return <tt>true</tt> if the bind type is receivable, otherwise
-     *         <tt>false</tt>.
+     * @return {@code true} if the bind type is receivable, otherwise {@code false}.
      */
     public boolean isReceivable() {
         return this == BIND_RX || this == BIND_TRX;
     }
 
     /**
-     * Get the <tt>BindType</tt> by specified command_id.
+     * Get the {@code BindType} by specified command_id.
      * 
      * @param bindCommandId is the command_id.
      * @return the enum const associated with the specified
-     *         <tt>bindCommandId</tt>.
-     * @throws IllegalArgumentException if there is no <tt>BindType</tt>
-     *         associated with specified <tt>bindCommandId</tt> found.
+     *         {@code bindCommandId}
+     * @throws IllegalArgumentException if there is no {@code BindType}
+     *         associated with specified {@code bindCommandId} found.
      */
     public static final BindType valueOf(int bindCommandId)
             throws IllegalArgumentException {

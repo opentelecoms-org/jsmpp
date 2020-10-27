@@ -227,17 +227,17 @@ public interface ClientSession extends Session {
      * Open connection and bind immediately with specified timeout. The default
      * timeout is 1 minutes.
      * 
-     * @param host is the SMSC host address.
-     * @param port is the SMSC listen port.
-     * @param bindType is the bind type.
-     * @param systemId is the system id.
-     * @param password is the password.
-     * @param systemType is the system type.
-     * @param addrTon is the address TON.
-     * @param addrNpi is the address NPI.
-     * @param addressRange is the address range.
-     * @param timeout is the timeout.
-     * @throws IOException if there is an IO error found.
+     * @param host the SMSC host address.
+     * @param port the SMSC listen port.
+     * @param bindType the bind type.
+     * @param systemId the system id.
+     * @param password the password.
+     * @param systemType the system type.
+     * @param addrTon the address TON.
+     * @param addrNpi the address NPI.
+     * @param addressRange the address range.
+     * @param timeout the timeout in milliseconds.
+     * @throws IOException if an input or output error occurred.
      */
     void connectAndBind(String host, int port, BindType bindType,
             String systemId, String password, String systemType,
@@ -247,11 +247,11 @@ public interface ClientSession extends Session {
     /**
      * Open connection and bind immediately.
      * 
-     * @param host is the SMSC host address.
-     * @param port is the SMSC listen port.
-     * @param bindParam is the bind parameters.
+     * @param host the SMSC host address.
+     * @param port the SMSC listen port.
+     * @param bindParam the bind parameters.
      * @return the SMSC system id.
-     * @throws IOException if there is an IO error found.
+     * @throws IOException if an input or output error occurred.
      */
     String connectAndBind(String host, int port,
             BindParameter bindParam) 
@@ -260,12 +260,12 @@ public interface ClientSession extends Session {
     /**
      * Open connection and bind immediately.
      * 
-     * @param host is the SMSC host address.
-     * @param port is the SMSC listen port.
-     * @param bindParam is the bind parameters.
-     * @param timeout is the timeout.
+     * @param host the SMSC host address.
+     * @param port the SMSC listen port.
+     * @param bindParam the bind parameters.
+     * @param timeout the timeout in milliseconds.
      * @return the SMSC system id.
-     * @throws IOException if there is an IO error found.
+     * @throws IOException if an input or output error occurred.
      */
     String connectAndBind(String host, int port,
             BindParameter bindParam, long timeout) 

@@ -35,16 +35,16 @@ public interface OutboundServerResponseHandler extends BaseResponseHandler {
      * Process the outbind
      *
      * @param outbind the outbind systemId and password
-     * @throws ProcessRequestException
+     * @throws ProcessRequestException if there is a failure when processing outbind
      */
     void processOutbind(Outbind outbind)
         throws ProcessRequestException;
 
     /**
-     * Process the deliver
+     * Process the deliver_sm
      *
-     * @param deliverSm
-     * @throws ProcessRequestException
+     * @param deliverSm the deliver_sm command
+     * @throws ProcessRequestException if there is a failure when processing deliver_sm
      */
     void processDeliverSm(DeliverSm deliverSm)
         throws ProcessRequestException;
@@ -55,7 +55,7 @@ public interface OutboundServerResponseHandler extends BaseResponseHandler {
      * @param commandStatus is the command_status.
      * @param sequenceNumber is the sequence number of original <b>DELIVER_SM</b> request.
      * @param messageId is the message_id.
-     * @throws IOException if an IO error occur.
+     * @throws IOException if an input/output error occurs.
      */
     void sendDeliverSmResp(int commandStatus, int sequenceNumber, String messageId) throws IOException;
 }

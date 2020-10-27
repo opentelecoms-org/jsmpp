@@ -75,10 +75,10 @@ public enum StringParameter {
 	private final int errCode;
 	
 	/**
-	 * @param type
-	 * @param min
-	 * @param max
-	 * @param rangeMinAndMax
+	 * @param type {@link StringType#C_OCTET_STRING} or {@link StringType#OCTET_STRING}
+	 * @param min the minimum length
+	 * @param max the maximum length
+	 * @param rangeMinAndMax the range minimum value and maximum value
 	 * @param errCode AKA error code on command_status.
 	 */
 	StringParameter(StringType type, int min, int max, boolean rangeMinAndMax, int errCode) {
@@ -90,21 +90,21 @@ public enum StringParameter {
 	}
 
 	/**
-	 * @return Returns the max.
+	 * @return the maximum value
 	 */
 	public int getMax() {
 		return max;
 	}
 
 	/**
-	 * @return Returns the min.
+	 * @return the minimum value
 	 */
 	public int getMin() {
 		return min;
 	}
 
 	/**
-	 * @return Returns the rangeMinAndMax.
+	 * @return the range minimum value and maximum value
 	 */
 	public boolean isRangeMinAndMax() {
 		return rangeMinAndMax;
@@ -116,7 +116,8 @@ public enum StringParameter {
 	
 	/**
 	 * Get the corresponding error code if the rule has broken.
-	 * @return
+	 *
+	 * @return the corresponding error code
 	 */
 	public int getErrCode() {
 		return errCode;

@@ -42,7 +42,7 @@ public interface ServerResponseHandler extends GenericServerResponseHandler {
     
     SubmitMultiResult processSubmitMulti(SubmitMulti submitMulti) throws ProcessRequestException;
     
-    void sendSubmitMultiResponse(SubmitMultiResult submiitMultiResult,
+    void sendSubmitMultiResponse(SubmitMultiResult submitMultiResult,
             int sequenceNumber) throws IOException;
     
     QuerySmResult processQuerySm(QuerySm querySm)

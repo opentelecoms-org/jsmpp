@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.bean;
 
@@ -69,7 +69,7 @@ public class AbstractSmCommand extends Command {
     }
 
     /**
-     * Specific Features.
+     * Set the UDHI in the ESMClass
      */
     public void setUdhi() {
         esmClass = composeUdhi(esmClass);
@@ -78,14 +78,14 @@ public class AbstractSmCommand extends Command {
     /**
      * Specific Features.
      *
-     * @return
+     * @return {@code true} if the {@link ESMClass} of the command has Reply Path set; {@code false} otherwise.
      */
     public boolean isReplyPath() {
         return isReplyPath(esmClass);
     }
 
     /**
-     * Specific Features.
+     * Set the Reply Path in the ESMClass
      */
     public void setReplyPath() {
         esmClass = composeReplyPath(esmClass);
@@ -94,7 +94,7 @@ public class AbstractSmCommand extends Command {
     /**
      * Specific Features.
      *
-     * @return
+     * @return {@code true} if the {@link ESMClass} of the command has UDHI and Reply Path set; {@code false} otherwise.
      */
     public boolean isUdhiAndReplyPath() {
         return isUdhiAndReplyPath(esmClass);
@@ -108,14 +108,14 @@ public class AbstractSmCommand extends Command {
     }
 
     /**
-     * @return the dataCoding
+     * @return the data coding scheme
      */
     public byte getDataCoding() {
         return dataCoding;
     }
 
     /**
-     * @param dataCoding the dataCoding to set
+     * @param dataCoding the data coding scheme to set
      */
     public void setDataCoding(byte dataCoding) {
         this.dataCoding = dataCoding;
@@ -237,8 +237,8 @@ public class AbstractSmCommand extends Command {
     /**
      * Message Type. Default message Type.
      *
-     * @param esmClass
-     * @return <tt>true</tt> if esmClass indicate delivery receipt
+     * @param esmClass the ESMClass
+     * @return {@code true} if esmClass indicates delivery receipt
      */
     public static boolean isDefaultMessageType(byte esmClass) {
         return isMessageType(esmClass, SMPPConstant.ESMCLS_DEFAULT_MESSAGE_TYPE);
@@ -247,18 +247,18 @@ public class AbstractSmCommand extends Command {
     /**
      * Message Type. Compose the esm_class as with default message Type.
      *
-     * @param esmClass
-     * @return
+     * @param esmClass the ESMClass
+     * @return the modified ESMClass as {@code byte}
      */
     public static byte composeDefaultMessageType(byte esmClass) {
         return cleanMessageType(esmClass);
     }
 
     /**
-     * Specific Features.
+     * Check the ESM Class for the UDHI bit.
      *
-     * @param esmClass
-     * @return
+     * @param esmClass the ESM Class byte to examine
+     * @return {@code true} if the esmClass parameter indicates the User Data Header Indicator (UDHI)
      */
     public static boolean isUdhi(byte esmClass) {
         return isSpecificFeatures(esmClass,
@@ -266,10 +266,10 @@ public class AbstractSmCommand extends Command {
     }
 
     /**
-     * Specific Features.
+     * Set the UDHI bit in the ESM Class.
      *
-     * @param esmClass
-     * @return
+     * @param esmClass the original ESM Class
+     * @return the modified ESMClass as {@code byte}
      */
     public static byte composeUdhi(byte esmClass) {
         return composeSpecificFeatures(esmClass,
@@ -277,30 +277,30 @@ public class AbstractSmCommand extends Command {
     }
 
     /**
-     * Specific Features.
+     * Check the ESM Class for the Reply Path feature.
      *
-     * @param esmClass
-     * @return
+     * @param esmClass the ESM class byte to examine
+     * @return {@code true} if the ESM class parameter indicates an Reply Path feature
      */
     public static boolean isReplyPath(byte esmClass) {
         return isSpecificFeatures(esmClass, SMPPConstant.ESMCLS_REPLY_PATH);
     }
 
     /**
-     * Specific Features.
+     * Set the Reply Path feature in the ESM class.
      *
-     * @param esmClass
-     * @return the esmClass with Reply Path
+     * @param esmClass the original ESM class
+     * @return the modified ESM Class with Reply Path
      */
     public static byte composeReplyPath(byte esmClass) {
         return composeSpecificFeatures(esmClass, SMPPConstant.ESMCLS_REPLY_PATH);
     }
 
     /**
-     * Specific Features.
+     * Check the ESM Class for the UDHI and Reply Path features.
      *
-     * @param esmClass
-     * @return if the esmClass has User Data Header Indicator and Reply Path
+     * @param esmClass the ESM class byte to examine
+     * @return {@code true} if the ESM class has User Data Header Indicator and Reply Path
      */
     public static boolean isUdhiAndReplyPath(byte esmClass) {
         return isSpecificFeatures(esmClass, SMPPConstant.ESMCLS_UDHI_REPLY_PATH);
@@ -309,8 +309,8 @@ public class AbstractSmCommand extends Command {
     /**
      * Specific Features.
      *
-     * @param esmClass
-     * @return the esmClass with User Data Header Indicator and Reply Path
+     * @param esmClass the original ESM class
+     * @return The modified ESM class with User Data Header Indicator and Reply Path features set.
      */
     public static byte composeUdhiAndReplyPath(byte esmClass) {
         return composeSpecificFeatures(esmClass,
@@ -330,8 +330,8 @@ public class AbstractSmCommand extends Command {
      * Compose the Messaging Mode. Messaging Mode encoded on ESM Class at bits 1 -
      * 0.
      *
-     * @param esmClass current/old ESM class.
-     * @param messagingModeValue
+     * @param esmClass original ESM class.
+     * @param messagingModeValue the messaging mode bits to set
      * @return the encoded messaging mode at ESM class
      */
     protected final static byte composeMessagingMode(byte esmClass,
@@ -342,8 +342,8 @@ public class AbstractSmCommand extends Command {
     /**
      * Clean the Messaging Mode or clean the ESM Class at bits 1 - 0.
      *
-     * @param esmClass
-     * @return the esmClass without the Messaging Mode bits
+     * @param esmClass the original ESM class
+     * @return the ESM class without the Messaging Mode bits
      */
     protected final static byte cleanMessagingMode(byte esmClass) {
         /*
@@ -364,12 +364,11 @@ public class AbstractSmCommand extends Command {
     }
 
     /**
-     * Compose the Message Type. Message Type encoded on ESM Class at bits 5 -
-     * 2.
+     * Compose the Message Type. Message Type encoded on ESM Class at bits 5 - 2.
      *
-     * @param esmClass
-     * @param messageTypeValue
-     * @return
+     * @param esmClass the original ESM class
+     * @param messageTypeValue the message type to be set in the ESM class
+     * @return the modified ESM class as {@code byte}
      */
     protected final static byte composeMessageType(byte esmClass,
             byte messageTypeValue) {
@@ -379,8 +378,8 @@ public class AbstractSmCommand extends Command {
     /**
      * Clean the Message Type or clean the ESM Class at bits 5 - 2.
      *
-     * @param esmClass
-     * @return
+     * @param esmClass the original ESM class
+     * @return the modified ESM class as {@code byte}
      */
     protected final static byte cleanMessageType(byte esmClass) {
         /*
@@ -401,12 +400,11 @@ public class AbstractSmCommand extends Command {
     }
 
     /**
-     * Compose Specific Features. Specific Features encoded on ESM Class at bits
-     * 7 - 6.
+     * Compose Specific Features. Specific Features encoded on ESM Class at bits 7 - 6.
      *
-     * @param esmClass
-     * @param specificFeaturesValue
-     * @return
+     * @param esmClass the original ESM class
+     * @param specificFeaturesValue the specific features to set
+     * @return the modified ESM class as {@code byte}
      */
     protected final static byte composeSpecificFeatures(byte esmClass,
             byte specificFeaturesValue) {
@@ -416,8 +414,8 @@ public class AbstractSmCommand extends Command {
     /**
      * Clean the Specific Features or ESM Class at bits 7 - 6.
      *
-     * @param esmClass
-     * @return
+     * @param esmClass the original ESM class
+     * @return the modified ESM class as {@code byte}
      */
     protected final static byte cleanSpecificFeatures(byte esmClass) {
         /*
@@ -428,15 +426,12 @@ public class AbstractSmCommand extends Command {
         return (byte)(esmClass & 0x3f);
     }
 
-    /*
-     * SMSC Delivert Receipt.
-     */
     /**
-     * SMSC Delivery Receipt.
+     * Check SMSC Delivery Receipt for receipt value.
      *
-     * @param registeredDelivery
-     * @param smscDeliveryReceiptValue
-     * @return
+     * @param registeredDelivery the registered delivery
+     * @param smscDeliveryReceiptValue the SMSC Delivery Receipt to check for
+     * @return {@code true} if the registered delivery has the SMSC Delivery Receipt value set
      */
     protected static final boolean isSmscDeliveryReceipt(
             byte registeredDelivery, byte smscDeliveryReceiptValue) {
@@ -457,9 +452,9 @@ public class AbstractSmCommand extends Command {
     /**
      * SME originated Acknowledgement.
      *
-     * @param registeredDelivery
-     * @param smeOriginatedAckValue
-     * @return
+     * @param registeredDelivery the registered delivery
+     * @param smeOriginatedAckValue the SME Originated Ack to check for
+     * @return {@code true} if the registered delivery has the SME Originated Ack value set
      */
     protected static final boolean isSmeAck(byte registeredDelivery,
             byte smeOriginatedAckValue) {

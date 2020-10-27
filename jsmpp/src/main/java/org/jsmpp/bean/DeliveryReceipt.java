@@ -343,11 +343,9 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
      * @param source the original source id:IIIIIIIIII sub:SSS dlvrd:DDD submit
      *        date:YYMMDDhhmm done date:YYMMDDhhmm stat:DDDDDDD err:E
      *        Text:....................
-     * @return the value of specified attribute.
-     * @throws IndexOutOfBoundsException
+     * @return the value of specified attribute
      */
-    private static String getDeliveryReceiptValue(String attrName, String source)
-            throws IndexOutOfBoundsException {
+    private static String getDeliveryReceiptValue(String attrName, String source) {
         String tmpAttr = attrName + ":";
         int startIndex = source.indexOf(tmpAttr);
         if (startIndex < 0) {
@@ -362,6 +360,9 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
     }
     
     /**
+     * Converts the date string to a {@link Date} object.
+     *
+     * <p>
      * YYMMDDhhmm where:
      * <ul>
      * <li>YY = last two digits of the year (00-99)</li>
@@ -373,11 +374,10 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
      * 
      * Java format is (yyMMddHHmm).
      * 
-     * @param date in <tt>String</tt> format.
-     * @return
-     * @throws NumberFormatException if there is contains non number on
-     *         <code>date</code> parameter.
-     * @throws IndexOutOfBoundsException if the date length in <tt>String</tt>
+     * @param date in {@code String} with YYMMDDhhmm format.
+     * @return the Date object
+     * @throws NumberFormatException if {@code date} parameter contains non-number.
+     * @throws IndexOutOfBoundsException if the date length in {@code }String}
      *         format is less than 10.
      */
     private static Date string2Date(String date) {
@@ -411,9 +411,8 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
     }
     
     /**
-     * @param source
-     * @return
-     * @throws IndexOutOfBoundsException
+     * @param source The Delivery Receipt string.
+     * @return The text value in the delivery receipt.
      */
     private static String getDeliveryReceiptTextValue(String source) {
         String tmpAttr = DeliveryReceipt.DELREC_TEXT + ":";

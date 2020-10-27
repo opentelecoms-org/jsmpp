@@ -19,13 +19,12 @@ import java.io.IOException;
 import org.jsmpp.bean.Bind;
 
 /**
- * <tt>ResponseHandler</tt> provide interface to handle response of the session
+ * {@code ResponseHandler} provide interface to handle response of the session
  * routines.
  * 
  * @author uudashr
  * @version 1.0
  * @since 2.0
- * 
  */
 public interface OutboundResponseHandler extends GenericServerResponseHandler {
 
@@ -34,7 +33,9 @@ public interface OutboundResponseHandler extends GenericServerResponseHandler {
     /**
      * Response by sending <b>DELIVER_SM_RESP</b> to SMSC.
      *
+     * @param commandStatus the command status.
      * @param sequenceNumber is the sequence number of original <b>DELIVER_SM</b> request.
+     * @param messageId the message_id.
      * @throws IOException if an IO error occur.
      */
     void sendDeliverSmResp(int commandStatus, int sequenceNumber, String messageId) throws IOException;

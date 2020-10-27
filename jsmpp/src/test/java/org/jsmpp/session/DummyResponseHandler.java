@@ -76,7 +76,7 @@ class DummyResponseHandler implements ServerResponseHandler {
         return null;
     }
     
-    public void sendSubmitMultiResponse(SubmitMultiResult submiitMultiResult,
+    public void sendSubmitMultiResponse(SubmitMultiResult submitMultiResult,
             int sequenceNumber) throws IOException {
     }
     

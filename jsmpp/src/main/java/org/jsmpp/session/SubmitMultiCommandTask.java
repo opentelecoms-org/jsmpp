@@ -80,7 +80,7 @@ public class SubmitMultiCommandTask extends AbstractSendCommandTask {
     
     public void executeTask(OutputStream out, int sequenceNumber)
             throws PDUException, IOException {
-        pduSender.sendSubmiMulti(out, sequenceNumber, serviceType,
+        pduSender.sendSubmitMulti(out, sequenceNumber, serviceType,
                 sourceAddrTon, sourceAddrNpi, sourceAddr, destinationAddresses,
                 esmClass, protocolId, priorityFlag, scheduleDeliveryTime,
                 validityPeriod, registeredDelivery, replaceIfPresentFlag,

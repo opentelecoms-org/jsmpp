@@ -84,45 +84,51 @@ public final class StringValidator {
     /**
      * Validate the C-Octet String.
      * 
-     * @param value
-     * @param maxLength
-     * @return
+     * @param value the {@code String} to check
+     * @param maxLength the maximum length of the value parameter
+     * @return {@code true} if the value's length is accepted; {@code false} otherwise.
      */
     static boolean isCOctetStringValid(String value, int maxLength) {
-        if (value == null)
+        if (value == null) {
             return true;
-        if (value.length() >= maxLength)
+        }
+        if (value.length() >= maxLength) {
             return false;
+        }
         return true;
-
     }
 
+    /**
+     * Validate the C-Octet bytes.
+     *
+     * @param value the bytes to check
+     * @param maxLength the maximum length of the value parameter
+     * @return {@code true} if the value's length is accepted; {@code false} otherwise.
+     */
     static boolean isCOctetStringValid(byte[] value, int maxLength) {
-        if (value == null)
+        if (value == null) {
             return true;
-        if (value.length >= maxLength)
+        }
+        if (value.length >= maxLength) {
             return false;
+        }
         return true;
-
     }
 
     /**
      * Validate the C-Octet String
      * 
-     * @param value
-     * @param length
-     * @return
+     * @param value the {@code String} to check
+     * @param length the length of bytes
+     * @return {@code true} if the value's length is accepted; {@code false} otherwise.
      */
-    static boolean isCOctetStringNullOrNValValid(String value,
-            int length) {
+    static boolean isCOctetStringNullOrNValValid(String value, int length) {
         if (value == null) {
             return true;
         }
-        
         if (value.length() == 0) {
             return true;
         }
-        
         if (value.length() == length - 1) {
             return true;
         }
@@ -131,10 +137,12 @@ public final class StringValidator {
 
     static boolean isCOctetStringNullOrNValValid(byte[] value,
             int length) {
-        if (value == null)
+        if (value == null) {
             return true;
-        if (value.length == 0)
+        }
+        if (value.length == 0) {
             return true;
+        }
         if (value.length == length - 1) {
             return true;
         }
@@ -144,23 +152,34 @@ public final class StringValidator {
     /**
      * Validate the Octet String
      * 
-     * @param value
-     * @param maxLength
-     * @return
+     * @param value the {@code String} to check
+     * @param maxLength the maximum length of the value parameter
+     * @return {@code true} if the value's length is accepted; {@code false} otherwise.
      */
     static boolean isOctetStringValid(String value, int maxLength) {
-        if (value == null)
+        if (value == null) {
             return true;
-        if (value.length() > maxLength)
+        }
+        if (value.length() > maxLength) {
             return false;
+        }
         return true;
     }
 
+    /**
+     * Validate the Octet String
+     *
+     * @param value the {@code byte[]} to check
+     * @param maxLength the maximum length of the value parameter
+     * @return {@code true} if the value's length is accepted; {@code false} otherwise.
+     */
     static boolean isOctetStringValid(byte[] value, int maxLength) {
-        if (value == null)
+        if (value == null) {
             return true;
-        if (value.length > maxLength)
+        }
+        if (value.length > maxLength) {
             return false;
+        }
         return true;
     }
 }

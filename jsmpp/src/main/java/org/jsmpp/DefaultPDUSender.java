@@ -399,7 +399,7 @@ public class DefaultPDUSender implements PDUSender {
         return b;
     }
 
-    public byte[] sendSubmiMulti(OutputStream os, int sequenceNumber,
+    public byte[] sendSubmitMulti(OutputStream os, int sequenceNumber,
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             DestinationAddress[] destinationAddresses, ESMClass esmClass,

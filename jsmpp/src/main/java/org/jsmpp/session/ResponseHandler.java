@@ -31,18 +31,20 @@ import org.jsmpp.extra.ProcessRequestException;
 public interface ResponseHandler extends BaseResponseHandler {
 
     /**
-     * Process the deliver
+     * Process the deliver sm
      * 
      * @param deliverSm the deliver short message object
-     * @throws ProcessRequestException
+     * @throws ProcessRequestException if there is a failure when processing the deliver_sm
      */
     void processDeliverSm(DeliverSm deliverSm)
             throws ProcessRequestException;
 
     /**
      * Response by sending <b>DELIVER_SM_RESP</b> to SMSC.
-     * 
+     *
+     * @param commandStatus the command status
      * @param sequenceNumber the sequence number of original <b>DELIVER_SM</b> request
+     * @param messageId the message_id
      * @throws IOException if an input or output error occurred
      */
     void sendDeliverSmResp(int commandStatus, int sequenceNumber, String messageId) throws IOException;
@@ -50,7 +52,7 @@ public interface ResponseHandler extends BaseResponseHandler {
     /**
      * Process the alert notification
      *
-     * @param alertNotification the alert notification object
+     * @param alertNotification the alert_notification object
      */
     void processAlertNotification(AlertNotification alertNotification);
 }

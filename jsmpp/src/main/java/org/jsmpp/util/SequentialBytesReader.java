@@ -56,7 +56,9 @@ class SequentialBytesReader {
     }
 
     /**
-     * @return <tt>String</tt> value. Nullable.
+     * Read C-Octet string from bytes.
+     *
+     * @return {@code String} value. Nullable.
      */
     public String readCString() {
         // TODO uudashr: we can do some improvement here
@@ -74,8 +76,9 @@ class SequentialBytesReader {
     }
 
     public byte[] readBytes(int length) {
-        if (length == 0)
+        if (length == 0) {
             return new byte[0];
+        }
         byte[] data = new byte[length];
         System.arraycopy(bytes, cursor, data, 0, length);
         cursor += length;
@@ -87,12 +90,13 @@ class SequentialBytesReader {
     }
 
     /**
-     * @param length
-     * @return <tt>String</tt> value. Nullable.
+     * @param length The number of bytes to read.
+     * @return {@code String} value. Nullable.
      */
     public String readString(int length) {
-        if (length == 0)
+        if (length == 0) {
             return null;
+        }
         String val = new String(bytes, cursor, length);
         cursor += length;
         return val;
@@ -105,8 +109,8 @@ class SequentialBytesReader {
     }
 
     /**
-     * @param length
-     * @return <tt>String</tt> value. Nullable.
+     * @param length The number of bytes to read.
+     * @return {@code String} value. Nullable.
      */
     public String readString(byte length) {
         /*

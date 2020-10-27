@@ -136,11 +136,10 @@ public class PDUByteBuffer {
     }
 
     /**
-     * Append <tt>String</tt> value.
+     * Append {@code String} value and optionally append a null byte.
      * 
-     * @param stringValue
-     * @param nullTerminated <tt>true<tt> means C-Octet String. 
-     *      The default value is <tt>true</tt>.
+     * @param stringValue The {@code String} value to append.
+     * @param nullTerminated {@code true} means C-Octet String. The default value is {@code true}.
      * @return the latest length of the buffer.
      */
     public int append(String stringValue, boolean nullTerminated) {
@@ -164,7 +163,7 @@ public class PDUByteBuffer {
     /**
      * Append an optional parameter.
      * 
-     * @param optionalParameter is the optional parameter.
+     * @param optionalParameter The optional parameters.
      * @return the latest length of the buffer.
      */
     public int append(OptionalParameter optionalParameter) {
@@ -174,7 +173,7 @@ public class PDUByteBuffer {
     /**
      * Append all optional parameters.
      * 
-     * @param optionalParameters is the optional parameters.
+     * @param optionalParameters The optional parameters.
      * @return the latest length of the buffer.
      */
     public int appendAll(OptionalParameter[] optionalParameters) {

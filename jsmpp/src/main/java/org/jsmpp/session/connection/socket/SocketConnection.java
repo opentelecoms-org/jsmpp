@@ -26,8 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author uudashr
+ * The Socket implementation of {@link Connection}.
  *
+ * @author uudashr
  */
 public class SocketConnection implements Connection {
 	private static final Logger logger = LoggerFactory.getLogger(SocketConnection.class);
@@ -48,6 +49,12 @@ public class SocketConnection implements Connection {
         this.out = socket.getOutputStream();
     }
 
+    /**
+     * Enable/disable the socket timeout with the specified timeout, in milliseconds.
+     *
+     * @param timeout the specified timeout, in milliseconds.
+     * @throws IOException if there is an error in the underlying protocol, such as a TCP error.
+     */
     @Override
     public void setSoTimeout(int timeout) throws IOException {
         socket.setSoTimeout(timeout);

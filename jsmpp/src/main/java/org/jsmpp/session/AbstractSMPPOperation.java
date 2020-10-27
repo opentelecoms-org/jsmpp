@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author uudashr
- *
  */
 public abstract class AbstractSMPPOperation implements SMPPOperation {
     private static final Logger logger = LoggerFactory.getLogger(AbstractSMPPOperation.class);
@@ -73,14 +72,14 @@ public abstract class AbstractSMPPOperation implements SMPPOperation {
     /**
      * Execute send command command task.
      *
-     * @param task is the task.
-     * @param timeout is the timeout in millisecond.
+     * @param task the send command task.
+     * @param timeout the timeout in milliseconds
      * @return the command response.
      * @throws PDUException if there is invalid PDU parameter found.
-     * @throws ResponseTimeoutException if the response has reach it timeout.
+     * @throws ResponseTimeoutException if the response has reached it's timeout.
      * @throws InvalidResponseException if invalid response found.
      * @throws NegativeResponseException if the negative response found.
-     * @throws IOException if there is an IO error found.
+     * @throws IOException if an input or output error occurs.
      */
     protected Command executeSendCommand(SendCommandTask task, long timeout)
             throws PDUException, ResponseTimeoutException,

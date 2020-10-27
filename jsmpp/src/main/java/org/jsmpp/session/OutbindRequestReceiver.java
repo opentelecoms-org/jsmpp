@@ -35,7 +35,7 @@ class OutbindRequestReceiver {
   /**
    * Wait until the outbind request received for specified timeout.
    *
-   * @param timeout is the timeout.
+   * @param timeout is the timeout in milliseconds.
    * @return the {@link OutbindRequest}.
    * @throws IllegalStateException if this method already called before.
    * @throws TimeoutException      if the timeout has been reach.

@@ -126,9 +126,9 @@ public class CustomDeliveryReceipt implements DeliveryReceiptInterface<CustomDel
    *
    * Java format is (yyMMddHHmm).
    *
-   * @param date in <tt>String</tt> format.
+   * @param date in {@code String} format.
    * @throws NumberFormatException     if there is contains non number on <code>date</code> parameter.
-   * @throws IndexOutOfBoundsException if the date length in <tt>String</tt> format is less than 10.
+   * @throws IndexOutOfBoundsException if the date length in {@code String} format is less than 10.
    */
   private static Date string2Date(String date) {
     int year = Integer.parseInt(date.substring(0, 2));

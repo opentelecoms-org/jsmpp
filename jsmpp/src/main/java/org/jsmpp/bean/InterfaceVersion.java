@@ -56,12 +56,12 @@ public enum InterfaceVersion {
     }
 
     /**
-     * Get the <tt>InterfaceVersion</tt> by specified value.
+     * Get the {@code InterfaceVersion} by specified value.
      * 
      * @param value is the value associated by the enum constant.
-     * @return the enum const associated with specified <tt>value</tt>.
-     * @throws IllegalArgumentException if there is <tt>InterfaceVersion</tt>
-     *         associated with specified <tt>value</tt>.
+     * @return the enum const associated with specified {@code value}.
+     * @throws IllegalArgumentException if there is {@code InterfaceVersion}
+     *         associated with specified {@code value}.
      */
     public static InterfaceVersion valueOf(byte value)
             throws IllegalArgumentException {

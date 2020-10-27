@@ -65,7 +65,10 @@ public class DataCodingFactory00xx extends AbstractDataCodingFactory {
     }
     
     /**
-     * @deprecated use {@link #DataCodings.containsMessageClass(byte dataCoding)}
+     * @param dataCoding the data coding scheme
+     * @return {@code true} if the data coding contains a message class
+     *
+     * @deprecated use {@link DataCodings#containsMessageClass(byte dataCoding)}
      */
     @Deprecated
     public boolean isContainMessageClass(byte dataCoding) {

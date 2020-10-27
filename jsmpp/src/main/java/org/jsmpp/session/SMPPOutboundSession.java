@@ -62,7 +62,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This is an object that used to communicate with an ESME. It hide
- * all un-needed SMPP operation that might harm if the user code use it such as :
+ * all un-needed SMPP operation that might harm if the user code use it such as:
+ *
  * <ul>
  * <li>DELIVER_SM_RESP, should be called only as response to DELIVER_SM</li>
  * <li>UNBIND_RESP, should be called only as response to UNBIND_RESP</li>
@@ -139,6 +140,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
    * @param port     is the ESME listen port.
    * @param systemId is the system id.
    * @param password is the password.
+   * @return the received bind request
    * @throws IOException if there is an IO error found.
    */
   @Override
@@ -155,6 +157,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
    * @param systemId is the system id.
    * @param password is the password.
    * @param timeout  is the timeout.
+   * @return the received bind request
    * @throws IOException if there is an IO error found.
    */
   @Override
@@ -224,7 +227,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
   /**
    * Wait for bind request.
    *
-   * @param timeout is the timeout.
+   * @param timeout is the timeout in milliseconds.
    * @return the {@link BindRequest}.
    * @throws IllegalStateException if this invocation of this method has been made or invoke when state is not OPEN.
    * @throws TimeoutException      if the timeout has been reach and {@link SMPPServerSession} are no more valid because

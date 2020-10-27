@@ -6,7 +6,6 @@ package org.jsmpp.extra;
  * @author uudashr
  * @version 1.0
  * @since 1.0
- * 
  */
 public enum SessionState {
 
@@ -50,7 +49,7 @@ public enum SessionState {
     /**
      * Check whether the session state is bound.
      * 
-     * @return <tt>true</tt> if session state is bound state
+     * @return {@code true} if session state is bound state
      */
     public boolean isBound() {
         return equals(BOUND_RX) || equals(BOUND_TX) || equals(BOUND_TRX);
@@ -59,7 +58,7 @@ public enum SessionState {
     /**
      * Check whether the session state is transmittable.
      * 
-     * @return <tt>true</tt> if session is transmittable.
+     * @return {@code true} if session is transmittable.
      */
     public boolean isTransmittable() {
         return equals(BOUND_TX) || equals(BOUND_TRX);
@@ -68,7 +67,7 @@ public enum SessionState {
     /**
      * Check whether the session state is receivable.
      * 
-     * @return <tt>true</tt> if session is receivable.
+     * @return {@code true} if session is receivable.
      */
     public boolean isReceivable() {
         return equals(BOUND_RX) || equals(BOUND_TRX);

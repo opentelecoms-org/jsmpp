@@ -447,7 +447,7 @@ public interface PDUSender {
      * @throws InvalidNumberOfDestinationsException if an invalid number of destinations in destinationAddresses are existing
      * @throws IOException if an input or output error occurred
      */
-    byte[] sendSubmiMulti(OutputStream os, int sequenceNumber,
+    byte[] sendSubmitMulti(OutputStream os, int sequenceNumber,
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             DestinationAddress[] destinationAddresses, ESMClass esmClass,
