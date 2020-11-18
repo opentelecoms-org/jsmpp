@@ -52,7 +52,7 @@ public class SubmitMultipartMultilangualExample {
 
 	private static final int MAX_MULTIPART_MSG_SEGMENT_SIZE_UCS2 = 134;
 	private static final int MAX_SINGLE_MSG_SEGMENT_SIZE_UCS2 = 70;
-	private static final int MAX_MULTIPART_MSG_SEGMENT_SIZE_7BIT = 154;
+	private static final int MAX_MULTIPART_MSG_SEGMENT_SIZE_7BIT = 153;
 	private static final int MAX_SINGLE_MSG_SEGMENT_SIZE_7BIT = 160;
 
 	private class SessionStateListenerImpl implements SessionStateListener {
