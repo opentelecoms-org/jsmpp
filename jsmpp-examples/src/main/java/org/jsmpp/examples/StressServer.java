@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.examples;
 
@@ -55,6 +55,7 @@ import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
 import org.jsmpp.util.AbsoluteTimeFormatter;
 import org.jsmpp.util.DeliveryReceiptState;
+import org.jsmpp.util.HexUtil;
 import org.jsmpp.util.MessageIDGenerator;
 import org.jsmpp.util.MessageId;
 import org.jsmpp.util.RandomMessageIDGenerator;
@@ -79,12 +80,12 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
     private final AtomicInteger requestCounter = new AtomicInteger();
     private int processorDegree;
     private int port;
-    
+
     public StressServer(int port, int processorDegree) {
         this.port = port;
         this.processorDegree = processorDegree;
     }
-    
+
     public void run() {
         try {
             SMPPServerSessionListener sessionListener = new SMPPServerSessionListener(port);
@@ -102,7 +103,7 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
             LOGGER.error("I/O error occurred", e);
         }
     }
-    
+
     public QuerySmResult onAcceptQuerySm(QuerySm querySm,
             SMPPServerSession source) throws ProcessRequestException {
         String finalDate = timeFormatter.format(new Date());
@@ -110,15 +111,24 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
         QuerySmResult querySmResult = new QuerySmResult(finalDate, MessageState.DELIVERED, (byte)0x00);
         return querySmResult;
     }
-    
+
     public MessageId onAcceptSubmitSm(SubmitSm submitSm,
             SMPPServerSession source) throws ProcessRequestException {
         MessageId messageId = messageIDGenerator.newMessageId();
-        LOGGER.info("Receiving submit_sm {}, and return message id {}", new String(submitSm.getShortMessage()), messageId.getValue());
+        byte[] shortMessage = submitSm.getShortMessage();
+        if (submitSm.isUdhi()) {
+            int udhl = (shortMessage[0] & 0xff);
+            LOGGER.info("Receiving submit_sm {} {}, return message id {}",
+                HexUtil.convertBytesToHexString(shortMessage, 0, 1 + udhl),
+                new String(shortMessage, 1+udhl,shortMessage.length - udhl - 1),
+                messageId.getValue());
+        } else {
+            LOGGER.info("Receiving submit_sm {}, return message id {}", new String(submitSm.getShortMessage()), messageId.getValue());
+        }
         requestCounter.incrementAndGet();
         return messageId;
     }
-    
+
     public SubmitMultiResult onAcceptSubmitMulti(SubmitMulti submitMulti,
             SMPPServerSession source) throws ProcessRequestException {
         MessageId messageId = messageIDGenerator.newMessageId();
@@ -127,7 +137,7 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
         SubmitMultiResult submitMultiResult = new SubmitMultiResult(messageId.getValue());
         return submitMultiResult;
     }
-    
+
     public DataSmResult onAcceptDataSm(DataSm dataSm, Session source)
             throws ProcessRequestException {
         MessageId messageId = messageIDGenerator.newMessageId();
@@ -137,29 +147,29 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
         DataSmResult dataSmResult = new DataSmResult(messageId, new OptionalParameter[]{});
         return dataSmResult;
     }
-    
+
     public void onAcceptCancelSm(CancelSm cancelSm, SMPPServerSession source)
             throws ProcessRequestException {
         LOGGER.warn("CancelSm not implemented");
         throw new ProcessRequestException(CANCELSM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RCANCELFAIL);
     }
-    
+
     public void onAcceptReplaceSm(ReplaceSm replaceSm, SMPPServerSession source)
             throws ProcessRequestException {
         LOGGER.warn("ReplaceSm not implemented");
         throw new ProcessRequestException(REPLACESM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RREPLACEFAIL);
     }
-    
+
     private class SessionStateListenerImpl implements SessionStateListener {
         public void onStateChange(SessionState newState, SessionState oldState, Session source) {
             SMPPServerSession session = (SMPPServerSession)source;
             LOGGER.info("New state of {} is {}" , session.getSessionId(), newState);
         }
     }
-    
+
     private class WaitBindTask implements Runnable {
         private final SMPPServerSession serverSession;
-        
+
         public WaitBindTask(SMPPServerSession serverSession) {
             this.serverSession = serverSession;
         }
@@ -183,12 +193,12 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
             }
         }
     }
-    
+
     private class DeliveryReceiptTask implements Runnable {
         private final SMPPServerSession session;
         private final SubmitSm submitSm;
         private MessageId messageId;
-        
+
         public DeliveryReceiptTask(SMPPServerSession session, SubmitSm submitSm, MessageId messageId) {
             this.session = session;
             this.submitSm = submitSm;
@@ -203,21 +213,21 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
             }
             String stringValue = Integer.valueOf(messageId.getValue(), 16).toString();
             try {
-                
+
                 DeliveryReceipt delRec = new DeliveryReceipt(stringValue, 1, 1, new Date(), new Date(), DeliveryReceiptState.DELIVRD,  null, new String(submitSm.getShortMessage()));
                 session.deliverShortMessage(
-                        "mc", 
-                        TypeOfNumber.valueOf(submitSm.getDestAddrTon()), 
-                        NumberingPlanIndicator.valueOf(submitSm.getDestAddrNpi()), 
-                        submitSm.getDestAddress(), 
-                        TypeOfNumber.valueOf(submitSm.getSourceAddrTon()), 
-                        NumberingPlanIndicator.valueOf(submitSm.getSourceAddrNpi()), 
-                        submitSm.getSourceAddr(), 
-                        new ESMClass(MessageMode.DEFAULT, MessageType.SMSC_DEL_RECEIPT, GSMSpecificFeature.DEFAULT), 
-                        (byte)0, 
-                        (byte)0, 
-                        new RegisteredDelivery(0), 
-                        DataCodings.ZERO, 
+                        "mc",
+                        TypeOfNumber.valueOf(submitSm.getDestAddrTon()),
+                        NumberingPlanIndicator.valueOf(submitSm.getDestAddrNpi()),
+                        submitSm.getDestAddress(),
+                        TypeOfNumber.valueOf(submitSm.getSourceAddrTon()),
+                        NumberingPlanIndicator.valueOf(submitSm.getSourceAddrNpi()),
+                        submitSm.getSourceAddr(),
+                        new ESMClass(MessageMode.DEFAULT, MessageType.SMSC_DEL_RECEIPT, GSMSpecificFeature.DEFAULT),
+                        (byte)0,
+                        (byte)0,
+                        new RegisteredDelivery(0),
+                        DataCodings.ZERO,
                         delRec.toString().getBytes());
                 LOGGER.debug("Sending delivery receipt for message id {}: {}", messageId, stringValue);
             } catch (Exception e) {
@@ -240,7 +250,7 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
             }
         }
     }
-    
+
     public static void main(String[] args) {
         PropertyConfigurator.configure(System.getProperty("jsmpp.server.log4jPath", DEFAULT_LOG4J_PATH));
 
@@ -250,7 +260,7 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
         } catch (NumberFormatException e) {
             port = DEFAULT_PORT;
         }
-        
+
         int processorDegree;
         try {
             processorDegree = Integer.parseInt(System.getProperty("jsmpp.server.procDegree",  Integer.toString(DEFAULT_PROCESSOR_DEGREE)));
