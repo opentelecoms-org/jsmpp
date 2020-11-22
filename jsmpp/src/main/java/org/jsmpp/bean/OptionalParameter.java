@@ -122,7 +122,7 @@ public abstract class OptionalParameter {
         @Override
         public String toString()
         {
-            return HexUtil.conventBytesToHexString(OctetUtil.shortToBytes(value));
+            return HexUtil.convertBytesToHexString(OctetUtil.shortToBytes(value));
         }
     }
 
@@ -160,7 +160,7 @@ public abstract class OptionalParameter {
         @Override
         public String toString()
         {
-            return HexUtil.conventBytesToHexString(OctetUtil.intToBytes(value));
+            return HexUtil.convertBytesToHexString(OctetUtil.intToBytes(value));
         }
     }
 
@@ -198,7 +198,7 @@ public abstract class OptionalParameter {
         @Override
         public String toString()
         {
-            return HexUtil.conventBytesToHexString(new byte[] {getValue()});
+            return HexUtil.convertBytesToHexString(new byte[] {getValue()});
         }
     }
 

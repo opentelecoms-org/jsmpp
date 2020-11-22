@@ -52,9 +52,9 @@ public class ConcatenationTest {
     Assert.assertEquals(63, segments[1].length);
     Assert.assertEquals(
         "050003d202014c6f72656d20697073756d20646f6c6f722073697420616d657420656e696d2e20457469616d20756c6c616d636f727065722e2053757370656e646973736520612070656c6c656e746573717565206475692c206e6f6e2066656c69732e204d616563656e6173206d616c65737561646120656c6974206c65637475732066656c69732c206d616c65737561646120756c747269636965732e",
-        HexUtil.conventBytesToHexString(segments[0]));
+        HexUtil.convertBytesToHexString(segments[0]));
     Assert.assertEquals("050003d20202437572616269747572206574206c6967756c612e205574206d6f6c657374696520612c20756c7472696369657320706f7274612075726e612e",
-        HexUtil.conventBytesToHexString(segments[1]));
+        HexUtil.convertBytesToHexString(segments[1]));
     Assert.assertEquals(
         "Lorem ipsum dolor sit amet enim. Etiam ullamcorper. Suspendisse a pellentesque dui, non felis. Maecenas malesuada elit lectus felis, malesuada ultricies.",
         new String(subarray(segments[0], 6), ISO_LATIN_1));
@@ -71,9 +71,9 @@ public class ConcatenationTest {
     Assert.assertEquals(65, segments[1].length);
     Assert.assertEquals(
         "060804d20201004c6f72656d20697073756d20646f6c6f722073697420616d657420656e696d2e20457469616d20756c6c616d636f727065722e2053757370656e646973736520612070656c6c656e746573717565206475692c206e6f6e2066656c69732e204d616563656e6173206d616c65737561646120656c6974206c65637475732066656c69732c206d616c65737561646120756c74726963696573",
-        HexUtil.conventBytesToHexString(segments[0]));
+        HexUtil.convertBytesToHexString(segments[0]));
     Assert.assertEquals("060804d20202002e437572616269747572206574206c6967756c612e205574206d6f6c657374696520612c20756c7472696369657320706f7274612075726e612e",
-        HexUtil.conventBytesToHexString(segments[1]));
+        HexUtil.convertBytesToHexString(segments[1]));
     Assert.assertEquals(
         "Lorem ipsum dolor sit amet enim. Etiam ullamcorper. Suspendisse a pellentesque dui, non felis. Maecenas malesuada elit lectus felis, malesuada ultricies",
         new String(subarray(segments[0], 7), ISO_LATIN_1));
@@ -92,15 +92,15 @@ public class ConcatenationTest {
     Assert.assertEquals(24, segments[3].length);
     Assert.assertEquals(
         "050003d20401004c006f00720065006d00200069007000730075006d00200064006f006c006f0072002000730069007400200061006d0065007400200065006e0069006d002e00200045007400690061006d00200075006c006c0061006d0063006f0072007000650072002e002000530075007300700065006e006400690073007300650020006100200070",
-        HexUtil.conventBytesToHexString(segments[0]));
+        HexUtil.convertBytesToHexString(segments[0]));
     Assert.assertEquals(
         "050003d204020065006c006c0065006e0074006500730071007500650020006400750069002c0020006e006f006e002000660065006c00690073002e0020004d0061006500630065006e006100730020006d0061006c00650073007500610064006100200065006c006900740020006c00650063007400750073002000660065006c00690073002c0020006d",
-        HexUtil.conventBytesToHexString(segments[1]));
+        HexUtil.convertBytesToHexString(segments[1]));
     Assert.assertEquals(
         "050003d204030061006c00650073007500610064006100200075006c0074007200690063006900650073002e0043007500720061006200690074007500720020006500740020006c006900670075006c0061002e0020005500740020006d006f006c0065007300740069006500200061002c00200075006c007400720069006300690065007300200070006f",
-        HexUtil.conventBytesToHexString(segments[2]));
+        HexUtil.convertBytesToHexString(segments[2]));
     Assert.assertEquals("050003d20404007200740061002000750072006e0061002e",
-        HexUtil.conventBytesToHexString(segments[3]));
+        HexUtil.convertBytesToHexString(segments[3]));
     Assert.assertEquals(
         "Lorem ipsum dolor sit amet enim. Etiam ullamcorper. Suspendisse a p",
         new String(subarray(segments[0], 6), USC_2));
@@ -123,15 +123,15 @@ public class ConcatenationTest {
     Assert.assertEquals(31, segments[3].length);
     Assert.assertEquals(
         "060804d2040100004c006f00720065006d00200069007000730075006d00200064006f006c006f0072002000730069007400200061006d0065007400200065006e0069006d002e00200045007400690061006d00200075006c006c0061006d0063006f0072007000650072002e002000530075007300700065006e00640069007300730065002000610020",
-        HexUtil.conventBytesToHexString(segments[0]));
+        HexUtil.convertBytesToHexString(segments[0]));
     Assert.assertEquals(
         "060804d204020000700065006c006c0065006e0074006500730071007500650020006400750069002c0020006e006f006e002000660065006c00690073002e0020004d0061006500630065006e006100730020006d0061006c00650073007500610064006100200065006c006900740020006c00650063007400750073002000660065006c00690073002c",
-        HexUtil.conventBytesToHexString(segments[1]));
+        HexUtil.convertBytesToHexString(segments[1]));
     Assert.assertEquals(
         "060804d20403000020006d0061006c00650073007500610064006100200075006c0074007200690063006900650073002e0043007500720061006200690074007500720020006500740020006c006900670075006c0061002e0020005500740020006d006f006c0065007300740069006500200061002c00200075006c0074007200690063006900650073",
-        HexUtil.conventBytesToHexString(segments[2]));
+        HexUtil.convertBytesToHexString(segments[2]));
     Assert.assertEquals("060804d204040000200070006f007200740061002000750072006e0061002e",
-        HexUtil.conventBytesToHexString(segments[3]));
+        HexUtil.convertBytesToHexString(segments[3]));
     Assert.assertEquals(
         "Lorem ipsum dolor sit amet enim. Etiam ullamcorper. Suspendisse a ",
         new String(subarray(segments[0], 7), USC_2));
@@ -152,10 +152,10 @@ public class ConcatenationTest {
     assertEquals(2, segments.length);
     assertEquals(
         "050003d20201546869732069732061206d657373616765207768696368206669747320696e2031353420736570746574732062757420746865206c61737420636861726163746572206973203220736570746574732e205468697320776f756c642066697420696e746f206f6e65207061636b6564206d657373616765206f66203135332073657074657473206f7220313334206f63746574732e2e2e2e",
-        HexUtil.conventBytesToHexString(segments[0]));
+        HexUtil.convertBytesToHexString(segments[0]));
     assertEquals(
         "050003d202023f",
-        HexUtil.conventBytesToHexString(segments[1]));
+        HexUtil.convertBytesToHexString(segments[1]));
     assertEquals(158, segments[0].length);
     assertEquals(7, segments[1].length);
 

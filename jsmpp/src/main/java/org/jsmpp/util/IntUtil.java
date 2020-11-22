@@ -45,6 +45,6 @@ public class IntUtil {
     }
 
     public static final String toHexString(int value) {
-        return HexUtil.conventBytesToHexString(OctetUtil.intToBytes(value));
+        return HexUtil.convertBytesToHexString(OctetUtil.intToBytes(value));
     }
 }
