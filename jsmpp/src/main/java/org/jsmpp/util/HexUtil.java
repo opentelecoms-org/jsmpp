@@ -44,6 +44,19 @@ public class HexUtil {
     }
 
     /**
+     * Convert byte to hex string.
+     *
+     * @param data is the byte.
+     * @return the hex string representation of the byte.
+     */
+    public static String convertByteToHexString(byte data) {
+        StringBuilder stringBuilder = new StringBuilder(2);
+        stringBuilder.append(hexChar[(data >> 4) & 0x0f]);
+        stringBuilder.append(hexChar[data & 0x0f]);
+        return stringBuilder.toString();
+    }
+
+    /**
      * Convert bytes to hex string.
      * 
      * @param data is the bytes.

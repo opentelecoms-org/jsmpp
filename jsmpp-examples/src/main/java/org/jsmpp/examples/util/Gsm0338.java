@@ -29,14 +29,20 @@ public class Gsm0338 {
       '¡', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
       'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ñ', 'Ü', '§',
       '¿', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-      'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ñ', 'ü', 'à',
+      'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ñ', 'ü', 'à'
+  };
+
+  private static final char[] BASIC_CHARS_EXTENSION = {
       // Basic Character Set Extension
       '\f', '^', '{', '}', '\\', '[', '~', ']', '|', '€'
   };
 
+  /**
+   * Verify is the java string consists of only GSM 03.38 characters of the Basic Character Set including the extension
+   */
   public static boolean isBasicEncodeable(String javaString) {
     char[] javaChars = javaString.toCharArray();
-    for(char c: javaChars) {
+    for (char c : javaChars) {
       if (isBasicEncodeable(c)) {
         continue;
       }
@@ -45,13 +51,56 @@ public class Gsm0338 {
     return true;
   }
 
-  public static boolean isBasicEncodeable(char javaChar){
-    for (char basicChar: BASIC_CHARS) {
-      if (basicChar == javaChar) {
+  /**
+   * Verify is the java char is an GSM 03.38 character of the Basic Character Set including the extension
+   */
+  public static boolean isBasicEncodeable(char javaChar) {
+    if (inBasicCharacterSet(javaChar) || inBasicCharacterSetExtension(javaChar)) {
+      return true;
+    }
+    return false;
+  }
+
+  public static boolean inBasicCharacterSet(char javaChar) {
+    for (char extendedChar : BASIC_CHARS) {
+      if (extendedChar == javaChar) {
         return true;
       }
     }
     return false;
+  }
+
+  public static boolean inBasicCharacterSetExtension(char javaChar) {
+    for (char extendedChar : BASIC_CHARS_EXTENSION) {
+      if (extendedChar == javaChar) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Determine the number of GSM 03.38 Basic Character Set (included extension) septets of a Java char.
+   */
+  public static int countSeptets(char c) {
+    if (inBasicCharacterSetExtension(c)) {
+      return 2;
+    }
+    if (inBasicCharacterSet(c)) {
+      return 1;
+    }
+    throw new IllegalArgumentException("Character '" + c + " is not a basic encodeable character");
+  }
+
+  /**
+   * Determine the number of GSM 03.38 Basic Character Set (included extension) septets of a Java string.
+   */
+  public static int countSeptets(String s) {
+    int i = 0;
+    for( char c: s.toCharArray()){
+      i += countSeptets(c);
+    }
+    return i;
   }
 
 }

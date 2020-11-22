@@ -34,9 +34,9 @@ public class GeneralDataCoding implements DataCoding {
     public GeneralDataCoding(Alphabet alphabet) {
         this(alphabet, null);
     }
-    
-    public GeneralDataCoding(Alphabet alphabet, ESMClass esmClass) {
-        this(alphabet, null, false);
+
+    public GeneralDataCoding(Alphabet alphabet, MessageClass messageClass) {
+        this(alphabet, messageClass, false);
     }
 
     /**
