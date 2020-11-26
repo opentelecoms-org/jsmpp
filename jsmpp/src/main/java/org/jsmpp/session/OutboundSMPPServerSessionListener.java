@@ -79,7 +79,7 @@ public class OutboundSMPPServerSessionListener {
         serverConn = serverConnFactory.listen(port, timeout, backlog);
     }
     
-    public int getTimeout(int timeout) throws IOException {
+    public int getTimeout() throws IOException {
         return serverConn.getSoTimeout();
     }
     
