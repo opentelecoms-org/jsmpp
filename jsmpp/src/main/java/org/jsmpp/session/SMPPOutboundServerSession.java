@@ -488,12 +488,12 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
     @Override
     public void onStateChange(SessionState newState, SessionState oldState,
                               Session source) {
-      /*
-       * We need to set SO_TIMEOUT to sessionTimer so when timeout occur,
-       * a SocketTimeoutException will be raised. When Exception raised we
-       * can send an enquireLinkCommand.
-       */
       if (newState.isBound()) {
+        /**
+         * We need to set SO_TIMEOUT to session timer so when timeout occur,
+         * a SocketTimeoutException will be raised. When Exception raised we
+         * can send an enquireLinkCommand.
+         */
         try {
           conn.setSoTimeout(getEnquireLinkTimer());
         } catch (IOException e) {

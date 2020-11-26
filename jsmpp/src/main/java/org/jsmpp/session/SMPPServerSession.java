@@ -111,7 +111,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         this.in = new DataInputStream(conn.getInputStream());
         this.out = conn.getOutputStream();
         enquireLinkSender = new EnquireLinkSender();
-        addSessionStateListener(new BoundStateListener());
+        addSessionStateListener(new BoundSessionStateListener());
         addSessionStateListener(sessionStateListener);
         setPduProcessorDegree(pduProcessorDegree);
         sessionContext.open();
@@ -632,10 +632,20 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         }
     }
     
-    private class BoundStateListener implements SessionStateListener {
+    private class BoundSessionStateListener implements SessionStateListener {
         @Override
         public void onStateChange(SessionState newState, SessionState oldState, Session source) {
             if (newState.isBound()) {
+                /**
+                 * We need to set SO_TIMEOUT to session timer so when timeout occurs,
+                 * a SocketTimeoutException will be raised. When Exception raised we
+                 * can send an enquireLinkCommand.
+                 */
+                try {
+                    connection().setSoTimeout(source.getEnquireLinkTimer());
+                } catch (IOException e) {
+                    logger.error("Failed setting so_timeout for session timer", e);
+                }
                 enquireLinkSender.start();
             }
         }

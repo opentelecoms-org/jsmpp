@@ -711,21 +711,21 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			@Override
 	    public void onStateChange(SessionState newState, SessionState oldState,
 	    		Session source) {
-	        /*
-	         * We need to set SO_TIMEOUT to sessionTimer so when timeout occur, 
-	         * a SocketTimeoutException will be raised. When Exception raised we
-	         * can send an enquireLinkCommand.
-	         */
 	        if (newState.isBound()) {
-	            try {
-                    conn.setSoTimeout(getEnquireLinkTimer());
-                } catch (IOException e) {
-                    logger.error("Failed setting so_timeout for session timer", e);
-                }
+						/**
+						 * We need to set SO_TIMEOUT to session timer so when timeout occurs,
+						 * a SocketTimeoutException will be raised. When Exception raised we
+						 * can send an enquireLinkCommand.
+						 */
+						try {
+	            	conn.setSoTimeout(getEnquireLinkTimer());
+	            } catch (IOException e) {
+	            	logger.error("Failed setting so_timeout for session timer", e);
+	            }
     	        
-               	logger.info("Changing processor degree to {}", getPduProcessorDegree());
-                pduReaderWorker.pduExecutor.setMaximumPoolSize(getPduProcessorDegree());
-                pduReaderWorker.pduExecutor.setCorePoolSize(getPduProcessorDegree());
+              logger.info("Changing processor degree to {}", getPduProcessorDegree());
+              pduReaderWorker.pduExecutor.setMaximumPoolSize(getPduProcessorDegree());
+              pduReaderWorker.pduExecutor.setCorePoolSize(getPduProcessorDegree());
 	        }
 	    }
 	}
