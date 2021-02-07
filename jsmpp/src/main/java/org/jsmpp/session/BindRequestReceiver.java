@@ -40,7 +40,7 @@ class BindRequestReceiver {
     /**
      * Wait until the bind request received for specified timeout.
      * 
-     * @param timeout is the timeout.
+     * @param timeout is the timeout in milliseconds.
      * @return the {@link BindRequest}.
      * @throws IllegalStateException if this method already called before.
      * @throws TimeoutException if the timeout has been reached.

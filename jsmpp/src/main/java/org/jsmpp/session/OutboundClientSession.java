@@ -40,12 +40,13 @@ public interface OutboundClientSession extends Session {
 
   /**
    * Open connection and outbind immediately. The default
-   * timeout is 1 minutes.
+   * timeout is 1 minute.
    *
    * @param host     is the ESME host address.
    * @param port     is the ESME listen port.
    * @param systemId is the system id.
    * @param password is the password.
+   * @return the received bind request
    * @throws IOException if there is an IO error found.
    */
   BindRequest connectAndOutbind(String host, int port,
@@ -60,6 +61,7 @@ public interface OutboundClientSession extends Session {
    * @param systemId is the system id.
    * @param password is the password.
    * @param timeout  is the timeout.
+   * @return the received bind request
    * @throws IOException if there is an IO error found.
    */
   BindRequest connectAndOutbind(String host, int port,

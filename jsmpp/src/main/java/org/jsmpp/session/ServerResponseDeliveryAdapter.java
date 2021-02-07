@@ -23,10 +23,8 @@ import org.jsmpp.bean.SubmitMultiResult;
  * This is alternative from implementing {@link ServerResponseDeliveryListener}.
  * User only have to create subclass of this class and doesn't have to implement
  * all method declared on {@link ServerResponseDeliveryListener}.
- * </p>
  *
  * @author uudashr
- *
  */
 public abstract class ServerResponseDeliveryAdapter implements
         ServerResponseDeliveryListener {

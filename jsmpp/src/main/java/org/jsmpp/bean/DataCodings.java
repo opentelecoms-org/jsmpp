@@ -20,7 +20,6 @@ import java.util.List;
 
 /**
  * @author uudashr
- *
  */
 public final class DataCodings {
 
@@ -62,6 +61,12 @@ public final class DataCodings {
         return new RawDataCoding(dataCoding);
     }
 
+    /**
+     * Check if the Data Coding has the message class bit set
+     *
+     * @param dataCoding the data coding scheme
+     * @return {@code true} if the data coding contains a message class
+     */
     public static boolean containsMessageClass(byte dataCoding) {
         return (dataCoding & MASK_CONTAIN_MESSAGE_CLASS) == MASK_CONTAIN_MESSAGE_CLASS;
     }

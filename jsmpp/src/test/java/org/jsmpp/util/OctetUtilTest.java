@@ -46,7 +46,9 @@ public class OctetUtilTest {
         assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0x00, (byte)0x01, (byte)0x00, (byte)0x00}), 65536);
         assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0x00, (byte)0xff, (byte)0xff, (byte)0xff}), 16777215);
         assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0x7f, (byte)0xff, (byte)0xff, (byte)0xff}), 2147483647);
-        // TODO: Negative length not possible, use long ?
+        assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0x80, (byte)0x00, (byte)0x00, (byte)0x00}), -2147483648);
+        assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0x80, (byte)0x00, (byte)0x00, (byte)0x01}), -2147483647);
+        assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0xff, (byte)0xff, (byte)0xff, (byte)0xfe}), -2);
         assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff}), -1);
 
         assertEquals(OctetUtil.bytesToInt(new byte[]{(byte)0x00, (byte)0x00, (byte)0x00}), 0);

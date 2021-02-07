@@ -46,7 +46,7 @@ public interface SMPPServerOperation extends SMPPOperation {
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException;
 
-    void alertNotification(int sequenceNumber, TypeOfNumber sourceAddrTon,
+    void alertNotification(TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber esmeAddrTon, NumberingPlanIndicator esmeAddrNpi,
             String esmeAddr, OptionalParameter... optionalParameters)

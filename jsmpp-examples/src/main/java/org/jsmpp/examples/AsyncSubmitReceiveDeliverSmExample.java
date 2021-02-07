@@ -128,7 +128,7 @@ public class AsyncSubmitReceiveDeliverSmExample {
                         LOGGER.error("Receive negative response", e);
                         counter.incrementAndGet();
                     } catch (IOException e) {
-                        LOGGER.error("I/O error occured", e);
+                        LOGGER.error("I/O error occurred", e);
                         counter.incrementAndGet();
                     }
                 }

@@ -32,38 +32,38 @@ import org.jsmpp.session.SMPPSession;
  * This is a gateway to submit short message.
  * 
  * @author uudashr
- *
  */
 public interface Gateway {
 
     /**
      * Submit the short message. It has the same parameter as
      * {@link SMPPSession#submitShortMessage(String, TypeOfNumber, NumberingPlanIndicator, String, TypeOfNumber, NumberingPlanIndicator, String, ESMClass, byte, byte, String, String, RegisteredDelivery, byte, DataCoding, byte, byte[], OptionalParameter...)}.
-     * 
-     * @param serviceType
-     * @param sourceAddrTon
-     * @param sourceAddrNpi
-     * @param sourceAddr
-     * @param destAddrTon
-     * @param destAddrNpi
-     * @param destinationAddr
-     * @param esmClass
-     * @param protocolId
-     * @param priorityFlag
-     * @param scheduleDeliveryTime
-     * @param validityPeriod
-     * @param registeredDelivery
-     * @param replaceIfPresentFlag
-     * @param dataCoding
-     * @param smDefaultMsgId
-     * @param shortMessage
-     * @param optionalParameters
-     * @return
-     * @throws PDUException
-     * @throws ResponseTimeoutException
-     * @throws InvalidResponseException
-     * @throws NegativeResponseException
-     * @throws IOException
+     *
+     * @param serviceType is the service_type.
+     * @param sourceAddrTon is the source_addr_ton.
+     * @param sourceAddrNpi is the source_addr_npi.
+     * @param sourceAddr is the source_addr.
+     * @param destAddrTon is the dest_addr_ton.
+     * @param destAddrNpi is the dest_addr_npi.
+     * @param destinationAddr is the destination_addr.
+     * @param esmClass is the esm_class.
+     * @param protocolId is the protocol_id.
+     * @param priorityFlag is the priority_flag.
+     * @param scheduleDeliveryTime is the schedule_delivery_time.
+     * @param validityPeriod is the validity_period.
+     * @param registeredDelivery is the registered_delivery.
+     * @param replaceIfPresentFlag is the replace_if_present_flag.
+     * @param dataCoding is the data_coding.
+     * @param smDefaultMsgId is the sm_default_msg_id.
+     * @param shortMessage is the short_message.
+     * @param optionalParameters is the optional parameters.
+     * @return the message_id to identified the submitted short message for
+     *         later use (delivery receipt, QUERY_SM, CANCEL_SM, REPLACE_SM).
+     * @throws PDUException if there is invalid PDU parameter found..
+     * @throws ResponseTimeoutException if timeout has been reach.
+     * @throws InvalidResponseException if response is invalid.
+     * @throws NegativeResponseException if negative response received.
+     * @throws IOException if there is an I/O error found.
      */
     String submitShortMessage(String serviceType,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,

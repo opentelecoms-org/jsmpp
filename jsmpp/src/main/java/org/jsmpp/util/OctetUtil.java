@@ -44,7 +44,7 @@ public class OctetUtil {
     /**
      * Convert integer (2 octets) value to bytes.
      * 
-     * @param value
+     * @param value as 2 bytes representing short in bytes.
      * @return bytes in big endian format
      */
     public static byte[] shortToBytes(short value) {
@@ -68,7 +68,7 @@ public class OctetUtil {
      * 32 bit.
      * 
      * @param bytes in big endian format
-     * @param offset
+     * @param offset the offset in bytes
      * @return integer
      */
     public static int bytesToInt(byte[] bytes, int offset) {
@@ -105,7 +105,7 @@ public class OctetUtil {
      * 16 bit.
      * 
      * @param bytes in big endian format
-     * @param offset
+     * @param offset the offset in bytes
      * @return short
      */
     public static short bytesToShort(byte[] bytes, int offset) {

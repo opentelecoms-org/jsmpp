@@ -18,10 +18,9 @@ package org.jsmpp.bean;
 import java.util.Objects;
 
 /**
- * This General Data Coding. 
+ * General Data Coding implements {@link DataCoding}
  *
  * @author uudashr
- *
  */
 public class GeneralDataCoding implements DataCoding {
     public static final GeneralDataCoding DEFAULT = new GeneralDataCoding();
@@ -37,9 +36,9 @@ public class GeneralDataCoding implements DataCoding {
     public GeneralDataCoding(Alphabet alphabet) {
         this(alphabet, null);
     }
-    
-    public GeneralDataCoding(Alphabet alphabet, ESMClass esmClass) {
-        this(alphabet, null, false);
+
+    public GeneralDataCoding(Alphabet alphabet, MessageClass messageClass) {
+        this(alphabet, messageClass, false);
     }
 
     /**
@@ -50,11 +49,8 @@ public class GeneralDataCoding implements DataCoding {
      * @param messageClass is the message class. This is nullable. If
      *        <code>null</code> means the DataCoding doesn't has meaning
      *        MessageClass.
-     * @param compressed is the compression flag. Value is
-     *        <code>true</tt> if the user message is compressed, otherwise set to <code>false</code>.
-     *
-     * @throws IllegalArgumentException if the alphabet is <code>null</code>,
-     *         since Alphabet is mandatory.
+     * @param compressed is the compression flag. Value is {@code true} if the user message is compressed, otherwise set to {@code false}.
+     * @throws IllegalArgumentException if the alphabet is {@code null}, since alphabet is mandatory.
      */
     public GeneralDataCoding(Alphabet alphabet, MessageClass messageClass,
             boolean compressed) throws IllegalArgumentException {

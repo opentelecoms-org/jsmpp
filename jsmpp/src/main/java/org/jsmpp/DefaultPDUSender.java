@@ -421,8 +421,7 @@ public class DefaultPDUSender implements PDUSender {
         return b;
     }
 
-    @Override
-    public byte[] sendSubmiMulti(OutputStream os, int sequenceNumber,
+    public byte[] sendSubmitMulti(OutputStream os, int sequenceNumber,
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             DestinationAddress[] destinationAddresses, ESMClass esmClass,
@@ -455,13 +454,13 @@ public class DefaultPDUSender implements PDUSender {
 
     @Override
     public byte[] sendAlertNotification(OutputStream os, int sequenceNumber,
-            byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
-            byte esmeAddrTon, byte esmeAddrNpi, String esmeAddr,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            TypeOfNumber esmeAddrTon, NumberingPlanIndicator esmeAddrNpi, String esmeAddr,
             OptionalParameter... optionalParameters)
         throws PDUStringException, IOException {
-        byte[] b = pduComposer.alertNotification(sequenceNumber, sourceAddrTon,
-                sourceAddrNpi, sourceAddr, esmeAddrTon, esmeAddrNpi, esmeAddr,
-                optionalParameters);
+        byte[] b = pduComposer.alertNotification(sequenceNumber,
+            sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr,
+            esmeAddrTon.value(), esmeAddrNpi.value(), esmeAddr, optionalParameters);
         writeAndFlush(os, b);
         return b;
     }
@@ -531,8 +530,7 @@ public class DefaultPDUSender implements PDUSender {
             throws IOException {
         if (log.isDebugEnabled())
         {
-            String hexmsg = HexUtil.convertBytesToHexString(b, 0, b.length, " ");
-            log.debug("Sending SMPP message {}", hexmsg);
+            log.debug("Sending PDU {}", HexUtil.convertBytesToHexString(b, 0, b.length));
         }
         out.write(b);
         out.flush();

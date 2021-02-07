@@ -690,7 +690,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	        try {
                 pduHeader = pduReader.readPDUHeader(in);
                 byte[] pdu = pduReader.readPDU(in, pduHeader);
-								logger.info("Received PDU in session {} in state {}: {}", getSessionId(), getSessionState(), HexUtil.conventBytesToHexString(pdu));
+								logger.info("Received PDU in session {} in state {}: {}", getSessionId(), getSessionState(), HexUtil.convertBytesToHexString(pdu));
 
                 /*
                  * When the processing PDU is need user interaction via event,

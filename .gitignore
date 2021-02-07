@@ -5,6 +5,7 @@ classes/
 stress/logs/
 syntax:glob
 *.swp
+pom.xml.versionsBackup
 
 # Eclipse Project Files
 .settings/

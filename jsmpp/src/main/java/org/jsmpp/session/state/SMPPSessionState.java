@@ -41,14 +41,14 @@ public interface SMPPSessionState extends GenericSMPPSessionState {
     /**
      * Process the bind response command.
      *
+     * @param sessionContext the session context.
      * @param pduHeader is the PDU header.
      * @param pdu is the complete PDU.
      * @param responseHandler is the session handler.
-     * @throws IOException throw if there is an IO error occur.
+     * @throws IOException if an input or output error occurred.
      */
     void processBindResp(SMPPSessionContext sessionContext, Command pduHeader, byte[] pdu,
                          ResponseHandler responseHandler) throws IOException;
-
 
     /**
      * Process the submit short message response command.

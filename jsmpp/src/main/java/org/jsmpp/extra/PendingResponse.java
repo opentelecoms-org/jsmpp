@@ -28,16 +28,16 @@ public class PendingResponse<T extends Command> {
     /**
      * Construct with specified timeout.
      * 
-     * @param timeout is the timeout in millisecond.
+     * @param timeout the timeout in milliseconds.
      */
     public PendingResponse(long timeout) {
         this.timeout = timeout;
     }
 
     /**
-     * Check whether if we already receive response.
+     * Check whether if we already received the response.
      * 
-     * @return <tt>true</tt> if response already receive.
+     * @return {@code true} if the response is already received.
      */
     private boolean isDoneResponse() {
         return response != null;

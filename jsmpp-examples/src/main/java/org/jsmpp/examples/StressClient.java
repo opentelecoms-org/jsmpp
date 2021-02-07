@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This stress client is an example of submit bulk messages asynchronously.
  * 
- * <table border="1">
+ * <table border="1" summary="Properties table">
  *     <tr><td><strong>Name</strong></td><td><strong>Description</strong></td><td><strong>Default value</strong></td></tr>
  *     <tr><td>jsmpp.client.host</td><td>Server host address</td><td>localhost</td></tr>
  *     <tr><td>jsmpp.client.port</td><td>Server port</td><td>8056</td></tr>

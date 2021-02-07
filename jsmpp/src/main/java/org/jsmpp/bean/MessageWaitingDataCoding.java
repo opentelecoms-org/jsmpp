@@ -15,7 +15,7 @@
 package org.jsmpp.bean;
 
 /**
- * Message Waiting DataCoding is a data coding for message waiting.
+ * Message Waiting DataCoding is a DataCoding implementation for message waiting.
  * 
  * @author uudashr
  * 
@@ -39,18 +39,16 @@ public class MessageWaitingDataCoding implements DataCoding {
     }
 
     /**
-     * Construct with specified indication sense, indication type and the
-     * alphabet.
+     * Construct with specified indication sense, indication type and the alphabet.
      * <p>
      * Possible alphabet is {@link Alphabet#ALPHA_DEFAULT},
      * {@link Alphabet#ALPHA_8_BIT} &amp; <code>null</code>, others will cause
      * construction thrown an {@link IllegalArgumentException}. If the alphabet
      * is set to <code>null</code> it means that the user message may discard.
-     * </p>
-     * 
+     *
      * @param indicationSense is the indication sense.
      * @param indicationType is the indication type.
-     * @param alphabet
+     * @param alphabet the Alphabet
      * @throws IllegalArgumentException if alphabet is null or alphabet non one
      *         of {@link Alphabet#ALPHA_DEFAULT} and
      *         {@link Alphabet#ALPHA_8_BIT}.
@@ -82,9 +80,8 @@ public class MessageWaitingDataCoding implements DataCoding {
     }
 
     /**
-     * Get the alphabet. Alphabet may <code>null</code>, that means
-     * {@link #isStoreMessage()} value is
-     * <code>false<code> and user message may discard.
+     * Get the alphabet. Alphabet may {@code null}, that means {@link #isStoreMessage()} value
+     * is {@code false} and user message may discard.
      * 
      * @return the alphabet. This value is nullable.
      */

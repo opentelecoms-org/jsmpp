@@ -23,7 +23,7 @@ public interface DataCodingFactory {
 
     /**
      * @param dataCoding The data coding scheme
-     * @return <tt>true</tt> if dataCoding is recognized
+     * @return {@code true} if dataCoding is recognized
      */
     boolean isRecognized(byte dataCoding);
     

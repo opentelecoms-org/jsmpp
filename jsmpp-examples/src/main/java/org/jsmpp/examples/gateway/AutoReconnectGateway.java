@@ -2,15 +2,15 @@
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.examples.gateway;
 
@@ -53,9 +53,10 @@ public class AutoReconnectGateway implements Gateway {
   /**
    * Construct auto reconnect gateway with specified IP address, port and SMPP Bind parameters.
    *
-   * @param remoteIpAddress is the SMSC IP address.
-   * @param remotePort      is the SMSC port.
-   * @param bindParam       is the SMPP Bind parameters.
+   * @param remoteIpAddress is the SMSC IP address or hostname.
+   * @param remotePort is the SMSC port.
+   * @param bindParam is the SMPP Bind parameters object.
+   * @throws IOException if the creation of new session failed.
    */
   public AutoReconnectGateway(String remoteIpAddress, int remotePort,
                               BindParameter bindParam) throws IOException {

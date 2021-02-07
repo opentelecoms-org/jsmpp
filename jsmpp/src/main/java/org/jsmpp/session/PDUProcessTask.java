@@ -14,8 +14,6 @@
  */
 package org.jsmpp.session;
 
-import static org.jsmpp.SMPPConstant.PDU_HEADER_LENGTH;
-
 import java.io.IOException;
 
 import org.jsmpp.SMPPConstant;
@@ -53,8 +51,7 @@ public class PDUProcessTask implements Runnable {
     public void run() {
         try {
             if (logger.isDebugEnabled()) {
-                logger.debug("Received SMPP message {} {}", pduHeader, 
-                        HexUtil.convertBytesToHexString(pdu, PDU_HEADER_LENGTH, pdu.length, " "));
+                logger.debug("Received PDU {}", HexUtil.convertBytesToHexString(pdu, 0, pdu.length));
             }
 
             switch (pduHeader.getCommandId()) {
@@ -126,11 +123,11 @@ public class PDUProcessTask implements Runnable {
                 break;
             case SMPPConstant.CID_CANCEL_BROADCAST_SM_RESP:
                 activityNotifier.notifyActivity();
-                sessionContext.getStateProcessor().processBroadcastSmResp(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processCancelBroadcastSmResp(pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_QUERY_BROADCAST_SM_RESP:
                 activityNotifier.notifyActivity();
-                sessionContext.getStateProcessor().processBroadcastSmResp(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processQueryBroadcastSmResp(pduHeader, pdu, responseHandler);
                 break;
 
             default:

@@ -61,7 +61,37 @@ public class SimpleSubmitSimpleReceiveExample {
         String message = "jSMPP simplify SMPP on Java platform";
 
         SMPPSession session = new SMPPSession();
+        // Set listener to receive deliver_sm
+        session.setMessageReceiverListener(new MessageReceiverListener() {
+
+            public void onAcceptDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
+                if (MessageType.SMSC_DEL_RECEIPT.containedIn(deliverSm.getEsmClass())) {
+                    // delivery receipt
+                    try {
+                        DeliveryReceipt delReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
+                        long id = Long.parseLong(delReceipt.getId()) & 0xffffffff;
+                        String messageId = Long.toString(id, 16).toUpperCase();
+                        LOGGER.info("received '{}' : {}", messageId, delReceipt);
+                    } catch (InvalidDeliveryReceiptException e) {
+                        LOGGER.error("receive failed, e");
+                    }
+                } else {
+                    // regular short message
+                    LOGGER.info("Receiving message : {}", new String(deliverSm.getShortMessage()));
+                }
+            }
+
+            public void onAcceptAlertNotification(AlertNotification alertNotification) {
+                LOGGER.info("Receiving alert for {} from {}", alertNotification.getSourceAddr(), alertNotification.getEsmeAddr());
+            }
+
+            public DataSmResult onAcceptDataSm(DataSm dataSm, Session source) throws ProcessRequestException {
+                LOGGER.info("onAcceptDataSm");
+                return null;
+            }
+        });
         try {
+
             String systemId = session.connectAndBind(server, port, new BindParameter(BindType.BIND_TRX, "test", "test", "cp",
                     TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
             LOGGER.info("Connected with SMSC with system id {}", systemId);
@@ -93,38 +123,8 @@ public class SimpleSubmitSimpleReceiveExample {
                 // Receiving negative response (non-zero command_status)
                 LOGGER.error("Receive negative response", e);
             } catch (IOException e) {
-                LOGGER.error("I/O error occured", e);
+                LOGGER.error("I/O error occurred", e);
             }
-
-            // Set listener to receive deliver_sm
-            session.setMessageReceiverListener(new MessageReceiverListener() {
-
-                public void onAcceptDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
-                    if (MessageType.SMSC_DEL_RECEIPT.containedIn(deliverSm.getEsmClass())) {
-                        // delivery receipt
-                        try {
-                            DeliveryReceipt delReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
-                            long id = Long.parseLong(delReceipt.getId()) & 0xffffffff;
-                            String messageId = Long.toString(id, 16).toUpperCase();
-                            LOGGER.info("received '{}' : {}", messageId, delReceipt);
-                        } catch (InvalidDeliveryReceiptException e) {
-                            LOGGER.error("receive failed, e");
-                        }
-                    } else {
-                        // regular short message
-                        LOGGER.info("Receiving message : {}", new String(deliverSm.getShortMessage()));
-                    }
-                }
-
-                public void onAcceptAlertNotification(AlertNotification alertNotification) {
-                    LOGGER.info("onAcceptAlertNotification");
-                }
-
-                public DataSmResult onAcceptDataSm(DataSm dataSm, Session source) throws ProcessRequestException {
-                    LOGGER.info("onAcceptDataSm");
-                    return null;
-                }
-            });
 
             // wait 3 second
             try {

@@ -42,10 +42,8 @@ import org.jsmpp.session.connection.socket.ServerSocketConnectionFactory;
  * initiation timer, otherwise if there is network open has been requested, ESME
  * will close the connection. Accepting the bind request should take less than
  * transaction timer or ESME will issued timeout.
- * </p>
- * 
+ *
  * @author uudashr
- * 
  */
 public class SMPPServerSessionListener {
     private final int port;
@@ -79,7 +77,7 @@ public class SMPPServerSessionListener {
         serverConn = serverConnFactory.listen(port, timeout, backlog);
     }
     
-    public int getTimeout(int timeout) throws IOException {
+    public int getTimeout() throws IOException {
         return serverConn.getSoTimeout();
     }
     
@@ -88,8 +86,8 @@ public class SMPPServerSessionListener {
      * arrive then {@link SocketTimeoutException} will be thrown but the
      * listener still valid.
      * 
-     * @param timeout
-     * @throws IOException
+     * @param timeout is the timeout in milliseconds.
+     * @throws IOException if an input or output error occurred
      */
     public void setTimeout(int timeout) throws IOException {
         serverConn.setSoTimeout(timeout);

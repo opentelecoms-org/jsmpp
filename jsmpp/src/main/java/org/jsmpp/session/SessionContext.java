@@ -18,8 +18,10 @@ import org.jsmpp.bean.BindType;
 import org.jsmpp.extra.SessionState;
 
 /**
- * Context defined session life cycle.<br/>
- * OPEN -> BOUND_TX | BOUND_RX | BOUND_TRX -> UNBOUND -> CLOSED.
+ * Context defined session life cycle.
+ *
+ * Possible states:
+ * OPEN -&gt; BOUND_TX | BOUND_RX | BOUND_TRX -&gt; UNBOUND -&gt; CLOSED.
  * 
  * @author uudashr
  *
@@ -32,7 +34,7 @@ public interface SessionContext extends ActivityNotifier {
     
     /**
      * Change state to bound state.
-     * @param bindType
+     * @param bindType the bindType enum
      */
     void bound(BindType bindType);
     
@@ -49,14 +51,14 @@ public interface SessionContext extends ActivityNotifier {
     /**
      * Get current session state.
      * 
-     * @return the current session state.
+     * @return the current session state
      */
     SessionState getSessionState();
     
     /**
      * Get the last activity of a session.
      * 
-     * @return the last activity timestamp. 
+     * @return the last activity timestamp
      */
     long getLastActivityTimestamp();
 }

@@ -1,6 +1,6 @@
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License. 
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author uudashr
- *
  */
 public abstract class AbstractSession implements Session {
     private static final Logger logger = LoggerFactory.getLogger(AbstractSession.class);
@@ -144,7 +143,7 @@ public abstract class AbstractSession implements Session {
     }
 
     /**
-     * Set total thread can read PDU and process it in parallel. It's defaulted to 3.
+     * Set the number of threads which can read PDU and process it in parallel. The default is 3.
      *
      * @param pduProcessorDegree is the total thread can handle read and process
      *        PDU in parallel.
@@ -159,7 +158,7 @@ public abstract class AbstractSession implements Session {
     }
 
     /**
-     * Get the total of thread that can handle read and process PDU in parallel.
+     * Get the total of threads that can handle read and process PDU in parallel.
      *
      * @return the total of thread that can handle read and process PDU in
      *         parallel.
@@ -169,7 +168,7 @@ public abstract class AbstractSession implements Session {
     }
 
     /**
-     * Get the capacity of the working queue for PDU processing.
+     * Get the capacity of the working queue for PDU processing. The default is 100.
      *
      * @return the ThreadPoolExecutor queue capacity.
      */
@@ -179,6 +178,8 @@ public abstract class AbstractSession implements Session {
 
     /**
      * Set the capacity of the working queue for PDU processing.
+     *
+     * @param queueCapacity the capacity of the working queue for receive and transmit
      */
     public void setQueueCapacity(final int queueCapacity) {
         this.queueCapacity = queueCapacity;
@@ -187,23 +188,23 @@ public abstract class AbstractSession implements Session {
     /**
      * Send the data_sm command.
      *
-     * @param serviceType is the service_type parameter.
-     * @param sourceAddrTon is the source_addr_ton parameter.
-     * @param sourceAddrNpi is the source_addr_npi parameter.
-     * @param sourceAddr is the source_addr parameter.
-     * @param destAddrTon is the dest_addr_ton parameter.
-     * @param destAddrNpi is the dest_addr_npi parameter.
-     * @param destinationAddr is the destination_addr parameter.
-     * @param esmClass is the esm_class parameter.
-     * @param registeredDelivery is the registered_delivery parameter.
-     * @param dataCoding is the data_coding parameter.
-     * @param optionalParameters is the optional parameters.
-     * @return the result of data_sm (data_sm_resp).
+     * @param serviceType the service_type parameter.
+     * @param sourceAddrTon the source_addr_ton parameter.
+     * @param sourceAddrNpi the source_addr_npi parameter.
+     * @param sourceAddr the source_addr parameter.
+     * @param destAddrTon the dest_addr_ton parameter.
+     * @param destAddrNpi the dest_addr_npi parameter.
+     * @param destinationAddr the destination_addr parameter.
+     * @param esmClass the esm_class parameter.
+     * @param registeredDelivery the registered_delivery parameter or null.
+     * @param dataCoding the data_coding parameter.
+     * @param optionalParameters the optional parameters.
+     * @return the result of data_sm
      * @throws PDUException if there is an invalid PDU parameter found.
      * @throws ResponseTimeoutException if the response take time too long.
      * @throws InvalidResponseException if the response is invalid.
      * @throws NegativeResponseException if the response return NON-OK command_status.
-     * @throws IOException if there is an IO error found.
+     * @throws IOException if an input or output error occurred.
      */
     @Override
     public DataSmResult dataShortMessage(String serviceType,
@@ -214,7 +215,6 @@ public abstract class AbstractSession implements Session {
             DataCoding dataCoding, OptionalParameter... optionalParameters)
             throws PDUException, ResponseTimeoutException,
             InvalidResponseException, NegativeResponseException, IOException {
-
 
         DataSmCommandTask task = new DataSmCommandTask(pduSender,
                 serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr,
@@ -285,7 +285,7 @@ public abstract class AbstractSession implements Session {
      * Execute send command command task.
      *
      * @param task is the task.
-     * @param timeout is the timeout in millisecond.
+     * @param timeout is the timeout in milliseconds.
      * @return the command response.
      * @throws PDUException if there is invalid PDU parameter found.
      * @throws ResponseTimeoutException if the response has reach it timeout.
@@ -334,7 +334,7 @@ public abstract class AbstractSession implements Session {
     }
 
     /**
-     * Execute send command command task.
+     * Execute send command command task without response.
      *
      * @param task is the task.
      * @throws PDUException if there is invalid PDU parameter found.
@@ -459,8 +459,8 @@ public abstract class AbstractSession implements Session {
      * then an exception thrown.
      *
      * @param activityName is the activity name.
-     * @param only set to <tt>true</tt> if you want to ensure transmittable only
-     *        (transceive will not pass), otherwise set to <tt>false</tt>.
+     * @param only set to {@code true} if you want to ensure transmittable only
+     *        (transceive will not pass), otherwise set to {@code false}.
      * @throws IOException if the session not transmittable (by considering the
      *         <code>only</code> parameter).
      */

@@ -1,5 +1,6 @@
 package org.jsmpp.examples.util;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -52,4 +53,15 @@ public class Gsm0338Test {
   public void test_non_gsm_0338_basic_chars() throws Exception {
     assertFalse(Gsm0338.isBasicEncodeable("⺴⻤"));
   }
+
+  @Test
+  public void test_count_septets() {
+    assertEquals(1, Gsm0338.countSeptets('a'));
+    assertEquals(1, Gsm0338.countSeptets("a"));
+    assertEquals(2, Gsm0338.countSeptets('€'));
+    assertEquals(2, Gsm0338.countSeptets("€"));
+    assertEquals(3, Gsm0338.countSeptets("abc"));
+    assertEquals(7, Gsm0338.countSeptets("[abc]"));
+  }
+
 }

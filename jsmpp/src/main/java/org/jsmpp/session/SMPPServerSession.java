@@ -69,7 +69,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author uudashr
- *
  */
 public class SMPPServerSession extends AbstractSession implements ServerSession {
     private static final String MESSAGE_RECEIVER_LISTENER_IS_NULL = "Received {} but message receiver listener is null";
@@ -114,7 +113,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         this.in = new DataInputStream(conn.getInputStream());
         this.out = conn.getOutputStream();
         enquireLinkSender = new EnquireLinkSender();
-        addSessionStateListener(new BoundStateListener());
+        addSessionStateListener(new BoundSessionStateListener());
         addSessionStateListener(sessionStateListener);
         setPduProcessorDegree(pduProcessorDegree);
         sessionContext.open();
@@ -183,22 +182,22 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     }
     
     /* (non-Javadoc)
-     * @see org.jsmpp.session.ServerSession#alertNotification(int, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.OptionalParameter[])
+     * @see org.jsmpp.session.ServerSession#alertNotification(org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.OptionalParameter[])
      */
     @Override
-    public void alertNotification(int sequenceNumber,
-            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
-            String sourceAddr, TypeOfNumber esmeAddrTon,
-            NumberingPlanIndicator esmeAddrNpi, String esmeAddr,
-            OptionalParameter... optionalParameters) throws PDUStringException,
+    public void alertNotification(TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            TypeOfNumber esmeAddrTon, NumberingPlanIndicator esmeAddrNpi, String esmeAddr,
+            OptionalParameter... optionalParameters) throws PDUException,
             IOException {
         
         ensureReceivable("alertNotification");
-        
-        pduSender().sendAlertNotification(connection().getOutputStream(),
-                sequenceNumber, sourceAddrTon.value(), sourceAddrNpi.value(),
-                sourceAddr, esmeAddrTon.value(), esmeAddrNpi.value(), esmeAddr,
-                optionalParameters);
+
+        AlertNotificationCommandTask task = new AlertNotificationCommandTask(pduSender(),
+             sourceAddrTon, sourceAddrNpi, sourceAddr,
+             esmeAddrTon, esmeAddrNpi, esmeAddr,
+             optionalParameters);
+
+        executeSendCommandWithNoResponse(task);
     }
     
     private SubmitSmResult fireAcceptSubmitSm(SubmitSm submitSm) throws ProcessRequestException {
@@ -747,11 +746,22 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         }
     }
     
-    private class BoundStateListener implements SessionStateListener {
+    private class BoundSessionStateListener implements SessionStateListener {
         @Override
         public void onStateChange(SessionState newState, SessionState oldState, Session source) {
             if (newState.equals(SessionState.OPEN)) {
                     enquireLinkSender.start();
+                /**
+                 * We need to set SO_TIMEOUT to session timer so when timeout occurs,
+                 * a SocketTimeoutException will be raised. When Exception raised we
+                 * can send an enquireLinkCommand.
+                 */
+                try {
+                    connection().setSoTimeout(source.getEnquireLinkTimer());
+                } catch (IOException e) {
+                    logger.error("Failed setting so_timeout for session timer", e);
+                }
+                enquireLinkSender.start();
             }
         }
     }

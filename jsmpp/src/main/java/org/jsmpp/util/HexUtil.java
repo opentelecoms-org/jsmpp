@@ -40,7 +40,20 @@ public class HexUtil {
      * @return the hex string representation of string.
      */
     public static String convertStringToHexString(String data) {
-        return conventBytesToHexString(data.getBytes());
+        return convertBytesToHexString(data.getBytes());
+    }
+
+    /**
+     * Convert byte to hex string.
+     *
+     * @param data is the byte.
+     * @return the hex string representation of the byte.
+     */
+    public static String convertByteToHexString(byte data) {
+        StringBuilder stringBuilder = new StringBuilder(2);
+        stringBuilder.append(hexChar[(data >> 4) & 0x0f]);
+        stringBuilder.append(hexChar[data & 0x0f]);
+        return stringBuilder.toString();
     }
 
     /**
@@ -49,7 +62,7 @@ public class HexUtil {
      * @param data is the bytes.
      * @return the hex string representation of bytes.
      */
-    public static String conventBytesToHexString(byte[] data) {
+    public static String convertBytesToHexString(byte[] data) {
         return convertBytesToHexString(data, 0, data.length);
     }
 

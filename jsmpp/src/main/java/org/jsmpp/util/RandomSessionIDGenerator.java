@@ -33,6 +33,6 @@ public class RandomSessionIDGenerator implements SessionIDGenerator<String> {
 	public String newSessionId() {
 		byte[] b = new byte[32];
 		random.nextBytes(b);
-		return HexUtil.conventBytesToHexString(b);
+		return HexUtil.convertBytesToHexString(b);
 	}
 }

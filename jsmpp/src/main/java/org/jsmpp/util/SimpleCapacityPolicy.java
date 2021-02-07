@@ -22,9 +22,8 @@ package org.jsmpp.util;
  *  int newCapcity = (currentCapacity * 3) / 2 + 1
  * </code>
  * and it's only apply if currentCapacity is not greater or equals than requiredCapacity.
- * </p>
- * @author uudashr
  *
+ * @author uudashr
  */
 public class SimpleCapacityPolicy implements CapacityPolicy {
     

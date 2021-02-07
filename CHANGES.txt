@@ -2,6 +2,20 @@ Changes:
 
 Please note that the 2.3.x release is the latest using Java 1.6. The next release (3.x.x) will require at minimum Java 1.7.
 
+2.3.11
+- Also set the socket timeout for server sessions for enquiry link timer.
+- Removed not used parameter from getTimeout method.
+- Fixed typo in method name of convertBytesToHexString.
+- Rewrote concatenation example, including 16 bit reference numbering.
+- Added jCharset dependency to examples.
+- Added convertByteToHexString to print hex string for single byte.
+- Added UCS-2 class to verify Unicode characters are inside BMP Unicode fro UCS-2.
+- Update Maven dependencies.
+- Update Apache Commens Codec dependency to 1.15.
+- Renamed sendSubmiMulti to sendSubmitMulti.
+- Fix all JavaDoc warnings and errors and generate JavaDoc jars.
+- Log the send and received PDU's at debug log level. Remove the space to condense the output.
+
 2.3.10
 - Implement queue capacity with default 100 include throttle response, handle bound state inside the handler of the bind request.
 - Fix decompose of replace_sm PDU.

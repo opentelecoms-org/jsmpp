@@ -2,15 +2,15 @@
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.session;
 
@@ -43,19 +43,16 @@ import org.jsmpp.extra.SessionState;
  * <li>{@link #setTransactionTimer(long)}</li>
  * <li>{@link #getTransactionTimer()}</li>
  * </ul>
- * </p>
- * 
+ *
  * <p>
  * To terminate the communication with the Message Center gracefully, invoke
  * {@link #unbindAndClose()}. It will send UNBIND command and close the
  * connection. This method will wait the UNBIND_RESP but, negative response
  * will be acceptable and closing connection will be done immediately.
- * </p>
- * 
+ *
  * @see SessionState
  * 
  * @author uudashr
- * 
  */
 public interface Session {
     
@@ -64,16 +61,16 @@ public interface Session {
      * response received or timeout reached. This method simplify operation of
      * sending DATA_SM and receiving DATA_SM_RESP.
      * 
-     * @param serviceType is the service_type.
-     * @param sourceAddrTon is the source_addr_ton.
-     * @param sourceAddrNpi is the source_addr_npi.
-     * @param sourceAddr is the source_addr.
-     * @param destAddrTon is the dest_addr_ton.
-     * @param destAddrNpi is the dest_addr_npi.
-     * @param destinationAddr is the destination_address.
-     * @param esmClass is the esm_class.
-     * @param registeredDelivery is the registered_delivery.
-     * @param dataCoding is the data_coding.
+     * @param serviceType the service_type.
+     * @param sourceAddrTon the source_addr_ton.
+     * @param sourceAddrNpi the source_addr_npi.
+     * @param sourceAddr the source_addr.
+     * @param destAddrTon the dest_addr_ton.
+     * @param destAddrNpi the dest_addr_npi.
+     * @param destinationAddr the destination_address.
+     * @param esmClass the esm_class.
+     * @param registeredDelivery the registered_delivery.
+     * @param dataCoding the data_coding.
      * @param optionalParameters is the optional parameters.
      * @return the response/result of DATA_SM.
      * @throws PDUException if there is invalid PDU parameter found.

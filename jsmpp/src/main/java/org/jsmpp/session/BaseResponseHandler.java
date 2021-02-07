@@ -33,8 +33,8 @@ public interface BaseResponseHandler {
      * 
      * @param sequenceNumber the sequence number of the request.
      * @return the {@link PendingResponse} correspond to specified
-     *         sequenceNumber. Return <tt>null</tt> if the the mapped
-     *         sequenceNumber not found
+     *         sequenceNumber. Return {@code null} if the the mapped
+     *         sequenceNumber is not found
      */
     PendingResponse<Command> removeSentItem(int sequenceNumber);
     

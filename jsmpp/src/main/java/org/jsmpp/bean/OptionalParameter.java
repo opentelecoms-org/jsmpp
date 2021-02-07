@@ -2,15 +2,15 @@
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.bean;
 
@@ -37,7 +37,8 @@ public abstract class OptionalParameter {
         this.tag = tag;
     }
 
-    /** Convert the optional parameter into a byte serialized form conforming to the SMPP specification.
+    /**
+		 * Convert the optional parameter into a byte serialized form conforming to the SMPP specification.
      * 
      * @return A byte array according to the SMPP specification
      */
@@ -50,15 +51,16 @@ public abstract class OptionalParameter {
         return buffer.array();
     }
 
-    /** This method should serialize the value part of the optional parameter. The format of the value is dependent
+    /**
+		 * This method should serialize the value part of the optional parameter. The format of the value is dependent
      * on the specific optional parameter type so it is abstract and must be implemented by subclasses.
-     * @return
+		 *
+     * @return the serialized bytes
      */
     protected abstract byte[] serializeValue();
     
     /**
      * An optional parameter with an empty value field.
-     *
      */
     public static class Null extends OptionalParameter {
         public Null(short tag) {
@@ -77,16 +79,15 @@ public abstract class OptionalParameter {
 
     /**
      * An optional parameter containing two bytes representing a short integer.
-     *
      */
     public static class Short extends OptionalParameter {
         protected final short value;
 
         /**
          * Construct the Short optional parameter with specified short value.
-         * 
-         * @param tag
-         * @param value
+         *
+				 * @param tag is the tag.
+				 * @param value is the value.
          */
         public Short(short tag, short value) {
             super(tag);
@@ -123,13 +124,12 @@ public abstract class OptionalParameter {
         @Override
         public String toString()
         {
-            return HexUtil.conventBytesToHexString(OctetUtil.shortToBytes(value));
+            return HexUtil.convertBytesToHexString(OctetUtil.shortToBytes(value));
         }
     }
 
     /**
      * An optional parameter containing four bytes representing an int integer.
-     *
      */
     public static class Int extends OptionalParameter {
         protected final int value;
@@ -162,13 +162,12 @@ public abstract class OptionalParameter {
         @Override
         public String toString()
         {
-            return HexUtil.conventBytesToHexString(OctetUtil.intToBytes(value));
+            return HexUtil.convertBytesToHexString(OctetUtil.intToBytes(value));
         }
     }
 
     /**
      * An optional parameter containing one byte representing a byte integer.
-     *
      */
     public static class Byte extends OptionalParameter {
         protected final byte value;
@@ -201,13 +200,12 @@ public abstract class OptionalParameter {
         @Override
         public String toString()
         {
-            return HexUtil.conventBytesToHexString(new byte[] {getValue()});
+            return HexUtil.convertBytesToHexString(new byte[] {getValue()});
         }
     }
 
     /**
      * An optional parameter containing a series of octets, not necessarily NULL terminated.
-     *
      */
     public static class OctetString extends OptionalParameter {
         protected final byte[] value;
@@ -255,11 +253,10 @@ public abstract class OptionalParameter {
 
     /**
      * An optional parameter containing a series of ASCII characters terminated with the NULL character.
-     *
      */
     public static class COctetString extends OctetString {
 
-        public COctetString(short tag, String value, String charsetName)
+    	public COctetString(short tag, String value, String charsetName)
 				throws UnsupportedEncodingException {
 			super(tag, new byte[value.getBytes(charsetName).length + 1]);
 			byte[] bytes = value.getBytes(charsetName);
@@ -285,8 +282,7 @@ public abstract class OptionalParameter {
 			System.arraycopy(value, 0, s, 0, s.length);
 			return new String(s);
 		}
-
-    }
+  }
     
     /**
      * Represents valid values for the optional parameters dest_addr_subunit and source_addr_subunit.
@@ -360,7 +356,7 @@ public abstract class OptionalParameter {
 
 		/**
 		 * Get the dest_addr_subunit value as an enum.
-		 * @return An enum of type Addr_subunit
+		 * @return An enum of type {@link Addr_subunit}
 		 */
 		public Addr_subunit getDestAddrSubunit() {
 			return Addr_subunit.toEnum(value);
@@ -433,7 +429,7 @@ public abstract class OptionalParameter {
 		
 		/**
 		 * Get the dest_network_type value as an enum.
-		 * @return An enum of type Network_type
+		 * @return An enum of type {@link Network_type}
 		 */
 		public Network_type getDestNetworkType() {
 			return Network_type.toEnum(value);
@@ -506,7 +502,7 @@ public abstract class OptionalParameter {
 
 		/**
 		 * Get the dest_bearer_type value as an enum.
-		 * @return An enum of type Bearer_type
+		 * @return An enum of type {@link Bearer_type}
 		 */
 		public Bearer_type getDestBearerType() {
 			return Bearer_type.toEnum(value);
@@ -565,7 +561,7 @@ public abstract class OptionalParameter {
 
 		/**
 		 * Get the source_addr_subunit parameter as an enum.
-		 * @return
+		 * @return the addr_subunit optional parameter
 		 */
 		public Addr_subunit getSourceAddrSubunit() {
 			return Addr_subunit.toEnum(value);
@@ -637,7 +633,7 @@ public abstract class OptionalParameter {
 
 		/**
 		 * Get the source_bearer_type value as an enum.
-		 * @return An enum of type Bearer_type
+		 * @return An enum of type {@link Bearer_type}
 		 */
 		public Bearer_type getSourceBearerType() {
 			return Bearer_type.toEnum(value);
@@ -702,22 +698,19 @@ public abstract class OptionalParameter {
 		 * Represents valid values for the optional parameter payload_type.
 		 *
 		 */
-		public enum Payload_type_enum {
+		public enum 	Payload_type_enum {
 			/**
 			 * From Short Message Peer to Peer Protocol Specification v3.4:
 			 * 
-			 * In the case of a WAP
-			 * application, the default higher layer
-			 * message type is a WDP message.
-			 * See [WDP] for details.
+			 * In the case of a WAP application, the default higher layer
+			 * message type is a WDP message. See [WDP] for details.
 			 */
 			DEFAULT(0),
 			/**
 			 * From Short Message Peer to Peer Protocol Specification v3.4:
 			 * 
 			 * WCMP message
-			 * Wireless Control
-			 * Message Protocol formatted data.
+			 * Wireless Control Message Protocol formatted data.
 			 * See [WCMP] for details.
 			 */
 			WCMP(1),
@@ -756,7 +749,7 @@ public abstract class OptionalParameter {
 		
 		/**
 		 * Get the payload_type value as an enum.
-		 * @return An enum of type Payload_type
+		 * @return An enum of type {@link Payload_type_enum}
 		 */
 		public Payload_type_enum getPayloadType() {
 			return Payload_type_enum.toEnum(value);
@@ -862,14 +855,16 @@ public abstract class OptionalParameter {
 		 * The Indicator is encoded in bit 7 as follows:
 		 * 0 = Set Indication Inactive
 		 * 1 = Set Indication Active
-		 * @return
+		 *
+		 * @return {@code true} if the indication is active, {@code false} if the indication is inactive
 		 */
 		public boolean isIndicatorActive() {
 			return (value & 0x80) != 0;
 		}
+
 		/**
 		 * Get the the message type of the message associated with the MWI.
-		 * @return An enum of type Payload_type
+		 * @return An enum of type {@link Ms_msg_wait_facilities_type}
 		 */
 		public Ms_msg_wait_facilities_type getMessageType() {
 			return Ms_msg_wait_facilities_type.toEnum((byte)(value & 0x03));
@@ -943,8 +938,7 @@ public abstract class OptionalParameter {
 		 * A User Specified subaddress is encoded
 		 * according to user specification, subject to a
 		 * maximum of 22 octets.
-		 *
-		 * @param content
+		 * @param content the source_subaddress optional parameter
 		 */
 		public Source_subaddress(byte[] content) {
 			super(Tag.SOURCE_SUBADDRESS.code, content);
@@ -985,11 +979,10 @@ public abstract class OptionalParameter {
 		 * field contains the Authority and Format
 		 * Identifier.
 		 * 
-		 * A User Specified subaddress is encoded
-		 * according to user specification, subject to a
-		 * maximum of 22 octets.
+		 * A User Specified subaddress is encoded according to user specification,
+		 * subject to a maximum of 22 octets.
 		 *
-		 * @param content
+		 * @param content the dest_subaddress bytes
 		 */
 		public Dest_subaddress(byte[] content) {
 			super(Tag.DEST_SUBADDRESS.code, content);
@@ -998,7 +991,7 @@ public abstract class OptionalParameter {
 	
 	/**
 	 * A reference assigned by the originating SME to the short message.
-	 *
+	 * <br>
 	 * Wireless Network Technology: Generic
 	 *
 	 * @author stefanth
@@ -1007,7 +1000,7 @@ public abstract class OptionalParameter {
 		
 		/**
 		 * From SMPP specs: "All values allowed."
-		 * @param value
+		 * @param value the user_message_reference optional parameter
 		 */
 		public User_message_reference(short value) {
 			super(Tag.USER_MESSAGE_REFERENCE, value);
@@ -1033,7 +1026,7 @@ public abstract class OptionalParameter {
 		 * 0 to 255 (IS-95 CDMA)
 		 * 0 to 15 (CMT-136 TDMA)
 		 *
-		 * @param value
+		 * @param value the user_response_code optional parameter
 		 */
 		public User_response_code(byte value) {
 			super(Tag.USER_MESSAGE_REFERENCE, value);
@@ -1056,8 +1049,7 @@ public abstract class OptionalParameter {
 		
 		/**
 		 * From SMPP specs: "All values allowed."
-		 *
-		 * @param value
+		 * @param value the source_port optional parameter
 		 */
 		public Source_port(short value) {
 			super(Tag.SOURCE_PORT, value);
@@ -1082,7 +1074,8 @@ public abstract class OptionalParameter {
 		
 		/**
 		 * From SMPP specs: "All values allowed."
-		 * @param value
+		 *
+		 * @param value the destination_port optional parameter
 		 */
 		public Destination_port(short value) {
 			super(Tag.DESTINATION_PORT, value);
@@ -1104,20 +1097,15 @@ public abstract class OptionalParameter {
 	public static class Sar_msg_ref_num extends OptionalParameter.Short {
 		
 		/**
-		 * This parameter shall contain a originator
-		 * generated reference number so that a
-		 * segmented short message may be
-		 * reassembled into a single original message.
-		 * This allows the parallel transmission of
-		 * several segmented messages. This
-		 * reference number shall remain constant for
-		 * every segment which makes up a particular
-		 * concatenated short message.
-		 * When present, the PDU must also contain
-		 * the sar_total_segments and
-		 * sar_segment_seqnum parameters.
+		 * This parameter shall contain a originator generated reference number so that a
+		 * segmented short message may be reassembled into a single original message.
+		 * This allows the parallel transmission of several segmented messages. This
+		 * reference number shall remain constant for every segment which makes up a particular
+		 * concatenated short message. When present, the PDU must also contain
+		 * the sar_total_segments and sar_segment_seqnum parameters.
 		 * Otherwise this parameter shall be ignored.
-		 * @param value
+		 *
+		 * @param value the sar_msg_ref_num value
 		 */
 		public Sar_msg_ref_num(short value) {
 			super(Tag.SAR_MSG_REF_NUM, value);
@@ -1187,21 +1175,16 @@ public abstract class OptionalParameter {
 	}
 	
 	/**
-	 * The sar_total_segments parameter is used to indicate the total number of short messages
-	 * within the concatenated short message.
-	 *
-	 * This parameter shall contain a value in the
-	 * range 1 to 255 indicating the total number
-	 * of fragments within the concatenated short
-	 * message. The value shall start at 1 and
-	 * remain constant for every short message
-	 * which makes up the concatenated short
-	 * message.
-	 * When present, the PDU must also contain
-	 * the sar_msg_ref_num and
-	 * sar_segment_seqnum parameters.
-	 * Otherwise this parameter shall be ignored.
-	 *
+	 * The sar_total_segments parameter is used to indicate the total number of
+	 * short messages within the concatenated short message. <br>
+	 * <br>
+	 * This parameter shall contain a value in the range 1 to 255 indicating
+	 * the total number of fragments within the concatenated short message.
+	 * The value shall start at 1 and remain constant for every short message
+	 * which makes up the concatenated short message. <br>
+	 * When present, the PDU must also contain the sar_msg_ref_num and
+	 * sar_segment_seqnum parameters. Otherwise this parameter shall be ignored. <br>
+	 * <br>
 	 * Wireless Network Technology: Generic
 	 *
 	 * @author stefanth
@@ -1218,21 +1201,16 @@ public abstract class OptionalParameter {
 	}
 	
 	/**
-	 * The sar_segment_seqnum parameter is used to indicate the sequence number of a particular
-	 * short message within the concatenated short message.
-	 *
-	 * This parameter shall contain a value in the range
-	 * 1 to 255 indicating the sequence number of
-	 * a particular message within the
-	 * concatenated short message. The value
-	 * shall start at 1 and increment by one for
-	 * every message sent within the concatenated
-	 * short message.
-	 * When present, the PDU must also contain
-	 * the sar_total_segments and
-	 * sar_msg_ref_num parameters. Otherwise
-	 * this parameter shall be ignored.
-	 *
+	 * The sar_segment_seqnum parameter is used to indicate the sequence number of
+	 * a particular short message within the concatenated short message. <br>
+	 * <br>
+	 * This parameter shall contain a value in the range 1 to 255 indicating
+	 * the sequence number of a particular message within the concatenated short message.
+	 * The value shall start at 1 and increment by one for every message sent within
+	 * the concatenated short message. <br>
+	 * When present, the PDU must also contain the sar_total_segments and sar_msg_ref_num parameters.
+	 * Otherwise this parameter shall be ignored. <br>
+	 * <br>
 	 * Wireless Network Technology: Generic
 	 *
 	 * @author stefanth
@@ -1272,18 +1250,18 @@ public abstract class OptionalParameter {
 	}
 
 	/**
-	 * This parameter controls the presentation indication and screening
-	 * of the CallBackNumber at the mobile station. If present, the callback_num
-	 * parameter must also be present.
-	 *
+	 * This parameter controls the presentation indication and screening of
+	 * the CallBackNumber at the mobile station. If present,
+	 * the callback_num parameter must also be present. <br>
+	 * <br>
 	 * If this parameter is present and there are multiple
 	 * instances of the callback_num parameter then this parameter
 	 * must occur an equal number of instances and the order of
 	 * occurrence determines the particular callback_num_pres_ind
-	 * which corresponds to a particular callback_num.
-	 *
-	 * Bits 7............0 = 0000ppss
-	 *
+	 * which corresponds to a particular callback_num.<br>
+	 * <br>
+	 * Bits 7............0 = 0000ppss <br>
+	 * <br>
 	 * The Presentation Indicator is encoded in
 	 * bits 2 and 3 as follows:
 	 * 00 = Presentation Allowed
@@ -1798,8 +1776,9 @@ public abstract class OptionalParameter {
 
 			public static Delivery_failure_reason_enum toEnum(byte value) {
 				for (Delivery_failure_reason_enum v : Delivery_failure_reason_enum.values()) {
-					if (v.value == value)
+					if (v.value == value) {
 						return v;
+					}
 				}
 				return RESERVED;
 			}
@@ -1898,7 +1877,6 @@ public abstract class OptionalParameter {
 
 		/**
 		 * Represents valid values for the optional parameter message_state.
-		 *
 		 */
 		public enum Message_state_enum {
 			SCHEDULED(0),
@@ -1940,7 +1918,7 @@ public abstract class OptionalParameter {
 		
 		/**
 		 * Get the message_state value as an enum.
-		 * @return An enum of type Message_state_enum
+		 * @return An enum of type {@link Message_state_enum}
 		 */
 		public Message_state_enum getMessageState() {
 			return Message_state_enum.toEnum(value);
@@ -2238,7 +2216,7 @@ public abstract class OptionalParameter {
 	/**
 	 * The dest_addr_np_information TLV is used to carry number portability information.
 	 *
-	 * CDMA & TDMA (North America):
+	 * CDMA &amp; TDMA (North America):
 	 * When the Number Portability parameters are used within the US, the information contained with the NP Information
 	 * will be the Location Routing Number (LRN).
 	 * A LRN is a 10-digit number, in the format NPA- NXX-XXXX, that uniquely identifies a switch or point of interconnection (POI).
@@ -2263,9 +2241,11 @@ public abstract class OptionalParameter {
 	}
 
 	/**
-	 * The display_time parameter is used to associate a display time of the short message on the MS.
-	 *
+	 * The display_time parameter is used to associate a display time of the short message on the MS. <br>
+	 * <br>
 	 * Wireless Network Technology: CDMA, TDMA
+	 *
+	 * @author stefanth
 	 */
 	public static class Display_time extends OptionalParameter.Byte {
 
@@ -2411,10 +2391,12 @@ public abstract class OptionalParameter {
 			super(Tag.ITS_SESSION_INFO.code, content);
 		}
 	}
-	
+
 	/**
 	 * The vendor_specific_source_msc_addr parameter is used to indicate the source MSC address 
-	 * over which the message originated. 
+	 * over which the message originated.
+	 *
+	 * @author stefanth
 	 */
 	public static class Vendor_specific_source_msc_addr extends OptionalParameter.Vendor_specific_msc_addr {
 		
@@ -2474,7 +2456,6 @@ public abstract class OptionalParameter {
      * @author mikko.koponen
      * @author uudashr
 		 * @author pmoerenhout
-     *
      */
     public enum Tag {
         
@@ -2555,7 +2536,7 @@ public abstract class OptionalParameter {
         /**
          * Get the tag code of the {@link Tag}.
          * 
-         * @returns the tag code.
+         * @return the tag code.
          * @deprecated use {@link #code()}
          */
         @Deprecated
@@ -2566,7 +2547,7 @@ public abstract class OptionalParameter {
         /**
          * Get the tag code of the {@link Tag}.
          * 
-         * @returns the tag code.
+         * @return the tag code.
          */
         public short code() {
             return code;

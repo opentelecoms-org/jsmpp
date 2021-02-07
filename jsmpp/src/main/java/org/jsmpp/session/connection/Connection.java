@@ -20,7 +20,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 
 /**
- * Connection object.
+ * Connection interface.
  *
  * @author uudashr
  */

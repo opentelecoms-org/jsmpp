@@ -29,8 +29,9 @@ import org.jsmpp.util.StringParameter;
 import org.jsmpp.util.StringValidator;
 
 /**
- * @author uudashr
+ * The object to hold all bind information.
  *
+ * @author uudashr
  */
 public class BindRequest {
     private final Lock lock = new ReentrantLock();
@@ -156,12 +157,13 @@ public class BindRequest {
     }
     
     /**
-     * Reject the bind request.
-     * 
+     * Reject the bind request with the provided error code.
+     *
      * @param errorCode is the reason of rejection.
      * @throws IllegalStateException if the acceptance or rejection has been made.
      * @throws IOException if the connection already closed.
-     * @see {@link #accept(String systemId, InterfaceVersion interfaceVersion)}
+     *
+     * @see #accept(String systemId, InterfaceVersion interfaceVersion)
      */
     public void reject(int errorCode) throws IllegalStateException, IOException {
         lock.lock();

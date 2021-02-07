@@ -1,29 +1,27 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.bean;
 
-
 /**
- * This is simple DataCoding. Only contains Alphabet (DEFAULT and 8-bit) and
- * Message Class.
- * 
+ * This is simple DataCoding implementing DataCoding.
+ * Only contains Alphabet (DEFAULT and 8-bit) and Message Class.
+ *
  * @author uudashr
- * 
  */
 public class SimpleDataCoding implements DataCoding {
-    
+
     private final Alphabet alphabet;
     private final MessageClass messageClass;
 
@@ -37,14 +35,14 @@ public class SimpleDataCoding implements DataCoding {
 
     /**
      * Construct Data Coding using specified Alphabet and Message Class.
-     *  
+     *
      * @param alphabet is the alphabet. Only support
      *        {@link Alphabet#ALPHA_DEFAULT} and {@link Alphabet#ALPHA_8_BIT}.
-     * @param messageClass
-     * @throws IllegalArgumentException if alphabet is <tt>null</tt> or using
+     * @param messageClass the message class 0, 1, 2 or 3
+     * @throws IllegalArgumentException if alphabet is {@code null} or using
      *         non {@link Alphabet#ALPHA_DEFAULT} and
      *         {@link Alphabet#ALPHA_8_BIT} alphabet or
-     *         <code>messageClass</code> is null.
+     *         {@code messageClass} is null.
      */
     public SimpleDataCoding(Alphabet alphabet, MessageClass messageClass) throws IllegalArgumentException {
         if (alphabet == null) {
@@ -65,15 +63,15 @@ public class SimpleDataCoding implements DataCoding {
         this.alphabet = alphabet;
         this.messageClass = messageClass;
     }
-    
+
     public Alphabet getAlphabet() {
         return alphabet;
     }
-    
+
     public MessageClass getMessageClass() {
         return messageClass;
     }
-    
+
     public byte toByte() {
         // base byte is 11110xxx or 0xf0, others injected
         byte value = (byte)0xf0;
@@ -114,7 +112,7 @@ public class SimpleDataCoding implements DataCoding {
             return false;
         return true;
     }
-    
+
     @Override
     public String toString() {
         return "DataCoding:" + (0xff & toByte());

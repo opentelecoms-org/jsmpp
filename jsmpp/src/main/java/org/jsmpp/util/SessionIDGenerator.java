@@ -25,7 +25,7 @@ package org.jsmpp.util;
 public interface SessionIDGenerator<S> {
 
     /**
-     * @return
+     * @return The new session id object
      */
     S newSessionId();
 }

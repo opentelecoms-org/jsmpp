@@ -21,8 +21,7 @@ import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.extra.ProcessRequestException;
 
 /**
- * <tt>ResponseHandler</tt> provide interface to handle response of the session
- * routines.
+ * {@code ResponseHandler} provide an interface to handle responses of the session routines.
  *
  * @author uudashr
  * @version 1.0
@@ -32,10 +31,10 @@ import org.jsmpp.extra.ProcessRequestException;
 public interface ResponseHandler extends BaseResponseHandler {
 
     /**
-     * Process the deliver_sm
-     *
-     * @param deliverSm
-     * @throws ProcessRequestException
+     * Process the deliver sm
+     * 
+     * @param deliverSm the deliver short message object
+     * @throws ProcessRequestException if there is a failure when processing the deliver_sm
      */
     void processDeliverSm(DeliverSm deliverSm)
             throws ProcessRequestException;
@@ -43,12 +42,17 @@ public interface ResponseHandler extends BaseResponseHandler {
     /**
      * Response by sending <b>DELIVER_SM_RESP</b> to SMSC.
      *
-     * @param commandStatus is the commandStatus
-     * @param sequenceNumber is the sequence number of original <b>DELIVER_SM</b> request
-     * @param messageId is the message id
-     * @throws IOException if an IO error occur.
+     * @param commandStatus the command status
+     * @param sequenceNumber the sequence number of original <b>DELIVER_SM</b> request
+     * @param messageId the message_id
+     * @throws IOException if an input or output error occurred
      */
     void sendDeliverSmResp(int commandStatus, int sequenceNumber, String messageId) throws IOException;
 
+    /**
+     * Process the alert notification
+     *
+     * @param alertNotification the alert_notification object
+     */
     void processAlertNotification(AlertNotification alertNotification);
 }
