@@ -35,8 +35,7 @@ public class OpenAndBindExample {
 
     System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
 
-    boolean useSsl = false;
-
+    boolean useSsl = true;
     String host = "localhost";
     int port = 8056;
     /*

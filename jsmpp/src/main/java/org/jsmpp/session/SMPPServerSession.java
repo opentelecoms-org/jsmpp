@@ -20,8 +20,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jsmpp.DefaultPDUReader;
@@ -58,6 +60,7 @@ import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ProcessRequestException;
+import org.jsmpp.extra.QueueMaxException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.connection.Connection;
@@ -120,7 +123,11 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     public InetAddress getInetAddress() {
         return connection().getInetAddress();
     }
-    
+
+    public int getPort() {
+        return connection().getPort();
+    }
+
     /**
      * Wait for bind request.
      *
@@ -136,7 +143,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             TimeoutException {
         SessionState currentSessionState = getSessionState();
         if (currentSessionState.equals(SessionState.OPEN)) {
-            new PDUReaderWorker().start();
+            new PDUReaderWorker(getPduProcessorDegree(), getQueueCapacity()).start();
             try {
                 return bindRequestReceiver.waitForRequest(timeout);
             } catch (IllegalStateException e) {
@@ -268,7 +275,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         throw new ProcessRequestException(NO_MESSAGE_RECEIVER_LISTENER_REGISTERED,
             SMPPConstant.STAT_ESME_RX_R_APPN);
     }
-    
+
     private void fireSubmitSmRespSent(SubmitSmResult submitSmResult) {
         if (responseDeliveryListener != null) {
             responseDeliveryListener.onSubmitSmRespSent(submitSmResult, this);
@@ -635,14 +642,40 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     }
     
     private class PDUReaderWorker extends Thread {
-        private ExecutorService executorService = Executors.newFixedThreadPool(getPduProcessorDegree());
+        private ThreadPoolExecutor pduExecutor;
         private Runnable onIOExceptionTask = new Runnable() {
             @Override
             public void run() {
                 close();
             }
         };
-        
+
+        private PDUReaderWorker(final int pduProcessorDegree, final int queueCapacity) {
+            super("PDUReaderWorker-" + getSessionId());
+            pduExecutor = new ThreadPoolExecutor(pduProcessorDegree, pduProcessorDegree,
+                0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(queueCapacity), new RejectedExecutionHandler() {
+                @Override
+                public void rejectedExecution(final Runnable runnable, final ThreadPoolExecutor executor) {
+                    logger.info("Receiving queue is full, please increasing queue capacity, and/or let other side obey the window size");
+                    Command pduHeader = ((PDUProcessServerTask)runnable).getPduHeader();
+                    if ((pduHeader.getCommandId() & SMPPConstant.MASK_CID_RESP) == SMPPConstant.MASK_CID_RESP) {
+                        try {
+                            boolean success = executor.getQueue().offer(runnable, 60000, TimeUnit.MILLISECONDS);
+                            if (!success){
+                                logger.warn("Offer to queue failed for {}", pduHeader);
+                            }
+                        }
+                        catch (InterruptedException e){
+                            Thread.currentThread().interrupt();
+                        }
+                    } else {
+                        throw new QueueMaxException("Queue capacity " + queueCapacity + " exceeded");
+                    }
+                }
+            });
+        }
+
         @Override
         public void run() {
             logger.info("Starting PDUReaderWorker with processor degree {}", getPduProcessorDegree());
@@ -650,19 +683,35 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 readPDU();
             }
             close();
-            executorService.shutdown();
-            logger.info("PDUReaderWorker stop");
+            pduExecutor.shutdown();
+            try {
+                pduExecutor.awaitTermination(getTransactionTimer(), TimeUnit.MILLISECONDS);
+            }
+            catch (InterruptedException e) {
+                logger.warn("Interrupted while waiting for PDU executor pool to finish");
+                Thread.currentThread().interrupt();
+            }
+            logger.debug("{} stopped", getName());
         }
         
         private void readPDU() {
+            Command pduHeader = null;
             try {
-                Command pduHeader = pduReader.readPDUHeader(in);
+                pduHeader = pduReader.readPDUHeader(in);
                 byte[] pdu = pduReader.readPDU(in, pduHeader);
                 
                 PDUProcessServerTask task = new PDUProcessServerTask(pduHeader,
                         pdu, sessionContext.getStateProcessor(),
                         sessionContext, responseHandler, onIOExceptionTask);
-                executorService.execute(task);
+                pduExecutor.execute(task);
+            } catch (QueueMaxException e) {
+                logger.info("Notify other side to throttle: {} ({} threads active)", e.getMessage(), pduExecutor.getActiveCount());
+                try {
+                    responseHandler.sendNegativeResponse(pduHeader.getCommandId(), SMPPConstant.STAT_ESME_RTHROTTLED, pduHeader.getSequenceNumber());
+                } catch (IOException ioe) {
+                    logger.warn("Failed sending negative response: {}", ioe.getMessage());
+                    close();
+                }
             } catch (InvalidCommandLengthException e) {
                 logger.warn("Received invalid command length: {}", e.getMessage());
                 try {

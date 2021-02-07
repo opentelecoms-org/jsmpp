@@ -56,9 +56,10 @@ public abstract class AbstractSession implements Session {
     private final Sequence sequence = new Sequence(1);
     private final PDUSender pduSender;
     private int pduProcessorDegree = 3;
+    private int queueCapacity = 100;
 
     private String sessionId = generateSessionId();
-    private int enquireLinkTimer = 5000;
+    private int enquireLinkTimer = 60000;
     private long transactionTimer = 2000;
 
     protected EnquireLinkSender enquireLinkSender;
@@ -165,6 +166,22 @@ public abstract class AbstractSession implements Session {
      */
     public int getPduProcessorDegree() {
         return pduProcessorDegree;
+    }
+
+    /**
+     * Get the capacity of the working queue for PDU processing.
+     *
+     * @return the ThreadPoolExecutor queue capacity.
+     */
+    public int getQueueCapacity() {
+        return queueCapacity;
+    }
+
+    /**
+     * Set the capacity of the working queue for PDU processing.
+     */
+    public void setQueueCapacity(final int queueCapacity) {
+        this.queueCapacity = queueCapacity;
     }
 
     /**
@@ -394,6 +411,7 @@ public abstract class AbstractSession implements Session {
         }
     }
 
+    @Override
     public void unbindAndClose() {
         logger.debug("Unbind and close session {}", sessionId);
         if (sessionContext().getSessionState().isBound()) {
@@ -462,7 +480,7 @@ public abstract class AbstractSession implements Session {
 
         public EnquireLinkSender()
         {
-        	super("EnquireLinkSender-" + AbstractSession.this);
+        	super("EnquireLinkSender-" + sessionId);
         }
 
         @Override

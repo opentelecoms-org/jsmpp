@@ -50,7 +50,7 @@ public class AcceptingConnectionAndBindExample {
                         "test".equals(request.getPassword())) {
 
                     // accepting request and send bind response immediately
-                    LOGGER.info("Accepting bind request, interface version is " + request.getInterfaceVersion());
+                    LOGGER.info("Accepting bind request, interface version is {}", request.getInterfaceVersion());
                     request.accept("sys");
                     
                     try {

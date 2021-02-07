@@ -136,4 +136,8 @@ public class PDUProcessServerTask implements Runnable {
             onIOExceptionTask.run();
         }
     }
+
+    protected Command getPduHeader() {
+        return pduHeader;
+    }
 }

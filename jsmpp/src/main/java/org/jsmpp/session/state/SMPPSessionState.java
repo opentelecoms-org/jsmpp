@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import org.jsmpp.bean.Command;
 import org.jsmpp.session.ResponseHandler;
+import org.jsmpp.session.SMPPSessionContext;
 
 /**
  * This class is provide interface to response to every incoming SMPP Commands.
@@ -45,8 +46,8 @@ public interface SMPPSessionState extends GenericSMPPSessionState {
      * @param responseHandler is the session handler.
      * @throws IOException throw if there is an IO error occur.
      */
-    void processBindResp(Command pduHeader, byte[] pdu,
-            ResponseHandler responseHandler) throws IOException;
+    void processBindResp(SMPPSessionContext sessionContext, Command pduHeader, byte[] pdu,
+                         ResponseHandler responseHandler) throws IOException;
 
 
     /**

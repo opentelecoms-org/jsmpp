@@ -113,7 +113,6 @@ public class PendingResponseTest {
                     //re-interrupt the current thread
                     Thread.currentThread().interrupt();
                 }
-                
             }
         }.start();
     }

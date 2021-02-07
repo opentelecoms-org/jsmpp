@@ -38,15 +38,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author pmoerenhout
- *
  */
 public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
     implements Runnable, OutboundServerMessageReceiverListener {
   private static final Logger LOGGER = LoggerFactory.getLogger(SMPPOutboundServerSimulator.class);
   private static final Integer DEFAULT_PORT = 8056;
-  private final ExecutorService execService = Executors.newFixedThreadPool(100);
+  private final ExecutorService execService = Executors.newFixedThreadPool(10);
   private int port;
 
   private AtomicBoolean exit = new AtomicBoolean();
@@ -59,13 +57,11 @@ public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
     int port;
     try {
       port = Integer.parseInt(System.getProperty("jsmpp.simulator.port", DEFAULT_PORT.toString()));
-    }
-    catch (NumberFormatException e) {
+    } catch (NumberFormatException e) {
       port = DEFAULT_PORT;
     }
 
     SMPPOutboundServerSimulator smppServerSim = new SMPPOutboundServerSimulator(port);
-    LOGGER.info("run {}", smppServerSim);
     smppServerSim.run();
   }
 
@@ -76,7 +72,7 @@ public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
   @Override
   public void run() {
     try {
-      LOGGER.info("Listening on port {}", port);
+      LOGGER.info("SMPP Outbound server listening on port {}", port);
       OutboundSMPPServerSessionListener sessionListener = new OutboundSMPPServerSessionListener(port);
 
       while (!exit.get()) {
@@ -87,24 +83,15 @@ public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
         outboundServerSession.addSessionStateListener(new SessionStateListenerImpl());
         outboundServerSession.setOutboundServerMessageReceiverListener(this);
 
-        execService.execute(new SMPPOutboundServerSimulator.WaitOutbindTask(outboundServerSession));
-
-        try {
-          Thread.sleep(60 * 60 * 1000L);
-        }
-        catch (InterruptedException e) {
-          LOGGER.info("Thread was interrupted");
-          shutdown();
-        }
-        outboundServerSession.close();
+        execService.submit(new SMPPOutboundServerSimulator.WaitOutbindTask(outboundServerSession));
       }
 
-      LOGGER.info("close listener {}", sessionListener);
+      LOGGER.info("Close listener {}", sessionListener);
       sessionListener.close();
+    } catch (IOException e) {
+      LOGGER.error("I/O error occurred", e);
+    } finally {
       execService.shutdown();
-    }
-    catch (IOException e) {
-      LOGGER.error("IO error occurred", e);
     }
   }
 
@@ -131,16 +118,13 @@ public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
             outbindRequest.getSystemId(), outbindRequest.getPassword());
 
         serverSession.bind(new BindParameter(BindType.BIND_TRX, "test", "test", "cp", TypeOfNumber.UNKNOWN,
-            NumberingPlanIndicator.UNKNOWN, null), 60000);
-      }
-      catch (IllegalStateException e) {
+            NumberingPlanIndicator.UNKNOWN, null), 15000);
+      } catch (IllegalStateException e) {
         LOGGER.error("System error", e);
-      }
-      catch (TimeoutException e) {
+      } catch (TimeoutException e) {
         LOGGER.warn("Wait for outbind has reached timeout", e);
-      }
-      catch (IOException e) {
-        LOGGER.warn("IO exception", e);
+      } catch (IOException e) {
+        LOGGER.warn("I/O error occurred", e);
       }
     }
   }
@@ -148,7 +132,7 @@ public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
   private class SessionStateListenerImpl implements SessionStateListener {
     @Override
     public void onStateChange(SessionState newState, SessionState oldState, Session source) {
-      LOGGER.info("Session state changed from {} to {}", oldState, newState);
+      LOGGER.info("Session {} state changed from {} to {}", source.getSessionId(), oldState, newState);
     }
   }
 

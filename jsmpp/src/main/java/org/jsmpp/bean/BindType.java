@@ -17,7 +17,7 @@ package org.jsmpp.bean;
 import org.jsmpp.SMPPConstant;
 
 /**
- * Enum represent bind type of SMPP. There is 3 bind type provide by SMPP:
+ * Enum represent bind type of SMPP. There are 3 bind type provided by SMPP:
  * <ul>
  * <li>receiver (BIND_RX) - receive only</li>
  * <li>transmitter (BIND_TX) - transmit only</li>
@@ -48,8 +48,8 @@ public enum BindType {
 
     private int bindCommandId;
 
-    private BindType(int bindCommadId) {
-        this.bindCommandId = bindCommadId;
+    private BindType(int bindCommandId) {
+        this.bindCommandId = bindCommandId;
     }
 
     /**
@@ -71,12 +71,12 @@ public enum BindType {
     }
 
     /**
-     * Inform whether the bind type is transmitable.
+     * Inform whether the bind type is transmittable.
      * 
-     * @return <tt>true</tt> f the bind type is transmitable, otherwise
+     * @return <tt>true</tt> f the bind type is transmittable, otherwise
      *         <tt>false</tt>.
      */
-    public boolean isTransmitable() {
+    public boolean isTransmittable() {
         return this == BIND_TX || this == BIND_TRX;
     }
 
@@ -86,7 +86,7 @@ public enum BindType {
      * @return <tt>true</tt> if the bind type is receivable, otherwise
      *         <tt>false</tt>.
      */
-    public boolean isReceiveable() {
+    public boolean isReceivable() {
         return this == BIND_RX || this == BIND_TRX;
     }
 

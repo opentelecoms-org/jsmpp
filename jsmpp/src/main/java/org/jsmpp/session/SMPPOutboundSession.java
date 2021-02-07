@@ -19,7 +19,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -48,6 +49,7 @@ import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ProcessRequestException;
+import org.jsmpp.extra.QueueMaxException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.connection.Connection;
@@ -188,7 +190,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
       in = new DataInputStream(conn.getInputStream());
       out = conn.getOutputStream();
 
-      pduReaderWorker = new PDUReaderWorker();
+      pduReaderWorker = new PDUReaderWorker(getPduProcessorDegree(), getQueueCapacity());
       pduReaderWorker.start();
       sendOutbind(outbindParameter.getSystemId(), outbindParameter.getPassword());
     }
@@ -201,7 +203,6 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
     try {
       BindRequest bindRequest = waitForBind(timeout);
 
-      logger.info("Start enquireLinkSender");
       enquireLinkSender = new EnquireLinkSender();
       enquireLinkSender.start();
 
@@ -252,6 +253,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
     }
   }
 
+  @Override
   public void deliverShortMessage(String serviceType,
                                   TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
                                   String sourceAddr, TypeOfNumber destAddrTon,
@@ -273,10 +275,12 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
     executeSendCommand(task, getTransactionTimer());
   }
 
+  @Override
   public MessageReceiverListener getMessageReceiverListener() {
     return messageReceiverListener;
   }
 
+  @Override
   public void setMessageReceiverListener(
       MessageReceiverListener messageReceiverListener) {
     this.messageReceiverListener = messageReceiverListener;
@@ -307,10 +311,9 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
 
     public void sendBindResp(String systemId, InterfaceVersion interfaceVersion, BindType bindType, int sequenceNumber)
         throws IOException {
-      SMPPOutboundSession.this.sessionContext.bound(bindType);
+      sessionContext.bound(bindType);
       try {
-        pduSender().sendBindResp(SMPPOutboundSession.this.out, bindType.responseCommandId(), sequenceNumber, systemId,
-            interfaceVersion);
+        pduSender().sendBindResp(out, bindType.responseCommandId(), sequenceNumber, systemId, interfaceVersion);
       }
       catch (PDUStringException e) {
         logger.error("Failed sending bind response", e);
@@ -333,6 +336,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
       }
     }
 
+    @Override
     public void sendDataSmResp(DataSmResult dataSmResult, int sequenceNumber)
         throws IOException {
       try {
@@ -345,14 +349,16 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
          * There should be no PDUStringException thrown since creation
          * of MessageId should be save.
          */
-        logger.error("SYSTEM ERROR. Failed sending dataSmResp", e);
+        logger.error("Failed sending data_sm_resp", e);
       }
     }
 
+    @Override
     public PendingResponse<Command> removeSentItem(int sequenceNumber) {
       return removePendingResponse(sequenceNumber);
     }
 
+    @Override
     public void notifyUnbonded() {
       sessionContext.unbound();
     }
@@ -363,23 +369,28 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
       logger.debug("deliver_sm_resp with sequence_number {} has been sent", sequenceNumber);
     }
 
+    @Override
     public void sendEnquireLinkResp(int sequenceNumber) throws IOException {
       logger.debug("Sending enquire_link_resp");
       pduSender().sendEnquireLinkResp(out, sequenceNumber);
     }
 
+    @Override
     public void sendGenerickNack(int commandStatus, int sequenceNumber) throws IOException {
       pduSender().sendGenericNack(out, commandStatus, sequenceNumber);
     }
 
+    @Override
     public void sendNegativeResponse(int originalCommandId, int commandStatus, int sequenceNumber) throws IOException {
       pduSender().sendHeader(out, originalCommandId | SMPPConstant.MASK_CID_RESP, commandStatus, sequenceNumber);
     }
 
+    @Override
     public void sendUnbindResp(int sequenceNumber) throws IOException {
       pduSender().sendUnbindResp(out, SMPPConstant.STAT_ESME_ROK, sequenceNumber);
     }
 
+    @Override
     public void processBind(Bind bind) {
       SMPPOutboundSession.this.bindRequestReceiver.notifyAcceptBind(bind);
     }
@@ -392,7 +403,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
    */
   private class PDUReaderWorker extends Thread {
     // start with serial execution of pdu processing, when the session is bound the pool will be enlarge up to the PduProcessorDegree
-    private ExecutorService executorService = Executors.newFixedThreadPool(1);
+    private ThreadPoolExecutor pduExecutor = null;
     private Runnable onIOExceptionTask = new Runnable() {
       @Override
       public void run() {
@@ -400,8 +411,16 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
       }
     };
 
-    private PDUReaderWorker() {
-      super("PDUReaderWorker: " + SMPPOutboundSession.this);
+    private PDUReaderWorker(final int pduProcessorDegree, final int queueCapacity) {
+      super("PDUReaderWorker-" + getSessionId());
+      pduExecutor = new ThreadPoolExecutor(pduProcessorDegree, pduProcessorDegree,
+          0L, TimeUnit.MILLISECONDS,
+          new LinkedBlockingQueue<Runnable>(queueCapacity), new RejectedExecutionHandler() {
+        @Override
+        public void rejectedExecution(final Runnable r, final ThreadPoolExecutor executor) {
+          throw new QueueMaxException("Queue capacity " + queueCapacity + " exceeded");
+        }
+      });
     }
 
     @Override
@@ -411,21 +430,21 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
         readPDU();
       }
       close();
-      executorService.shutdown();
+      pduExecutor.shutdown();
       try {
-        executorService.awaitTermination(getTransactionTimer(), TimeUnit.MILLISECONDS);
+        pduExecutor.awaitTermination(getTransactionTimer(), TimeUnit.MILLISECONDS);
       }
       catch (InterruptedException e) {
-        logger.warn("interrupted while waiting for executor service pool to finish");
+        logger.warn("Interrupted while waiting for PDU executor pool to finish");
         Thread.currentThread().interrupt();
-        throw new RuntimeException("Interrupted");
       }
-      logger.info("PDUReaderWorker stop");
+      logger.debug("{} stopped", getName());
     }
 
     private void readPDU() {
+      Command pduHeader = null;
       try {
-        Command pduHeader = pduReader.readPDUHeader(in);
+        pduHeader = pduReader.readPDUHeader(in);
         byte[] pdu = pduReader.readPDU(in, pduHeader);
                 /*
                  * When the processing PDU is need user interaction via event,
@@ -435,8 +454,15 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
         PDUProcessOutboundTask task = new PDUProcessOutboundTask(pduHeader, pdu,
             sessionContext, responseHandler,
             sessionContext, onIOExceptionTask);
-        executorService.execute(task);
-
+        pduExecutor.execute(task);
+      } catch (QueueMaxException e) {
+        logger.info("Notify other side to throttle: {} ({} threads active)", e.getMessage(), pduExecutor.getActiveCount());
+        try {
+          responseHandler.sendNegativeResponse(pduHeader.getCommandId(), SMPPConstant.STAT_ESME_RTHROTTLED, pduHeader.getSequenceNumber());
+        } catch (IOException ioe) {
+          logger.warn("Failed sending negative response: {}", ioe.getMessage());
+          close();
+        }
       }
       catch (InvalidCommandLengthException e) {
         logger.warn("Received invalid command length: {}", e.getMessage());
@@ -478,6 +504,8 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
    * @author uudashr
    */
   private class BoundSessionStateListener implements SessionStateListener {
+
+    @Override
     public void onStateChange(SessionState newState, SessionState oldState,
                               Session source) {
       /**
@@ -494,8 +522,8 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
         }
       } else if (newState.isBound()) {
         logger.info("Changing processor degree to {}", getPduProcessorDegree());
-        ((ThreadPoolExecutor) pduReaderWorker.executorService).setMaximumPoolSize(getPduProcessorDegree());
-        ((ThreadPoolExecutor) pduReaderWorker.executorService).setCorePoolSize(getPduProcessorDegree());
+        pduReaderWorker.pduExecutor.setMaximumPoolSize(getPduProcessorDegree());
+        pduReaderWorker.pduExecutor.setCorePoolSize(getPduProcessorDegree());
       }
     }
   }

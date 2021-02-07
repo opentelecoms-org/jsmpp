@@ -8,7 +8,7 @@ package org.jsmpp.extra;
  * @since 1.0
  * 
  */
-public class QueueException extends Exception {
+public class QueueException extends RuntimeException {
     private static final long serialVersionUID = -8946319349013591134L;
 
     /**

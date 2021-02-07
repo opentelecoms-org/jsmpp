@@ -14,6 +14,8 @@
  */
 package org.jsmpp.session;
 
+import static org.jsmpp.SMPPConstant.PDU_HEADER_LENGTH;
+
 import java.io.IOException;
 
 import org.jsmpp.SMPPConstant;

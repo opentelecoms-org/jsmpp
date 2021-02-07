@@ -16,8 +16,12 @@ package org.jsmpp.examples;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jsmpp.PDUStringException;
@@ -115,11 +119,20 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
                 LOGGER.info("Accepting connection for session {}", serverSession.getSessionId());
                 serverSession.setMessageReceiverListener(this);
                 serverSession.setResponseDeliveryListener(this);
-                serverSession.setEnquireLinkTimer(4444);
-
-                LOGGER.info("enquireLinkSender start");
-
-                execService.execute(new WaitBindTask(serverSession, systemId, password));
+                Future<Boolean> bindResult = execService.submit(new WaitBindTask(serverSession, systemId, password));
+                try {
+                    boolean bound = bindResult.get(60000, TimeUnit.MILLISECONDS);
+                    if (bound) {
+                        // Could start deliver_sm to ESME
+                        LOGGER.info("The session is now in state {}", serverSession.getSessionState());
+                    }
+                } catch (InterruptedException e){
+                    LOGGER.info("Interrupted WaitBind task: {}", e.getMessage());
+                } catch (ExecutionException e){
+                    LOGGER.info("Exception on execute WaitBind task: {}", e.getMessage());
+                } catch (TimeoutException e){
+                    LOGGER.info("Timeout on bind result: {}", e.getMessage());
+                }
             }
         } catch (IOException e) {
             LOGGER.error("IO error occurred", e);
@@ -134,7 +147,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
 
     @Override
     public SubmitSmResult onAcceptSubmitSm(SubmitSm submitSm,
-                                           SMPPServerSession source) throws ProcessRequestException {
+            SMPPServerSession source) throws ProcessRequestException {
         MessageId messageId = messageIDGenerator.newMessageId();
         LOGGER.info("Receiving submit_sm '{}', and return message id {}", new String(submitSm.getShortMessage()), messageId);
         if (SMSCDeliveryReceipt.FAILURE.containedIn(submitSm.getRegisteredDelivery()) || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitSm.getRegisteredDelivery())) {
@@ -206,7 +219,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
         throw new ProcessRequestException(QUERYBROADCASTSM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RBCASTQUERYFAIL);
     }
 
-    private static class WaitBindTask implements Runnable {
+    private static class WaitBindTask implements Callable<Boolean> {
         private final SMPPServerSession serverSession;
         private String systemId;
         private String password;
@@ -217,9 +230,10 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
             this.password = password;
         }
 
-        public void run() {
+        @Override
+        public Boolean call() {
             try {
-                BindRequest bindRequest = serverSession.waitForBind(5555000);
+                BindRequest bindRequest = serverSession.waitForBind(5000);
                 try {
                     if (BindType.BIND_TRX.equals(bindRequest.getBindType())) {
                       if (systemId.equals(bindRequest.getSystemId())) {
@@ -227,6 +241,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
                           LOGGER.info("Accepting bind for session {}, interface version {}", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
                           // The systemId identifies the SMSC to the ESME.
                           bindRequest.accept(SMSC_SYSTEMID, InterfaceVersion.IF_34);
+                          return true;
                         } else {
                           LOGGER.info("Rejecting bind for session {}, interface version {}, invalid password", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
                           bindRequest.reject(SMPPConstant.STAT_ESME_RINVPASWD);
@@ -251,6 +266,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
             } catch (IOException e) {
                 LOGGER.error("Failed accepting bind request for session {}", serverSession.getSessionId());
             }
+            return false;
         }
     }
 

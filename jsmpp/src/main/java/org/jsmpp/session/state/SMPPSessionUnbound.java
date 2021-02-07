@@ -20,6 +20,7 @@ import org.jsmpp.bean.Command;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BaseResponseHandler;
 import org.jsmpp.session.ResponseHandler;
+import org.jsmpp.session.SMPPSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +44,8 @@ class SMPPSessionUnbound implements SMPPSessionState {
     }
 
     @Override
-    public void processBindResp(Command pduHeader, byte[] pdu,
-            ResponseHandler responseHandler) throws IOException {
+    public void processBindResp(SMPPSessionContext sessionContext, Command pduHeader, byte[] pdu,
+                                ResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 

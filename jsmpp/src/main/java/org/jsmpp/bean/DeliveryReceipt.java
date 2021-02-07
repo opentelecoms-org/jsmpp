@@ -70,14 +70,14 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
                     DeliveryReceipt.DELREC_DONE_DATE, formattedDeliveryReceipt));
             finalStatus = DeliveryReceiptState
                     .getByName(getDeliveryReceiptValue(
-                            DeliveryReceipt.DELREC_STAT, formattedDeliveryReceipt));
+                        DeliveryReceipt.DELREC_STAT, formattedDeliveryReceipt));
             error = getDeliveryReceiptValue(DeliveryReceipt.DELREC_ERR, formattedDeliveryReceipt);
             text = getDeliveryReceiptTextValue(formattedDeliveryReceipt);
         } catch (Exception e) {
             throw new InvalidDeliveryReceiptException("There is an error found when parsing delivery receipt", e);
         }
     }
-    
+
     public DeliveryReceipt(String id, int submitted, int delivered,
             Date submitDate, Date doneDate, DeliveryReceiptState finalStatus,
             String error, String text) {
@@ -241,7 +241,7 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
     /**
      * Create String representation of integer. Preceding 0 will be add as
      * needed.
-     * 
+     *
      * @param value is the value.
      * @param digit is the digit should be shown.
      * @return the String representation of int value.
@@ -257,7 +257,7 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
 
     /**
      * Get the delivery receipt attribute value.
-     * 
+     *
      * @param attrName is the attribute name.
      * @param source the original source id:IIIIIIIIII sub:SSS dlvrd:DDD submit
      *        date:YYMMDDhhmm done date:YYMMDDhhmm stat:DDDDDDD err:E
@@ -279,7 +279,7 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
         }
         return source.substring(startIndex);
     }
-    
+
     /**
      * YYMMDDhhmm where:
      * <ul>
@@ -289,9 +289,9 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
      * <li>hh = hour (00-23)</li>
      * <li>mm = minute (00-59)</li>
      * </ul>
-     * 
+     *
      * Java format is (yyMMddHHmm).
-     * 
+     *
      * @param date in <tt>String</tt> format.
      * @return
      * @throws NumberFormatException if there is contains non number on
@@ -317,7 +317,7 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
     }
-    
+
     private static int convertTwoDigitYear(int year) {
         if (year >=0 && year <= 37) {
             return 2000 + year;
@@ -328,7 +328,7 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
             return year;
         }
     }
-    
+
     /**
      * @param source
      * @return the text part of delivery receipt

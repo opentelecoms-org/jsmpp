@@ -52,6 +52,7 @@ public class SMPPServerSessionListener {
     private final ServerConnection serverConn;
     private int initiationTimer = 5000;
     private int pduProcessorDegree = 3;
+    private int queueCapacity = 100;
     private SessionStateListener sessionStateListener;
     private ServerMessageReceiverListener messageReceiverListener;
     private ServerResponseDeliveryListener responseDeliveryListener;
@@ -101,7 +102,15 @@ public class SMPPServerSessionListener {
     public int getPduProcessorDegree() {
         return pduProcessorDegree;
     }
-    
+
+    public int getQueueCapacity() {
+        return queueCapacity;
+    }
+
+    public void setQueueCapacity(final int queueCapacity) {
+        this.queueCapacity = queueCapacity;
+    }
+
     public int getPort() {
         return port;
     }

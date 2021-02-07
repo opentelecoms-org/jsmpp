@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUStringException;
+import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.Outbind;
 import org.jsmpp.extra.PendingResponse;
@@ -44,14 +45,15 @@ class SMPPOutboundServerSessionOpen implements SMPPOutboundServerSessionState {
     private static final Logger logger = LoggerFactory.getLogger(SMPPOutboundServerSessionOpen.class);
     private static final PDUDecomposer pduDecomposer = new DefaultDecomposer();
     private static final String INVALID_PROCESS_FOR_OPEN_SESSION = "Invalid process for open session state";
-    
+
+    @Override
     public SessionState getSessionState() {
         return SessionState.OPEN;
     }
 
+    @Override
     public void processOutbind(Command pduHeader, byte[] pdu,
                             OutboundServerResponseHandler responseHandler) throws IOException {
-        logger.info("processOutbind");
         try {
             Outbind outbind = pduDecomposer.outbind(pdu);
             responseHandler.processOutbind(outbind);
@@ -63,27 +65,28 @@ class SMPPOutboundServerSessionOpen implements SMPPOutboundServerSessionState {
         }
     }
 
+    @Override
     public void processBindResp(Command pduHeader, byte[] pdu,
                                 OutboundServerResponseHandler responseHandler) throws IOException {
         logger.info("processBindResp");
         throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
     }
 
+    @Override
     public void processDeliverSm(Command pduHeader, byte[] pdu,
                                  OutboundServerResponseHandler responseHandler) throws IOException {
-        PendingResponse<Command> pendingResp = responseHandler
-                .removeSentItem(1);
-        if (pendingResp != null) {
-            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
-                    "Receive unexpected deliver_sm"));
-        }
+        logger.info("Received deliver_sm in OPEN state, send negative response");
+        responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
+            SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader.getSequenceNumber());
     }
 
+    @Override
     public void processEnquireLink(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         responseHandler.sendEnquireLinkResp(pduHeader.getSequenceNumber());
     }
 
+    @Override
     public void processEnquireLinkResp(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         PendingResponse<Command> pendingResp = responseHandler
@@ -94,6 +97,7 @@ class SMPPOutboundServerSessionOpen implements SMPPOutboundServerSessionState {
         }
     }
 
+    @Override
     public void processGenericNack(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) {
         PendingResponse<Command> pendingResp = responseHandler
@@ -104,6 +108,7 @@ class SMPPOutboundServerSessionOpen implements SMPPOutboundServerSessionState {
         }
     }
 
+    @Override
     public void processUnbind(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         PendingResponse<Command> pendingResp = responseHandler
@@ -114,6 +119,7 @@ class SMPPOutboundServerSessionOpen implements SMPPOutboundServerSessionState {
         }
     }
 
+    @Override
     public void processUnbindResp(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         PendingResponse<Command> pendingResp = responseHandler
@@ -124,6 +130,7 @@ class SMPPOutboundServerSessionOpen implements SMPPOutboundServerSessionState {
         }
     }
 
+    @Override
     public void processUnknownCid(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         PendingResponse<Command> pendingResp = responseHandler
@@ -134,16 +141,15 @@ class SMPPOutboundServerSessionOpen implements SMPPOutboundServerSessionState {
         }
     }
 
+    @Override
     public void processDataSm(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-        PendingResponse<Command> pendingResp = responseHandler
-                .removeSentItem(1);
-        if (pendingResp != null) {
-            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
-                    "Receive unexpected data_sm"));
-        }
+        logger.info("Received data_sm in OPEN state, send negative response");
+        responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
+            SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader.getSequenceNumber());
     }
-    
+
+    @Override
     public void processDataSmResp(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         PendingResponse<Command> pendingResp = responseHandler

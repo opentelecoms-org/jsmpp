@@ -42,10 +42,18 @@ public class SocketConnection implements Connection {
         this.out = socket.getOutputStream();
     }
 
+    public SocketConnection(Socket socket, int size) throws IOException {
+        this.socket = socket;
+        this.in = new StrictBufferedInputStream(socket.getInputStream(), size);
+        this.out = socket.getOutputStream();
+    }
+
+    @Override
     public void setSoTimeout(int timeout) throws IOException {
         socket.setSoTimeout(timeout);
     }
 
+    @Override
     public void close() {
         try {
             socket.close();
@@ -54,19 +62,39 @@ public class SocketConnection implements Connection {
         }
     }
 
+    @Override
     public boolean isOpen() {
         return !socket.isClosed();
     }
 
+    @Override
     public InputStream getInputStream() {
         return in;
     }
 
+    @Override
     public OutputStream getOutputStream() {
         return out;
     }
 
+    @Override
     public InetAddress getInetAddress() {
         return socket.getInetAddress();
     }
+
+    @Override
+    public InetAddress getLocalAddress() {
+        return socket.getLocalAddress();
+    }
+
+    @Override
+    public int getPort() {
+        return socket.getPort();
+    }
+
+    @Override
+    public int getLocalPort() {
+        return socket.getLocalPort();
+    }
+
 }

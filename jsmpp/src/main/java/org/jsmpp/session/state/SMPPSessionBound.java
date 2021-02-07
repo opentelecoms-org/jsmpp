@@ -19,6 +19,7 @@ import java.io.IOException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
 import org.jsmpp.session.ResponseHandler;
+import org.jsmpp.session.SMPPSessionContext;
 
 /**
  * This class is general bound state implementation of {@link SMPPSessionState}.
@@ -28,10 +29,11 @@ import org.jsmpp.session.ResponseHandler;
  * @since 2.0
  * 
  */
-abstract class SMPPSessionBound extends AbstractGenericSMPPSessionBound  implements SMPPSessionState {
+abstract class SMPPSessionBound extends AbstractGenericSMPPSessionBound implements SMPPSessionState {
 
-    public void processBindResp(Command pduHeader, byte[] pdu,
-            ResponseHandler responseHandler) throws IOException {
+    @Override
+    public void processBindResp(SMPPSessionContext sessionContext, Command pduHeader, byte[] pdu,
+                                ResponseHandler responseHandler) throws IOException {
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
                 SMPPConstant.STAT_ESME_RALYBND, pduHeader.getSequenceNumber());
     }
