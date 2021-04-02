@@ -21,7 +21,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jsmpp.PDUStringException;
@@ -106,32 +105,34 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
 
     @Override
     public void run() {
-        try {
+        /*
+         * for SSL use the SSLServerSocketConnectionFactory() or DefaultSSLServerSocketConnectionFactory()
+         */
+        try (SMPPServerSessionListener sessionListener = useSsl ?
+            new SMPPServerSessionListener(port, new KeyStoreSSLServerSocketConnectionFactory())
+            : new SMPPServerSessionListener(port)) {
             /*
              * for SSL use the SSLServerSocketConnectionFactory() or DefaultSSLServerSocketConnectionFactory()
              */
-            SMPPServerSessionListener sessionListener = useSsl ?
-                new SMPPServerSessionListener(port, new KeyStoreSSLServerSocketConnectionFactory())
-                : new SMPPServerSessionListener(port);
             LOGGER.info("Listening on port {}{}", port, useSsl ? " (SSL)" : "");
             while (true) {
                 SMPPServerSession serverSession = sessionListener.accept();
-                LOGGER.info("Accepting connection for session {}", serverSession.getSessionId());
+                LOGGER.info("Accepted connection with session {}", serverSession.getSessionId());
                 serverSession.setMessageReceiverListener(this);
                 serverSession.setResponseDeliveryListener(this);
-                Future<Boolean> bindResult = execService.submit(new WaitBindTask(serverSession, systemId, password));
+                Future<Boolean> bindResult = execService.submit(new WaitBindTask(serverSession, 30000, systemId, password));
                 try {
-                    boolean bound = bindResult.get(60000, TimeUnit.MILLISECONDS);
+                    boolean bound = bindResult.get();
                     if (bound) {
                         // Could start deliver_sm to ESME
                         LOGGER.info("The session is now in state {}", serverSession.getSessionState());
                     }
                 } catch (InterruptedException e){
                     LOGGER.info("Interrupted WaitBind task: {}", e.getMessage());
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException(e);
                 } catch (ExecutionException e){
                     LOGGER.info("Exception on execute WaitBind task: {}", e.getMessage());
-                } catch (TimeoutException e){
-                    LOGGER.info("Timeout on bind result: {}", e.getMessage());
                 }
             }
         } catch (IOException e) {
@@ -221,11 +222,13 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
 
     private static class WaitBindTask implements Callable<Boolean> {
         private final SMPPServerSession serverSession;
+        private final long timeout;
         private String systemId;
         private String password;
 
-        public WaitBindTask(SMPPServerSession serverSession, String systemId, String password) {
+        public WaitBindTask(SMPPServerSession serverSession, long timeout, String systemId, String password) {
             this.serverSession = serverSession;
+            this.timeout = timeout;
             this.systemId = systemId;
             this.password = password;
         }
@@ -233,14 +236,15 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
         @Override
         public Boolean call() {
             try {
-                BindRequest bindRequest = serverSession.waitForBind(5000);
+                BindRequest bindRequest = serverSession.waitForBind(timeout);
                 try {
                     if (BindType.BIND_TRX.equals(bindRequest.getBindType())) {
                       if (systemId.equals(bindRequest.getSystemId())) {
                         if (password.equals(bindRequest.getPassword())) {
                           LOGGER.info("Accepting bind for session {}, interface version {}", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
+                          serverSession.setInterfaceVersion(InterfaceVersion.IF_50.min(bindRequest.getInterfaceVersion()));
                           // The systemId identifies the SMSC to the ESME.
-                          bindRequest.accept(SMSC_SYSTEMID, InterfaceVersion.IF_34);
+                          bindRequest.accept(SMSC_SYSTEMID, InterfaceVersion.IF_50);
                           return true;
                         } else {
                           LOGGER.info("Rejecting bind for session {}, interface version {}, invalid password", serverSession.getSessionId(), bindRequest.getInterfaceVersion());

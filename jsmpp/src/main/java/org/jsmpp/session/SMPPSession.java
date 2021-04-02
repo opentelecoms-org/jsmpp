@@ -151,7 +151,6 @@ public class SMPPSession extends AbstractSession implements ClientSession {
         connectAndBind(host, port, bindParam);
 	}
 
-
 	public int getLocalPort(){
 		return conn.getLocalPort();
 	}
@@ -180,8 +179,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
     }
 
 	/**
-     * Open connection and bind immediately with specified timeout. The default
-     * timeout is 1 minutes.
+     * Open connection and bind immediately with specified timeout.
      *
      * @param host is the SMSC host address.
      * @param port is the SMSC listen port.
@@ -205,7 +203,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	}
 
 	/**
-     * Open connection and bind immediately.
+     * Open connection and bind immediately with timeout of 1 minute.
      *
      * @param host is the SMSC host address.
      * @param port is the SMSC listen port.
@@ -346,13 +344,17 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 
 	    BindResp resp = (BindResp)executeSendCommand(task, timeout);
 	    OptionalParameter.Sc_interface_version scVersion = resp.getOptionalParameter(Sc_interface_version.class);
-	    if(scVersion != null) {
+	    if (scVersion != null) {
 		    logger.info("Other side reports SMPP interface version {}", scVersion);
-	    }
+				setInterfaceVersion(InterfaceVersion.IF_50.min(InterfaceVersion.valueOf(scVersion.getValue())));
+	    } else {
+	    	// Fallback to version when 3.4 when server doesn't use optional parameter
+				setInterfaceVersion(InterfaceVersion.IF_34);
+			}
 
 			sessionContext.bound(bindType);
 
-		return resp.getSystemId();
+			return resp.getSystemId();
 	}
     /* (non-Javadoc)
      * @see org.jsmpp.session.ClientSession#submitShortMessage(java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.ESMClass, byte, byte, java.lang.String, java.lang.String, org.jsmpp.bean.RegisteredDelivery, byte, org.jsmpp.bean.DataCoding, byte, byte[], org.jsmpp.bean.OptionalParameter[])
@@ -660,6 +662,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 						}
 						catch (InterruptedException e){
 							Thread.currentThread().interrupt();
+							throw new RuntimeException(e);
 						}
 					} else {
 						throw new QueueMaxException("Queue capacity " + queueCapacity + " exceeded");
@@ -732,10 +735,12 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	     * Notify for no activity.
 	     */
 	    private void notifyNoActivity() {
-	        logger.debug("No activity notified, sending enquire_link");
-	        if (sessionContext().getSessionState().isBound()) {
-	            enquireLinkSender.enquireLink();
-	        }
+				SessionState sessionState = sessionContext().getSessionState();
+	    	if ((getInterfaceVersion().compareTo(InterfaceVersion.IF_34) > 0 && sessionState.isNotClosed()) ||
+						sessionState.isBound()) {
+					logger.trace("No activity notified, sending enquire_link");
+	    		enquireLinkSender.enquireLink();
+	    	}
 	    }
 	}
 
@@ -762,7 +767,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 						}
 					}
 	        if (newState.isBound()) {
-	        	 logger.debug("Changing processor degree to {}", getPduProcessorDegree());
+	        	logger.debug("Changing processor degree to {}", getPduProcessorDegree());
 						pduReaderWorker.pduExecutor.setMaximumPoolSize(getPduProcessorDegree());
 						pduReaderWorker.pduExecutor.setCorePoolSize(getPduProcessorDegree());
 	        }

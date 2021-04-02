@@ -70,8 +70,8 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
 
   private final PDUReader pduReader;
   private final OutboundServerResponseHandler responseHandler = new OutboundServerResponseHandlerImpl();
-  private BoundSessionStateListener sessionStateListener = new BoundSessionStateListener();
-  private OutboundSMPPServerSessionContext sessionContext = new OutboundSMPPServerSessionContext(this, sessionStateListener);
+  private BoundSessionStateListener boundSessionStateListener = new BoundSessionStateListener();
+  private OutboundSMPPServerSessionContext sessionContext = new OutboundSMPPServerSessionContext(this, boundSessionStateListener);
   private PDUReaderWorker pduReaderWorker;
   private GenericMessageReceiverListener messageReceiverListener;
   private OutboundServerMessageReceiverListener outboundServerMessageReceiverListener;
@@ -101,8 +101,6 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
     this.in = new DataInputStream(conn.getInputStream());
     this.out = conn.getOutputStream();
     enquireLinkSender = new EnquireLinkSender();
-    addSessionStateListener(new BoundSessionStateListener());
-    // addSessionStateListener(new OutboundSMPPServerSession.BoundStateListener());
     addSessionStateListener(sessionStateListener);
     setPduProcessorDegree(pduProcessorDegree);
     sessionContext.open();
@@ -150,6 +148,9 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
     OptionalParameter.Sc_interface_version scVersion = resp.getOptionalParameter(Sc_interface_version.class);
     if (scVersion != null) {
       logger.debug("Other side reports SMPP interface version {}", scVersion);
+      setInterfaceVersion(InterfaceVersion.IF_50.min(InterfaceVersion.valueOf(scVersion.getValue())));
+    } else {
+      setInterfaceVersion(InterfaceVersion.IF_34);
     }
 
     logger.info("Bind response systemId '{}'", resp.getSystemId());
@@ -409,11 +410,9 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
 
     @Override
     public void run() {
-      logger.info("Starting PDUReaderWorker");
       while (isReadPdu()) {
         readPDU();
       }
-      logger.info("Close PDUReaderWorker");
       close();
       pduExecutor.shutdown();
       try {
@@ -421,6 +420,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
       } catch (InterruptedException e) {
         logger.warn("Interrupted while waiting for PDU executor pool to finish");
         Thread.currentThread().interrupt();
+        throw new RuntimeException(e);
       }
       logger.debug("{} stopped", getName());
     }
@@ -436,8 +436,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
          * process it concurrently.
          */
         PDUProcessOutboundServerTask task = new PDUProcessOutboundServerTask(pduHeader, pdu,
-            sessionContext, responseHandler,
-            sessionContext, onIOExceptionTask);
+            sessionContext, responseHandler, sessionContext, onIOExceptionTask);
         pduExecutor.execute(task);
       } catch (QueueMaxException e) {
         logger.info("Notify other side to throttle: {} ({} threads active)", e.getMessage(), pduExecutor.getActiveCount());
@@ -477,18 +476,17 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
      * Notify for no activity.
      */
     private void notifyNoActivity() {
-      logger.debug("No activity notified, sending enquire_link");
-      if (sessionContext().getSessionState().isBound()) {
+      SessionState sessionState = sessionContext().getSessionState();
+      if ((getInterfaceVersion().compareTo(InterfaceVersion.IF_34) > 0 && sessionState.isNotClosed()) || sessionState.isBound()) {
+        logger.trace("No activity notified, sending enquire_link");
         enquireLinkSender.enquireLink();
       }
     }
-
   }
 
   private class BoundSessionStateListener implements SessionStateListener {
     @Override
-    public void onStateChange(SessionState newState, SessionState oldState,
-                              Session source) {
+    public void onStateChange(SessionState newState, SessionState oldState, Session source) {
       if (newState.isBound()) {
         /**
          * We need to set SO_TIMEOUT to session timer so when timeout occur,
@@ -501,7 +499,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
           logger.error("Failed setting so_timeout for session timer", e);
         }
 
-        logger.info("Changing processor degree to {}", getPduProcessorDegree());
+        logger.debug("Changing processor degree to {}", getPduProcessorDegree());
         pduReaderWorker.pduExecutor.setMaximumPoolSize(getPduProcessorDegree());
         pduReaderWorker.pduExecutor.setCorePoolSize(getPduProcessorDegree());
       }

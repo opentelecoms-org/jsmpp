@@ -4,7 +4,7 @@
 
     <groupId>org.jsmpp</groupId>
     <artifactId>jsmpp-pom</artifactId>
-    <version>2.3.11-SNAPSHOT</version>
+    <version>2.3.12-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>jSMPP - Parent</name>
@@ -50,9 +50,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.30</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
-        <junit.version>4.13</junit.version>
+        <jcharset.version>2.1</jcharset.version>
+        <junit.version>4.13.1</junit.version>
         <testng.version>6.14.3</testng.version>
-        <commons-codec.version>1.14</commons-codec.version>
+        <commons-codec.version>1.15</commons-codec.version>
         <git.properties>git.properties</git.properties>
     </properties>
 
@@ -89,6 +90,7 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>
@@ -98,10 +100,17 @@
             </dependency>
 
             <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${log4j.version}</version>
+                <groupId>net.freeutils</groupId>
+                <artifactId>jcharset</artifactId>
+                <version>${jcharset.version}</version>
             </dependency>
+
+<!--            <dependency>-->
+<!--                <groupId>log4j</groupId>-->
+<!--                <artifactId>log4j</artifactId>-->
+<!--                <version>${log4j.version}</version>-->
+<!--            </dependency>-->
+
         </dependencies>
     </dependencyManagement>
 

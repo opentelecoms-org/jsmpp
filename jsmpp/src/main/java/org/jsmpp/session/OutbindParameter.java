@@ -19,7 +19,7 @@ import java.util.Objects;
 import org.jsmpp.bean.InterfaceVersion;
 
 /**
- * This class is wraps all bind parameter that will be send as PDU.
+ * This class is wraps all outbind parameter that will be send as PDU.
  *
  * @author pmoerenhout
  */

@@ -339,6 +339,7 @@ public interface SMPPConstant {
     /*
      * interface_version
      */
+    byte IF_VERSION_00 = 0x00;
     byte IF_VERSION_33 = 0x33;
     byte IF_VERSION_34 = 0x34;
     byte IF_VERSION_50 = 0x50;

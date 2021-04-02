@@ -37,8 +37,8 @@ class PDUProcessOutboundServerTask implements Runnable {
     private final Runnable onIOExceptionTask;
 
     PDUProcessOutboundServerTask(Command pduHeader, byte[] pdu,
-                                        OutboundSMPPServerSessionContext sessionContext, OutboundServerResponseHandler responseHandler,
-                                        ActivityNotifier activityNotifier, Runnable onIOExceptionTask) {
+                                 OutboundSMPPServerSessionContext sessionContext, OutboundServerResponseHandler responseHandler,
+                                 ActivityNotifier activityNotifier, Runnable onIOExceptionTask) {
         this.pduHeader = pduHeader;
         this.pdu = pdu;
         this.sessionContext = sessionContext;
@@ -59,7 +59,7 @@ class PDUProcessOutboundServerTask implements Runnable {
             case SMPPConstant.CID_BIND_TRANSMITTER_RESP:
             case SMPPConstant.CID_BIND_TRANSCEIVER_RESP:
                 activityNotifier.notifyActivity();
-                sessionContext.getStateProcessor().processBindResp(pduHeader, pdu, responseHandler);
+                sessionContext.getStateProcessor().processBindResp(sessionContext, pduHeader, pdu, responseHandler);
                 break;
             case SMPPConstant.CID_GENERIC_NACK:
                 activityNotifier.notifyActivity();

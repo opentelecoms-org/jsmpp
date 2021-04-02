@@ -41,7 +41,7 @@ import org.jsmpp.extra.ResponseTimeoutException;
  * @author uudashr
  * 
  */
-public interface ClientSession extends Session {
+public interface ClientSession extends Session, AutoCloseable {
     
     /**
      * Submit a short message to specified destination address. This method will

@@ -83,7 +83,7 @@ public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
         outboundServerSession.addSessionStateListener(new SessionStateListenerImpl());
         outboundServerSession.setOutboundServerMessageReceiverListener(this);
 
-        execService.submit(new SMPPOutboundServerSimulator.WaitOutbindTask(outboundServerSession));
+        execService.execute(new SMPPOutboundServerSimulator.WaitOutbindTask(outboundServerSession));
       }
 
       LOGGER.info("Close listener {}", sessionListener);

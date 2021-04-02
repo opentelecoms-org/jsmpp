@@ -2,15 +2,15 @@
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.session.state;
 
@@ -20,6 +20,7 @@ import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.BindResp;
+import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.EnquireLinkResp;
 import org.jsmpp.extra.PendingResponse;
@@ -27,6 +28,7 @@ import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BaseResponseHandler;
 import org.jsmpp.session.OutboundServerResponseHandler;
 import org.jsmpp.session.ResponseHandler;
+import org.jsmpp.session.SessionContext;
 import org.jsmpp.util.DefaultDecomposer;
 import org.jsmpp.util.PDUDecomposer;
 import org.slf4j.Logger;
@@ -59,16 +61,28 @@ class SMPPOutboundServerSessionOutbound implements SMPPOutboundServerSessionStat
     }
 
     @Override
-    public void processBindResp(Command pduHeader, byte[] pdu,
+    public void processBindResp(SessionContext sessionContext, Command pduHeader, byte[] pdu,
                                 OutboundServerResponseHandler responseHandler) throws IOException {
         PendingResponse<Command> pendingResp = responseHandler
             .removeSentItem(pduHeader.getSequenceNumber());
         if (pendingResp != null) {
             try {
                 BindResp resp = pduDecomposer.bindResp(pdu);
+                if (pduHeader.getCommandId() == SMPPConstant.CID_BIND_RECEIVER_RESP)
+                {
+                    sessionContext.bound(BindType.BIND_RX);
+                }
+                else if (pduHeader.getCommandId() == SMPPConstant.CID_BIND_TRANSMITTER_RESP)
+                {
+                    sessionContext.bound(BindType.BIND_TX);
+                }
+                else if (pduHeader.getCommandId() == SMPPConstant.CID_BIND_TRANSCEIVER_RESP)
+                {
+                    sessionContext.bound(BindType.BIND_TRX);
+                }
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
-                String message = "Failed decomposing submit_sm_resp";
+                String message = "Failed decomposing bind_resp";
                 logger.error(message, e);
                 responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
                     .getSequenceNumber());
@@ -171,6 +185,7 @@ class SMPPOutboundServerSessionOutbound implements SMPPOutboundServerSessionStat
         }
     }
 
+    // TODO
     public void processAlertNotification(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) {
         PendingResponse<Command> pendingResp = responseHandler

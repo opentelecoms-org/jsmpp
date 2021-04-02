@@ -29,7 +29,6 @@ import org.jsmpp.session.BaseResponseHandler;
 import org.jsmpp.session.ResponseHandler;
 import org.jsmpp.session.SMPPSessionContext;
 import org.jsmpp.util.DefaultDecomposer;
-import org.jsmpp.util.IntUtil;
 import org.jsmpp.util.PDUDecomposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,11 +58,6 @@ class SMPPSessionOpen implements SMPPSessionState {
                 .removeSentItem(pduHeader.getSequenceNumber());
         if (pendingResp != null) {
             try {
-                logger.debug("bind_resp header ({}, {}, {}, {})",
-                    pduHeader.getCommandLength(),
-                    pduHeader.getCommandIdAsHex(),
-                    IntUtil.toHexString(pduHeader.getCommandStatus()),
-                    pduHeader.getSequenceNumber());
                 BindResp resp = pduDecomposer.bindResp(pdu);
                 if (pduHeader.getCommandId() == SMPPConstant.CID_BIND_RECEIVER_RESP)
                 {

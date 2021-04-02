@@ -27,6 +27,7 @@ import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BaseResponseHandler;
 import org.jsmpp.session.OutboundServerResponseHandler;
 import org.jsmpp.session.ResponseHandler;
+import org.jsmpp.session.SessionContext;
 import org.jsmpp.util.DefaultDecomposer;
 import org.jsmpp.util.PDUDecomposer;
 import org.slf4j.Logger;
@@ -66,16 +67,14 @@ class SMPPOutboundServerSessionOpen implements SMPPOutboundServerSessionState {
     }
 
     @Override
-    public void processBindResp(Command pduHeader, byte[] pdu,
+    public void processBindResp(SessionContext sessionContext, Command pduHeader, byte[] pdu,
                                 OutboundServerResponseHandler responseHandler) throws IOException {
-        logger.info("processBindResp");
         throw new IOException(INVALID_PROCESS_FOR_OPEN_SESSION);
     }
 
     @Override
     public void processDeliverSm(Command pduHeader, byte[] pdu,
                                  OutboundServerResponseHandler responseHandler) throws IOException {
-        logger.info("Received deliver_sm in OPEN state, send negative response");
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
             SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader.getSequenceNumber());
     }
@@ -160,6 +159,7 @@ class SMPPOutboundServerSessionOpen implements SMPPOutboundServerSessionState {
         }
     }
 
+    // TODO: Check if needed
     public void processAlertNotification(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) {
         PendingResponse<Command> pendingResp = responseHandler

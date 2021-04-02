@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -42,6 +44,7 @@ import org.jsmpp.bean.QueryBroadcastSm;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceSm;
+import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.SubmitMulti;
 import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
@@ -74,13 +77,15 @@ import org.slf4j.LoggerFactory;
  */
 public class StressServer implements Runnable, ServerMessageReceiverListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(StressServer.class);
-    private static final int DEFAULT_MAX_WAIT_BIND = 10;
+    private static final int DEFAULT_MAX_WAIT_BIND = 5;
+    private static final int DEFAULT_MAX_DELIVERIES = 5;
     private static final String DEFAULT_LOG4J_PATH = "stress/server-log4j.properties";
     private static final int DEFAULT_PORT = 8056;
     private static final int DEFAULT_PROCESSOR_DEGREE = 3;
     private static final String CANCELSM_NOT_IMPLEMENTED = "cancel_sm not implemented";
     private static final String REPLACESM_NOT_IMPLEMENTED = "replace_sm not implemented";
     private final ExecutorService waitBindExecService = Executors.newFixedThreadPool(DEFAULT_MAX_WAIT_BIND);
+    private final ScheduledExecutorService deliveryExecService = Executors.newScheduledThreadPool(DEFAULT_MAX_DELIVERIES);
     private final MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
     private final AbsoluteTimeFormatter timeFormatter = new AbsoluteTimeFormatter();
     private final AtomicInteger requestCounter = new AtomicInteger();
@@ -94,8 +99,7 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
 
     @Override
     public void run() {
-        try {
-            SMPPServerSessionListener sessionListener = new SMPPServerSessionListener(port);
+        try (SMPPServerSessionListener sessionListener = new SMPPServerSessionListener(port)) {
             sessionListener.setSessionStateListener(new SessionStateListenerImpl());
             sessionListener.setPduProcessorDegree(processorDegree);
             new TrafficWatcherThread().start();
@@ -104,11 +108,13 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
                 SMPPServerSession serverSession = sessionListener.accept();
                 LOGGER.info("Accepting connection for session {}", serverSession.getSessionId());
                 serverSession.setMessageReceiverListener(this);
-                waitBindExecService.execute(new WaitBindTask(serverSession));
+                waitBindExecService.execute(new WaitBindTask(serverSession, 60000));
             }
         } catch (IOException e) {
             LOGGER.error("I/O error occurred", e);
         }
+        waitBindExecService.shutdown();
+        deliveryExecService.shutdown();
     }
 
     @Override
@@ -119,7 +125,6 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
         QuerySmResult querySmResult = new QuerySmResult(finalDate, MessageState.DELIVERED, (byte)0x00);
         return querySmResult;
     }
-
 
     @Override
     public SubmitSmResult onAcceptSubmitSm(SubmitSm submitSm,
@@ -136,6 +141,12 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
             LOGGER.info("Receiving submit_sm {}, return message id {}", new String(submitSm.getShortMessage()), messageId.getValue());
         }
         requestCounter.incrementAndGet();
+
+        if (SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitSm.getRegisteredDelivery())) {
+            LOGGER.debug("Schedule delivery receipt in 1000ms");
+            deliveryExecService.schedule(new DeliveryReceiptTask(source, submitSm, messageId), 1000, TimeUnit.MILLISECONDS);
+        }
+
         return new SubmitSmResult(messageId, new OptionalParameter[0]);
     }
 
@@ -210,19 +221,23 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
 
     private class WaitBindTask implements Runnable {
         private final SMPPServerSession serverSession;
+        private final long timeout;
 
-        public WaitBindTask(SMPPServerSession serverSession) {
+        public WaitBindTask(SMPPServerSession serverSession, long timeout) {
             this.serverSession = serverSession;
+            this.timeout = timeout;
         }
 
         @Override
         public void run() {
             try {
-                LOGGER.info("Waiting for bind for session {}", serverSession.getSessionId());
-                BindRequest bindRequest = serverSession.waitForBind(60000);
+                LOGGER.info("Waiting {} ms for bind for session {} ", timeout, serverSession.getSessionId());
+                BindRequest bindRequest = serverSession.waitForBind(timeout);
                 LOGGER.info("Accepting bind for session {}", serverSession.getSessionId());
                 try {
-                    bindRequest.accept("sys", InterfaceVersion.IF_34);
+                    serverSession.setInterfaceVersion(InterfaceVersion.IF_50.min(bindRequest.getInterfaceVersion()));
+                    bindRequest.accept("sys", InterfaceVersion.IF_50);
+
                 } catch (PDUStringException e) {
                     LOGGER.error("Invalid system id", e);
                     bindRequest.reject(SMPPConstant.STAT_ESME_RINVSYSID);
@@ -230,7 +245,7 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
             } catch (IllegalStateException e) {
                 LOGGER.error("System error", e);
             } catch (TimeoutException e) {
-                LOGGER.warn("Wait for bind has reached timeout", e);
+                LOGGER.warn("Timeout: {}", e.getMessage());
             } catch (IOException e) {
                 LOGGER.error("Failed accepting bind request for session {}", serverSession.getSessionId());
             }
@@ -250,11 +265,6 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
 
         @Override
         public void run() {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
             String stringValue = Integer.valueOf(messageId.getValue(), 16).toString();
             try {
 

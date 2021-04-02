@@ -49,6 +49,10 @@ public class OpenAndBindExample {
       String systemId = session
           .connectAndBind(host, port, new BindParameter(BindType.BIND_TRX, "j", "jpwd", "cp", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
       LOGGER.info("Connected with SMSC with system id {}", systemId);
+
+      LOGGER.info("Session interface version: {}", session.getInterfaceVersion());
+      LOGGER.info("Local port: {}", session.getLocalPort());
+
       try {
         Thread.sleep(60000);
       } catch (InterruptedException e) {

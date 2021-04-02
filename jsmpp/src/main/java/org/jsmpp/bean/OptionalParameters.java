@@ -191,6 +191,8 @@ public class OptionalParameters {
             	return new OptionalParameter.More_messages_to_send(content);
             case MESSAGE_STATE:
                 return new OptionalParameter.Message_state(content);
+            case CONGESTION_STATE:
+                return new OptionalParameter.Congestion_state(content);
             case USSD_SERVICE_OP:
             	return new OptionalParameter.Ussd_service_op(content);
             case BROADCAST_CHANNEL_INDICATOR:
@@ -284,7 +286,7 @@ public class OptionalParameters {
             }
           }
         }
-        logger.info("Optional Parameter Tag {} not found", tagClass);
+        logger.debug("Optional Parameter Tag {} not found", tagClass);
         return null;
     }
 
@@ -297,7 +299,7 @@ public class OptionalParameters {
             }
           }
         }
-        logger.info("Optional Parameter Tag {} not found", tag);
+        logger.debug("Optional Parameter Tag {} not found", tag);
         return null;
     }
 }

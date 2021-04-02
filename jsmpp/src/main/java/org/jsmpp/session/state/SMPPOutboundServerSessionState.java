@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import org.jsmpp.bean.Command;
 import org.jsmpp.session.OutboundServerResponseHandler;
+import org.jsmpp.session.SessionContext;
 
 /**
  * This class is provide interface to response to every incoming SMPP Commands.
@@ -44,12 +45,13 @@ public interface SMPPOutboundServerSessionState extends GenericSMPPSessionState 
     /**
      * Process the bind response command.
      *
+     * @param sessionContext is the session context
      * @param pduHeader is the PDU header.
      * @param pdu is the complete PDU.
      * @param responseHandler is the session handler.
      * @throws IOException if an input or output error occurred
      */
-    void processBindResp(Command pduHeader, byte[] pdu, OutboundServerResponseHandler responseHandler)
+    void processBindResp(SessionContext sessionContext, Command pduHeader, byte[] pdu, OutboundServerResponseHandler responseHandler)
         throws IOException;
 
     void processDeliverSm(Command pduHeader, byte[] pdu, OutboundServerResponseHandler responseHandler)

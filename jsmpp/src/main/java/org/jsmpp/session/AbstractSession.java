@@ -29,6 +29,7 @@ import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DataSmResp;
 import org.jsmpp.bean.ESMClass;
+import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.RegisteredDelivery;
@@ -47,17 +48,18 @@ import org.slf4j.LoggerFactory;
 /**
  * @author uudashr
  */
-public abstract class AbstractSession implements Session {
+public abstract class AbstractSession implements Session, AutoCloseable {
     private static final Logger logger = LoggerFactory.getLogger(AbstractSession.class);
     private static final Random random = new Random();
 
-    private final Map<Integer, PendingResponse<Command>> pendingResponse = new ConcurrentHashMap<Integer, PendingResponse<Command>>();
+    private final Map<Integer, PendingResponse<Command>> pendingResponse = new ConcurrentHashMap<>();
     private final Sequence sequence = new Sequence(1);
     private final PDUSender pduSender;
     private int pduProcessorDegree = 3;
     private int queueCapacity = 100;
 
     private String sessionId = generateSessionId();
+    private InterfaceVersion interfaceVersion = InterfaceVersion.IF_34;
     private int enquireLinkTimer = 60000;
     private long transactionTimer = 2000;
 
@@ -86,6 +88,16 @@ public abstract class AbstractSession implements Session {
     @Override
     public String getSessionId() {
         return sessionId;
+    }
+
+    @Override
+    public void setInterfaceVersion(InterfaceVersion interfaceVersion) {
+        this.interfaceVersion = interfaceVersion;
+    }
+
+    @Override
+    public InterfaceVersion getInterfaceVersion() {
+        return interfaceVersion;
     }
 
     @Override
@@ -228,10 +240,10 @@ public abstract class AbstractSession implements Session {
 
     @Override
     public void close() {
-        logger.debug("Close session {} in state {}", sessionId, getSessionState());
         SessionContext ctx = sessionContext();
         SessionState sessionState = ctx.getSessionState();
         if (!sessionState.equals(SessionState.CLOSED)) {
+            logger.debug("Close session {} in state {}", sessionId, getSessionState());
             try {
                 connection().close();
             } catch (IOException e) {
@@ -298,7 +310,7 @@ public abstract class AbstractSession implements Session {
             InvalidResponseException, NegativeResponseException, IOException {
 
         int seqNum = sequence.nextValue();
-        PendingResponse<Command> pendingResp = new PendingResponse<Command>(timeout);
+        PendingResponse<Command> pendingResp = new PendingResponse<>(timeout);
         pendingResponse.put(seqNum, pendingResp);
         try {
             task.executeTask(connection().getOutputStream(), seqNum);
@@ -392,8 +404,7 @@ public abstract class AbstractSession implements Session {
         }
     }
 
-    public void unbind() throws ResponseTimeoutException,
-            InvalidResponseException, IOException {
+    public void unbind() throws IOException {
         if (sessionContext().getSessionState().equals(SessionState.CLOSED)) {
             throw new IOException("Session " + sessionId + " is closed");
         }
@@ -405,6 +416,12 @@ public abstract class AbstractSession implements Session {
         } catch (PDUException e) {
             // exception should be never caught since we didn't send any string parameter.
             logger.warn("PDU String should be always valid", e);
+        } catch (ResponseTimeoutException e) {
+            // exception should be never caught since we didn't send any string parameter.
+            logger.warn("Unbind response timeout", e);
+        } catch (InvalidResponseException e) {
+            // exception should be never caught since we didn't send any string parameter.
+            logger.warn("Invalid response for unbind", e);
         } catch (NegativeResponseException e) {
             // ignore the negative response
             logger.warn("Receive non-ok command_status ({}) for unbind_resp", e.getCommandStatus());
@@ -417,10 +434,6 @@ public abstract class AbstractSession implements Session {
         if (sessionContext().getSessionState().isBound()) {
             try {
                 unbind();
-            } catch (ResponseTimeoutException e) {
-                logger.error("Timeout waiting unbind response", e);
-            } catch (InvalidResponseException e) {
-                logger.error("Receive invalid unbind response", e);
             } catch (IOException e) {
                 logger.error("IO error found", e);
             }
@@ -485,6 +498,9 @@ public abstract class AbstractSession implements Session {
 
         @Override
         public void run() {
+            if (enquireLinkTimer == 0){
+                return;
+            }
             logger.debug("Starting EnquireLinkSender for session {}", sessionId);
             while (getSessionState().isNotClosed()) {
 

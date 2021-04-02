@@ -22,6 +22,7 @@ import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BaseResponseHandler;
 import org.jsmpp.session.OutboundServerResponseHandler;
+import org.jsmpp.session.SessionContext;
 import org.jsmpp.util.DefaultDecomposer;
 import org.jsmpp.util.PDUDecomposer;
 import org.slf4j.Logger;
@@ -41,38 +42,38 @@ class SMPPOutboundServerSessionUnbound implements SMPPOutboundServerSessionState
     private static final Logger logger = LoggerFactory.getLogger(SMPPOutboundServerSessionOutbound.class);
     private static final PDUDecomposer pduDecomposer = new DefaultDecomposer();
     private static final String INVALID_PROCESS_FOR_UNBOUND_SESSION = "Invalid process for unbound session state";
-    
+
+    @Override
     public SessionState getSessionState() {
         return SessionState.UNBOUND;
     }
 
+    @Override
     public void processOutbind(Command pduHeader, byte[] pdu,
                             OutboundServerResponseHandler responseHandler) throws IOException
     {
         throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 
-    public void processBind(Command pduHeader, byte[] pdu,
-                            OutboundServerResponseHandler responseHandler) throws IOException
-    {
-        throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
-    }
-
-    public void processBindResp(Command pduHeader, byte[] pdu,
+    @Override
+    public void processBindResp(SessionContext sessionContext, Command pduHeader, byte[] pdu,
             OutboundServerResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 
+    @Override
     public void processDeliverSm(Command pduHeader, byte[] pdu,
                                  OutboundServerResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 
+    @Override
     public void processEnquireLink(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         responseHandler.sendEnquireLinkResp(pduHeader.getSequenceNumber());
     }
 
+    @Override
     public void processEnquireLinkResp(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         PendingResponse<Command> pendingResp = responseHandler
@@ -85,31 +86,37 @@ class SMPPOutboundServerSessionUnbound implements SMPPOutboundServerSessionState
         }
     }
 
+    @Override
     public void processGenericNack(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 
+    @Override
     public void processUnbind(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 
+    @Override
     public void processUnbindResp(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 
+    @Override
     public void processUnknownCid(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
 
+    @Override
     public void processDataSm(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);
     }
-    
+
+    @Override
     public void processDataSmResp(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
         throw new IOException(INVALID_PROCESS_FOR_UNBOUND_SESSION);

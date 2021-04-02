@@ -16,6 +16,7 @@ package org.jsmpp.bean;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import org.jsmpp.util.HexUtil;
@@ -2426,12 +2427,9 @@ public abstract class OptionalParameter {
 			super(tag, value);
 			try {
         if (value.length >= 2) {
-          address = new String(value, 2, value.length - 2, "ISO-8859-1");
+          address = new String(value, 2, value.length - 2, StandardCharsets.ISO_8859_1);
         }
 			} catch (StringIndexOutOfBoundsException e) {
-				e.printStackTrace();
-			} catch (UnsupportedEncodingException e) {
-				// TODO: do something better
 				e.printStackTrace();
 			}
 		}
@@ -2447,6 +2445,31 @@ public abstract class OptionalParameter {
 
 		public String getAddress() {
 			return address;
+		}
+	}
+
+	/**
+	 * The congestion_state parameter is used to pass congestion status information between ESME and MC
+	 * as a means of providing flow control and congestion avoidance capabilities to the sending peer.
+	 * The TLV can be used in any SMPP operation response PDU as a means of passing congestion status from one peer to another.
+	 * Typical uses of this would be in submit_sm/submit_sm_resp sequences where an ESME would drive a batch of submissions
+	 * at a high rate and use continual tracking of the returned congestion_state values as a means of gauging the congestion.
+	 * Reaction to a variation in congestion_state would involve increasing/decreasing the rate as required to maintain the balance
+	 * in the Optimum range.
+	 *
+	 * Introduced in SMPP 5.0
+	 *
+	 * @author pmoerenhout
+	 * @since 3.0
+	 */
+	public static class Congestion_state extends OptionalParameter.Short {
+
+		public Congestion_state(short value) {
+			super(Tag.CONGESTION_STATE, value);
+		}
+
+		public Congestion_state(byte[] content) {
+			super(Tag.CONGESTION_STATE.code, content);
 		}
 	}
 
@@ -2495,7 +2518,8 @@ public abstract class OptionalParameter {
         MESSAGE_PAYLOAD(0x0424, Message_payload.class),
         DELIVERY_FAILURE_REASON(0x0425, Delivery_failure_reason.class), 
         MORE_MESSAGES_TO_SEND(0x0426, More_messages_to_send.class), 
-        MESSAGE_STATE(0x0427, Message_state.class), 
+        MESSAGE_STATE(0x0427, Message_state.class),
+			  CONGESTION_STATE(0x0428, Congestion_state.class),
         USSD_SERVICE_OP(0x0501, Ussd_service_op.class),
         BROADCAST_CHANNEL_INDICATOR(0x0600, Broadcast_channel_indicator.class),
         BROADCAST_CONTENT_TYPE(0x0601, Broadcast_content_type.class),

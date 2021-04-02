@@ -61,7 +61,7 @@ class BindRequestReceiver {
             if (request != null) {
                 return request;
             } else {
-                throw new TimeoutException("Waiting for bind request take time too long");
+                throw new TimeoutException("No bind request after " + timeout + "ms");
             }
         } finally {
             alreadyWaitForRequest = true;

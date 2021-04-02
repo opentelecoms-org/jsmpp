@@ -20,6 +20,7 @@ import org.jsmpp.InvalidResponseException;
 import org.jsmpp.PDUException;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
+import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.RegisteredDelivery;
@@ -94,7 +95,14 @@ public interface Session {
      * @return the session id.
      */
     String getSessionId();
-    
+
+    void setInterfaceVersion(InterfaceVersion interfaceVersion);
+    /**
+     * Get the negotiated interface version.
+     *
+     * @return the negotiated interface version.
+     */
+    InterfaceVersion getInterfaceVersion();
     void setEnquireLinkTimer(int enquireLinkTimer);
     int getEnquireLinkTimer();
     void setTransactionTimer(long transactionTimer);

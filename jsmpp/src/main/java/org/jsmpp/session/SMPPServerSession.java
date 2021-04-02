@@ -75,7 +75,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     private static final String NO_MESSAGE_RECEIVER_LISTENER_REGISTERED = "No message receiver listener registered";
 
     private static final Logger logger = LoggerFactory.getLogger(SMPPServerSession.class);
-    
+
     private final Connection conn;
     private final DataInputStream in;
     private final OutputStream out;
@@ -398,7 +398,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
 				        throw e;
             }
             catch(Exception e) {
-                String msg = "Invalid runtime exception thrown when processing submit_sDummyResponseHanm";
+                String msg = "Invalid runtime exception thrown when processing submit_sm";
                 logger.error(msg, e);
                 throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
             }
@@ -487,7 +487,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                  * There should be no PDUStringException thrown since creation
                  * of parsed messageId has been validated.
                  */
-                logger.error("Failed sending cancel_sm_resp", e);
+                logger.error("Failed sending query_sm_resp", e);
             }
         }
 
@@ -585,7 +585,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                  * There should be no PDUStringException thrown since creation
                  * of MessageId should be save.
                  */
-                logger.error("Failed sending broadcastSmResp", e);
+                logger.error("Failed sending broadcast_sm_resp", e);
             }
         }
 
@@ -677,7 +677,6 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
 
         @Override
         public void run() {
-            logger.info("Starting PDUReaderWorker with processor degree {}", getPduProcessorDegree());
             while (isReadPdu()) {
                 readPDU();
             }
@@ -750,7 +749,6 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         @Override
         public void onStateChange(SessionState newState, SessionState oldState, Session source) {
             if (newState.equals(SessionState.OPEN)) {
-                    enquireLinkSender.start();
                 /**
                  * We need to set SO_TIMEOUT to session timer so when timeout occurs,
                  * a SocketTimeoutException will be raised. When Exception raised we

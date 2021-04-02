@@ -45,7 +45,7 @@ import org.jsmpp.session.connection.socket.ServerSocketConnectionFactory;
  *
  * @author uudashr
  */
-public class SMPPServerSessionListener {
+public class SMPPServerSessionListener implements AutoCloseable {
     private final int port;
     private final ServerConnection serverConn;
     private int initiationTimer = 5000;

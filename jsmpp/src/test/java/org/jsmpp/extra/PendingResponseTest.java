@@ -89,6 +89,7 @@ public class PendingResponseTest {
                 } catch (InterruptedException e) {
                     //re-interrupt the current thread
                     Thread.currentThread().interrupt();
+                    throw new RuntimeException(e);
                 }
             }
         }.start();
