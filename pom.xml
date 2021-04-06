@@ -51,7 +51,7 @@
         <slf4j.version>1.7.30</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
         <jcharset.version>2.1</jcharset.version>
-        <junit.version>4.13.1</junit.version>
+        <junit.version>4.13.2</junit.version>
         <testng.version>6.14.3</testng.version>
         <commons-codec.version>1.15</commons-codec.version>
         <git.properties>git.properties</git.properties>
