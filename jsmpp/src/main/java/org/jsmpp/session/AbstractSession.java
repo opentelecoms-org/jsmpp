@@ -14,6 +14,7 @@
  */
 package org.jsmpp.session;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Random;
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author uudashr
  */
-public abstract class AbstractSession implements Session, AutoCloseable {
+public abstract class AbstractSession implements Session, Closeable {
     private static final Logger logger = LoggerFactory.getLogger(AbstractSession.class);
     private static final Random random = new Random();
 

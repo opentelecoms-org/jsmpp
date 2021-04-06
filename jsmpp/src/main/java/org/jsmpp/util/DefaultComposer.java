@@ -250,7 +250,7 @@ public class DefaultComposer implements PDUComposer {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jsmpp.util.PDUComposer#submitSmResp(int, java.lang.String)
+     * @see org.jsmpp.util.PDUComposer#submitSmResp(int, java.lang.String, org.jsmpp.bean.OptionalParameter[])
      */
     public byte[] submitSmResp(int sequenceNumber, String messageId, OptionalParameter... optionalParameters)
             throws PDUStringException {
@@ -259,6 +259,7 @@ public class DefaultComposer implements PDUComposer {
         PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_SUBMIT_SM_RESP,
             SMPPConstant.STAT_ESME_ROK, sequenceNumber);
         buf.append(messageId);
+        /* Since SMPP 5.0 */
         if (optionalParameters != null) {
             buf.appendAll(optionalParameters);
         }

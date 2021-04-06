@@ -193,7 +193,7 @@ public interface PDUComposer {
      * @param sequenceNumber The sequence number of original submit_sm PDU.
      * @param messageId The MC message ID of the submitted message.
      *                  It may be used at a later stage to query the status of a message, cancel or replace the message.
-     * @param optionalParameters Optional parameter TLV's
+     * @param optionalParameters Optional parameter TLV's for SMPP 5.0
      * @return the composed submit_sm_resp PDU byte values.
      * @throws PDUStringException if there is an invalid string constraint found
      */

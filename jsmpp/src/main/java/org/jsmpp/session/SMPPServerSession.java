@@ -409,7 +409,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 throws IOException {
             try {
                 pduSender().sendSubmitSmResp(out, sequenceNumber,
-                    submitSmResult.getMessageId());
+                    submitSmResult.getMessageId(), submitSmResult.getOptionalParameters());
                 fireSubmitSmRespSent(submitSmResult);
             } catch (PDUStringException e) {
                 /*

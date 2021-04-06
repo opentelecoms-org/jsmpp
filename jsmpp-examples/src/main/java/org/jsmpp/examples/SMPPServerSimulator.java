@@ -154,6 +154,10 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
         if (SMSCDeliveryReceipt.FAILURE.containedIn(submitSm.getRegisteredDelivery()) || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitSm.getRegisteredDelivery())) {
             execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitSm, messageId));
         }
+        /*
+         * SMPP 5.0 allows the following optional parameters (SMPP 5.0 paragraph 4.2.5):
+         * additional_status_info_text, delivery_failure_reason, dpf_result, network_error_code
+         */
         return new SubmitSmResult(messageId, new OptionalParameter[0]);
     }
 
