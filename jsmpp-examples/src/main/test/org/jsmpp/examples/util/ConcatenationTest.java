@@ -17,6 +17,7 @@ package org.jsmpp.examples.util;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.jsmpp.util.HexUtil;
 import org.junit.Assert;
@@ -24,8 +25,8 @@ import org.junit.Test;
 
 public class ConcatenationTest {
 
-  private Charset ISO_LATIN_1 = Charset.forName("ISO-8859-1");
-  private Charset USC_2 = Charset.forName("UTF-16BE");
+  private Charset ISO_LATIN_1 = StandardCharsets.ISO_8859_1;
+  private Charset USC_2 = StandardCharsets.UTF_16BE;
 
   private String message = "Lorem ipsum dolor sit amet enim. Etiam ullamcorper. " +
       "Suspendisse a pellentesque dui, non felis. Maecenas malesuada elit lectus felis, malesuada ultricies." +

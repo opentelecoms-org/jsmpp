@@ -18,6 +18,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.jsmpp.util.HexUtil;
 import org.junit.Test;
@@ -34,8 +35,8 @@ public class CharsetsTest {
 
   private final Charset GSM_CHARSET = new SCGSMCharset();
   private final Charset GSM_PACKED_CHARSET = new CRSCPackedGSMCharset();
-  private final Charset ISO_LATIN_1_CHARSET = Charset.forName("ISO-8859-1");
-  private final Charset UCS_2_CHARSET = Charset.forName("UTF-16BE");
+  private final Charset ISO_LATIN_1_CHARSET = StandardCharsets.ISO_8859_1;
+  private final Charset UCS_2_CHARSET = StandardCharsets.UTF_16BE;
 
   @Test
   public void test_gsm_encoding() throws Exception {

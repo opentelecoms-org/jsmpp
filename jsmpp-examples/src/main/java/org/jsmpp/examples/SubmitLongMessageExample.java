@@ -44,17 +44,15 @@ import org.slf4j.LoggerFactory;
  */
 public class SubmitLongMessageExample {
     private static final Logger LOGGER = LoggerFactory.getLogger(SubmitLongMessageExample.class);
-    private static final TimeFormatter TIME_FORMATTER = new AbsoluteTimeFormatter();;
+    private static final TimeFormatter TIME_FORMATTER = new AbsoluteTimeFormatter();
+    private static Random RANDOM = new Random();
     
     public static void main(String[] args) {
-        SMPPSession session = new SMPPSession();
-        try {
-            session.connectAndBind("localhost", 8056, new BindParameter(BindType.BIND_TX, "test", "test", "cp", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
-
-            Random random = new Random();
+        try (SMPPSession session = new SMPPSession()) {
+            session.connectAndBind("wyless.ns1.name", 8056, new BindParameter(BindType.BIND_TX, "test", "test", "cp", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
 
             final int totalSegments = 3;
-            OptionalParameter sarMsgRefNum = OptionalParameters.newSarMsgRefNum((short)random.nextInt());
+            OptionalParameter sarMsgRefNum = OptionalParameters.newSarMsgRefNum((short)RANDOM.nextInt());
             OptionalParameter sarTotalSegments = OptionalParameters.newSarTotalSegments(totalSegments);
 
             for (int i = 0; i < totalSegments; i++) {
@@ -65,7 +63,7 @@ public class SubmitLongMessageExample {
                 LOGGER.info("Message submitted, message_id is {}", messageId);
             }
 
-            session.unbindAndClose();
+            session.unbind();
 
         } catch (IOException e) {
             LOGGER.error("Failed connect and bind to host", e);

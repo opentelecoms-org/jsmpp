@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author uudashr
+ * @author pmoerenhout
  *
  */
 public class OptionalParameters {
@@ -190,10 +191,48 @@ public class OptionalParameters {
             	return new OptionalParameter.More_messages_to_send(content);
             case MESSAGE_STATE:
                 return new OptionalParameter.Message_state(content);
+            case CONGESTION_STATE:
+                return new OptionalParameter.Congestion_state(content);
             case USSD_SERVICE_OP:
             	return new OptionalParameter.Ussd_service_op(content);
+            case BROADCAST_CHANNEL_INDICATOR:
+                return new OptionalParameter.Broadcast_channel_indicator(content);
+            case BROADCAST_CONTENT_TYPE:
+                return new OptionalParameter.Broadcast_content_type(content);
+            case BROADCAST_CONTENT_TYPE_INFO:
+                return new OptionalParameter.Broadcast_content_type_info(content);
+            case BROADCAST_MESSAGE_CLASS:
+                return new OptionalParameter.Broadcast_message_class(content);
+            case BROADCAST_REP_NUM:
+                return new OptionalParameter.Broadcast_rep_num(content);
+            case BROADCAST_FREQUENCY_INTERVAL:
+                return new OptionalParameter.Broadcast_frequency_interval(content);
+            case BROADCAST_AREA_IDENTIFIER:
+                return new OptionalParameter.Broadcast_area_identifier(content);
+            case BROADCAST_ERROR_STATUS:
+                return new OptionalParameter.Broadcast_error_status(content);
+            case BROADCAST_AREA_SUCCESS:
+                return new OptionalParameter.Broadcast_area_success(content);
+            case BROADCAST_END_TIME:
+                return new OptionalParameter.Broadcast_end_time(content);
+            case BROADCAST_SERVICE_GROUP:
+                return new OptionalParameter.Broadcast_service_group(content);
             case BILLING_IDENTIFICATION:
             	return new OptionalParameter.Billing_identification(content);
+            case SOURCE_NETWORK_ID:
+                return new OptionalParameter.Source_network_id(content);
+            case DEST_NETWORK_ID:
+                return new OptionalParameter.Dest_network_id(content);
+            case SOURCE_NODE_ID:
+                return new OptionalParameter.Source_node_id(content);
+            case DEST_NODE_ID:
+                return new OptionalParameter.Dest_node_id(content);
+            case DEST_ADDR_NP_RESOLUTION:
+                return new OptionalParameter.Dest_addr_np_resolution(content);
+            case DEST_ADDR_NP_INFORMATION:
+                return new OptionalParameter.Dest_addr_np_information(content);
+            case DEST_ADDR_NP_COUNTRY:
+                return new OptionalParameter.Dest_addr_np_country(content);
             case DISPLAY_TIME:
             	return new OptionalParameter.Display_time(content);
             case SMS_SIGNAL:
@@ -247,7 +286,7 @@ public class OptionalParameters {
             }
           }
         }
-        logger.info("Optional Parameter Tag {} not found", tagClass);
+        logger.debug("Optional Parameter Tag {} not found", tagClass);
         return null;
     }
 
@@ -260,7 +299,7 @@ public class OptionalParameters {
             }
           }
         }
-        logger.info("Optional Parameter Tag {} not found", tag);
+        logger.debug("Optional Parameter Tag {} not found", tag);
         return null;
     }
 }

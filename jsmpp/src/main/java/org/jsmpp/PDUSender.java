@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp;
 
@@ -33,17 +33,17 @@ import org.jsmpp.bean.UnsuccessDelivery;
 /**
  * This class provides a way to send SMPP Commands over an {@link OutputStream}.
  * PDUs will be created and returned as bytes.
- * 
+ *
  * @author uudashr
  * @version 1.0
  * @since 1.0
- * 
+ *
  */
 public interface PDUSender {
 
     /**
      * Send only the PDU header.
-     * 
+     *
      * @param os the {@link OutputStream}
      * @param commandId the command_id
      * @param commandStatus the command_status
@@ -56,7 +56,7 @@ public interface PDUSender {
 
     /**
      * Send bind command.
-     * 
+     *
      * @param os the {@link OutputStream}
      * @param bindType the bind type that determine the command_id
      * @param sequenceNumber the sequence_number
@@ -79,7 +79,7 @@ public interface PDUSender {
 
     /**
      * Send bind response command.
-     * 
+     *
      * @param os the {@link OutputStream}
      * @param commandId the command_id
      * @param sequenceNumber the sequence_number
@@ -109,7 +109,7 @@ public interface PDUSender {
 
     /**
      * Send unbind command.
-     * 
+     *
      * @param os the {@link OutputStream}
      * @param sequenceNumber the sequence_number
      * @return the composed bytes
@@ -119,7 +119,7 @@ public interface PDUSender {
 
     /**
      * Send generic non-acknowledge command.
-     * 
+     *
      * @param os the {@link OutputStream}
      * @param commandStatus the command_status
      * @param sequenceNumber the sequence_number
@@ -131,19 +131,20 @@ public interface PDUSender {
 
     /**
      * Send unbind response command.
-     * 
+     *
      * @param os the {@link OutputStream}
      * @param commandStatus the command_status
      * @param sequenceNumber the sequence_number
      * @return the composed bytes
      * @throws IOException if an input or output error occurred
+
      */
     byte[] sendUnbindResp(OutputStream os, int commandStatus, int sequenceNumber)
             throws IOException;
 
     /**
      * Send enquire link command.
-     * 
+     *
      * @param os the {@link OutputStream}
      * @param sequenceNumber the sequence_number
      * @return the composed bytes
@@ -154,7 +155,7 @@ public interface PDUSender {
 
     /**
      * Send enquire link response command.
-     * 
+     *
      * @param os the {@link OutputStream}.
      * @param sequenceNumber the sequenceNumber
      * @return the composed bytes
@@ -204,16 +205,17 @@ public interface PDUSender {
 
     /**
      * Send submit short message response command.
-     * 
+     *
      * @param os the {@link OutputStream}
      * @param sequenceNumber the sequence_number
      * @param messageId the message_id
+     * @param optionalParameters the optional parameters
      * @return the composed bytes
      * @throws PDUStringException if there is an invalid string constraint found
      * @throws IOException if an input or output error occurred
      */
     byte[] sendSubmitSmResp(OutputStream os, int sequenceNumber,
-            String messageId) throws PDUStringException, IOException;
+            String messageId, OptionalParameter... optionalParameters) throws PDUStringException, IOException;
 
     /**
      * Send query short message command.
@@ -251,7 +253,7 @@ public interface PDUSender {
 
     /**
      * Send the deliver short message command.
-     * 
+     *
      * @param os the {@link OutputStream}.
      * @param sequenceNumber the sequence_number.
      * @param serviceType the service_type.
@@ -284,7 +286,7 @@ public interface PDUSender {
 
     /**
      * Send the deliver short message response.
-     * 
+     *
      * @param os the {@link OutputStream}
      * @param commandStatus the command_status
      * @param sequenceNumber the sequence_number
@@ -364,7 +366,7 @@ public interface PDUSender {
 
     /**
      * Send cancel short message response command.
-     * 
+     *
      * @param os {@link OutputStream}
      * @param sequenceNumber the sequence_number
      * @return the composed bytes
@@ -494,4 +496,33 @@ public interface PDUSender {
             TypeOfNumber esmeAddrTon, NumberingPlanIndicator esmeAddrNpi, String esmeAddr,
             OptionalParameter... optionalParameters) throws PDUStringException,
             IOException;
+
+    byte[] sendBroadcastSm(OutputStream os, int sequenceNumber, String serviceType,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            String messageId, byte priorityFlag, String scheduleDeliveryTime, String validityPeriod,
+            ReplaceIfPresentFlag replaceIfPresentFlag, DataCoding dataCoding, byte smDefaultMsgId,
+            OptionalParameter... optionalParameters)
+        throws PDUStringException, IOException;
+
+    byte[] sendBroadcastSmResp(OutputStream os, int sequenceNumber,
+            String messageId, OptionalParameter... optionalParameters)
+        throws PDUStringException, IOException;
+
+    byte[] sendCancelBroadcastSm(OutputStream os, int sequenceNumber, String serviceType, String messageId,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            OptionalParameter... optionalParameters)
+        throws PDUStringException, IOException;
+
+    byte[] sendCancelBroadcastSmResp(OutputStream os, int sequenceNumber)
+        throws IOException;
+
+    byte[] sendQueryBroadcastSm(OutputStream os, int sequenceNumber, String messageId,
+            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+            OptionalParameter... optionalParameters)
+        throws PDUStringException, IOException;
+
+    byte[] sendQueryBroadcastSmResp(OutputStream os, int sequenceNumber, String messageId,
+                                OptionalParameter... optionalParameters)
+        throws PDUStringException, IOException;
+
 }

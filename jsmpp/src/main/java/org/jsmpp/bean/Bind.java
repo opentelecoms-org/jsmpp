@@ -2,19 +2,19 @@
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.bean;
 
-import org.jsmpp.util.ObjectUtil;
+import java.util.Objects;
 
 /**
  * This class represent SMPP bind command.
@@ -39,27 +39,27 @@ public class Bind extends Command {
     }
 
     /**
-     * Get the address_range.
+     * Get the address_range
      * 
-     * @return the address_range.
+     * @return the address_range
      */
     public String getAddressRange() {
         return addressRange;
     }
 
     /**
-     * Set the address_range.
+     * Set the address_range
      * 
-     * @param addressRange is the address_range.
+     * @param addressRange is the address_range
      */
     public void setAddressRange(String addressRange) {
         this.addressRange = addressRange;
     }
 
     /**
-     * Get the addr_npi.
+     * Get the addr_npi
      * 
-     * @return the addr_npi.
+     * @return the addr_npi
      */
     public byte getAddrNpi() {
         return addrNpi;
@@ -75,9 +75,9 @@ public class Bind extends Command {
     }
 
     /**
-     * Get the addr_ton.
+     * Get the addr_ton
      * 
-     * @return the addr_ton.
+     * @return the addr_ton
      */
     public byte getAddrTon() {
         return addrTon;
@@ -93,18 +93,18 @@ public class Bind extends Command {
     }
 
     /**
-     * Get the interface_version.
+     * Get the interface_version
      * 
-     * @return the interface_version.
+     * @return the interface_version
      */
     public byte getInterfaceVersion() {
         return interfaceVersion;
     }
 
     /**
-     * Set the interface_version.
+     * Set the interface_version
      * 
-     * @param interfaceVersion is the interface_version.
+     * @param interfaceVersion is the interface_version
      */
     public void setInterfaceVersion(byte interfaceVersion) {
         this.interfaceVersion = interfaceVersion;
@@ -113,7 +113,7 @@ public class Bind extends Command {
     /**
      * Get the password.
      * 
-     * @return the password.
+     * @return the password
      */
     public String getPassword() {
         return password;
@@ -122,107 +122,72 @@ public class Bind extends Command {
     /**
      * Set the password.
      * 
-     * @param password is the password.
+     * @param password is the password
      */
     public void setPassword(String password) {
         this.password = password;
     }
 
     /**
-     * Get the system_id.
+     * Get the system_id
      * 
-     * @return the system_id.
+     * @return the system_id
      */
     public String getSystemId() {
         return systemId;
     }
 
     /**
-     * Set the system_id.
+     * Set the system_id
      * 
-     * @param systemId is the system_id.
+     * @param systemId is the system_id
      */
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
 
     /**
-     * Get the system_type.
+     * Get the system_type
      * 
-     * @return the system_type.
+     * @return the system_type
      */
     public String getSystemType() {
         return systemType;
     }
 
     /**
-     * Set the system_type.
+     * Set the system_type
      * 
-     * @param systemType is the system_type.
+     * @param systemType is the system_type
      */
     public void setSystemType(String systemType) {
         this.systemType = systemType;
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                + ((addressRange == null) ? 0 : addressRange.hashCode());
-        result = prime * result
-                + ((password == null) ? 0 : password.hashCode());
-        result = prime * result
-                + ((systemId == null) ? 0 : systemId.hashCode());
-        result = prime * result
-                + ((systemType == null) ? 0 : systemType.hashCode());
-        return result;
-    }
-    
-    private boolean hasEqualAddressRange(Bind other) {
-        return ObjectUtil.equals(addressRange, other.addressRange);
-    }
-    
-    private boolean hasEqualPassword(Bind other) {
-        return ObjectUtil.equals(password, other.password);
-    }
-    
-    private boolean hasEqualSystemId(Bind other) {
-        return ObjectUtil.equals(systemId, other.systemId);
-    }
-    
-    private boolean hasEqualSystemType(Bind other) {
-        return ObjectUtil.equals(systemType, other.systemType);
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final Bind other = (Bind)obj;
-        if (addrNpi != other.addrNpi)
-            return false;
-        if (addrTon != other.addrTon)
-            return false;
-        if (!hasEqualAddressRange(other)) {
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (interfaceVersion != other.interfaceVersion)
-            return false;
-        if (!hasEqualPassword(other)) {
+        if (!super.equals(o)) {
             return false;
         }
-        if (!hasEqualSystemId(other)) {
-            return false;
-        }
-        if (!hasEqualSystemType(other)) {
-            return false;
-        }
-        return true;
+        final Bind bind = (Bind) o;
+        return interfaceVersion == bind.interfaceVersion &&
+            addrTon == bind.addrTon &&
+            addrNpi == bind.addrNpi &&
+            Objects.equals(systemId, bind.systemId) &&
+            Objects.equals(password, bind.password) &&
+            Objects.equals(systemType, bind.systemType) &&
+            Objects.equals(addressRange, bind.addressRange);
     }
-    
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), systemId, password, systemType, interfaceVersion, addrTon, addrNpi, addressRange);
+    }
+
 }

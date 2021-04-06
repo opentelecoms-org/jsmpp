@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 public class OpenAndOutbindExample implements Runnable {
 
   private static final Logger LOG = LoggerFactory.getLogger(OpenAndOutbindExample.class);
-  private static final String DEFAULT_HOST = "localhost";
+  private static final String DEFAULT_HOST = "37.97.131.112";
   private static final Integer DEFAULT_PORT = 8056;
   private static final String DEFAULT_SYSID = "jsysid";
   private static final String DEFAULT_PASSWORD = "jpwd";
@@ -165,7 +165,7 @@ public class OpenAndOutbindExample implements Runnable {
     int count = 0;
     while (!exit.get() && count < deliverSmCount) {
       /* now send some deliver_sm receipts to the ESME */
-      count++;
+      deliverSmCount++;
       try {
         MessageId messageId = messageIDGenerator.newMessageId();
         DeliveryReceipt delRec = new DeliveryReceipt(messageId.getValue(), 1, 1, new Date(),
@@ -177,7 +177,7 @@ public class OpenAndOutbindExample implements Runnable {
             DataCodings.ZERO, delRec.toString().getBytes("ISO-8859-1"));
         LOG.info("The deliver_sm request #{} with message id {} was sent", count, messageId);
       } catch (IllegalStateException e) {
-        LOG.error("IllegalStateException error", e);
+        LOG.info("The deliver_sm request #{} was sent", deliverSmCount);
       } catch (PDUException e) {
         LOG.error("PDUException error", e);
       } catch (ResponseTimeoutException e) {
@@ -187,7 +187,15 @@ public class OpenAndOutbindExample implements Runnable {
       } catch (NegativeResponseException e) {
         LOG.warn("Negative response received", e);
       } catch (IOException e) {
-        LOG.warn("IO exception", e);
+        LOG.warn("I/O exception", e);
+      }
+
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException e) {
+        LOG.error("SMPP Server simulator was interrupted", e);
+        //re-interrupt the current thread
+        Thread.currentThread().interrupt();
       }
 
       if (!session.getSessionState().isBound()) {
@@ -200,7 +208,7 @@ public class OpenAndOutbindExample implements Runnable {
 
   private class SessionStateListenerImpl implements SessionStateListener {
     public void onStateChange(SessionState newState, SessionState oldState, Session source) {
-      LOG.info("Session state changed from " + oldState + " to " + newState);
+      LOG.info("Session {} state changed from {} to {}", source.getSessionId(), oldState, newState);
     }
   }
 

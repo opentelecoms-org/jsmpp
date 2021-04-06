@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.examples;
 
@@ -31,6 +31,7 @@ import org.jsmpp.bean.DeliveryReceipt;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.MessageType;
 import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.TypeOfNumber;
@@ -44,6 +45,9 @@ import org.jsmpp.session.SMPPSession;
 import org.jsmpp.session.Session;
 import org.jsmpp.util.AbsoluteTimeFormatter;
 import org.jsmpp.util.InvalidDeliveryReceiptException;
+import org.jsmpp.util.MessageIDGenerator;
+import org.jsmpp.util.MessageId;
+import org.jsmpp.util.RandomMessageIDGenerator;
 import org.jsmpp.util.TimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,17 +59,18 @@ import org.slf4j.LoggerFactory;
 public class AsyncSubmitReceiveDeliverSmExample {
     private static final Logger LOGGER = LoggerFactory.getLogger(AsyncSubmitReceiveDeliverSmExample.class);
     private static final TimeFormatter TIME_FORMATTER = new AbsoluteTimeFormatter();
+    private static final MessageIDGenerator MESSAGE_ID_GENERATOR = new RandomMessageIDGenerator();
 
     public static void main(String[] args) {
         final AtomicInteger counter = new AtomicInteger();
-        
+
         final SMPPSession session = new SMPPSession();
         try {
             session.connectAndBind("localhost", 8056, new BindParameter(BindType.BIND_TRX, "test", "test", "cp", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
         } catch (IOException e) {
             LOGGER.error("Failed connect and bind to host", e);
         }
-        
+
         // Set listener to receive deliver_sm
         session.setMessageReceiverListener(new MessageReceiverListener() {
             public void onAcceptDeliverSm(DeliverSm deliverSm)
@@ -86,27 +91,28 @@ public class AsyncSubmitReceiveDeliverSmExample {
                     LOGGER.info("Receiving message : {}", new String(deliverSm.getShortMessage()));
                 }
             }
-            
-            public void onAcceptAlertNotification(
-                    AlertNotification alertNotification) {
+
+            public void onAcceptAlertNotification(AlertNotification alertNotification) {
+                LOGGER.info("Receiving alert_notification");
             }
-            
+
             public DataSmResult onAcceptDataSm(DataSm dataSm, Session source)
                     throws ProcessRequestException {
-                // TODO Auto-generated method stub
-                return null;
+                MessageId messageId = MESSAGE_ID_GENERATOR.newMessageId();
+                LOGGER.info("Receiving data_sm, generated message id {}", messageId.getValue());
+                return new DataSmResult(messageId, new OptionalParameter[]{});
             }
         });
-        
+
         // Now we will send 50 message asynchronously with max outstanding messages 10.
         ExecutorService execService = Executors.newFixedThreadPool(10);
-        
+
         // requesting delivery report
         final RegisteredDelivery registeredDelivery = new RegisteredDelivery();
         registeredDelivery.setSMSCDeliveryReceipt(SMSCDeliveryReceipt.SUCCESS_FAILURE);
         final int maxMessage = 50;
         for (int i = 0; i < maxMessage; i++) {
-            
+
             execService.execute(new Runnable() {
                 public void run() {
                     try {
@@ -134,15 +140,18 @@ public class AsyncSubmitReceiveDeliverSmExample {
                 }
             });
         }
-        
+
         while (counter.get() != maxMessage) {
-            try { Thread.sleep(1000); }
-            catch (InterruptedException e) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
                 LOGGER.error("Interrupted");
+                //re-interrupt the current thread
+                Thread.currentThread().interrupt();
             }
         }
         session.unbindAndClose();
         execService.shutdown();
     }
-    
+
 }

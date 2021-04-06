@@ -24,7 +24,7 @@ import org.jsmpp.PDUSender;
  *
  */
 public class EnquireLinkCommandTask extends AbstractSendCommandTask {
-    
+
     public EnquireLinkCommandTask(PDUSender pduSender) {
         super(pduSender);
     }

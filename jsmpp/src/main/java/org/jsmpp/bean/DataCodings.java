@@ -49,8 +49,8 @@ public final class DataCodings {
     /**
      * Create new instance of {@link DataCoding}.
      * 
-     * @param dataCoding in byte.
-     * @return the DataCoding.
+     * @param dataCoding the data coding as byte
+     * @return the DataCoding object
      */
     public static DataCoding newInstance(byte dataCoding) {
         for (DataCodingFactory factory : factories) {

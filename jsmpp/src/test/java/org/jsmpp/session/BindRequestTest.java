@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.session;
 
@@ -37,17 +37,16 @@ public class BindRequestTest {
         bindRequest = new BindRequest(1, BindType.BIND_TRX, null, null, null, null, null, null, null, responseHandler);
     }
     
-    
     @Test(groups="checkintest")
     public void testSucceedAccept() {
         try {
             bindRequest.accept("sys");
         } catch (PDUStringException e) {
-            fail("Should succes accepting bind request");
+            fail("Should success accepting bind request");
         } catch (IllegalStateException e1) {
-            fail("Should succes accepting bind request");
+            fail("Should success accepting bind request");
         } catch (IOException e1) {
-            fail("Should succes accepting bind request");
+            fail("Should success accepting bind request");
         }
     }
     
@@ -109,7 +108,6 @@ public class BindRequestTest {
             fail("Should throw IllegalStateException");
         }
     }
-    
     
     @Test(groups="checkintest")
     public void testNonSingleReject() {

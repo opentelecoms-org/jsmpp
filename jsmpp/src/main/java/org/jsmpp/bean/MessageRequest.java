@@ -1,28 +1,30 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.bean;
 
 import java.util.Arrays;
-
-import org.jsmpp.util.ObjectUtil;
+import java.util.Objects;
 
 /**
  * @author uudashr
- * 
+ *
  */
 public class MessageRequest extends AbstractSmCommand {
+
+    private static final long serialVersionUID = 5020181832372374307L;
+
     protected byte protocolId;
     protected byte priorityFlag;
     protected String scheduleDeliveryTime;
@@ -34,7 +36,6 @@ public class MessageRequest extends AbstractSmCommand {
     public MessageRequest() {
         super();
     }
-
 
     /**
      * @return the priorityFlag
@@ -135,54 +136,30 @@ public class MessageRequest extends AbstractSmCommand {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final MessageRequest that = (MessageRequest) o;
+        return protocolId == that.protocolId &&
+            priorityFlag == that.priorityFlag &&
+            replaceIfPresent == that.replaceIfPresent &&
+            smDefaultMsgId == that.smDefaultMsgId &&
+            Objects.equals(scheduleDeliveryTime, that.scheduleDeliveryTime) &&
+            Objects.equals(validityPeriod, that.validityPeriod) &&
+            Arrays.equals(shortMessage, that.shortMessage);
+    }
+
+    @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime
-                * result
-                + ((scheduleDeliveryTime == null) ? 0 : scheduleDeliveryTime
-                        .hashCode());
-        result = prime * result + Arrays.hashCode(shortMessage);
-        result = prime * result
-                + ((validityPeriod == null) ? 0 : validityPeriod.hashCode());
+        int result = Objects.hash(super.hashCode(), protocolId, priorityFlag, scheduleDeliveryTime, validityPeriod, replaceIfPresent, smDefaultMsgId);
+        result = 31 * result + Arrays.hashCode(shortMessage);
         return result;
     }
-    
-    private boolean hasEqualScheduleDeliveryTime(MessageRequest other) {
-        return ObjectUtil.equals(scheduleDeliveryTime, other.scheduleDeliveryTime);
-    }
-    
-    private boolean hasEqualValidityPeriod(MessageRequest other) {
-        return ObjectUtil.equals(validityPeriod, other.validityPeriod);
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final MessageRequest other = (MessageRequest)obj;
-        if (priorityFlag != other.priorityFlag)
-            return false;
-        if (protocolId != other.protocolId)
-            return false;
-        if (replaceIfPresent != other.replaceIfPresent)
-            return false;
-        if (!hasEqualScheduleDeliveryTime(other)) {
-            return false;
-        }
-        if (!Arrays.equals(shortMessage, other.shortMessage))
-            return false;
-        if (smDefaultMsgId != other.smDefaultMsgId)
-            return false;
-        if (!hasEqualValidityPeriod(other)) {
-            return false;
-        }
-        return true;
-    }
-    
-    
 }

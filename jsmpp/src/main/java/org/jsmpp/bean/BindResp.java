@@ -2,19 +2,20 @@
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.bean;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.jsmpp.bean.OptionalParameter.Tag;
 
@@ -75,33 +76,26 @@ public class BindResp extends Command {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + Arrays.hashCode(optionalParameters);
-        result = prime * result
-                + ((systemId == null) ? 0 : systemId.hashCode());
-        return result;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final BindResp bindResp = (BindResp) o;
+        return Objects.equals(systemId, bindResp.systemId) &&
+            Arrays.equals(optionalParameters, bindResp.optionalParameters);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final BindResp other = (BindResp)obj;
-        if (!Arrays.equals(optionalParameters, other.optionalParameters))
-            return false;
-        if (systemId == null) {
-            if (other.systemId != null)
-                return false;
-        } else if (!systemId.equals(other.systemId))
-            return false;
-        return true;
+    public int hashCode() {
+        int result = Objects.hash(super.hashCode(), systemId);
+        result = 31 * result + Arrays.hashCode(optionalParameters);
+        return result;
     }
-    
-    
+
 }

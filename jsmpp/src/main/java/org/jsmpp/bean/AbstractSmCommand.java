@@ -15,10 +15,10 @@
 package org.jsmpp.bean;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.OptionalParameter.Tag;
-import org.jsmpp.util.ObjectUtil;
 
 /**
  * @author uudashr
@@ -474,65 +474,36 @@ public class AbstractSmCommand extends Command {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                + ((destAddress == null) ? 0 : destAddress.hashCode());
-        result = prime * result + Arrays.hashCode(optionalParameters);
-        result = prime * result
-                + ((serviceType == null) ? 0 : serviceType.hashCode());
-        result = prime * result
-                + ((sourceAddr == null) ? 0 : sourceAddr.hashCode());
-        return result;
-    }
-
-    private boolean hasEqualDestAddress(AbstractSmCommand other) {
-        return ObjectUtil.equals(destAddress, other.destAddress);
-    }
-
-    private boolean hasEqualSourceAddr(AbstractSmCommand other) {
-        return ObjectUtil.equals(sourceAddr, other.sourceAddr);
-    }
-
-    private boolean hasEqualServiceType(AbstractSmCommand other) {
-        return ObjectUtil.equals(serviceType, other.serviceType);
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final AbstractSmCommand that = (AbstractSmCommand) o;
+        return sourceAddrTon == that.sourceAddrTon &&
+            sourceAddrNpi == that.sourceAddrNpi &&
+            destAddrTon == that.destAddrTon &&
+            destAddrNpi == that.destAddrNpi &&
+            esmClass == that.esmClass &&
+            registeredDelivery == that.registeredDelivery &&
+            dataCoding == that.dataCoding &&
+            Objects.equals(serviceType, that.serviceType) &&
+            Objects.equals(sourceAddr, that.sourceAddr) &&
+            Objects.equals(destAddress, that.destAddress) &&
+            Arrays.equals(optionalParameters, that.optionalParameters);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final AbstractSmCommand other = (AbstractSmCommand)obj;
-        if (destAddrTon != other.destAddrTon)
-            return false;
-        if (destAddrNpi != other.destAddrNpi)
-            return false;
-        if (!hasEqualDestAddress(other)) {
-            return false;
-        }
-        if (sourceAddrTon != other.sourceAddrTon)
-            return false;
-        if (sourceAddrNpi != other.sourceAddrNpi)
-            return false;
-        if (!hasEqualSourceAddr(other)) {
-            return false;
-        }
-        if (dataCoding != other.dataCoding)
-            return false;
-        if (esmClass != other.esmClass)
-            return false;
-        if (!Arrays.equals(optionalParameters, other.optionalParameters))
-            return false;
-        if (registeredDelivery != other.registeredDelivery)
-            return false;
-        if (!hasEqualServiceType(other)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        int result = Objects
+            .hash(super.hashCode(), serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr, destAddrTon, destAddrNpi, destAddress, esmClass, registeredDelivery,
+                dataCoding);
+        result = 31 * result + Arrays.hashCode(optionalParameters);
+        return result;
     }
 }

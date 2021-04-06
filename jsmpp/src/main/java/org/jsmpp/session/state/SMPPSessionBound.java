@@ -29,7 +29,7 @@ import org.jsmpp.session.SMPPSessionContext;
  * @since 2.0
  * 
  */
-abstract class SMPPSessionBound extends AbstractGenericSMPPSessionBound  implements SMPPSessionState {
+abstract class SMPPSessionBound extends AbstractGenericSMPPSessionBound implements SMPPSessionState {
 
     @Override
     public void processBindResp(SMPPSessionContext sessionContext, Command pduHeader, byte[] pdu,

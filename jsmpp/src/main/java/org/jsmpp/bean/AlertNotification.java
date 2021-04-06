@@ -15,9 +15,9 @@
 package org.jsmpp.bean;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.jsmpp.bean.OptionalParameter.Tag;
-import org.jsmpp.util.ObjectUtil;
 
 /**
  * @author uudashr
@@ -105,51 +105,30 @@ public class AlertNotification extends Command {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final AlertNotification that = (AlertNotification) o;
+        return sourceAddrTon == that.sourceAddrTon &&
+            sourceAddrNpi == that.sourceAddrNpi &&
+            esmeAddrTon == that.esmeAddrTon &&
+            esmeAddrNpi == that.esmeAddrNpi &&
+            Objects.equals(sourceAddr, that.sourceAddr) &&
+            Objects.equals(esmeAddr, that.esmeAddr) &&
+            Arrays.equals(optionalParameters, that.optionalParameters);
+    }
+
+    @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                + ((esmeAddr == null) ? 0 : esmeAddr.hashCode());
-        result = prime * result + Arrays.hashCode(optionalParameters);
-        result = prime * result
-                + ((sourceAddr == null) ? 0 : sourceAddr.hashCode());
+        int result = Objects.hash(super.hashCode(), sourceAddrTon, sourceAddrNpi, sourceAddr, esmeAddrTon, esmeAddrNpi, esmeAddr);
+        result = 31 * result + Arrays.hashCode(optionalParameters);
         return result;
     }
-    
-    private boolean hasEqualSourceAddr(AlertNotification other) {
-        return ObjectUtil.equals(sourceAddr, other.sourceAddr);
-    }
-    
-    private boolean hasEqualEsmeAddr(AlertNotification other) {
-        return ObjectUtil.equals(esmeAddr, other.esmeAddr);
-    }
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final AlertNotification other = (AlertNotification)obj;
-        if (!hasEqualEsmeAddr(other)) {
-            return false;
-        }
-        if (esmeAddrNpi != other.esmeAddrNpi)
-            return false;
-        if (esmeAddrTon != other.esmeAddrTon)
-            return false;
-        if (!Arrays.equals(optionalParameters, other.optionalParameters))
-            return false;
-        if (!hasEqualSourceAddr(other)) {
-            return false;
-        }
-        if (sourceAddrNpi != other.sourceAddrNpi)
-            return false;
-        if (sourceAddrTon != other.sourceAddrTon)
-            return false;
-        return true;
-    }
-    
-    
 }

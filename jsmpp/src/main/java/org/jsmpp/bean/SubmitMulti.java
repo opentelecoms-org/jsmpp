@@ -1,23 +1,23 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.bean;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.jsmpp.bean.OptionalParameter.Tag;
-import org.jsmpp.util.ObjectUtil;
 
 /**
  * @author uudashr
@@ -186,89 +186,44 @@ public class SubmitMulti extends Command {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + Arrays.hashCode(destAddresses);
-        result = prime * result + Arrays.hashCode(optionalParameters);
-        result = prime
-                * result
-                + ((scheduleDeliveryTime == null) ? 0 : scheduleDeliveryTime
-                        .hashCode());
-        result = prime * result
-                + ((serviceType == null) ? 0 : serviceType.hashCode());
-        result = prime * result + Arrays.hashCode(shortMessage);
-        result = prime * result
-                + ((sourceAddr == null) ? 0 : sourceAddr.hashCode());
-        result = prime * result
-                + ((validityPeriod == null) ? 0 : validityPeriod.hashCode());
-        return result;
-    }
-
-    private boolean hasEqualSourceAddr(SubmitMulti other) {
-        return ObjectUtil.equals(sourceAddr, other.sourceAddr);
-    }
-
-    private boolean hasEqualScheduleDeliveryTime(SubmitMulti other) {
-        return ObjectUtil.equals(scheduleDeliveryTime, other.scheduleDeliveryTime);
-    }
-
-    private boolean hasEqualValidityPeriod(SubmitMulti other) {
-        return ObjectUtil.equals(validityPeriod, other.validityPeriod);
-    }
-
-    private boolean hasEqualSystemType(SubmitMulti other) {
-        return ObjectUtil.equals(serviceType, other.serviceType);
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final SubmitMulti that = (SubmitMulti) o;
+        return sourceAddrTon == that.sourceAddrTon &&
+            sourceAddrNpi == that.sourceAddrNpi &&
+            esmClass == that.esmClass &&
+            protocolId == that.protocolId &&
+            priorityFlag == that.priorityFlag &&
+            registeredDelivery == that.registeredDelivery &&
+            replaceIfPresentFlag == that.replaceIfPresentFlag &&
+            dataCoding == that.dataCoding &&
+            smDefaultMsgId == that.smDefaultMsgId &&
+            Objects.equals(serviceType, that.serviceType) &&
+            Objects.equals(sourceAddr, that.sourceAddr) &&
+            Arrays.equals(destAddresses, that.destAddresses) &&
+            Objects.equals(scheduleDeliveryTime, that.scheduleDeliveryTime) &&
+            Objects.equals(validityPeriod, that.validityPeriod) &&
+            Arrays.equals(shortMessage, that.shortMessage) &&
+            Arrays.equals(optionalParameters, that.optionalParameters);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final SubmitMulti other = (SubmitMulti)obj;
-        if (!Arrays.equals(destAddresses, other.destAddresses)) {
-            return false;
-        }
-        if (!hasEqualSourceAddr(other)) {
-            return false;
-        }
-        if (sourceAddrNpi != other.sourceAddrNpi) {
-            return false;
-        }
-        if (sourceAddrTon != other.sourceAddrTon) {
-            return false;
-        }
-        if (dataCoding != other.dataCoding)
-            return false;
-        if (esmClass != other.esmClass)
-            return false;
-        if (!Arrays.equals(optionalParameters, other.optionalParameters))
-            return false;
-        if (priorityFlag != other.priorityFlag)
-            return false;
-        if (protocolId != other.protocolId)
-            return false;
-        if (registeredDelivery != other.registeredDelivery)
-            return false;
-        if (replaceIfPresentFlag != other.replaceIfPresentFlag)
-            return false;
-        if (!hasEqualScheduleDeliveryTime(other)) {
-            return false;
-        }
-        if (!hasEqualValidityPeriod(other)) {
-            return false;
-        }
-        if (!hasEqualSystemType(other)) {
-            return false;
-        }
-        if (!Arrays.equals(shortMessage, other.shortMessage))
-            return false;
-        if (smDefaultMsgId != other.smDefaultMsgId)
-            return false;
-        return true;
+    public int hashCode() {
+        int result = Objects
+            .hash(super.hashCode(), serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr, esmClass, protocolId, priorityFlag, scheduleDeliveryTime,
+                validityPeriod,
+                registeredDelivery, replaceIfPresentFlag, dataCoding, smDefaultMsgId);
+        result = 31 * result + Arrays.hashCode(destAddresses);
+        result = 31 * result + Arrays.hashCode(shortMessage);
+        result = 31 * result + Arrays.hashCode(optionalParameters);
+        return result;
     }
 }

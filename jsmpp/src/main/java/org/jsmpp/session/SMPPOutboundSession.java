@@ -428,7 +428,6 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
 
     @Override
     public void run() {
-      logger.info("Starting PDUReaderWorker");
       while (isReadPdu()) {
         readPDU();
       }
@@ -494,8 +493,10 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
      * Notify for no activity.
      */
     private void notifyNoActivity() {
-      logger.debug("No activity notified, sending enquireLink");
-      if (sessionContext().getSessionState().isBound()) {
+      SessionState sessionState = sessionContext().getSessionState();
+      if ((getInterfaceVersion().compareTo(InterfaceVersion.IF_34) > 0 && sessionState.isNotClosed()) ||
+          sessionState.isBound()) {
+        logger.trace("No activity notified, sending enquire_link");
         enquireLinkSender.enquireLink();
       }
     }
@@ -523,7 +524,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
         catch (IOException e) {
           logger.error("Failed setting so_timeout for enquire link timer", e);
         }
-
+      } else if (newState.isBound()) {
         logger.info("Changing processor degree to {}", getPduProcessorDegree());
         pduReaderWorker.pduExecutor.setMaximumPoolSize(getPduProcessorDegree());
         pduReaderWorker.pduExecutor.setCorePoolSize(getPduProcessorDegree());

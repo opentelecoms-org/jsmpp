@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.util;
 
@@ -19,6 +19,10 @@ import org.jsmpp.PDUStringException;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.Bind;
 import org.jsmpp.bean.BindResp;
+import org.jsmpp.bean.BroadcastSm;
+import org.jsmpp.bean.BroadcastSmResp;
+import org.jsmpp.bean.CancelBroadcastSm;
+import org.jsmpp.bean.CancelBroadcastSmResp;
 import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.CancelSmResp;
 import org.jsmpp.bean.Command;
@@ -31,6 +35,8 @@ import org.jsmpp.bean.EnquireLink;
 import org.jsmpp.bean.EnquireLinkResp;
 import org.jsmpp.bean.GenericNack;
 import org.jsmpp.bean.Outbind;
+import org.jsmpp.bean.QueryBroadcastSm;
+import org.jsmpp.bean.QueryBroadcastSmResp;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.QuerySmResp;
 import org.jsmpp.bean.ReplaceSm;
@@ -45,17 +51,17 @@ import org.jsmpp.bean.UnbindResp;
 /**
  * This class provides an interface to decompose SMPP PDU bytes
  * into a SMPP command objects.
- * 
+ *
  * @author uudashr
  * @version 1.0
  * @since 1.0
- * 
+ *
  */
 public interface PDUDecomposer {
 
     /**
      * Decompose the header only SMPP PDU command.
-     * 
+     *
      * @param b The header bytes.
      * @return the header ({@link Command}) object.
      */
@@ -63,7 +69,7 @@ public interface PDUDecomposer {
 
     /**
      * Decompose the SMPP PDU bind command.
-     * 
+     *
      * @param b The bind PDU bytes.
      * @return The bind command object.
      * @throws PDUStringException if there is an invalid string constraint found
@@ -72,7 +78,7 @@ public interface PDUDecomposer {
 
     /**
      * Decompose the SMPP PDU bind response command.
-     * 
+     *
      * @param b The bind_resp PDU bytes.
      * @return The bind response command object.
      * @throws PDUStringException if there is an invalid string constraint found
@@ -81,7 +87,7 @@ public interface PDUDecomposer {
 
     /**
      * Decompose the SMPP PDU unbind command.
-     * 
+     *
      * @param b The unbind PDU bytes.
      * @return the unbind command object.
      */
@@ -89,7 +95,7 @@ public interface PDUDecomposer {
 
     /**
      * Decompose the SMPP PDU unbind response command.
-     * 
+     *
      * @param b The unbind_resp PDU bytes.
      * @return the unbind response command object.
      */
@@ -97,7 +103,7 @@ public interface PDUDecomposer {
 
     /**
      * Decompose the SMPP PDU outbind command.
-     * 
+     *
      * @param b The outbind PDU bytes.
      * @return the outbind command object.
      * @throws PDUStringException if there is an invalid string constraint found
@@ -107,7 +113,7 @@ public interface PDUDecomposer {
     // ENQUIRE_LINK OPERATION
     /**
      * Decompose the SMPP PDU enquire link command.
-     * 
+     *
      * @param b The enquiry_link PDU bytes.
      * @return the enquire link command object.
      */
@@ -115,7 +121,7 @@ public interface PDUDecomposer {
 
     /**
      * Decompose the SMPP PDU enquire link response command.
-     * 
+     *
      * @param b The enquiry_link_resp PDU bytes.
      * @return the enquire link response command object.
      */
@@ -123,7 +129,7 @@ public interface PDUDecomposer {
 
     /**
      * Decompose the SMPP PDU generic nack command.
-     * 
+     *
      * @param b The generic_nack PDU bytes.
      * @return The generic nack command object.
      */
@@ -131,7 +137,7 @@ public interface PDUDecomposer {
 
     /**
      * Decompose the SMPP PDU submit short message command.
-     * 
+     *
      * @param b The submit_sm PDU bytes.
      * @return The submit short message command object.
      * @throws PDUStringException if there is an invalid string constraint found
@@ -149,7 +155,7 @@ public interface PDUDecomposer {
 
     /**
      * Decompose the SMPP PDU query short message command.
-     * 
+     *
      * @param b The query_sm PDU bytes.
      * @return The query short message command object.
      * @throws PDUStringException if there is an invalid string constraint found
@@ -167,7 +173,7 @@ public interface PDUDecomposer {
 
     /**
      * Decompose the SMPP PDU deliver short message command.
-     * 
+     *
      * @param b The deliver_sm PDU bytes.
      * @return The deliver short message command object.
      * @throws PDUStringException if there is an invalid string constraint found
@@ -176,7 +182,7 @@ public interface PDUDecomposer {
 
     /**
      * Decompose the SMPP PDU deliver short message response command.
-     * 
+     *
      * @param b The deliver_sm_resp PDU bytes.
      * @return The deliver short message response command object.
      */
@@ -184,7 +190,7 @@ public interface PDUDecomposer {
 
     /**
      * Decompose the SMPP PDU delivery receipt content.
-     * 
+     *
      * @param data the delivery receipt string.
      * @return The delivery receipt object.
      * @throws InvalidDeliveryReceiptException throw if the data is invalid, so
@@ -195,7 +201,7 @@ public interface PDUDecomposer {
 
     /**
      * Decompose the SMPP PDU delivery receipt content.
-     * 
+     *
      * @param data The delivery receipt bytes
      * @return The delivery receipt object.
      * @throws InvalidDeliveryReceiptException throw if the data is invalid, so
@@ -215,7 +221,7 @@ public interface PDUDecomposer {
     
     /**
      * Decompose the SMPP PDU data short message response command.
-     * 
+     *
      * @param data The data_sm_resp PDU bytes.
      * @return The data short message response command object.
      * @throws PDUStringException if there is an invalid string constraint found
@@ -224,7 +230,7 @@ public interface PDUDecomposer {
     
     /**
      * Decompose the SMPP PDU cancel short message command.
-     * 
+     *
      * @param data The cancel_sm PDU bytes.
      * @return The cancel short message command object.
      * @throws PDUStringException if there is an invalid string constraint found
@@ -233,7 +239,7 @@ public interface PDUDecomposer {
     
     /**
      * Decompose the SMPP PDU cancel short message response command.
-     * 
+     *
      * @param data The cancel_sm_resp PDU bytes.
      * @return The cancel short message response command object.
      */
@@ -284,4 +290,16 @@ public interface PDUDecomposer {
      * @throws PDUStringException if there is an invalid string constraint found
      */
     AlertNotification alertNotification(byte[] data) throws PDUStringException;
+
+    BroadcastSm broadcastSm(byte[] data) throws PDUStringException;
+
+    BroadcastSmResp broadcastSmResp(byte[] data) throws PDUStringException;
+
+    CancelBroadcastSm cancelBroadcastSm(byte[] data) throws PDUStringException;
+
+    CancelBroadcastSmResp cancelBroadcastSmResp(byte[] data) throws PDUStringException;
+
+    QueryBroadcastSm queryBroadcastSm(byte[] data) throws PDUStringException;
+
+    QueryBroadcastSmResp queryBroadcastSmResp(byte[] data) throws PDUStringException;
 }

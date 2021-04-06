@@ -24,6 +24,7 @@ import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.OutbindRequest;
@@ -68,6 +69,7 @@ public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
     exit.set(true);
   }
 
+  @Override
   public void run() {
     try {
       LOGGER.info("SMPP Outbound server listening on port {}", port);
@@ -81,7 +83,7 @@ public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
         outboundServerSession.addSessionStateListener(new SessionStateListenerImpl());
         outboundServerSession.setOutboundServerMessageReceiverListener(this);
 
-        execService.submit(new SMPPOutboundServerSimulator.WaitOutbindTask(outboundServerSession));
+        execService.execute(new SMPPOutboundServerSimulator.WaitOutbindTask(outboundServerSession));
       }
 
       LOGGER.info("Close listener {}", sessionListener);
@@ -93,7 +95,9 @@ public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
     }
   }
 
-  public void onAcceptDeliverSm(DeliverSm deliverSm, SMPPOutboundServerSession source) {
+  @Override
+  public void onAcceptDeliverSm(DeliverSm deliverSm, SMPPOutboundServerSession source)
+      throws ProcessRequestException {
     LOGGER.info("deliver_sm: {} {} => {} {}", deliverSm.getSequenceNumber(), deliverSm.getSourceAddr(),
         deliverSm.getDestAddress(), new String(deliverSm.getShortMessage()));
   }
@@ -105,6 +109,7 @@ public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
       this.serverSession = serverSession;
     }
 
+    @Override
     public void run() {
       try {
         LOGGER.info("Waiting for outbind request");
@@ -125,6 +130,7 @@ public class SMPPOutboundServerSimulator extends ServerResponseDeliveryAdapter
   }
 
   private class SessionStateListenerImpl implements SessionStateListener {
+    @Override
     public void onStateChange(SessionState newState, SessionState oldState, Session source) {
       LOGGER.info("Session {} state changed from {} to {}", source.getSessionId(), oldState, newState);
     }

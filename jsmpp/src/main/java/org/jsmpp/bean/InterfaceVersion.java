@@ -26,6 +26,10 @@ import org.jsmpp.SMPPConstant;
  */
 public enum InterfaceVersion {
     /**
+     * Interface Version for legacy SMPP.
+     */
+    IF_00(SMPPConstant.IF_VERSION_00),
+    /**
      * Interface Version for SMPP version 3.3.
      */
     IF_33(SMPPConstant.IF_VERSION_33),
@@ -72,5 +76,18 @@ public enum InterfaceVersion {
 
         throw new IllegalArgumentException(
                 "No enum const InterfaceVersion with value " + value);
+    }
+
+    /**
+     * Get the minimum {@code InterfaceVersion} supported by both sides.
+     *
+     * @param a The other interface version.
+     * @return the {@code InterfaceVersion} supported by both sides.
+     */
+    public InterfaceVersion min(InterfaceVersion a) {
+        if (a == null) {
+            return this;
+        }
+        return (a.ordinal() <= this.ordinal()) ? a : this;
     }
 }

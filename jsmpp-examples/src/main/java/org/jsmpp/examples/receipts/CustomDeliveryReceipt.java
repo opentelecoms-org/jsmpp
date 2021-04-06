@@ -2,27 +2,27 @@
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.examples.receipts;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jsmpp.bean.DeliveryReceiptInterface;
 import org.jsmpp.util.InvalidDeliveryReceiptException;
-import org.jsmpp.util.ObjectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -303,84 +303,26 @@ public class CustomDeliveryReceipt implements DeliveryReceiptInterface<CustomDel
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result
-        + ((dateFormat == null) ? 0 : dateFormat.hashCode());
-    result = prime * result + delivered;
-    result = prime * result
-        + ((doneDate == null) ? 0 : doneDate.hashCode());
-    result = prime * result + ((error == null) ? 0 : error.hashCode());
-    result = prime * result
-        + ((finalStatus == null) ? 0 : finalStatus.hashCode());
-    result = prime * result + ((id == null) ? 0 : id.hashCode());
-    result = prime * result
-        + ((submitDate == null) ? 0 : submitDate.hashCode());
-    result = prime * result + submitted;
-    result = prime * result + ((text == null) ? 0 : text.hashCode());
-    return result;
+    return Objects.hash(dateFormat, id, submitted, delivered, submitDate, doneDate, finalStatus, error, text);
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
+  public boolean equals(final Object o) {
+    if (this == o) {
       return true;
     }
-    if (obj == null) {
+    if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final CustomDeliveryReceipt other = (CustomDeliveryReceipt) obj;
-    if (!hasEqualId(other)) {
-      return false;
-    }
-    if (!ObjectUtil.equals(submitted, other.submitted)) {
-      return false;
-    }
-    if (!ObjectUtil.equals(delivered, other.delivered)) {
-      return false;
-    }
-    if (!hasEqualSubmitDate(other)) {
-      return false;
-    }
-    if (!hasEqualDoneDate(other)) {
-      return false;
-    }
-    if (!hasEqualFinalStatus(other)) {
-      return false;
-    }
-    if (!hasEqualError(other)) {
-      return false;
-    }
-    if (!hasEqualText(other)) {
-      return false;
-    }
-    return true;
-  }
-
-  private boolean hasEqualId(CustomDeliveryReceipt other) {
-      return ObjectUtil.equals(id, other.id);
-  }
-
-  private boolean hasEqualDoneDate(CustomDeliveryReceipt other) {
-      return ObjectUtil.equals(doneDate, other.doneDate);
-  }
-
-  private boolean hasEqualError(CustomDeliveryReceipt other) {
-      return ObjectUtil.equals(error, other.error);
-  }
-
-  private boolean hasEqualFinalStatus(CustomDeliveryReceipt other) {
-      return ObjectUtil.equals(finalStatus, other.finalStatus);
-  }
-
-  private boolean hasEqualSubmitDate(CustomDeliveryReceipt other) {
-      return ObjectUtil.equals(submitDate, other.submitDate);
-  }
-
-  private boolean hasEqualText(CustomDeliveryReceipt other) {
-      return ObjectUtil.equals(text, other.text);
+    final CustomDeliveryReceipt that = (CustomDeliveryReceipt) o;
+    return Objects.equals(dateFormat, that.dateFormat) &&
+        Objects.equals(id, that.id) &&
+        Objects.equals(submitted, that.submitted) &&
+        Objects.equals(delivered, that.delivered) &&
+        Objects.equals(submitDate, that.submitDate) &&
+        Objects.equals(doneDate, that.doneDate) &&
+        finalStatus == that.finalStatus &&
+        Objects.equals(error, that.error) &&
+        Objects.equals(text, that.text);
   }
 }

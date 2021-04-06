@@ -116,10 +116,24 @@ public class PDUProcessServerTask implements Runnable {
                 activityNotifier.notifyActivity();
                 stateProcessor.processUnbindResp(pduHeader, pdu, responseHandler);
                 break;
+            case SMPPConstant.CID_BROADCAST_SM:
+                activityNotifier.notifyActivity();
+                stateProcessor.processBroadcastSm(pduHeader, pdu, responseHandler);
+                break;
+            case SMPPConstant.CID_CANCEL_BROADCAST_SM:
+                activityNotifier.notifyActivity();
+                stateProcessor.processCancelBroadcastSm(pduHeader, pdu, responseHandler);
+                break;
+            case SMPPConstant.CID_QUERY_BROADCAST_SM:
+                activityNotifier.notifyActivity();
+                stateProcessor.processQueryBroadcastSm(pduHeader, pdu, responseHandler);
+                break;
+
             default:
                 stateProcessor.processUnknownCid(pduHeader, pdu, responseHandler);
             }
         } catch (IOException e) {
+            logger.info("I/O exception: {}", e.getMessage());
             onIOExceptionTask.run();
         }
     }

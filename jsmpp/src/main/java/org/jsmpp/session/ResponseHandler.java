@@ -1,5 +1,5 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -22,11 +22,11 @@ import org.jsmpp.extra.ProcessRequestException;
 
 /**
  * {@code ResponseHandler} provide an interface to handle responses of the session routines.
- * 
+ *
  * @author uudashr
  * @version 1.0
  * @since 2.0
- * 
+ *
  */
 public interface ResponseHandler extends BaseResponseHandler {
 
