@@ -329,7 +329,13 @@ public abstract class AbstractSession implements Session, Closeable {
 
         try {
             pendingResp.waitDone();
-            logger.debug("{} response with sequence_number {} received for session {}", task.getCommandName(), seqNum, sessionId);
+            if("enquire_link".equals(task.getCommandName())) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace("{} response with sequence_number {} received for session {}", task.getCommandName(), seqNum, sessionId);
+                }
+            } else {
+                logger.debug("{} response with sequence_number {} received for session {}", task.getCommandName(), seqNum, sessionId);
+            }
         } catch (ResponseTimeoutException e) {
             pendingResponse.remove(seqNum);
             throw new ResponseTimeoutException("No response after waiting for "
