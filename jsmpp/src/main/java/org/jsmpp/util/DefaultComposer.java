@@ -422,6 +422,9 @@ public class DefaultComposer implements PDUComposer {
         PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_DATA_SM_RESP,
             SMPPConstant.STAT_ESME_ROK, sequenceNumber);
         buf.append(messageId);
+        if (optionalParameters != null && optionalParameters.length > 0) {
+            buf.appendAll(optionalParameters);
+        }
         return buf.toBytes();
     }
 
