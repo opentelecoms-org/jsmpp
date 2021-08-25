@@ -74,7 +74,7 @@ public enum SessionState {
   /**
    * Check whether the session state is not closed.
    *
-   * @return <tt>true</tt> if session is not closed.
+   * @return {@code true} if session is not closed.
    */
   public boolean isNotClosed() {
     return !equals(CLOSED);

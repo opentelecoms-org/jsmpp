@@ -49,7 +49,7 @@ public enum TypeOfNumber {
 	}
 	
 	/**
-     * Get the <tt>TypeOfNumber</tt> based on the specified byte value
+     * Get the {@code TypeOfNumber} based on the specified byte value
      * representation.
      * 
      * @param value is the byte value representation.
