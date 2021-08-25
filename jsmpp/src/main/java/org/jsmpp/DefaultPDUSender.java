@@ -17,7 +17,6 @@ package org.jsmpp;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import java.util.Arrays;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.DestinationAddress;
@@ -530,8 +529,7 @@ public class DefaultPDUSender implements PDUSender {
 
     private static void writeAndFlush(OutputStream out, byte[] b)
             throws IOException {
-        byte[] commandIdByte = Arrays.copyOfRange(b, 4, 8);
-        int commandId = OctetUtil.bytesToInt(commandIdByte);
+        int commandId = OctetUtil.bytesToInt(b, 4);
         if (commandId == SMPPConstant.CID_ENQUIRE_LINK
             || commandId == SMPPConstant.CID_ENQUIRE_LINK_RESP) {
             if (log.isTraceEnabled()) {
