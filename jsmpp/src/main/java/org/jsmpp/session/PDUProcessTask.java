@@ -14,6 +14,8 @@
  */
 package org.jsmpp.session;
 
+import static org.jsmpp.SMPPConstant.PDU_HEADER_LENGTH;
+
 import java.io.IOException;
 
 import org.jsmpp.SMPPConstant;
@@ -50,7 +52,12 @@ public class PDUProcessTask implements Runnable {
     @Override
     public void run() {
         try {
-            if (logger.isDebugEnabled()) {
+            if (pduHeader.getCommandId() == SMPPConstant.CID_ENQUIRE_LINK
+                || pduHeader.getCommandId() == SMPPConstant.CID_ENQUIRE_LINK_RESP) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Received PDU {}", HexUtil.convertBytesToHexString(pdu, 0, pdu.length));
+                }
+            } else if (logger.isDebugEnabled()) {
                 logger.debug("Received PDU {}", HexUtil.convertBytesToHexString(pdu, 0, pdu.length));
             }
 

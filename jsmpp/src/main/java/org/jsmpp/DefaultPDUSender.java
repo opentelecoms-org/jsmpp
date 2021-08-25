@@ -17,6 +17,7 @@ package org.jsmpp;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import java.util.Arrays;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.DestinationAddress;
@@ -32,6 +33,7 @@ import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.util.DefaultComposer;
 import org.jsmpp.util.HexUtil;
+import org.jsmpp.util.OctetUtil;
 import org.jsmpp.util.PDUComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -528,8 +530,14 @@ public class DefaultPDUSender implements PDUSender {
 
     private static void writeAndFlush(OutputStream out, byte[] b)
             throws IOException {
-        if (log.isDebugEnabled())
-        {
+        byte[] commandIdByte = Arrays.copyOfRange(b, 4, 8);
+        int commandId = OctetUtil.bytesToInt(commandIdByte);
+        if (commandId == SMPPConstant.CID_ENQUIRE_LINK
+            || commandId == SMPPConstant.CID_ENQUIRE_LINK_RESP) {
+            if (log.isTraceEnabled()) {
+                log.trace("Sending PDU {}", HexUtil.convertBytesToHexString(b, 0, b.length));
+            }
+        } else if (log.isDebugEnabled()) {
             log.debug("Sending PDU {}", HexUtil.convertBytesToHexString(b, 0, b.length));
         }
         out.write(b);

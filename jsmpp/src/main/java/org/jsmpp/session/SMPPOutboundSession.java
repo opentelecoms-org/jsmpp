@@ -374,7 +374,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
 
     @Override
     public void sendEnquireLinkResp(int sequenceNumber) throws IOException {
-      logger.debug("Sending enquire_link_resp");
+      logger.trace("Sending enquire_link_resp");
       pduSender().sendEnquireLinkResp(out, sequenceNumber);
     }
 
