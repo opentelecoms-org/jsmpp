@@ -29,7 +29,10 @@ import org.jsmpp.bean.BroadcastSm;
 import org.jsmpp.bean.CancelBroadcastSm;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataCodings;
+import org.jsmpp.bean.DataSm;
+import org.jsmpp.bean.DataSmResp;
 import org.jsmpp.bean.ESMClass;
+import org.jsmpp.bean.EnquireLink;
 import org.jsmpp.bean.GSMSpecificFeature;
 import org.jsmpp.bean.GenericNack;
 import org.jsmpp.bean.MessageMode;
@@ -176,6 +179,97 @@ public class ComposeDecomposeTest {
         OptionalParameter.Additional_status_info_text decomposedAdditionalStatusInfoText = OptionalParameters.get(OptionalParameter.Additional_status_info_text.class, submitSmResp.getOptionalParameters());
         assertEquals(decomposedAdditionalStatusInfoText.tag, OptionalParameter.Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), "Unexpected optional parameters tag");
         assertEquals(decomposedAdditionalStatusInfoText.getValueAsString(), "Oops", "Unexpected optional parameters value");
+    }
+
+    /**
+     * Test the data_sm composed PDU can decomposed properly.
+     *
+     * @throws Exception if an unexpected error found.
+     */
+    @Test(groups="checkintest")
+    public void sendDataSm() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        OptionalParameter messagePayload = new OptionalParameter.Message_payload(new byte[]{ 0x00, 0x12, 0x34, 0x45, 0x67, 0x78});
+
+        pduSender.sendDataSm(out, 1234, "CMT",
+            TypeOfNumber.ABBREVIATED, NumberingPlanIndicator.UNKNOWN, "567",
+            TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, "316123456789",
+            new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.DEFAULT),
+            (new RegisteredDelivery()).setSMSCDeliveryReceipt(SMSCDeliveryReceipt.DEFAULT),
+            DataCodings.ZERO, messagePayload);
+
+        DataInputStream in = new DataInputStream(new ByteArrayInputStream(out.toByteArray()));
+        Command header = pduReader.readPDUHeader(in);
+        assertEquals(header.getCommandId(), SMPPConstant.CID_DATA_SM, "Unexpected command id");
+        assertEquals(header.getCommandLength(), 54, "Unexpected command length");
+        assertEquals(header.getCommandStatus(), SMPPConstant.STAT_ESME_ROK, "Unexpected command status");
+        assertEquals(header.getSequenceNumber(), 1234, "Unexpected sequence number");
+
+        byte[] pdu = pduReader.readPDU(in, header);
+        DataSm dataSm = decomposer.dataSm(pdu);
+        assertEquals(dataSm.getSourceAddr(), "567", "Unexpected source address");
+        assertEquals(dataSm.getDestAddress(), "316123456789", "Unexpected destination address");
+        assertEquals(dataSm.getEsmClass(), (byte)0x00, "Unexpected ESM class");
+        assertEquals(dataSm.getDataCoding(), (byte)0x00, "Unexpected data coding");
+        assertEquals(dataSm.getOptionalParameters().length, 1, "Unexpected optional parameters length");
+
+        OptionalParameter.Message_payload decomposedMessagePayload = OptionalParameters.get(OptionalParameter.Message_payload.class, dataSm.getOptionalParameters());
+        assertEquals(decomposedMessagePayload.tag, OptionalParameter.Tag.MESSAGE_PAYLOAD.code(), "Unexpected optional parameters tag");
+        assertEquals(decomposedMessagePayload.getValue(), new byte[]{ 0x00, 0x12, 0x34, 0x45, 0x67, 0x78}, "Unexpected optional parameters value");
+    }
+
+    /**
+     * Test the data_sm_resp composed PDU can decomposed properly.
+     *
+     * @throws Exception if an unexpected error found.
+     */
+    @Test(groups="checkintest")
+    public void sendDataSmResp() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        OptionalParameter additionalStatusInfoText = new OptionalParameter.Additional_status_info_text(new byte[]{ 0x00, 0x12, 0x34, 0x45, 0x67, 0x78});
+
+        pduSender.sendDataSmResp(out, 1234, "41fbf22d-fb3b-49ac-9c5e-71b762158808", additionalStatusInfoText);
+
+        DataInputStream in = new DataInputStream(new ByteArrayInputStream(out.toByteArray()));
+        Command header = pduReader.readPDUHeader(in);
+        assertEquals(header.getCommandId(), SMPPConstant.CID_DATA_SM_RESP, "Unexpected command id");
+        assertEquals(header.getCommandLength(), 63, "Unexpected command length");
+        assertEquals(header.getCommandStatus(), SMPPConstant.STAT_ESME_ROK, "Unexpected command status");
+        assertEquals(header.getSequenceNumber(), 1234, "Unexpected sequence number");
+
+        byte[] pdu = pduReader.readPDU(in, header);
+        DataSmResp dataSmResp = decomposer.dataSmResp(pdu);
+        assertEquals(dataSmResp.getMessageId(), "41fbf22d-fb3b-49ac-9c5e-71b762158808", "Unexpected message id");
+        assertEquals(dataSmResp.getOptionalParameters().length, 1, "Unexpected optional parameters length");
+
+        OptionalParameter.Additional_status_info_text decomposedAdditionalStatusInfoText = OptionalParameters.get(OptionalParameter.Additional_status_info_text.class, dataSmResp.getOptionalParameters());
+        assertEquals(decomposedAdditionalStatusInfoText.tag, OptionalParameter.Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), "Unexpected optional parameters tag");
+        assertEquals(decomposedAdditionalStatusInfoText.getValue(), new byte[]{ 0x00, 0x12, 0x34, 0x45, 0x67, 0x78}, "Unexpected optional parameters value");
+    }
+
+    /**
+     * Test the data_sm_resp composed PDU can decomposed properly.
+     *
+     * @throws Exception if an unexpected error found.
+     */
+    @Test(groups="checkintest")
+    public void sendEnquireLink() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        pduSender.sendEnquireLink(out, 1234);
+
+        DataInputStream in = new DataInputStream(new ByteArrayInputStream(out.toByteArray()));
+        Command header = pduReader.readPDUHeader(in);
+        assertEquals(header.getCommandId(), SMPPConstant.CID_ENQUIRE_LINK, "Unexpected command id");
+        assertEquals(header.getCommandLength(), 16, "Unexpected command length");
+        assertEquals(header.getCommandStatus(), SMPPConstant.STAT_ESME_ROK, "Unexpected command status");
+        assertEquals(header.getSequenceNumber(), 1234, "Unexpected sequence number");
+
+        byte[] pdu = pduReader.readPDU(in, header);
+        EnquireLink enquireLink = decomposer.enquireLink(pdu);
+        assertEquals(enquireLink.getSequenceNumber(), 1234, "Unexpected sequence number");
     }
 
     /**
