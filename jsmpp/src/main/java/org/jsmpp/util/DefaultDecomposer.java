@@ -450,6 +450,7 @@ public class DefaultDecomposer implements PDUDecomposer {
             resp.setMessageId(reader.readCString());
             StringValidator.validateString(resp.getMessageId(),
                     StringParameter.MESSAGE_ID);
+            resp.setOptionalParameters(readOptionalParameters(reader));
         }
 
         return resp;
