@@ -346,7 +346,6 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
 
         @Override
         public void sendEnquireLinkResp(int sequenceNumber) throws IOException {
-            logger.debug("Sending enquire_link_resp");
             pduSender().sendEnquireLinkResp(out, sequenceNumber);
         }
 
