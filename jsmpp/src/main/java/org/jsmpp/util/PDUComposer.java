@@ -496,11 +496,30 @@ public interface PDUComposer {
      */
     byte[] cancelBroadcastSmResp(int sequenceNumber);
 
+    /**
+     * Compose query broadcast short message (query_broadcast_sm) PDU.
+     *
+     * @param sequenceNumber The sequence number of original broadcast_sm PDU.
+     * @param messageId The message id returned in the broadcast_sm_resp.
+     * @param sourceAddrTon Type of Number for source address.
+     * @param sourceAddrNpi Numbering Plan Indicator for source address.
+     * @param sourceAddr Address of SME which originated this message.
+     * @param optionalParameters Optional TLVs, user_message_reference.
+     * @return the composed byte values.
+     */
     byte[] queryBroadcastSm(int sequenceNumber,
             String messageId,
             byte sourceAddrTon, byte sourceAddrNpi, String sourceAddr,
             OptionalParameter... optionalParameters) throws PDUStringException;
-
+    /**
+     * Compose query broadcast short message response (query_broadcast_sm_resp) PDU.
+     *
+     * @param sequenceNumber The sequence number of original broadcast_sm PDU.
+     * @param messageId The message id returned in the broadcast_sm_resp.
+     * @param optionalParameters Optional TLVs, message_state, broadcast_area_identifier, broadcast_area_success,
+     *                           broadcast_end_time, user_message_reference.
+     * @return the composed byte values.
+     */
     byte[] queryBroadcastSmResp(int sequenceNumber,
             String messageId,
             OptionalParameter... optionalParameters) throws PDUStringException;
