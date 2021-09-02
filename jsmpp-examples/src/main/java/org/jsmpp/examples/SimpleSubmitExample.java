@@ -71,7 +71,7 @@ public class SimpleSubmitExample {
                 LOGGER.error("Receive invalid response", e);
             } catch (NegativeResponseException e) {
                 // Receiving negative response (non-zero command_status)
-                LOGGER.error("Receive negative response, e");
+                LOGGER.error("Receive negative response", e);
             } catch (IOException e) {
                 LOGGER.error("IO error occurred", e);
             }
