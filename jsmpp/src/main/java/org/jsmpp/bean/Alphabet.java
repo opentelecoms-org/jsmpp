@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -18,8 +18,9 @@ package org.jsmpp.bean;
  * This is enum of the alphabet type.
  *
  * Alphabet represents the lower 4 bits of the data_coding field in the PDU,
- * as specified in section 5.2.19 of the SMPP v3.4 specification.
- * 
+ * as specified in section 5.2.19 of the SMPP v3.4 specification and
+ * in section 4.7.7 of the SMPP 5.0 specification.
+ *
  * @author uudashr
  * @version 1.0
  */
@@ -56,7 +57,7 @@ public enum Alphabet {
     ALPHA_JIS((byte)0x05, true, false),
 
     /**
-     * Cyrllic (ISO-8859-5)
+     * Cyrillic (ISO-8859-5)
      */
     ALPHA_CYRILLIC((byte)0x06, true, false),
 
@@ -102,18 +103,18 @@ public enum Alphabet {
     ALPHA_KS_C_5601((byte)0x0e, true, false),
 
     /**
-     * Unused.
+     * Unused
      */
     ALPHA_RESERVED_15((byte)0x0f, false, false);
 
 
     /**
-     * Is the MASK of alphabet (00001111).
+     * Is the MASK of alphabet (00001111)
      */
     public static final byte MASK_ALPHABET = 0x0f; // bin: 00001111
 
     /**
-     * Is the MASK of alphabet when message class is present (00001100).
+     * Is the MASK of alphabet when message class is present (00001100)
      */
     public static final byte MASK_ALPHABET_MESSAGE_CLASS = 0x0c; // bin: 00001100
 
@@ -123,7 +124,7 @@ public enum Alphabet {
 
     /**
      * Default constructor.
-     * 
+     *
      * @param value is the alphabet value
      * @param valid is the alphabet validity
      * @param unspecified is the unspecified value
@@ -136,7 +137,7 @@ public enum Alphabet {
 
     /**
      * Get the alphabet value.
-     * 
+     *
      * @return the alphabet value.
      */
     public byte value() {
@@ -173,7 +174,7 @@ public enum Alphabet {
 
     /**
      * Get the enum constant associated with specified value.
-     * 
+     *
      * @param value is the value associated with the {@code Alphabet} enum constant.
      * @return the associated enum constant.
      * @throws IllegalArgumentException if there is no associated enum constant
@@ -187,12 +188,9 @@ public enum Alphabet {
         throw new IllegalArgumentException("No enum const Alphabet with value "
                 + value);
     }
-    
+
     public static Alphabet parseDataCoding(byte dataCoding) throws IllegalArgumentException {
-        byte mask = MASK_ALPHABET;
-        if(DataCodings.containsMessageClass(dataCoding)) {
-            mask = MASK_ALPHABET_MESSAGE_CLASS;
-        }
+        byte mask = DataCodings.containsMessageClass(dataCoding) ? MASK_ALPHABET_MESSAGE_CLASS : MASK_ALPHABET;
         byte value = (byte)(dataCoding & mask);
         for (Alphabet val : values()) {
             if (val.value == value) {
