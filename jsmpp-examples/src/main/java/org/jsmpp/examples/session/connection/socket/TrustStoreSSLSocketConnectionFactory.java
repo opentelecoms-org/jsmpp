@@ -14,7 +14,6 @@
  */
 package org.jsmpp.examples.session.connection.socket;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
@@ -34,7 +33,7 @@ import org.jsmpp.session.connection.socket.SocketConnection;
  */
 public class TrustStoreSSLSocketConnectionFactory implements ConnectionFactory {
 
-  private static final String KEY_STORE_PATH = "/Users/pim/github/opentelecoms-org/jsmpp/jsmpp-examples/src/main/resources/ssl/keystore.p12";
+  private static final String KEY_STORE_PATH = "ssl/keystore.p12";
   private static final char[] KEY_STORE_PASSWORD = "password".toCharArray();
 
   private SSLSocketFactory sslSocketFactory;
@@ -42,15 +41,13 @@ public class TrustStoreSSLSocketConnectionFactory implements ConnectionFactory {
   public TrustStoreSSLSocketConnectionFactory() {
     try {
       KeyStore keyStore = KeyStore.getInstance("PKCS12");
-      keyStore.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD);
+      keyStore.load(this.getClass().getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASSWORD);
       TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
       trustManagerFactory.init(keyStore);
       SSLContext sslContext = SSLContext.getInstance("TLS");
       sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
       sslSocketFactory = sslContext.getSocketFactory();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    } catch (GeneralSecurityException e) {
+    } catch (GeneralSecurityException | IOException e) {
       throw new RuntimeException(e);
     }
   }

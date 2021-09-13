@@ -33,7 +33,7 @@ import org.jsmpp.session.connection.socket.ServerSocketConnection;
  */
 public class KeyStoreSSLServerSocketConnectionFactory implements ServerConnectionFactory {
 
-  private static final String KEY_STORE_PATH = "jsmpp-examples/src/main/resources/ssl/keystore.p12";
+  private static final String KEY_STORE_PATH = "keystore.p12";
   private static final char[] KEY_STORE_PASSWORD = "password".toCharArray();
 
   private SSLServerSocketFactory sslServerSocketFactory;
@@ -47,24 +47,25 @@ public class KeyStoreSSLServerSocketConnectionFactory implements ServerConnectio
       SSLContext sslContext = SSLContext.getInstance("TLS");
       sslContext.init(keyManagerFactory.getKeyManagers(), null, null);
       sslServerSocketFactory = sslContext.getServerSocketFactory();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    } catch (GeneralSecurityException e) {
+    } catch (GeneralSecurityException | IOException e) {
       throw new RuntimeException(e);
     }
   }
 
+  @Override
   public ServerConnection listen(int port) throws IOException {
     ServerSocket serverSocket = sslServerSocketFactory.createServerSocket(port);
     return new ServerSocketConnection(serverSocket);
   }
 
+  @Override
   public ServerConnection listen(int port, int timeout) throws IOException {
     ServerSocket serverSocket = sslServerSocketFactory.createServerSocket(port);
     serverSocket.setSoTimeout(timeout);
     return new ServerSocketConnection(serverSocket);
   }
 
+  @Override
   public ServerConnection listen(int port, int timeout, int backlog) throws IOException {
     ServerSocket serverSocket = sslServerSocketFactory.createServerSocket(port, backlog);
     serverSocket.setSoTimeout(timeout);
