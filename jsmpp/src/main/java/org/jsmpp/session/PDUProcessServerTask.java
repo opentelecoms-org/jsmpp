@@ -52,12 +52,17 @@ public class PDUProcessServerTask implements Runnable {
     @Override
     public void run() {
         try {
-            if (logger.isDebugEnabled())
-        	  {
+            int commandId = pduHeader.getCommandId();
+            if (commandId == SMPPConstant.CID_ENQUIRE_LINK
+                || commandId == SMPPConstant.CID_ENQUIRE_LINK_RESP) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Received PDU {}", HexUtil.convertBytesToHexString(pdu, 0, pdu.length));
+                }
+            } else if (logger.isDebugEnabled()) {
                 logger.debug("Received PDU {}", HexUtil.convertBytesToHexString(pdu, 0, pdu.length));
             }
 
-            switch (pduHeader.getCommandId()) {
+            switch (commandId) {
             case SMPPConstant.CID_BIND_RECEIVER:
             case SMPPConstant.CID_BIND_TRANSMITTER:
             case SMPPConstant.CID_BIND_TRANSCEIVER:
