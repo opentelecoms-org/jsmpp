@@ -1,20 +1,20 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.examples.receipts;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.DeliveryReceiptStrip;
@@ -34,12 +34,13 @@ public class CustomDeliveryReceiptStripper implements DeliveryReceiptStrip<Custo
     return instance;
   }
 
+  @Override
   public CustomDeliveryReceipt strip(DeliverSm deliverSm) throws InvalidDeliveryReceiptException {
     if (MessageType.SMSC_DEL_RECEIPT.containedIn(deliverSm.getEsmClass()) || MessageType.SME_DEL_ACK.containedIn(deliverSm.getEsmClass())) {
-      return new CustomDeliveryReceipt(new String(deliverSm.getShortMessage(), Charset.forName("US-ASCII")));
+      return new CustomDeliveryReceipt(new String(deliverSm.getShortMessage(), StandardCharsets.US_ASCII));
     } else {
       throw new InvalidDeliveryReceiptException(
-          "deliver_sm is not a Delivery Receipt since esm_class value = " + deliverSm.getEsmClass());
+          "deliver_sm is not a delivery receipt since esm_class value = " + deliverSm.getEsmClass());
     }
   }
 
