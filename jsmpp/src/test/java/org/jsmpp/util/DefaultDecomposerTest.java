@@ -1,10 +1,10 @@
 package org.jsmpp.util;
 
+import static java.nio.charset.StandardCharsets.US_ASCII;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.ByteArrayOutputStream;
-import java.nio.charset.Charset;
 
 import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SubmitSm;
@@ -14,8 +14,6 @@ import org.junit.Test;
  * @author pmoerenhout
  */
 public class DefaultDecomposerTest {
-
-  private final static Charset CHARSET_US_ASCII = Charset.forName("US-ASCII");
 
   PDUDecomposer decomposer = new DefaultDecomposer();
 
@@ -31,19 +29,19 @@ public class DefaultDecomposerTest {
     // sequence_number
     data.write(new byte[]{ 0x00, 0x00, 0x12, 0x34 });
     // service_type
-    data.write("CMT\000".getBytes(CHARSET_US_ASCII));
+    data.write("CMT\000".getBytes(US_ASCII));
     // source_addr_ton
     data.write(1);
     // source_addr_npi
     data.write(2);
     // source_addr
-    data.write("31600000000\000".getBytes(CHARSET_US_ASCII));
+    data.write("31600000000\000".getBytes(US_ASCII));
     // dest_addr_ton
     data.write(3);
     // dest_addr_npi
     data.write(4);
     // destination_addr
-    data.write("31612345678\000".getBytes(CHARSET_US_ASCII));
+    data.write("31612345678\000".getBytes(US_ASCII));
     // esm_class
     data.write(5);
     // protocol_id
@@ -65,7 +63,7 @@ public class DefaultDecomposerTest {
     // sm_length
     data.write(12);
     // short_message
-    data.write("Hello World!".getBytes(CHARSET_US_ASCII));
+    data.write("Hello World!".getBytes(US_ASCII));
 
     SubmitSm submitSm = decomposer.submitSm(data.toByteArray());
     assertEquals(submitSm.getCommandLength(), data.size());
@@ -89,7 +87,7 @@ public class DefaultDecomposerTest {
     assertEquals(submitSm.getReplaceIfPresent(), (byte) 0x01);
     assertEquals(submitSm.getDataCoding(), (byte) 0x09);
     assertEquals(submitSm.getSmDefaultMsgId(), (byte) 0x0a);
-    assertEquals(new String(submitSm.getShortMessage(), CHARSET_US_ASCII), "Hello World!");
+    assertEquals(new String(submitSm.getShortMessage(), US_ASCII), "Hello World!");
   }
 
   @Test
@@ -104,13 +102,13 @@ public class DefaultDecomposerTest {
     // sequence_number
     data.write(new byte[]{ 0x00, 0x00, 0x12, 0x34 });
     // message_id
-    data.write("32f53129-6a87-422c-8954-145f603582ed\000".getBytes(CHARSET_US_ASCII));
+    data.write("32f53129-6a87-422c-8954-145f603582ed\000".getBytes(US_ASCII));
     // source_addr_ton
     data.write(1);
     // source_addr_npi
     data.write(2);
     // source_addr
-    data.write("31612345678\000".getBytes(CHARSET_US_ASCII));
+    data.write("31612345678\000".getBytes(US_ASCII));
     // schedule_delivery_time
     data.write(0);
     // validity_period
@@ -122,7 +120,7 @@ public class DefaultDecomposerTest {
     // sm_length
     data.write(12);
     // short_message
-    data.write("Hello World!".getBytes(CHARSET_US_ASCII));
+    data.write("Hello World!".getBytes(US_ASCII));
 
     ReplaceSm replaceSm = decomposer.replaceSm(data.toByteArray());
     assertEquals(replaceSm.getCommandLength(), 84);
@@ -137,7 +135,7 @@ public class DefaultDecomposerTest {
     assertNull(replaceSm.getValidityPeriod());
     assertEquals(replaceSm.getRegisteredDelivery(), (byte) 0x04);
     assertEquals(replaceSm.getSmDefaultMsgId(), (byte) 0x05);
-    assertEquals(new String(replaceSm.getShortMessage(), CHARSET_US_ASCII), "Hello World!");
+    assertEquals(new String(replaceSm.getShortMessage(), US_ASCII), "Hello World!");
   }
 
 }
