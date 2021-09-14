@@ -104,17 +104,17 @@ public class CustomDeliveryReceipt implements DeliveryReceiptInterface<CustomDel
   }
 
   /**
-   * Create String representation of integer. Preceding 0 will be add as needed.
+   * Create String representation of integer. Preceding 0 will be added as needed.
    *
    * @param value is the value.
-   * @param digit is the digit should be shown.
+   * @param digits is the minimum number of digits to be returned, possibly prefixed with 0 digits.
    * @return the String representation of int value.
    */
 
-  private static String intToString(int value, int digit) {
-    StringBuilder stringBuilder = new StringBuilder(digit);
-    stringBuilder.append(Integer.toString(value));
-    while (stringBuilder.length() < digit) {
+  private static String intToString(int value, int digits) {
+    StringBuilder stringBuilder = new StringBuilder(digits);
+    stringBuilder.append(value);
+    while (stringBuilder.length() < digits) {
       stringBuilder.insert(0, "0");
     }
     return stringBuilder.toString();
