@@ -110,6 +110,13 @@ public interface Session {
     SessionState getSessionState();
     void addSessionStateListener(SessionStateListener l);
     void removeSessionStateListener(SessionStateListener l);
+
+    /**
+     * Get the number of unacknowledged requests in the sending window of the session.
+     *
+     * @return number of unacknowledged requests.
+     */
+    int getUnacknowledgedRequests();
     
     /**
      * Get the last reading valid PDU from remote host.

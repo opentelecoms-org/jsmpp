@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * @author uudashr
  */
 public abstract class AbstractSession implements Session, Closeable {
-    private static final Logger logger = LoggerFactory.getLogger(AbstractSession.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractSession.class);
     private static final Random random = new Random();
 
     private final Map<Integer, PendingResponse<Command>> pendingResponse = new ConcurrentHashMap<>();
@@ -59,7 +59,7 @@ public abstract class AbstractSession implements Session, Closeable {
     private int pduProcessorDegree = 3;
     private int queueCapacity = 100;
 
-    private String sessionId = generateSessionId();
+    private final String sessionId = generateSessionId();
     private InterfaceVersion interfaceVersion = InterfaceVersion.IF_34;
     private int enquireLinkTimer = 60000;
     private long transactionTimer = 2000;
@@ -107,7 +107,7 @@ public abstract class AbstractSession implements Session, Closeable {
             try {
                 connection().setSoTimeout(enquireLinkTimer);
             } catch (IOException e) {
-                logger.error("Failed setting so_timeout for session timer", e);
+                log.error("Setting so_timeout for session timer failed", e);
             }
         }
         this.enquireLinkTimer = enquireLinkTimer;
@@ -126,6 +126,11 @@ public abstract class AbstractSession implements Session, Closeable {
     @Override
     public long getTransactionTimer() {
         return transactionTimer;
+    }
+
+    @Override
+    public int getUnacknowledgedRequests() {
+        return this.pendingResponse.size();
     }
 
     @Override
@@ -165,7 +170,7 @@ public abstract class AbstractSession implements Session, Closeable {
     public void setPduProcessorDegree(int pduProcessorDegree) throws IllegalStateException {
         if (!getSessionState().equals(SessionState.CLOSED)) {
             throw new IllegalStateException(
-                    "Cannot set PDU processor degree since the PDU dispatcher thread already created");
+                    "Cannot set PDU processor degree since the PDU dispatcher thread is already created");
         }
         this.pduProcessorDegree = pduProcessorDegree;
     }
@@ -244,30 +249,30 @@ public abstract class AbstractSession implements Session, Closeable {
         SessionContext ctx = sessionContext();
         SessionState sessionState = ctx.getSessionState();
         if (!sessionState.equals(SessionState.CLOSED)) {
-            logger.debug("Close session {} in state {}", sessionId, getSessionState());
+            log.debug("Close session {} in state {}", sessionId, getSessionState());
             try {
                 connection().close();
             } catch (IOException e) {
-                logger.warn("Failed to close connection:", e);
+                log.warn("Close connection failed", e);
             }
         }
 
         // Make sure the enquireLinkThread doesn't wait for itself
         if (Thread.currentThread() != enquireLinkSender) {
             if (enquireLinkSender != null && enquireLinkSender.isAlive()) {
-                logger.debug("Stop enquireLinkSender for session {}", sessionId);
+                log.debug("Stop enquireLinkSender for session {}", sessionId);
                 try {
                     enquireLinkSender.interrupt();
                     enquireLinkSender.join();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    logger.warn("Interrupted while waiting for enquireLinkSender thread to exit");
+                    log.warn("Interrupted while waiting for enquireLinkSender thread to exit");
                 }
             }
         }
 
         if (!sessionState.equals(SessionState.CLOSED)) {
-            logger.debug("Close session context {} in state {}", sessionId, sessionState);
+            log.debug("Close session context {} in state {}", sessionId, sessionState);
             ctx.close();
         }
     }
@@ -316,10 +321,10 @@ public abstract class AbstractSession implements Session, Closeable {
         try {
             task.executeTask(connection().getOutputStream(), seqNum);
         } catch (IOException e) {
-            logger.error("Failed sending {} command", task.getCommandName(), e);
+            log.error("Sending {} command failed", task.getCommandName(), e);
 
             if("enquire_link".equals(task.getCommandName())) {
-                logger.info("Ignore failure of sending enquire_link, wait to see if connection is restored");
+                log.info("Ignore failure of sending enquire_link, wait to see if connection is restored");
             } else {
                 pendingResponse.remove(seqNum);
                 close();
@@ -330,11 +335,11 @@ public abstract class AbstractSession implements Session, Closeable {
         try {
             pendingResp.waitDone();
             if("enquire_link".equals(task.getCommandName())) {
-                if (logger.isTraceEnabled()) {
-                    logger.trace("{} response with sequence_number {} received for session {}", task.getCommandName(), seqNum, sessionId);
+                if (log.isTraceEnabled()) {
+                    log.trace("{} response with sequence_number {} received for session {}", task.getCommandName(), seqNum, sessionId);
                 }
             } else {
-                logger.debug("{} response with sequence_number {} received for session {}", task.getCommandName(), seqNum, sessionId);
+                log.debug("{} response with sequence_number {} received for session {}", task.getCommandName(), seqNum, sessionId);
             }
         } catch (ResponseTimeoutException e) {
             pendingResponse.remove(seqNum);
@@ -366,7 +371,7 @@ public abstract class AbstractSession implements Session, Closeable {
         try {
             task.executeTask(connection().getOutputStream(), seqNum);
         } catch (IOException e) {
-            logger.error("Failed sending {} command", task.getCommandName(), e);
+            log.error("Sending {} command failed", task.getCommandName(), e);
             close();
             throw e;
         }
@@ -389,10 +394,10 @@ public abstract class AbstractSession implements Session, Closeable {
             executeSendCommand(task, getTransactionTimer());
         } catch (PDUException e) {
             // should never happen, since it doesn't have any String parameter.
-            logger.warn("PDU String should be always valid", e);
+            log.warn("PDU String should be always valid", e);
         } catch (NegativeResponseException e) {
             // the command_status of the enquire_link response should be always 0
-            logger.warn("command_status of enquire_link_resp should be always 0", e);
+            log.warn("command_status of enquire_link_resp should be always 0", e);
         }
     }
 
@@ -407,7 +412,7 @@ public abstract class AbstractSession implements Session, Closeable {
             executeSendCommandWithNoResponse(task);
         } catch (PDUException e) {
             // exception should be never caught since we didn't send any string parameter.
-            logger.warn("PDU String should be always valid", e);
+            log.warn("PDU String should be always valid", e);
         }
     }
 
@@ -422,27 +427,27 @@ public abstract class AbstractSession implements Session, Closeable {
             executeSendCommand(task, transactionTimer);
         } catch (PDUException e) {
             // exception should be never caught since we didn't send any string parameter.
-            logger.warn("PDU String should be always valid", e);
+            log.warn("PDU String should be always valid", e);
         } catch (ResponseTimeoutException e) {
             // exception should be never caught since we didn't send any string parameter.
-            logger.warn("Unbind response timeout", e);
+            log.warn("Unbind response timeout", e);
         } catch (InvalidResponseException e) {
             // exception should be never caught since we didn't send any string parameter.
-            logger.warn("Invalid response for unbind", e);
+            log.warn("Invalid response for unbind", e);
         } catch (NegativeResponseException e) {
             // ignore the negative response
-            logger.warn("Receive non-ok command_status ({}) for unbind_resp", e.getCommandStatus());
+            log.warn("Receive non-ok command_status ({}) for unbind_resp", e.getCommandStatus());
         }
     }
 
     @Override
     public void unbindAndClose() {
-        logger.debug("Unbind and close session {}", sessionId);
+        log.debug("Unbind and close session {}", sessionId);
         if (sessionContext().getSessionState().isBound()) {
             try {
                 unbind();
             } catch (IOException e) {
-                logger.error("IO error found", e);
+                log.error("IO error found", e);
             }
         }
         close();
@@ -508,7 +513,7 @@ public abstract class AbstractSession implements Session, Closeable {
             if (enquireLinkTimer == 0){
                 return;
             }
-            logger.debug("Starting EnquireLinkSender for session {}", sessionId);
+            log.debug("Starting EnquireLinkSender for session {}", sessionId);
             while (getSessionState().isNotClosed()) {
 
                 while (!sendingEnquireLink.compareAndSet(true, false) && !Thread.currentThread().isInterrupted() && getSessionState() != SessionState.CLOSED) {
@@ -527,18 +532,18 @@ public abstract class AbstractSession implements Session, Closeable {
                 try {
                     sendEnquireLink();
                 } catch (ResponseTimeoutException e) {
-                    logger.error("Response timeout on enquire_link", e);
+                    log.error("Response timeout on enquire_link", e);
                     close();
                 } catch (InvalidResponseException e) {
-                    logger.error("Invalid response on enquire_link", e);
+                    log.error("Invalid response on enquire_link", e);
                     // lets unbind gracefully
                     unbindAndClose();
                 } catch (IOException e) {
-                    logger.error("I/O exception on enquire_link", e);
+                    log.error("I/O exception on enquire_link", e);
                     close();
                 }
             }
-            logger.debug("EnquireLinkSender stopped for session {}", sessionId);
+            log.debug("EnquireLinkSender stopped for session {}", sessionId);
         }
 
         /**
@@ -550,7 +555,7 @@ public abstract class AbstractSession implements Session, Closeable {
                     sendingEnquireLink.notify();
                 }
             } else {
-                logger.debug("Not sending enquire link notify");
+                log.debug("Not sending enquire link notify");
             }
         }
     }
