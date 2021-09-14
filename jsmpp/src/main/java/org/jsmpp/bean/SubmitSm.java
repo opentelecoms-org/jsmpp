@@ -182,6 +182,7 @@ public class SubmitSm extends MessageRequest {
      * @return {@code true} if the Message Mode is the default mode
      * @deprecated see {@link MessageMode#containedIn(byte)}
      */
+    @Deprecated
     public static final boolean isDefaultMode(byte esmClass) {
         return isMessagingMode(esmClass, SMPPConstant.ESMCLS_DEFAULT_MODE);
     }
@@ -193,6 +194,7 @@ public class SubmitSm extends MessageRequest {
      * @return the modified ESM class
      * @deprecated use {@link MessageMode#compose(byte, MessageMode)}
      */
+    @Deprecated
     public static final byte composeDefaultMode(byte esmClass) {
         return composeMessagingMode(esmClass, SMPPConstant.ESMCLS_DEFAULT_MODE);
     }
