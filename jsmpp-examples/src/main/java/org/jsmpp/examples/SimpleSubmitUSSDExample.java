@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * @author pmoerenhout
  */
 public class SimpleSubmitUSSDExample {
-  private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSubmitUSSDExample.class);
+  private static final Logger log = LoggerFactory.getLogger(SimpleSubmitUSSDExample.class);
   private static final MessageIDGenerator MESSAGE_ID_GENERATOR = new RandomMessageIDGenerator();
 
   public static void main(String[] args) {
@@ -62,55 +62,57 @@ public class SimpleSubmitUSSDExample {
 
     // Set listener to receive deliver_sm with USSD
     session.setMessageReceiverListener(new MessageReceiverListener() {
+      @Override
       public void onAcceptDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
         if (MessageType.SMSC_DEL_RECEIPT.containedIn(deliverSm.getEsmClass())) {
           // delivery receipt
-          LOGGER.info("Received unexpected deliver receipt from {}", deliverSm.getSourceAddr());
+          log.info("Received unexpected deliver receipt from {}", deliverSm.getSourceAddr());
         } else {
           // USSD short message
           String serviceType = deliverSm.getServiceType();
-          LOGGER.info("Receiving {} USSD message: {}", serviceType, new String(deliverSm.getShortMessage()), StandardCharsets.US_ASCII);
+          log.info("Receiving {} USSD message: {}", serviceType, new String(deliverSm.getShortMessage(), StandardCharsets.US_ASCII));
           for (OptionalParameter optionalParameter : deliverSm.getOptionalParameters()) {
             String tagHex = String.format("%04x", optionalParameter.tag);
             if (optionalParameter instanceof OptionalParameter.Null) {
-              LOGGER.info("Optional parameter {}: null", tagHex);
+              log.info("Optional parameter {}: null", tagHex);
             } else if (optionalParameter instanceof OptionalParameter.Byte) {
               OptionalParameter.Byte optionalByte = (OptionalParameter.Byte) optionalParameter;
-              LOGGER.info("Optional parameter {}: {}", tagHex, (optionalByte.getValue() & 0xff));
+              log.info("Optional parameter {}: {}", tagHex, (optionalByte.getValue() & 0xff));
             } else if (optionalParameter instanceof OptionalParameter.Short) {
               OptionalParameter.Short optionalShort = (OptionalParameter.Short) optionalParameter;
-              LOGGER.info("Optional parameter {}: {}", tagHex, (optionalShort.getValue() & 0xffff));
+              log.info("Optional parameter {}: {}", tagHex, (optionalShort.getValue() & 0xffff));
             } else if (optionalParameter instanceof OptionalParameter.Int) {
               OptionalParameter.Int optionalInt = (OptionalParameter.Int) optionalParameter;
-              LOGGER.info("Optional parameter {}: {}", tagHex, optionalInt.getValue());
+              log.info("Optional parameter {}: {}", tagHex, optionalInt.getValue());
             } else if (optionalParameter instanceof OptionalParameter.COctetString) {
               OptionalParameter.COctetString cOctetString = (OptionalParameter.COctetString) optionalParameter;
-              LOGGER.info("Optional parameter {}: {}", tagHex, cOctetString.getValueAsString());
+              log.info("Optional parameter {}: {}", tagHex, cOctetString.getValueAsString());
             } else if (optionalParameter instanceof OptionalParameter.OctetString) {
               OptionalParameter.OctetString octetString = (OptionalParameter.OctetString) optionalParameter;
-              LOGGER.info("Optional parameter {}: {}", tagHex, octetString.getValueAsString());
+              log.info("Optional parameter {}: {}", tagHex, octetString.getValueAsString());
             }
           }
           latch.countDown();
         }
       }
 
+      @Override
       public void onAcceptAlertNotification(AlertNotification alertNotification) {
-        LOGGER.info("Received alert_notification");
+        log.info("Received alert_notification");
       }
 
+      @Override
       public DataSmResult onAcceptDataSm(DataSm dataSm, Session source) throws ProcessRequestException {
-        LOGGER.info("Received data_sm");
-        DataSmResult dataSmResult = new DataSmResult(MESSAGE_ID_GENERATOR.newMessageId(), new OptionalParameter[]{});
-        return dataSmResult;
+        log.info("Received data_sm");
+        return new DataSmResult(MESSAGE_ID_GENERATOR.newMessageId(), new OptionalParameter[]{});
       }
     });
 
     try {
-      LOGGER.info("Connecting");
+      log.info("Connecting");
       String systemId = session.connectAndBind("localhost", 2775,
           new BindParameter(BindType.BIND_TRX, "SP", "password", "0", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
-      LOGGER.info("Connected with USSD Message Centre with system id {}", systemId);
+      log.info("Connected with USSD Message Centre with system id {}", systemId);
 
       String sourceAddress = "*111";
       String destinationAddress = "628176504657";
@@ -142,7 +144,7 @@ public class SimpleSubmitUSSDExample {
         //  new OptionalParameter.Dest_addr_subunit(MOBILE_EQUIPMENT),
         //  new OptionalParameter.Ussd_service_op((byte) 0x02));
 
-        LOGGER.info("USSD BR message submitted, message_id is {}", beginRequestMessageId);
+        log.info("USSD BR message submitted, message_id is {}", beginRequestMessageId);
 
         // Wait for deliver_sm
         latch.await(60000, TimeUnit.MILLISECONDS);
@@ -159,30 +161,30 @@ public class SimpleSubmitUSSDExample {
         //  new OptionalParameter.Dest_bearer_type(USSD),
         //  new OptionalParameter.Dest_addr_subunit(MOBILE_EQUIPMENT),
         //  new OptionalParameter.Ussd_service_op((byte) 0x02));
-        LOGGER.info("USSD EF message submitted, message_id is {}", endReleaseMessageId);
+        log.info("USSD EF message submitted, message_id is {}", endReleaseMessageId);
       } catch (InterruptedException e) {
-        LOGGER.error("Interrupted", e);
+        log.error("Interrupted", e);
         Thread.currentThread().interrupt();
       } catch (PDUException e) {
         // Invalid PDU parameter
-        LOGGER.error("Invalid PDU parameter", e);
+        log.error("Invalid PDU parameter", e);
       } catch (ResponseTimeoutException e) {
         // Response timeout
-        LOGGER.error("Response timeout", e);
+        log.error("Response timeout", e);
       } catch (InvalidResponseException e) {
         // Invalid response
-        LOGGER.error("Receive invalid response", e);
+        log.error("Receive invalid response", e);
       } catch (NegativeResponseException e) {
         // Receiving negative response (non-zero command_status)
-        LOGGER.error("Receive negative response, e");
+        log.error("Receive negative response, e");
       } catch (IOException e) {
-        LOGGER.error("IO error occurred", e);
+        log.error("IO error occurred", e);
       }
 
       session.unbindAndClose();
 
     } catch (IOException e) {
-      LOGGER.error("Failed connect and bind to host", e);
+      log.error("Failed connect and bind to host", e);
     }
   }
 
