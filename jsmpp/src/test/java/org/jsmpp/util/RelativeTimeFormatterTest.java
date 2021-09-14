@@ -40,7 +40,7 @@ public class RelativeTimeFormatterTest {
 
   @Test(groups = "checkintest")
   public void testStaticRelativeFormatter() {
-    String formatted = RelativeTimeFormatter.format(07, 12, 26, 12, 46, 10);
+    String formatted = RelativeTimeFormatter.format(7, 12, 26, 12, 46, 10);
     assertEquals(formatted, "071226124610000R");
   }
 
@@ -52,7 +52,7 @@ public class RelativeTimeFormatterTest {
 
   @Test(groups = "checkintest")
   public void validateRelativeDate() throws Exception {
-    String formatted = RelativeTimeFormatter.format(07, 12, 26, 12, 46, 10);
+    String formatted = RelativeTimeFormatter.format(7, 12, 26, 12, 46, 10);
     StringValidator.validateString(formatted, StringParameter.SCHEDULE_DELIVERY_TIME);
     StringValidator.validateString(formatted, StringParameter.VALIDITY_PERIOD);
     StringValidator.validateString(formatted, StringParameter.FINAL_DATE);
