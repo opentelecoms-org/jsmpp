@@ -74,7 +74,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class DefaultDecomposer implements PDUDecomposer {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultDecomposer.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultDecomposer.class);
     private static final OptionalParameter[] EMPTY_OPTIONAL_PARAMETERS = new OptionalParameter[]{};
 
     private static final PDUDecomposer instance = new DefaultDecomposer();
@@ -106,6 +106,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      * 
      * @see org.jsmpp.util.PDUDecomposer#bind(byte[])
      */
+    @Override
     public Bind bind(byte[] b) throws PDUStringException {
         Bind req = new Bind();
         SequentialBytesReader reader = new SequentialBytesReader(b);
@@ -133,6 +134,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      * 
      * @see org.jsmpp.util.PDUDecomposer#bindResp(byte[])
      */
+    @Override
     public BindResp bindResp(byte[] b) throws PDUStringException {
         BindResp resp = new BindResp();
         SequentialBytesReader reader = new SequentialBytesReader(b);
@@ -152,6 +154,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      * 
      * @see org.jsmpp.util.PDUDecomposer#unbind(byte[])
      */
+    @Override
     public Unbind unbind(byte[] b) {
         Unbind req = new Unbind();
         assignHeader(req, b);
@@ -163,6 +166,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      * 
      * @see org.jsmpp.util.PDUDecomposer#unbindResp(byte[])
      */
+    @Override
     public UnbindResp unbindResp(byte[] b) {
         UnbindResp resp = new UnbindResp();
         assignHeader(resp, b);
@@ -174,6 +178,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      * 
      * @see org.jsmpp.util.PDUDecomposer#outbind(byte[])
      */
+    @Override
     public Outbind outbind(byte[] b) throws PDUStringException {
         Outbind req = new Outbind();
         SequentialBytesReader reader = new SequentialBytesReader(b);
@@ -193,6 +198,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      * 
      * @see org.jsmpp.util.PDUDecomposer#enquireLink(byte[])
      */
+    @Override
     public EnquireLink enquireLink(byte[] b) {
         EnquireLink req = new EnquireLink();
         assignHeader(req, b);
@@ -204,6 +210,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      * 
      * @see org.jsmpp.util.PDUDecomposer#enquireLinkResp(byte[])
      */
+    @Override
     public EnquireLinkResp enquireLinkResp(byte[] b) {
         EnquireLinkResp resp = new EnquireLinkResp();
         assignHeader(resp, b);
@@ -216,6 +223,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      * 
      * @see org.jsmpp.util.PDUDecomposer#genericNack(byte[])
      */
+    @Override
     public GenericNack genericNack(byte[] b) {
         GenericNack req = new GenericNack();
         assignHeader(req, b);
@@ -228,6 +236,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      * 
      * @see org.jsmpp.util.PDUDecomposer#submitSm(byte[])
      */
+    @Override
     public SubmitSm submitSm(byte[] b) throws PDUStringException {
         SubmitSm req = new SubmitSm();
         SequentialBytesReader reader = new SequentialBytesReader(b);
@@ -274,6 +283,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      * 
      * @see org.jsmpp.util.PDUDecomposer#submitSmResp(byte[])
      */
+    @Override
     public SubmitSmResp submitSmResp(byte[] b) throws PDUStringException {
         SubmitSmResp resp = new SubmitSmResp();
         SequentialBytesReader reader = new SequentialBytesReader(b);
@@ -293,6 +303,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      * 
      * @see org.jsmpp.util.PDUDecomposer#querySm(byte[])
      */
+    @Override
     public QuerySm querySm(byte[] b) throws PDUStringException {
         QuerySm req = new QuerySm();
         SequentialBytesReader reader = new SequentialBytesReader(b);
@@ -314,6 +325,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      * 
      * @see org.jsmpp.util.PDUDecomposer#querySmResp(byte[])
      */
+    @Override
     public QuerySmResp querySmResp(byte[] b) throws PDUStringException {
         QuerySmResp resp = new QuerySmResp();
         SequentialBytesReader reader = new SequentialBytesReader(b);
@@ -337,6 +349,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      * 
      * @see org.jsmpp.util.PDUDecomposer#deliverSm(byte[])
      */
+    @Override
     public DeliverSm deliverSm(byte[] b) throws PDUStringException {
         DeliverSm req = new DeliverSm();
         SequentialBytesReader reader = new SequentialBytesReader(b);
@@ -387,6 +400,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      * 
      * @see org.jsmpp.util.PDUDecomposer#deliverSmResp(byte[])
      */
+    @Override
     public DeliverSmResp deliverSmResp(byte[] b) {
         DeliverSmResp resp = new DeliverSmResp();
         SequentialBytesReader reader = new SequentialBytesReader(b);
@@ -400,6 +414,7 @@ public class DefaultDecomposer implements PDUDecomposer {
      * 
      * @see org.jsmpp.util.PDUDecomposer#deliveryReceipt(java.lang.String)
      */
+    @Override
     public DeliveryReceipt deliveryReceipt(String data)
             throws InvalidDeliveryReceiptException {
         return new DeliveryReceipt(data);
@@ -410,11 +425,13 @@ public class DefaultDecomposer implements PDUDecomposer {
      * 
      * @see org.jsmpp.util.PDUDecomposer#deliveryReceipt(byte[])
      */
+    @Override
     public DeliveryReceipt deliveryReceipt(byte[] data)
             throws InvalidDeliveryReceiptException {
         return deliveryReceipt(new String(data));
     }
 
+    @Override
     public DataSm dataSm(byte[] data) throws PDUStringException {
         DataSm req = new DataSm();
         SequentialBytesReader reader = new SequentialBytesReader(data);
@@ -442,6 +459,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         return req;
     }
 
+    @Override
     public DataSmResp dataSmResp(byte[] data) throws PDUStringException {
         DataSmResp resp = new DataSmResp();
         SequentialBytesReader reader = new SequentialBytesReader(data);
@@ -456,6 +474,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         return resp;
     }
 
+    @Override
     public CancelSm cancelSm(byte[] data) throws PDUStringException {
         CancelSm req = new CancelSm();
         SequentialBytesReader reader = new SequentialBytesReader(data);
@@ -483,12 +502,14 @@ public class DefaultDecomposer implements PDUDecomposer {
         return req;
     }
 
+    @Override
     public CancelSmResp cancelSmResp(byte[] data) {
         CancelSmResp resp = new CancelSmResp();
         assignHeader(resp, data);
         return resp;
     }
 
+    @Override
     public SubmitMulti submitMulti(byte[] data) throws PDUStringException,
             InvalidNumberOfDestinationsException {
         SubmitMulti req = new SubmitMulti();
@@ -519,7 +540,7 @@ public class DefaultDecomposer implements PDUDecomposer {
             } else if (flag == Flag.DISTRIBUTION_LIST.getValue()) {
                 destAddresses[i] = new DistributionList(reader.readCString());
             } else {
-                logger.warn("Unknown destination address flag: {}", flag);
+                log.warn("Unknown destination address flag: {}", flag);
             }
         }
         req.setDestAddresses(destAddresses);
@@ -545,6 +566,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         return req;
     }
 
+    @Override
     public SubmitMultiResp submitMultiResp(byte[] data)
             throws PDUStringException {
         SubmitMultiResp resp = new SubmitMultiResp();
@@ -570,7 +592,8 @@ public class DefaultDecomposer implements PDUDecomposer {
         }
         return resp;
     }
-    
+
+    @Override
     public ReplaceSm replaceSm(byte[] data) throws PDUStringException {
         ReplaceSm req = new ReplaceSm();
         SequentialBytesReader reader = new SequentialBytesReader(data);
@@ -597,13 +620,15 @@ public class DefaultDecomposer implements PDUDecomposer {
                 StringParameter.SHORT_MESSAGE);
         return req;
     }
-    
+
+    @Override
     public ReplaceSmResp replaceSmResp(byte[] data) {
         ReplaceSmResp resp = new ReplaceSmResp();
         assignHeader(resp, data);
         return resp;
     }
 
+    @Override
     public BroadcastSm broadcastSm(byte[] data) throws PDUStringException {
         BroadcastSm req = new BroadcastSm();
         SequentialBytesReader reader = new SequentialBytesReader(data);
@@ -633,6 +658,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         return req;
     }
 
+    @Override
     public BroadcastSmResp broadcastSmResp(byte[] data) throws PDUStringException {
         BroadcastSmResp resp = new BroadcastSmResp();
         SequentialBytesReader reader = new SequentialBytesReader(data);
@@ -644,6 +670,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         return resp;
     }
 
+    @Override
     public CancelBroadcastSm cancelBroadcastSm(byte[] data) throws PDUStringException {
         CancelBroadcastSm req = new CancelBroadcastSm();
         SequentialBytesReader reader = new SequentialBytesReader(data);
@@ -663,6 +690,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         return req;
     }
 
+    @Override
     public CancelBroadcastSmResp cancelBroadcastSmResp(byte[] data) throws PDUStringException {
         CancelBroadcastSmResp resp = new CancelBroadcastSmResp();
         SequentialBytesReader reader = new SequentialBytesReader(data);
@@ -670,6 +698,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         return resp;
     }
 
+    @Override
     public QueryBroadcastSm queryBroadcastSm(byte[] data) throws PDUStringException {
         QueryBroadcastSm req = new QueryBroadcastSm();
         SequentialBytesReader reader = new SequentialBytesReader(data);
@@ -686,6 +715,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         return req;
     }
 
+    @Override
     public QueryBroadcastSmResp queryBroadcastSmResp(byte[] data) throws PDUStringException {
         QueryBroadcastSmResp resp = new QueryBroadcastSmResp();
         SequentialBytesReader reader = new SequentialBytesReader(data);
@@ -697,6 +727,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         return resp;
     }
 
+    @Override
     public AlertNotification alertNotification(byte[] data) throws PDUStringException {
         AlertNotification req = new AlertNotification();
         SequentialBytesReader reader = new SequentialBytesReader(data);
@@ -735,7 +766,7 @@ public class DefaultDecomposer implements PDUDecomposer {
             SequentialBytesReader seqBytesReader) {
         int commandLength = seqBytesReader.readInt();
         if (seqBytesReader.getBytes().length != commandLength) {
-            logger.error("The command_length ({}) not equals the byte array length ({})",
+            log.error("The command_length ({}) does not equals the byte array length ({})",
                 commandLength, seqBytesReader.getBytes().length);
         }
         pdu.setCommandLength(commandLength);
