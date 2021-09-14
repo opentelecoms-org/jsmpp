@@ -246,7 +246,6 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 
 		enquireLinkSender = new EnquireLinkSender();
 		enquireLinkSender.start();
-		return;
 	}
 
 	/**
