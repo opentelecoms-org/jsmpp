@@ -1,6 +1,6 @@
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License. 
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -23,6 +23,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
+import org.jsmpp.InvalidResponseException;
+import org.jsmpp.PDUException;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.BindType;
@@ -50,7 +52,9 @@ import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.examples.session.connection.socket.KeyStoreSSLServerSocketConnectionFactory;
+import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.ProcessRequestException;
+import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BindRequest;
 import org.jsmpp.session.BroadcastSmResult;
@@ -76,7 +80,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implements Runnable, ServerMessageReceiverListener {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SMPPServerSimulator.class);
+    private static final Logger log = LoggerFactory.getLogger(SMPPServerSimulator.class);
     private static final String QUERYSM_NOT_IMPLEMENTED = "query_sm not implemented";
     private static final String CANCELSM_NOT_IMPLEMENTED = "cancel_sm not implemented";
     private static final String DATASM_NOT_IMPLEMENTED = "data_sm not implemented";
@@ -114,10 +118,10 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
             /*
              * for SSL use the SSLServerSocketConnectionFactory() or DefaultSSLServerSocketConnectionFactory()
              */
-            LOGGER.info("Listening on port {}{}", port, useSsl ? " (SSL)" : "");
+            log.info("Listening on port {}{}", port, useSsl ? " (SSL)" : "");
             while (true) {
                 SMPPServerSession serverSession = sessionListener.accept();
-                LOGGER.info("Accepted connection with session {}", serverSession.getSessionId());
+                log.info("Accepted connection with session {}", serverSession.getSessionId());
                 serverSession.setMessageReceiverListener(this);
                 serverSession.setResponseDeliveryListener(this);
                 Future<Boolean> bindResult = execService.submit(new WaitBindTask(serverSession, 30000, systemId, password));
@@ -125,24 +129,32 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
                     boolean bound = bindResult.get();
                     if (bound) {
                         // Could start deliver_sm to ESME
-                        LOGGER.info("The session is now in state {}", serverSession.getSessionState());
+                        log.info("The session is now in state {}", serverSession.getSessionState());
+
+                        serverSession.deliverShortMessage("CMT",
+                            TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, "555",
+                            TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, "12345",
+                            new ESMClass(0), (byte) 0x00, (byte) 0x00, new RegisteredDelivery(), DataCodings.ZERO,
+                            "Hello World".getBytes());
                     }
                 } catch (InterruptedException e){
-                    LOGGER.info("Interrupted WaitBind task: {}", e.getMessage());
+                    log.info("Interrupted WaitBind task: {}", e.getMessage());
                     Thread.currentThread().interrupt();
                     throw new RuntimeException(e);
                 } catch (ExecutionException e){
-                    LOGGER.info("Exception on execute WaitBind task: {}", e.getMessage());
+                    log.info("Exception on execute WaitBind task: {}", e.getMessage());
+                } catch (NegativeResponseException | ResponseTimeoutException | PDUException | InvalidResponseException e){
+                    log.info("Could not send deliver_sm: {}", e.getMessage());
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("IO error occurred", e);
+            log.error("IO error occurred", e);
         }
     }
 
     @Override
     public QuerySmResult onAcceptQuerySm(QuerySm querySm, SMPPServerSession source) throws ProcessRequestException {
-        LOGGER.info("QuerySm not implemented");
+        log.info("QuerySm not implemented");
         throw new ProcessRequestException(QUERYSM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RINVCMDID);
     }
 
@@ -150,7 +162,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
     public SubmitSmResult onAcceptSubmitSm(SubmitSm submitSm,
             SMPPServerSession source) throws ProcessRequestException {
         MessageId messageId = messageIDGenerator.newMessageId();
-        LOGGER.info("Receiving submit_sm '{}', and return message id {}", new String(submitSm.getShortMessage()), messageId);
+        log.info("Receiving submit_sm '{}', and return message id {}", new String(submitSm.getShortMessage()), messageId);
         if (SMSCDeliveryReceipt.FAILURE.containedIn(submitSm.getRegisteredDelivery()) || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitSm.getRegisteredDelivery())) {
             execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitSm, messageId));
         }
@@ -164,14 +176,14 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
     @Override
     public void onSubmitSmRespSent(SubmitSmResult submitSmResult,
             SMPPServerSession source) {
-        LOGGER.debug("submit_sm_resp with message_id {} has been sent", submitSmResult.getMessageId());
+        log.debug("submit_sm_resp with message_id {} has been sent", submitSmResult.getMessageId());
     }
 
     @Override
     public SubmitMultiResult onAcceptSubmitMulti(SubmitMulti submitMulti, SMPPServerSession source)
         throws ProcessRequestException {
         MessageId messageId = messageIDGenerator.newMessageId();
-        LOGGER.debug("Receiving submit_multi_sm '{}', and return message id {}",
+        log.debug("Receiving submit_multi_sm '{}', and return message id {}",
                 new String(submitMulti.getShortMessage()), messageId);
         if (SMSCDeliveryReceipt.FAILURE.containedIn(submitMulti.getRegisteredDelivery())
                 || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitMulti.getRegisteredDelivery())) {
@@ -183,21 +195,21 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
     @Override
     public DataSmResult onAcceptDataSm(DataSm dataSm, Session source)
             throws ProcessRequestException {
-        LOGGER.info("Accepting data_sm, but not implemented");
+        log.info("Accepting data_sm, but not implemented");
         throw new ProcessRequestException(DATASM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RSYSERR);
     }
 
     @Override
     public void onAcceptCancelSm(CancelSm cancelSm, SMPPServerSession source)
             throws ProcessRequestException {
-        LOGGER.info("Accepting cancel_sm, but not implemented");
+        log.info("Accepting cancel_sm, but not implemented");
         throw new ProcessRequestException(CANCELSM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RCANCELFAIL);
     }
 
     @Override
     public void onAcceptReplaceSm(ReplaceSm replaceSm, SMPPServerSession source)
             throws ProcessRequestException {
-        LOGGER.info("Accepting replace_sm, but not implemented");
+        log.info("Accepting replace_sm, but not implemented");
         throw new ProcessRequestException(REPLACESM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RREPLACEFAIL);
     }
 
@@ -205,7 +217,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
     public BroadcastSmResult onAcceptBroadcastSm(final BroadcastSm broadcastSm, final SMPPServerSession source)
         throws ProcessRequestException {
         MessageId messageId = messageIDGenerator.newMessageId();
-        LOGGER.debug("Receiving broadcast_sm '{}', and return message id {}",
+        log.debug("Receiving broadcast_sm '{}', and return message id {}",
             new String(broadcastSm.getOptionalParameter(OptionalParameter.Tag.MESSAGE_PAYLOAD).serialize()), messageId);
         return new BroadcastSmResult(messageId, new OptionalParameter[0]);
     }
@@ -213,14 +225,14 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
     @Override
     public void onAcceptCancelBroadcastSm(final CancelBroadcastSm cancelBroadcastSm, final SMPPServerSession source)
         throws ProcessRequestException {
-        LOGGER.info("Accepting cancel_broadcast_sm, but not implemented");
+        log.info("Accepting cancel_broadcast_sm, but not implemented");
         throw new ProcessRequestException(CANCELBROADCASTSM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RBCASTCANCELFAIL);
     }
 
     @Override
     public QueryBroadcastSmResult onAcceptQueryBroadcastSm(final QueryBroadcastSm queryBroadcastSm,
                                                            final SMPPServerSession source) throws ProcessRequestException {
-        LOGGER.info("Accepting query_broadcast_sm, but not implemented");
+        log.info("Accepting query_broadcast_sm, but not implemented");
         throw new ProcessRequestException(QUERYBROADCASTSM_NOT_IMPLEMENTED, SMPPConstant.STAT_ESME_RBCASTQUERYFAIL);
     }
 
@@ -245,34 +257,34 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
                     if (BindType.BIND_TRX.equals(bindRequest.getBindType())) {
                       if (systemId.equals(bindRequest.getSystemId())) {
                         if (password.equals(bindRequest.getPassword())) {
-                          LOGGER.info("Accepting bind for session {}, interface version {}", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
+                          log.info("Accepting bind for session {}, interface version {}", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
                           serverSession.setInterfaceVersion(InterfaceVersion.IF_50.min(bindRequest.getInterfaceVersion()));
                           // The systemId identifies the SMSC to the ESME.
                           bindRequest.accept(SMSC_SYSTEMID, InterfaceVersion.IF_50);
                           return true;
                         } else {
-                          LOGGER.info("Rejecting bind for session {}, interface version {}, invalid password", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
+                          log.info("Rejecting bind for session {}, interface version {}, invalid password", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
                           bindRequest.reject(SMPPConstant.STAT_ESME_RINVPASWD);
                         }
                       } else {
-                        LOGGER.info("Rejecting bind for session {}, interface version {}, invalid system id", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
+                        log.info("Rejecting bind for session {}, interface version {}, invalid system id", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
                         bindRequest.reject(SMPPConstant.STAT_ESME_RINVSYSID);
                       }
                     } else {
-                      LOGGER.info("Rejecting bind for session {}, interface version {}, only accept transceiver", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
+                      log.info("Rejecting bind for session {}, interface version {}, only accept transceiver", serverSession.getSessionId(), bindRequest.getInterfaceVersion());
                       bindRequest.reject(SMPPConstant.STAT_ESME_RBINDFAIL);
                     }
                 } catch (PDUStringException e) {
-                  LOGGER.error("Invalid system id: " + SMSC_SYSTEMID, e);
+                  log.error("Invalid system id: " + SMSC_SYSTEMID, e);
                   bindRequest.reject(SMPPConstant.STAT_ESME_RSYSERR);
                 }
 
             } catch (IllegalStateException e) {
-                LOGGER.error("System error", e);
+                log.error("System error", e);
             } catch (TimeoutException e) {
-                LOGGER.warn("Wait for bind has reach timeout", e);
+                log.warn("Wait for bind has reach timeout", e);
             } catch (IOException e) {
-                LOGGER.error("Failed accepting bind request for session {}", serverSession.getSessionId());
+                log.error("Failed accepting bind request for session {}", serverSession.getSessionId());
             }
             return false;
         }
@@ -340,14 +352,14 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
         public void run() {
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException e1) {
-                LOGGER.error("Interrupted", e1);
+            } catch (InterruptedException e) {
+                log.error("Interrupted", e);
                 //re-interrupt the current thread
                 Thread.currentThread().interrupt();
             }
             SessionState state = session.getSessionState();
             if (!state.isReceivable()) {
-                LOGGER.debug("Not sending delivery receipt for message id {} since session state is {}", messageId, state);
+                log.debug("Not sending delivery receipt for message id {} since session state is {}", messageId, state);
                 return;
             }
             String stringValue = Integer.valueOf(messageId.getValue(), 16).toString();
@@ -364,9 +376,9 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
                         new RegisteredDelivery(0),
                         DataCodings.ZERO,
                         delRec.toString().getBytes());
-                LOGGER.debug("Sending delivery receipt for message id {}: {}", messageId, stringValue);
+                log.debug("Sending delivery receipt for message id {}: {}", messageId, stringValue);
             } catch (Exception e) {
-                LOGGER.error("Failed sending delivery_receipt for message id " + messageId + ":" + stringValue, e);
+                log.error("Failed sending delivery_receipt for message id " + messageId + ":" + stringValue, e);
             }
         }
     }
