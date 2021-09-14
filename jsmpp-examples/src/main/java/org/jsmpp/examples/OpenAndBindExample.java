@@ -29,11 +29,9 @@ import org.slf4j.LoggerFactory;
  * @author uudashr
  */
 public class OpenAndBindExample {
-  private static final Logger LOGGER = LoggerFactory.getLogger(OpenAndBindExample.class);
+  private static final Logger log = LoggerFactory.getLogger(OpenAndBindExample.class);
 
   public static void main(String[] args) throws Exception {
-
-    System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
 
     boolean useSsl = true;
     String host = "localhost";
@@ -41,31 +39,31 @@ public class OpenAndBindExample {
     /*
      * For SSL, use NoTrustSSLSocketConnectionFactory to accept all selfsigned certs, use SSLSocketConnectionFactory otherwise.
      */
-    SMPPSession session = useSsl ? new SMPPSession(new TrustStoreSSLSocketConnectionFactory()) : new SMPPSession();
-    session.setEnquireLinkTimer(30000);
-    session.setTransactionTimer(2000);
-    try {
-      LOGGER.info("Connect and bind to {} port {}{}", host, port, useSsl ? " (SSL)" : "");
-      String systemId = session
-          .connectAndBind(host, port, new BindParameter(BindType.BIND_TRX, "j", "jpwd", "cp", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
-      LOGGER.info("Connected with SMSC with system id {}", systemId);
-
-      LOGGER.info("Session interface version: {}", session.getInterfaceVersion());
-      LOGGER.info("Local port: {}", session.getLocalPort());
-
+    try (SMPPSession session = useSsl ? new SMPPSession(new TrustStoreSSLSocketConnectionFactory()) : new SMPPSession()) {
+      session.setEnquireLinkTimer(30000);
+      session.setTransactionTimer(2000);
       try {
-        Thread.sleep(60000);
-      } catch (InterruptedException e) {
-        LOGGER.debug("Interrupted");
-        //re-interrupt the current thread
-        Thread.currentThread().interrupt();
-      }
-    } catch (IOException e) {
-      // Failed connect and bind to SMSC
-      LOGGER.error("Failed connect and bind to host", e);
-    }
-    LOGGER.debug("Unbind and close session");
-    session.unbindAndClose();
-  }
+        log.info("Connect and bind to {} port {}{}", host, port, useSsl ? " (SSL)" : "");
+        String systemId = session
+            .connectAndBind(host, port, new BindParameter(BindType.BIND_TRX, "j", "jpwd", "cp", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
+        log.info("Connected with SMSC with system id {}", systemId);
 
+        log.info("Session interface version: {}", session.getInterfaceVersion());
+        log.info("Local port: {}", session.getLocalPort());
+
+        try {
+          Thread.sleep(60000);
+        } catch (InterruptedException e) {
+          log.debug("Interrupted");
+          //re-interrupt the current thread
+          Thread.currentThread().interrupt();
+        }
+      } catch (IOException e) {
+        // Failed connect and bind to SMSC
+        log.error("Failed connect and bind to host", e);
+      }
+      log.debug("Unbind and close session");
+      session.unbindAndClose();
+    }
+  }
 }

@@ -52,8 +52,8 @@ import org.slf4j.LoggerFactory;
  */
 public class OpenAndOutbindExample implements Runnable {
 
-  private static final Logger LOG = LoggerFactory.getLogger(OpenAndOutbindExample.class);
-  private static final String DEFAULT_HOST = "37.97.131.112";
+  private static final Logger log = LoggerFactory.getLogger(OpenAndOutbindExample.class);
+  private static final String DEFAULT_HOST = "localhost";
   private static final Integer DEFAULT_PORT = 8056;
   private static final String DEFAULT_SYSID = "jsysid";
   private static final String DEFAULT_PASSWORD = "jpwd";
@@ -113,7 +113,7 @@ public class OpenAndOutbindExample implements Runnable {
     } catch (NumberFormatException e) {
       transactionTimer = DEFAULT_TRANSACTIONTIMER;
     }
-    LOG.info("Transaction timer: {} ms", transactionTimer);
+    log.info("Transaction timer: {} ms", transactionTimer);
 
     int processorDegree;
     try {
@@ -122,7 +122,7 @@ public class OpenAndOutbindExample implements Runnable {
     } catch (NumberFormatException e) {
       processorDegree = DEFAULT_PROCESSOR_DEGREE;
     }
-    LOG.info("Processor degree: {}", processorDegree);
+    log.info("Processor degree: {}", processorDegree);
 
     int deliverSmCount;
     try {
@@ -131,7 +131,7 @@ public class OpenAndOutbindExample implements Runnable {
     } catch (NumberFormatException e) {
       deliverSmCount = DEFAULT_DELIVER_SM_COUNT;
     }
-    LOG.info("Number of deliver_sm to send: {}", deliverSmCount);
+    log.info("Number of deliver_sm to send: {}", deliverSmCount);
 
     OpenAndOutbindExample openAndOutbindExample = new OpenAndOutbindExample(host, port, systemId, password,
         sourceAddr, destinationAddr, deliverSmCount, transactionTimer, processorDegree);
@@ -142,23 +142,24 @@ public class OpenAndOutbindExample implements Runnable {
     exit.set(true);
   }
 
+  @Override
   public void run() {
     try {
       session.addSessionStateListener(new SessionStateListenerImpl());
 
-      LOG.info("Connect and outbind to {} port {}", host, port);
+      log.info("Connect and outbind to {} port {}", host, port);
       BindRequest bindRequest = session.connectAndOutbind(host, port, systemId, password);
-      LOG.info("Received bind request system_id:'{}' password:'{}", bindRequest.getSystemId(), bindRequest.getPassword());
+      log.info("Received bind request system_id:'{}' password:'{}", bindRequest.getSystemId(), bindRequest.getPassword());
 
       try {
         bindRequest.accept("sys", InterfaceVersion.IF_34);
       } catch (PDUStringException e) {
-        LOG.error("Invalid system id", e);
+        log.error("Invalid system id", e);
         bindRequest.reject(SMPPConstant.STAT_ESME_RSYSERR);
       }
 
     } catch (IOException e) {
-      LOG.error("Failed initialize connection, outbind, or bind", e);
+      log.error("Failed initialize connection, outbind, or bind", e);
       return;
     }
 
@@ -175,25 +176,25 @@ public class OpenAndOutbindExample implements Runnable {
             new ESMClass(MessageMode.DEFAULT, MessageType.SMSC_DEL_RECEIPT, GSMSpecificFeature.DEFAULT),
             (byte) 0x00, PriorityFlag.GsmSms.NORMAL.value(), new RegisteredDelivery(0),
             DataCodings.ZERO, delRec.toString().getBytes("ISO-8859-1"));
-        LOG.info("The deliver_sm request #{} with message id {} was sent", count, messageId);
+        log.info("The deliver_sm request #{} with message id {} was sent", count, messageId);
       } catch (IllegalStateException e) {
-        LOG.info("The deliver_sm request #{} was sent", deliverSmCount);
+        log.info("The deliver_sm request #{} was sent", deliverSmCount);
       } catch (PDUException e) {
-        LOG.error("PDUException error", e);
+        log.error("PDUException error", e);
       } catch (ResponseTimeoutException e) {
-        LOG.warn("Response reached timeout", e);
+        log.warn("Response reached timeout", e);
       } catch (InvalidResponseException e) {
-        LOG.warn("Invalid response received", e);
+        log.warn("Invalid response received", e);
       } catch (NegativeResponseException e) {
-        LOG.warn("Negative response received", e);
+        log.warn("Negative response received", e);
       } catch (IOException e) {
-        LOG.warn("I/O exception", e);
+        log.warn("I/O exception", e);
       }
 
       try {
         Thread.sleep(500);
       } catch (InterruptedException e) {
-        LOG.error("SMPP Server simulator was interrupted", e);
+        log.error("SMPP Server simulator was interrupted", e);
         //re-interrupt the current thread
         Thread.currentThread().interrupt();
       }
@@ -202,13 +203,14 @@ public class OpenAndOutbindExample implements Runnable {
         shutdown();
       }
     }
-    LOG.info("Outbind session ended");
+    log.info("Outbind session ended");
     session.unbindAndClose();
   }
 
   private class SessionStateListenerImpl implements SessionStateListener {
+    @Override
     public void onStateChange(SessionState newState, SessionState oldState, Session source) {
-      LOG.info("Session {} state changed from {} to {}", source.getSessionId(), oldState, newState);
+      log.info("Session {} state changed from {} to {}", source.getSessionId(), oldState, newState);
     }
   }
 
