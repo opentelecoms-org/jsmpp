@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.util;
 
@@ -27,7 +27,7 @@ public class OctetUtil {
     }
 
     /**
-     * Convert integer (4 octets) value to bytes.
+     * Convert integer value to bytes (4 octets).
      * 
      * @param value as 4 bytes representing integer in bytes.
      * @return bytes in big endian format
@@ -42,7 +42,7 @@ public class OctetUtil {
     }
 
     /**
-     * Convert integer (2 octets) value to bytes.
+     * Convert short value to bytes (2 octets) .
      * 
      * @param value as 2 bytes representing short in bytes.
      * @return bytes in big endian format
@@ -55,7 +55,7 @@ public class OctetUtil {
     }
 
     /**
-     * 32 bit.
+     * Construct an int from 32 bit.
      * 
      * @param bytes in big endian format
      * @return integer
@@ -65,24 +65,16 @@ public class OctetUtil {
     }
 
     /**
-     * 32 bit.
+     * Construct an int from 32 bit (4 octets).
      * 
      * @param bytes in big endian format
      * @param offset the offset in bytes
      * @return integer
      */
     public static int bytesToInt(byte[] bytes, int offset) {
-        // 
-        int result = 0x00000000;
-
-        int length;
+        int result = 0;
         // maximum byte size for int data type is 4
-        if (bytes.length - offset < 4) {
-            length = bytes.length - offset;
-        } else {
-            length = 4;
-        }
-
+        int length = Math.min(bytes.length - offset, 4);
         int end = offset + length - 1;
         for (int i = 0; i < length; i++) {
             // TODO uudashr: CHECK FOR IMPROVEMENT
@@ -92,7 +84,7 @@ public class OctetUtil {
     }
 
     /**
-     * 16 bit.
+     * Construct a short from 16 bit (2 octets).
      * 
      * @param bytes in big endian format
      * @return short
@@ -102,14 +94,14 @@ public class OctetUtil {
     }
 
     /**
-     * 16 bit.
+     * Construct a short from 16 bit (2 octets).
      * 
      * @param bytes in big endian format
      * @param offset the offset in bytes
      * @return short
      */
     public static short bytesToShort(byte[] bytes, int offset) {
-        short result = 0x0000;
+        short result = 0;
         int end = offset + 1;
         for (int i = 0; i < 2; i++) {
             result |= (bytes[end - i] & 0xff) << (8 * i);
