@@ -186,7 +186,7 @@ public class OptionalParameterTest {
 
   @Test
   public void testCongestionState() {
-    OptionalParameter.Congestion_state op = new OptionalParameter.Congestion_state((short)80);
-    assertEquals(80, op.getValue());
+    OptionalParameter.Congestion_state op = new OptionalParameter.Congestion_state((byte)80);
+    assertEquals(80, op.getValue() & 0xff);
   }
 }

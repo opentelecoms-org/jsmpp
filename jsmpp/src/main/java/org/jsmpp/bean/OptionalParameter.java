@@ -2456,14 +2456,22 @@ public abstract class OptionalParameter {
 	 * Reaction to a variation in congestion_state would involve increasing/decreasing the rate as required to maintain the balance
 	 * in the Optimum range.
 	 *
+	 * 0 = Idle
+	 * 1-29 = Low Load
+	 * 30-49 = Medium Load
+	 * 50-79 = High Load
+	 * 80-89 = Optimum Load
+	 * 90-99 = Nearing Congestion
+	 * 100 = Congested / Maximum Load
+	 *
 	 * Introduced in SMPP 5.0
 	 *
 	 * @author pmoerenhout
 	 * @since 3.0
 	 */
-	public static class Congestion_state extends OptionalParameter.Short {
+	public static class Congestion_state extends OptionalParameter.Byte {
 
-		public Congestion_state(short value) {
+		public Congestion_state(byte value) {
 			super(Tag.CONGESTION_STATE, value);
 		}
 
@@ -2473,14 +2481,13 @@ public abstract class OptionalParameter {
 	}
 
     /**
-     * Is all the defined SMPP Optional Parameters.
+     * All the defined SMPP Optional Parameters.
      * 
      * @author mikko.koponen
      * @author uudashr
 		 * @author pmoerenhout
      */
     public enum Tag {
-        
         DEST_ADDR_SUBUNIT(0x0005, Dest_addr_subunit.class),
         DEST_NETWORK_TYPE(0x0006, Dest_network_type.class),
         DEST_BEARER_TYPE(0x0007, Dest_bearer_type.class), 
