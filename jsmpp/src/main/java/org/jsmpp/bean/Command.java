@@ -1,20 +1,21 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.bean;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.jsmpp.util.IntUtil;
 
@@ -77,7 +78,7 @@ public class Command implements Serializable {
     }
 
     /**
-     * Ser the command_length.
+     * Set the command_length.
      * 
      * @param commandLength is the new value of command_length.
      */
@@ -124,7 +125,7 @@ public class Command implements Serializable {
     /**
      * Set value of sequence_number.
      * 
-     * @param sequenceNumber is the new value of sequece_number.
+     * @param sequenceNumber is the new value of sequence_number.
      */
     public void setSequenceNumber(int sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
@@ -142,13 +143,7 @@ public class Command implements Serializable {
      */
     @Override
     public int hashCode() {
-        final int PRIME = 31;
-        int result = 1;
-        result = PRIME * result + commandId;
-        result = PRIME * result + commandLength;
-        result = PRIME * result + commandStatus;
-        result = PRIME * result + sequenceNumber;
-        return result;
+        return Objects.hash(commandLength, commandId, commandStatus, sequenceNumber);
     }
 
     /*
@@ -157,23 +152,14 @@ public class Command implements Serializable {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(Object o) {
+        if (this == o)
             return true;
-        if (obj == null)
+        if (!(o instanceof Command)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final Command other = (Command)obj;
-        if (commandId != other.commandId)
-            return false;
-        if (commandLength != other.commandLength)
-            return false;
-        if (commandStatus != other.commandStatus)
-            return false;
-        if (sequenceNumber != other.sequenceNumber)
-            return false;
-        return true;
+        }
+        final Command command = (Command) o;
+        return commandLength == command.commandLength && commandId == command.commandId && commandStatus == command.commandStatus && sequenceNumber == command.sequenceNumber;
     }
     
 }
