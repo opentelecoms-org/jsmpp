@@ -1,6 +1,6 @@
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License. 
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -20,19 +20,26 @@ import java.util.Objects;
 /**
  * General Data Coding implements {@link DataCoding}
  *
+ * SMPP 3.3 uses the GSM 03.38 SMS DCS. For SMPP 3.4 and later,
+ * the data_coding is preferable only used for character code settings. These are the values 0x00 till 0x0f,
+ * whereby some overlap exists with the GSM, TDMA and CDMA defined values.
+ *
  * @author uudashr
  */
 public class GeneralDataCoding implements DataCoding {
     public static final GeneralDataCoding DEFAULT = new GeneralDataCoding();
-    
-    private final boolean compressed;
+
     private final Alphabet alphabet;
     private final MessageClass messageClass;
-    
+    private final boolean compressed;
+
     public GeneralDataCoding() {
         this(Alphabet.ALPHA_DEFAULT);
     }
 
+    /**
+     *  Used when using the SMPP 3.4/5.0 DCS for character set only.
+     */
     public GeneralDataCoding(Alphabet alphabet) {
         this(alphabet, null);
     }
@@ -45,9 +52,9 @@ public class GeneralDataCoding implements DataCoding {
      * Construct the GeneralDataCoding with specified alphabet, messageClass and
      * compression flag.
      *
-     * @param alphabet is the alphabet.
+     * @param alphabet is the alphabet
      * @param messageClass is the message class. This is nullable. If
-     *        <code>null</code> means the DataCoding doesn't has meaning
+     *        <code>null</code> means the DataCoding doesn't have meaning
      *        MessageClass.
      * @param compressed is the compression flag. Value is {@code true} if the user message is compressed, otherwise set to {@code false}.
      * @throws IllegalArgumentException if the alphabet is {@code null}, since alphabet is mandatory.
@@ -55,7 +62,10 @@ public class GeneralDataCoding implements DataCoding {
     public GeneralDataCoding(Alphabet alphabet, MessageClass messageClass,
             boolean compressed) throws IllegalArgumentException {
         if (alphabet == null) {
-            throw new IllegalArgumentException("alphabet is mandatory, can't be null");
+            throw new IllegalArgumentException("Alphabet is mandatory, can't be null");
+        }
+        if (messageClass != null && (alphabet != Alphabet.ALPHA_DEFAULT && alphabet != Alphabet.ALPHA_8_BIT && alphabet != Alphabet.ALPHA_UCS2 && alphabet != Alphabet.ALPHA_RESERVED_12)) {
+            throw new IllegalArgumentException("Alphabet is not supported, only default, 8-bit, UCS-2 are allowed with message class specified");
         }
         this.alphabet = alphabet;
         this.messageClass = messageClass;
@@ -94,7 +104,7 @@ public class GeneralDataCoding implements DataCoding {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof GeneralDataCoding)) {
             return false;
         }
         final GeneralDataCoding that = (GeneralDataCoding) o;
