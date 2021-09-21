@@ -4,17 +4,17 @@
 
     <groupId>org.jsmpp</groupId>
     <artifactId>jsmpp-pom</artifactId>
-    <version>2.3.12-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>jSMPP - Parent</name>
     <description>SMPP library for Java</description>
-    <url>http://jsmpp.org</url>
+    <url>https://jsmpp.org</url>
 
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -34,7 +34,7 @@
         <developer>
             <name>Daniel Pocock</name>
             <email>daniel@pocock.pro</email>
-            <url>http://danielpocock.com</url>
+            <url>https://danielpocock.com</url>
         </developer>
         <developer>
             <name>Pim Moerenhout</name>
@@ -48,13 +48,24 @@
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
         <buildNumber>${maven.build.timestamp}</buildNumber>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j.version>1.7.30</slf4j.version>
+        <slf4j.version>1.7.32</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
         <jcharset.version>2.1</jcharset.version>
         <junit.version>4.13.2</junit.version>
         <testng.version>6.14.3</testng.version>
         <commons-codec.version>1.15</commons-codec.version>
         <git.properties>git.properties</git.properties>
+
+        <maven-bundle-plugin.version>2.5.4</maven-bundle-plugin.version>
+        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+        <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+        <maven-release-plugin.version>3.0.0-M4</maven-release-plugin.version>
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <maven-wagon.version>3.0.0</maven-wagon.version>
+        <git-commit-id-plugin.version>3.0.1</git-commit-id-plugin.version>
+        <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -74,42 +85,26 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <version>${testng.version}</version>
                 <scope>test</scope>
             </dependency>
-
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j.version}</version>
-                <scope>test</scope>
-            </dependency>
-
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>${commons-codec.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>net.freeutils</groupId>
                 <artifactId>jcharset</artifactId>
                 <version>${jcharset.version}</version>
             </dependency>
-
-<!--            <dependency>-->
-<!--                <groupId>log4j</groupId>-->
-<!--                <artifactId>log4j</artifactId>-->
-<!--                <version>${log4j.version}</version>-->
-<!--            </dependency>-->
 
         </dependencies>
     </dependencyManagement>
@@ -125,12 +120,12 @@
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ssh</artifactId>
-                <version>3.0.0</version>
+                <version>${maven-wagon.version}</version>
             </extension>
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ssh-external</artifactId>
-                <version>3.0.0</version>
+                <version>${maven-wagon.version}</version>
             </extension>
         </extensions>
         <plugins>
@@ -144,21 +139,21 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.2</version>
+                    <version>${maven-surefire-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>${maven-release-plugin.version}</version>
                 </plugin>
                 <plugin>
                   <groupId>org.apache.felix</groupId>
                   <artifactId>maven-bundle-plugin</artifactId>
-                  <version>2.5.4</version>
+                  <version>${maven-bundle-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.2.1</version>
+                    <version>${maven-source-plugin}</version>
                     <executions>
                         <execution>
                             <phase>verify</phase>
@@ -171,7 +166,7 @@
                 <plugin>
                     <groupId>pl.project13.maven</groupId>
                     <artifactId>git-commit-id-plugin</artifactId>
-                    <version>2.2.4</version>
+                    <version>${git-commit-id-plugin.version}</version>
                     <executions>
                         <execution>
                             <phase>initialize</phase>
@@ -180,7 +175,6 @@
                             </goals>
                         </execution>
                     </executions>
-
                     <configuration>
                         <!-- that's the default value, you don't have to set it -->
                         <prefix>git</prefix>
@@ -196,12 +190,11 @@
                         <!-- The path for the to be generated properties file, it's relative to ${project.basedir} -->
                         <generateGitPropertiesFilename>${git.properties}</generateGitPropertiesFilename>
                     </configuration>
-
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>properties-maven-plugin</artifactId>
-                    <version>1.0.0</version>
+                    <version>${properties-maven-plugin.version}</version>
                     <executions>
                         <execution>
                             <phase>initialize</phase>
@@ -218,7 +211,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>${maven-jar-plugin.version}</version>
                     <configuration>
                         <archive>
                             <manifest>
@@ -250,7 +243,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
+                        <version>${maven-gpg-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
