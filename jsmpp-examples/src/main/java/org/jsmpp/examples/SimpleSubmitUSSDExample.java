@@ -42,6 +42,7 @@ import org.jsmpp.session.DataSmResult;
 import org.jsmpp.session.MessageReceiverListener;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.session.Session;
+import org.jsmpp.session.SubmitSmResult;
 import org.jsmpp.util.MessageIDGenerator;
 import org.jsmpp.util.RandomMessageIDGenerator;
 import org.slf4j.Logger;
@@ -132,13 +133,16 @@ public class SimpleSubmitUSSDExample {
 
         String message = "1. First Menu Item\n2. Second Menu Item\n0. Help\n* Exit";
 
-        String beginRequestMessageId = session.submitShortMessage("BR",
+        SubmitSmResult beginRequestResult = session.submitShortMessage("BR",
             TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, sourceAddress,
             TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, destinationAddress,
             new ESMClass(), (byte) 0, (byte) 0, null, null,
             new RegisteredDelivery(SMSCDeliveryReceipt.DEFAULT), (byte) 0,
             new GeneralDataCoding(Alphabet.ALPHA_8_BIT), (byte) 0,
             message.getBytes(StandardCharsets.US_ASCII));
+
+        String beginRequestMessageId = beginRequestResult.getMessageId();
+
         // Possible Optional Parameters:
         //  new OptionalParameter.Dest_bearer_type(USSD),
         //  new OptionalParameter.Dest_addr_subunit(MOBILE_EQUIPMENT),
@@ -150,13 +154,15 @@ public class SimpleSubmitUSSDExample {
         latch.await(60000, TimeUnit.MILLISECONDS);
 
         // End and Release the USSD session
-        String endReleaseMessageId = session.submitShortMessage("EF",
+        SubmitSmResult endReleaseResult = session.submitShortMessage("EF",
             TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, sourceAddress,
             TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.ISDN, destinationAddress,
             new ESMClass(), (byte) 0, (byte) 0, null, null,
             new RegisteredDelivery(SMSCDeliveryReceipt.DEFAULT), (byte) 0,
             new GeneralDataCoding(Alphabet.ALPHA_8_BIT), (byte) 0,
             "The weather is nice today.".getBytes(StandardCharsets.US_ASCII));
+
+        String endReleaseMessageId = endReleaseResult.getMessageId();
         // Possible Optional Parameters:
         //  new OptionalParameter.Dest_bearer_type(USSD),
         //  new OptionalParameter.Dest_addr_subunit(MOBILE_EQUIPMENT),

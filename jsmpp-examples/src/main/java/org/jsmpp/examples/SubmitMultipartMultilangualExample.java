@@ -43,6 +43,7 @@ import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
+import org.jsmpp.session.SubmitSmResult;
 import org.jsmpp.util.HexUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,10 +152,11 @@ public class SubmitMultipartMultilangualExample {
                                DataCoding dataCoding, ESMClass esmClass) {
     String messageId = null;
     try {
-      messageId = session.submitShortMessage("CMT", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN,
+      SubmitSmResult submitSmResult = session.submitShortMessage("CMT", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN,
           sourceMsisdn, TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, destinationMsisdn, esmClass,
           (byte) 0, (byte) 1, null, null, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE),
           (byte) 0, dataCoding, (byte) 0, message);
+      messageId = submitSmResult.getMessageId();
     } catch (PDUException e) {
       // Invalid PDU parameter
       LOGGER.error("Invalid PDU parameter", e);

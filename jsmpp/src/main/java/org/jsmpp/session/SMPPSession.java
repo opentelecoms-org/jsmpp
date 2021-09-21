@@ -359,7 +359,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
      * @see org.jsmpp.session.ClientSession#submitShortMessage(java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.TypeOfNumber, org.jsmpp.bean.NumberingPlanIndicator, java.lang.String, org.jsmpp.bean.ESMClass, byte, byte, java.lang.String, java.lang.String, org.jsmpp.bean.RegisteredDelivery, byte, org.jsmpp.bean.DataCoding, byte, byte[], org.jsmpp.bean.OptionalParameter[])
      */
 		@Override
-    public String submitShortMessage(String serviceType,
+    public SubmitSmResult submitShortMessage(String serviceType,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, TypeOfNumber destAddrTon,
             NumberingPlanIndicator destAddrNpi, String destinationAddr,
@@ -381,7 +381,8 @@ public class SMPPSession extends AbstractSession implements ClientSession {
                 dataCoding, smDefaultMsgId, shortMessage, optionalParameters);
 
         SubmitSmResp resp = (SubmitSmResp)executeSendCommand(submitSmTask, getTransactionTimer());
-    	return resp.getMessageId();
+
+			return new SubmitSmResult(resp.getMessageId(), resp.getOptionalParameters());
     }
 
     /* (non-Javadoc)

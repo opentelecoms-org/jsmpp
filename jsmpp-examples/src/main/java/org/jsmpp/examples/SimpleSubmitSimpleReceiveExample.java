@@ -41,6 +41,7 @@ import org.jsmpp.session.DataSmResult;
 import org.jsmpp.session.MessageReceiverListener;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.session.Session;
+import org.jsmpp.session.SubmitSmResult;
 import org.jsmpp.util.AbsoluteTimeFormatter;
 import org.jsmpp.util.InvalidDeliveryReceiptException;
 import org.jsmpp.util.TimeFormatter;
@@ -52,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class SimpleSubmitSimpleReceiveExample {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSubmitExample.class);
+    private static final Logger log = LoggerFactory.getLogger(SimpleSubmitSimpleReceiveExample.class);
     private static final TimeFormatter TIME_FORMATTER = new AbsoluteTimeFormatter();
 
     public static void main(String[] args) {
@@ -71,22 +72,22 @@ public class SimpleSubmitSimpleReceiveExample {
                         DeliveryReceipt delReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
                         long id = Long.parseLong(delReceipt.getId()) & 0xffffffff;
                         String messageId = Long.toString(id, 16).toUpperCase();
-                        LOGGER.info("received '{}' : {}", messageId, delReceipt);
+                        log.info("received '{}' : {}", messageId, delReceipt);
                     } catch (InvalidDeliveryReceiptException e) {
-                        LOGGER.error("receive failed, e");
+                        log.error("receive failed, e");
                     }
                 } else {
                     // regular short message
-                    LOGGER.info("Receiving message : {}", new String(deliverSm.getShortMessage()));
+                    log.info("Receiving message : {}", new String(deliverSm.getShortMessage()));
                 }
             }
 
             public void onAcceptAlertNotification(AlertNotification alertNotification) {
-                LOGGER.info("Receiving alert for {} from {}", alertNotification.getSourceAddr(), alertNotification.getEsmeAddr());
+                log.info("Receiving alert for {} from {}", alertNotification.getSourceAddr(), alertNotification.getEsmeAddr());
             }
 
             public DataSmResult onAcceptDataSm(DataSm dataSm, Session source) throws ProcessRequestException {
-                LOGGER.info("onAcceptDataSm");
+                log.info("onAcceptDataSm");
                 return null;
             }
         });
@@ -94,7 +95,7 @@ public class SimpleSubmitSimpleReceiveExample {
 
             String systemId = session.connectAndBind(server, port, new BindParameter(BindType.BIND_TRX, "test", "test", "cp",
                     TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
-            LOGGER.info("Connected with SMSC with system id {}", systemId);
+            log.info("Connected with SMSC with system id {}", systemId);
 
             // send Message
             try {
@@ -102,45 +103,46 @@ public class SimpleSubmitSimpleReceiveExample {
                 final RegisteredDelivery registeredDelivery = new RegisteredDelivery();
                 registeredDelivery.setSMSCDeliveryReceipt(SMSCDeliveryReceipt.SUCCESS_FAILURE);
 
-                String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL,
+                SubmitSmResult submitSmResult = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL,
                     NumberingPlanIndicator.UNKNOWN, "1616", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN,
                     "628176504657", new ESMClass(), (byte)0, (byte)1, TIME_FORMATTER.format(new Date()), null,
                     registeredDelivery, (byte)0, new GeneralDataCoding(Alphabet.ALPHA_DEFAULT, MessageClass.CLASS1,
                         false), (byte)0, message.getBytes());
 
-                LOGGER.info("Message submitted, message_id is {}", messageId);
+                String messageId = submitSmResult.getMessageId();
+                log.info("Message submitted, message_id is {}", messageId);
 
             } catch (PDUException e) {
                 // Invalid PDU parameter
-                LOGGER.error("Invalid PDU parameter", e);
+                log.error("Invalid PDU parameter", e);
             } catch (ResponseTimeoutException e) {
                 // Response timeout
-                LOGGER.error("Response timeout", e);
+                log.error("Response timeout", e);
             } catch (InvalidResponseException e) {
                 // Invalid response
-                LOGGER.error("Receive invalid response", e);
+                log.error("Receive invalid response", e);
             } catch (NegativeResponseException e) {
                 // Receiving negative response (non-zero command_status)
-                LOGGER.error("Receive negative response", e);
+                log.error("Receive negative response", e);
             } catch (IOException e) {
-                LOGGER.error("I/O error occurred", e);
+                log.error("I/O error occurred", e);
             }
 
             // wait 3 second
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
-                LOGGER.info("Interrupted exception", e);
+                log.info("Interrupted exception", e);
             }
 
             // unbind(disconnect)
             session.unbindAndClose();
 
         } catch (IOException e) {
-            LOGGER.error("Failed connect and bind to host", e);
+            log.error("Failed connect and bind to host", e);
         }
 
-        LOGGER.info("Finish!");
+        log.info("Finish!");
     }
 
 }

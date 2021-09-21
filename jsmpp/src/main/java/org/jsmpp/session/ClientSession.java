@@ -66,15 +66,15 @@ public interface ClientSession extends Session, AutoCloseable {
      * @param smDefaultMsgId is the sm_default_msg_id.
      * @param shortMessage is the short_message.
      * @param optionalParameters is the optional parameters.
-     * @return the message_id to identified the submitted short message for
-     *         later use (delivery receipt, QUERY_SM, CANCEL_SM, REPLACE_SM).
+     * @return the SubmitSmResult with the message_id to identify the submitted short message for
+     *         later use (delivery receipt, query_sm, cancel_sm, replace_sm) and optional parameters.
      * @throws PDUException if there is invalid PDU parameter found..
      * @throws ResponseTimeoutException if timeout has been reach.
      * @throws InvalidResponseException if response is invalid.
      * @throws NegativeResponseException if negative response received.
      * @throws IOException if there is an I/O error found.
      */
-    String submitShortMessage(String serviceType, TypeOfNumber sourceAddrTon,
+    SubmitSmResult submitShortMessage(String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
             String destinationAddr, ESMClass esmClass, byte protocolId,

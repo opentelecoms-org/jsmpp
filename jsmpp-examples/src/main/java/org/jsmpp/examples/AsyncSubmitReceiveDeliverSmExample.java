@@ -43,6 +43,7 @@ import org.jsmpp.session.DataSmResult;
 import org.jsmpp.session.MessageReceiverListener;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.session.Session;
+import org.jsmpp.session.SubmitSmResult;
 import org.jsmpp.util.AbsoluteTimeFormatter;
 import org.jsmpp.util.InvalidDeliveryReceiptException;
 import org.jsmpp.util.MessageIDGenerator;
@@ -57,7 +58,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class AsyncSubmitReceiveDeliverSmExample {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AsyncSubmitReceiveDeliverSmExample.class);
+    private static final Logger log = LoggerFactory.getLogger(AsyncSubmitReceiveDeliverSmExample.class);
     private static final TimeFormatter TIME_FORMATTER = new AbsoluteTimeFormatter();
     private static final MessageIDGenerator MESSAGE_ID_GENERATOR = new RandomMessageIDGenerator();
 
@@ -68,7 +69,7 @@ public class AsyncSubmitReceiveDeliverSmExample {
         try {
             session.connectAndBind("localhost", 8056, new BindParameter(BindType.BIND_TRX, "test", "test", "cp", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
         } catch (IOException e) {
-            LOGGER.error("Failed connect and bind to host", e);
+            log.error("Failed connect and bind to host", e);
         }
 
         // Set listener to receive deliver_sm
@@ -82,24 +83,24 @@ public class AsyncSubmitReceiveDeliverSmExample {
                         DeliveryReceipt delReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
                         long id = Long.parseLong(delReceipt.getId()) & 0xffffffff;
                         String messageId = Long.toString(id, 16).toUpperCase();
-                        LOGGER.info("Receiving delivery receipt for message '{}' : {}", messageId, delReceipt);
+                        log.info("Receiving delivery receipt for message '{}' : {}", messageId, delReceipt);
                     } catch (InvalidDeliveryReceiptException e) {
-                        LOGGER.error("Failed getting delivery receipt", e);
+                        log.error("Failed getting delivery receipt", e);
                     }
                 } else {
                     // regular short message
-                    LOGGER.info("Receiving message : {}", new String(deliverSm.getShortMessage()));
+                    log.info("Receiving message : {}", new String(deliverSm.getShortMessage()));
                 }
             }
 
             public void onAcceptAlertNotification(AlertNotification alertNotification) {
-                LOGGER.info("Receiving alert_notification");
+                log.info("Receiving alert_notification");
             }
 
             public DataSmResult onAcceptDataSm(DataSm dataSm, Session source)
                     throws ProcessRequestException {
                 MessageId messageId = MESSAGE_ID_GENERATOR.newMessageId();
-                LOGGER.info("Receiving data_sm, generated message id {}", messageId.getValue());
+                log.info("Receiving data_sm, generated message id {}", messageId.getValue());
                 return new DataSmResult(messageId, new OptionalParameter[]{});
             }
         });
@@ -116,25 +117,26 @@ public class AsyncSubmitReceiveDeliverSmExample {
             execService.execute(new Runnable() {
                 public void run() {
                     try {
-                        String messageId = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "1616", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "628176504657", new ESMClass(), (byte)0, (byte)1,  TIME_FORMATTER
+                        SubmitSmResult submitSmResult = session.submitShortMessage("CMT", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "1616", TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "628176504657", new ESMClass(), (byte)0, (byte)1,  TIME_FORMATTER
                             .format(new Date()), null, registeredDelivery, (byte)0, DataCodings.ZERO, (byte)0, "jSMPP simplify SMPP on Java platform".getBytes());
-                        LOGGER.info("Message submitted, message_id is {}", messageId);
+                        String messageId = submitSmResult.getMessageId();
+                        log.info("Message submitted, message_id is {}", messageId);
                     } catch (PDUException e) {
-                        LOGGER.error("Invalid PDU parameter", e);
+                        log.error("Invalid PDU parameter", e);
                         counter.incrementAndGet();
                     } catch (ResponseTimeoutException e) {
-                        LOGGER.error("Response timeout", e);
+                        log.error("Response timeout", e);
                         counter.incrementAndGet();
                     } catch (InvalidResponseException e) {
                         // Invalid response
-                        LOGGER.error("Receive invalid response", e);
+                        log.error("Receive invalid response", e);
                         counter.incrementAndGet();
                     } catch (NegativeResponseException e) {
                         // Receiving negative response (non-zero command_status)
-                        LOGGER.error("Receive negative response", e);
+                        log.error("Receive negative response", e);
                         counter.incrementAndGet();
                     } catch (IOException e) {
-                        LOGGER.error("I/O error occurred", e);
+                        log.error("I/O error occurred", e);
                         counter.incrementAndGet();
                     }
                 }
@@ -145,9 +147,10 @@ public class AsyncSubmitReceiveDeliverSmExample {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                LOGGER.error("Interrupted");
+                log.error("Interrupted");
                 //re-interrupt the current thread
                 Thread.currentThread().interrupt();
+                break;
             }
         }
         session.unbindAndClose();

@@ -30,6 +30,7 @@ import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.SMPPSession;
+import org.jsmpp.session.SubmitSmResult;
 import org.jsmpp.util.AbsoluteTimeFormatter;
 import org.jsmpp.util.TimeFormatter;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class SimpleSubmitRegisteredExample {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSubmitExample.class);
+    private static final Logger log = LoggerFactory.getLogger(SimpleSubmitRegisteredExample.class);
     private static final TimeFormatter TIME_FORMATTER = new AbsoluteTimeFormatter();
     
     public static void main(String[] args) {
@@ -50,42 +51,43 @@ public class SimpleSubmitRegisteredExample {
         
         try {
             String systemId = session.connectAndBind("localhost", 8056, new BindParameter(BindType.BIND_TRX, "test", "test", "cp", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
-            LOGGER.info("Connected with SMSC with system id {}", systemId);
+            log.info("Connected with SMSC with system id {}", systemId);
 
             try {
-                String messageId = session.submitShortMessage("CMT",
+                SubmitSmResult submitSmResult = session.submitShortMessage("CMT",
                     TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "1616",
                     TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.UNKNOWN, "628176504657",
                     new ESMClass(), (byte)0, (byte)1,  TIME_FORMATTER.format(new Date()), null,
                     new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE), (byte)0, DataCodings.ZERO, (byte)0, "jSMPP simplify SMPP on Java platform".getBytes());
 
+                String messageId = submitSmResult.getMessageId();
                 /*
                  * you can save the submitted message to database.
                  */
-                LOGGER.info("Message submitted, message_id is {}", messageId);
+                log.info("Message submitted, message_id is {}", messageId);
                 Thread.sleep(2000);
             } catch (PDUException e) {
                 // Invalid PDU parameter
-                LOGGER.error("Invalid PDU parameter", e);
+                log.error("Invalid PDU parameter", e);
             } catch (ResponseTimeoutException e) {
                 // Response timeout
-                LOGGER.error("Response timeout", e);
+                log.error("Response timeout", e);
             } catch (InvalidResponseException e) {
                 // Invalid response
-                LOGGER.error("Receive invalid response", e);
+                log.error("Receive invalid response", e);
             } catch (NegativeResponseException e) {
                 // Receiving negative response (non-zero command_status)
-                LOGGER.error("Receive negative response", e);
+                log.error("Receive negative response", e);
             } catch (IOException e) {
-                LOGGER.error("I/O error occurred", e);
+                log.error("I/O error occurred", e);
             } catch (InterruptedException e) {
-                LOGGER.error("Thread interrupted", e);
+                log.error("Thread interrupted", e);
             }
 
             session.unbindAndClose();
 
         } catch (IOException e) {
-            LOGGER.error("Failed connect and bind to host", e);
+            log.error("Failed connect and bind to host", e);
         }
 
     }

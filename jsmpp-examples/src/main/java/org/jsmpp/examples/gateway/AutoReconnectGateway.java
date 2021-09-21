@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  */
 
 public class AutoReconnectGateway implements Gateway {
-  private static final Logger LOGGER = LoggerFactory.getLogger(AutoReconnectGateway.class);
+  private static final Logger log = LoggerFactory.getLogger(AutoReconnectGateway.class);
   private SMPPSession session = null;
   private String remoteIpAddress;
   private int remotePort;
@@ -77,6 +77,7 @@ public class AutoReconnectGateway implements Gateway {
       catch (InterruptedException e) {
         //re-interrupt the current thread
         Thread.currentThread().interrupt();
+        break;
       }
     }
   }
@@ -101,7 +102,7 @@ public class AutoReconnectGateway implements Gateway {
         destinationAddr, esmClass, protocolId, priorityFlag,
         scheduleDeliveryTime, validityPeriod, registeredDelivery,
         replaceIfPresentFlag, dataCoding, smDefaultMsgId, shortMessage,
-        optionalParameters);
+        optionalParameters).getMessageId();
   }
 
   /**
@@ -124,7 +125,7 @@ public class AutoReconnectGateway implements Gateway {
    */
   private SMPPSession getSession() throws IOException {
     if (session == null) {
-      LOGGER.info("Initiate session for the first time to {}:{}", remoteIpAddress, remotePort);
+      log.info("Initiate session for the first time to {}:{}", remoteIpAddress, remotePort);
       session = newSession();
     }
     else if (!session.getSessionState().isBound()) {
@@ -142,7 +143,7 @@ public class AutoReconnectGateway implements Gateway {
     new Thread() {
       @Override
       public void run() {
-        LOGGER.info("Schedule reconnect after {} millis", timeInMillis);
+        log.info("Schedule reconnect after {} millis", timeInMillis);
         try {
           Thread.sleep(timeInMillis);
         }
@@ -152,11 +153,11 @@ public class AutoReconnectGateway implements Gateway {
         int attempt = 0;
         while (session == null || session.getSessionState().equals(SessionState.CLOSED)) {
           try {
-            LOGGER.info("Reconnecting attempt #{} ...", ++attempt);
+            log.info("Reconnecting attempt #{} ...", ++attempt);
             session = newSession();
           }
           catch (IOException e) {
-            LOGGER.error("Failed opening connection and bind to " + remoteIpAddress + ":" + remotePort, e);
+            log.error("Failed opening connection and bind to " + remoteIpAddress + ":" + remotePort, e);
             // wait for a second
             try {
               Thread.sleep(1000);
@@ -179,9 +180,9 @@ public class AutoReconnectGateway implements Gateway {
    */
   private class SessionStateListenerImpl implements SessionStateListener {
     public void onStateChange(SessionState newState, SessionState oldState, Session source) {
-      LOGGER.debug("State changed from {} to {}", oldState , newState);
+      log.debug("State changed from {} to {}", oldState , newState);
       if (newState.equals(SessionState.CLOSED)) {
-        LOGGER.info("Session {} closed, reconnect after {} ms", source.getSessionId(), reconnectInterval);
+        log.info("Session {} closed, reconnect after {} ms", source.getSessionId(), reconnectInterval);
         reconnectAfter(reconnectInterval);
       }
     }
