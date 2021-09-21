@@ -14,8 +14,6 @@
  */
 package org.jsmpp.bean;
 
-import java.util.Arrays;
-
 /**
  * @author pmoerenhout
  * @since 3.0.0
@@ -53,41 +51,6 @@ public class BroadcastSmResp extends Command {
 
   public void setOptionalParameters(OptionalParameter[] optionalParameters) {
     this.optionalParameters = optionalParameters;
-  }
-
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = super.hashCode();
-    result = prime * result
-        + ((messageId == null) ? 0 : messageId.hashCode());
-    result = prime * result + Arrays.hashCode(optionalParameters);
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-      if (this == obj) {
-          return true;
-      }
-      if (!super.equals(obj)) {
-          return false;
-      }
-      if (getClass() != obj.getClass()) {
-          return false;
-      }
-    final BroadcastSmResp other = (BroadcastSmResp) obj;
-    if (messageId == null) {
-      if (other.messageId != null) {
-        return false;
-      }
-    } else if (!messageId.equals(other.messageId)) {
-      return false;
-    }
-    if (!Arrays.equals(optionalParameters, other.optionalParameters)) {
-      return false;
-    }
-    return true;
   }
 
 }

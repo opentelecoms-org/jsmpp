@@ -15,6 +15,7 @@
 package org.jsmpp.bean;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * @author pmoerenhout
@@ -57,37 +58,23 @@ public class QueryBroadcastSmResp extends Command {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = super.hashCode();
-    result = prime * result
-        + ((messageId == null) ? 0 : messageId.hashCode());
-    result = prime * result + Arrays.hashCode(optionalParameters);
+    int result = Objects.hash(super.hashCode(), messageId);
+    result = 31 * result + Arrays.hashCode(optionalParameters);
     return result;
   }
 
   @Override
-  public boolean equals(Object obj) {
-      if (this == obj) {
-          return true;
-      }
-      if (!super.equals(obj)) {
-          return false;
-      }
-      if (getClass() != obj.getClass()) {
-          return false;
-      }
-    final QueryBroadcastSmResp other = (QueryBroadcastSmResp) obj;
-    if (messageId == null) {
-      if (other.messageId != null) {
-        return false;
-      }
-    } else if (!messageId.equals(other.messageId)) {
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof QueryBroadcastSmResp)) {
       return false;
     }
-    if (!Arrays.equals(optionalParameters, other.optionalParameters)) {
+    if (!super.equals(o)) {
       return false;
     }
-    return true;
+    final QueryBroadcastSmResp that = (QueryBroadcastSmResp) o;
+    return Objects.equals(messageId, that.messageId) && Arrays.equals(optionalParameters, that.optionalParameters);
   }
-
 }

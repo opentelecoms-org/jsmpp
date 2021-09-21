@@ -190,37 +190,24 @@ public class SubmitMulti extends Command {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof SubmitMulti)) {
             return false;
         }
         if (!super.equals(o)) {
             return false;
         }
         final SubmitMulti that = (SubmitMulti) o;
-        return sourceAddrTon == that.sourceAddrTon &&
-            sourceAddrNpi == that.sourceAddrNpi &&
-            esmClass == that.esmClass &&
-            protocolId == that.protocolId &&
-            priorityFlag == that.priorityFlag &&
-            registeredDelivery == that.registeredDelivery &&
-            replaceIfPresentFlag == that.replaceIfPresentFlag &&
-            dataCoding == that.dataCoding &&
-            smDefaultMsgId == that.smDefaultMsgId &&
-            Objects.equals(serviceType, that.serviceType) &&
-            Objects.equals(sourceAddr, that.sourceAddr) &&
-            Arrays.equals(destAddresses, that.destAddresses) &&
-            Objects.equals(scheduleDeliveryTime, that.scheduleDeliveryTime) &&
-            Objects.equals(validityPeriod, that.validityPeriod) &&
-            Arrays.equals(shortMessage, that.shortMessage) &&
-            Arrays.equals(optionalParameters, that.optionalParameters);
+        return sourceAddrTon == that.sourceAddrTon && sourceAddrNpi == that.sourceAddrNpi && esmClass == that.esmClass && protocolId == that.protocolId && priorityFlag == that.priorityFlag && registeredDelivery == that.registeredDelivery && replaceIfPresentFlag == that.replaceIfPresentFlag && dataCoding == that.dataCoding && smDefaultMsgId == that.smDefaultMsgId && Objects.equals(
+            serviceType, that.serviceType) && Objects.equals(sourceAddr, that.sourceAddr) && Arrays.equals(destAddresses,
+            that.destAddresses) && Objects.equals(scheduleDeliveryTime, that.scheduleDeliveryTime) && Objects.equals(validityPeriod,
+            that.validityPeriod) && Arrays.equals(shortMessage, that.shortMessage) && Arrays.equals(optionalParameters, that.optionalParameters);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects
-            .hash(super.hashCode(), serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr, esmClass, protocolId, priorityFlag, scheduleDeliveryTime,
-                validityPeriod,
-                registeredDelivery, replaceIfPresentFlag, dataCoding, smDefaultMsgId);
+        int result = Objects.hash(super.hashCode(), serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr, esmClass, protocolId, priorityFlag,
+            scheduleDeliveryTime,
+            validityPeriod, registeredDelivery, replaceIfPresentFlag, dataCoding, smDefaultMsgId);
         result = 31 * result + Arrays.hashCode(destAddresses);
         result = 31 * result + Arrays.hashCode(shortMessage);
         result = 31 * result + Arrays.hashCode(optionalParameters);

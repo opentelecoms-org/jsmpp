@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -15,6 +15,7 @@
 package org.jsmpp.bean;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.jsmpp.bean.OptionalParameter.Tag;
 
@@ -87,14 +88,25 @@ public class QueryBroadcastSm extends Command {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof QueryBroadcastSm)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final QueryBroadcastSm that = (QueryBroadcastSm) o;
+        return sourceAddrTon == that.sourceAddrTon && sourceAddrNpi == that.sourceAddrNpi && Objects.equals(messageId,
+            that.messageId) && Objects.equals(sourceAddr, that.sourceAddr) && Arrays.equals(optionalParameters, that.optionalParameters);
+    }
+
+    @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (messageId != null ? messageId.hashCode() : 0);
-        result = 31 * result + (int) sourceAddrTon;
-        result = 31 * result + (int) sourceAddrNpi;
-        result = 31 * result + (sourceAddr != null ? sourceAddr.hashCode() : 0);
+        int result = Objects.hash(super.hashCode(), messageId, sourceAddrTon, sourceAddrNpi, sourceAddr);
         result = 31 * result + Arrays.hashCode(optionalParameters);
         return result;
     }
-
 }

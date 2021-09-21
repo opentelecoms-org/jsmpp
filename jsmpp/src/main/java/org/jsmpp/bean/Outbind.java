@@ -14,6 +14,8 @@
  */
 package org.jsmpp.bean;
 
+import java.util.Objects;
+
 /**
  * @author uudashr
  * 
@@ -57,38 +59,22 @@ public class Outbind extends Command {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                + ((password == null) ? 0 : password.hashCode());
-        result = prime * result
-                + ((systemId == null) ? 0 : systemId.hashCode());
-        return result;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Outbind)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final Outbind outbind = (Outbind) o;
+        return Objects.equals(systemId, outbind.systemId) && Objects.equals(password, outbind.password);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final Outbind other = (Outbind)obj;
-        if (password == null) {
-            if (other.password != null)
-                return false;
-        } else if (!password.equals(other.password))
-            return false;
-        if (systemId == null) {
-            if (other.systemId != null)
-                return false;
-        } else if (!systemId.equals(other.systemId))
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), systemId, password);
     }
-    
-    
-    
 }

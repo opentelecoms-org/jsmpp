@@ -1,8 +1,8 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -13,8 +13,6 @@
  *
  */
 package org.jsmpp.bean;
-
-import java.util.Arrays;
 
 import org.jsmpp.bean.OptionalParameter.Tag;
 
@@ -147,24 +145,6 @@ public class BroadcastSm extends Command {
 
     public void setOptionalParameters(OptionalParameter[] optionalParameters) {
         this.optionalParameters = optionalParameters;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (serviceType != null ? serviceType.hashCode() : 0);
-        result = 31 * result + (int) sourceAddrTon;
-        result = 31 * result + (int) sourceAddrNpi;
-        result = 31 * result + (sourceAddr != null ? sourceAddr.hashCode() : 0);
-        result = 31 * result + (messageId != null ? messageId.hashCode() : 0);
-        result = 31 * result + (int) priorityFlag;
-        result = 31 * result + (scheduleDeliveryTime != null ? scheduleDeliveryTime.hashCode() : 0);
-        result = 31 * result + (validityPeriod != null ? validityPeriod.hashCode() : 0);
-        result = 31 * result + (int) replaceIfPresentFlag;
-        result = 31 * result + (int) dataCoding;
-        result = 31 * result + (int) smDefaultMsgId;
-        result = 31 * result + Arrays.hashCode(optionalParameters);
-        return result;
     }
 
 }

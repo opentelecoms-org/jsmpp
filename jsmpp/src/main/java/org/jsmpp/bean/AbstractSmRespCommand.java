@@ -14,6 +14,7 @@
  */
 package org.jsmpp.bean;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -24,6 +25,8 @@ public class AbstractSmRespCommand extends Command {
     private static final long serialVersionUID = 4829782792374754685L;
     
     private String messageId;
+    // SMPP 5.0 added optionalParameters
+    private OptionalParameter[] optionalParameters;
 
     public AbstractSmRespCommand() {
         super();
@@ -43,24 +46,43 @@ public class AbstractSmRespCommand extends Command {
         this.messageId = messageId;
     }
 
+    public <U extends OptionalParameter> U getOptionalParameter(Class<U> tagClass)
+    {
+        return OptionalParameters.get(tagClass, optionalParameters);
+    }
+
+    public OptionalParameter getOptionalParameter(OptionalParameter.Tag tagEnum)
+    {
+        return OptionalParameters.get(tagEnum.code(), optionalParameters);
+    }
+
+    public OptionalParameter[] getOptionalParameters() {
+        return optionalParameters;
+    }
+
+    public void setOptionalParameters(OptionalParameter[] optionalParameters) {
+        this.optionalParameters = optionalParameters;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof AbstractSmRespCommand)) {
             return false;
         }
         if (!super.equals(o)) {
             return false;
         }
         final AbstractSmRespCommand that = (AbstractSmRespCommand) o;
-        return Objects.equals(messageId, that.messageId);
+        return Objects.equals(messageId, that.messageId) && Arrays.equals(optionalParameters, that.optionalParameters);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), messageId);
+        int result = Objects.hash(super.hashCode(), messageId);
+        result = 31 * result + Arrays.hashCode(optionalParameters);
+        return result;
     }
-
 }

@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -14,12 +14,9 @@
  */
 package org.jsmpp.bean;
 
-import java.util.Arrays;
-import java.util.Objects;
-
 /**
  * @author pmoerenhout
- *
+ * @since 3.0.0
  */
 public class CancelBroadcastSm extends Command {
 
@@ -92,30 +89,4 @@ public class CancelBroadcastSm extends Command {
         this.optionalParameters = optionalParameters;
     }
 
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(super.hashCode(), serviceType, messageId, sourceAddrTon, sourceAddrNpi, sourceAddr);
-        result = 31 * result + Arrays.hashCode(optionalParameters);
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-        final CancelBroadcastSm that = (CancelBroadcastSm) o;
-        return sourceAddrTon == that.sourceAddrTon &&
-            sourceAddrNpi == that.sourceAddrNpi &&
-            Objects.equals(serviceType, that.serviceType) &&
-            Objects.equals(messageId, that.messageId) &&
-            Objects.equals(sourceAddr, that.sourceAddr) &&
-            Arrays.equals(optionalParameters, that.optionalParameters);
-    }
 }

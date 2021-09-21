@@ -15,6 +15,7 @@
 package org.jsmpp.bean;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * @author uudashr
@@ -66,36 +67,26 @@ public class SubmitMultiResp extends Command {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                + ((messageId == null) ? 0 : messageId.hashCode());
-        result = prime * result + Arrays.hashCode(unsuccessSmes);
-        result = prime * result + Arrays.hashCode(optionalParameters);
-        return result;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SubmitMultiResp)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final SubmitMultiResp that = (SubmitMultiResp) o;
+        return Objects.equals(messageId, that.messageId) && Arrays.equals(unsuccessSmes, that.unsuccessSmes) && Arrays.equals(
+            optionalParameters, that.optionalParameters);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final SubmitMultiResp other = (SubmitMultiResp)obj;
-        if (messageId == null) {
-            if (other.messageId != null)
-                return false;
-        } else if (!messageId.equals(other.messageId))
-            return false;
-        if (!Arrays.equals(unsuccessSmes, other.unsuccessSmes))
-            return false;
-        if (!Arrays.equals(optionalParameters, other.optionalParameters))
-            return false;
-        return true;
+    public int hashCode() {
+        int result = Objects.hash(super.hashCode(), messageId);
+        result = 31 * result + Arrays.hashCode(unsuccessSmes);
+        result = 31 * result + Arrays.hashCode(optionalParameters);
+        return result;
     }
-    
-    
 }

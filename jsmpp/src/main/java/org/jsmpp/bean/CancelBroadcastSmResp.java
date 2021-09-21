@@ -26,20 +26,4 @@ public class CancelBroadcastSmResp extends Command {
     super();
   }
 
-    /**
-     * Null-safe comparison of two objects for equality
-     *
-     * @param object1 the first object
-     * @param object2 the second object
-     * @return {@code true} if object1 is the same as object2 argument; {@code false} otherwise.
-     */
-    public static boolean equals(Object object1, Object object2) {
-        if (object1 == object2) {
-            return true;
-        }
-        if (object1 == null || object2 == null) {
-            return false;
-        }
-        return object1.equals(object2);
-    }
 }
