@@ -110,7 +110,7 @@ public class SubmitMultipartMultilangualExample {
         // set UDHI, as concatenation will add UDH
         esmClass = new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.DEFAULT);
       }
-    } else if (Ucs2.isUcs2Encodeable(messageBody)) {
+    } else if (Ucs2.isUcs2Encodable(messageBody)) {
       dataCoding = new GeneralDataCoding(Alphabet.ALPHA_UCS2, messageClass);
       if (messageBody.length() > MAX_SINGLE_MSG_CHAR_SIZE_UCS2) {
         // split message according to the maximum available length of a segment, character boundaries, etc.

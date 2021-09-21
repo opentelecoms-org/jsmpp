@@ -30,22 +30,22 @@ public class Ucs2Test {
 
   @Test
   public void test_is_ucs2_encodeable() throws Exception {
-    assertTrue(Ucs2.isUcs2Encodeable(""));
-    assertTrue(Ucs2.isUcs2Encodeable(" ")); // U+0020
-    assertTrue(Ucs2.isUcs2Encodeable("@")); // U+0040
-    assertTrue(Ucs2.isUcs2Encodeable("¤$£€₺₡¢"));
-    assertTrue(Ucs2.isUcs2Encodeable("ر.س"));
-    assertTrue(Ucs2.isUcs2Encodeable("ÿ")); // U+00ff
-    assertTrue(Ucs2.isUcs2Encodeable("Ā")); // U+0100
-    assertTrue(Ucs2.isUcs2Encodeable("Э")); // U+042D
-    assertTrue(Ucs2.isUcs2Encodeable("☕")); // U+2615
-    assertTrue(Ucs2.isUcs2Encodeable("Java ☕"));
+    assertTrue(Ucs2.isUcs2Encodable(""));
+    assertTrue(Ucs2.isUcs2Encodable(" ")); // U+0020
+    assertTrue(Ucs2.isUcs2Encodable("@")); // U+0040
+    assertTrue(Ucs2.isUcs2Encodable("¤$£€₺₡¢"));
+    assertTrue(Ucs2.isUcs2Encodable("ر.س"));
+    assertTrue(Ucs2.isUcs2Encodable("ÿ")); // U+00ff
+    assertTrue(Ucs2.isUcs2Encodable("Ā")); // U+0100
+    assertTrue(Ucs2.isUcs2Encodable("Э")); // U+042D
+    assertTrue(Ucs2.isUcs2Encodable("☕")); // U+2615
+    assertTrue(Ucs2.isUcs2Encodable("Java ☕"));
   }
 
   @Test
   public void test_is_not_ucs2_encodeable() throws Exception {
-    assertFalse(Ucs2.isUcs2Encodeable("\uD801\uDC37")); // 𐐷
-    assertFalse(Ucs2.isUcs2Encodeable("\uD852\uDF62")); // 𤭢
-    assertFalse(Ucs2.isUcs2Encodeable("\"What is \uD852\uDF62")); // What is 𤭢
+    assertFalse(Ucs2.isUcs2Encodable("\uD801\uDC37")); // 𐐷
+    assertFalse(Ucs2.isUcs2Encodable("\uD852\uDF62")); // 𤭢
+    assertFalse(Ucs2.isUcs2Encodable("What is \uD852\uDF62")); // What is 𤭢
   }
 }
