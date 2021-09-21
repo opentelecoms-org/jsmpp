@@ -146,7 +146,7 @@ public interface PDUDecomposer {
 
     /**
      * Decompose the SMPP PDU submit short message response command.
-     * 
+     *
      * @param b The submit_sm_resp PDU bytes.
      * @return The submit short message response command object.
      * @throws PDUStringException if there is an invalid string constraint found
@@ -164,7 +164,7 @@ public interface PDUDecomposer {
 
     /**
      * Decompose the SMPP PDU query short message response command.
-     * 
+     *
      * @param b The query_sm_resp PDU bytes.
      * @return The query short message response command object.
      * @throws PDUStringException if there is an invalid string constraint found
@@ -209,16 +209,16 @@ public interface PDUDecomposer {
      */
     DeliveryReceipt deliveryReceipt(byte[] data)
             throws InvalidDeliveryReceiptException;
-    
+
     /**
      * Decompose the SMPP PDU data short message command.
-     * 
+     *
      * @param data The data_sm PDU bytes.
      * @return The data short message command object.
      * @throws PDUStringException if there is an invalid string constraint found
      */
     DataSm dataSm(byte[] data) throws PDUStringException;
-    
+
     /**
      * Decompose the SMPP PDU data short message response command.
      *
@@ -227,7 +227,7 @@ public interface PDUDecomposer {
      * @throws PDUStringException if there is an invalid string constraint found
      */
     DataSmResp dataSmResp(byte[] data) throws PDUStringException;
-    
+
     /**
      * Decompose the SMPP PDU cancel short message command.
      *
@@ -236,7 +236,7 @@ public interface PDUDecomposer {
      * @throws PDUStringException if there is an invalid string constraint found
      */
     CancelSm cancelSm(byte[] data) throws PDUStringException;
-    
+
     /**
      * Decompose the SMPP PDU cancel short message response command.
      *

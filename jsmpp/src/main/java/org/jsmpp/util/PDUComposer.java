@@ -29,7 +29,7 @@ import org.jsmpp.bean.UnsuccessDelivery;
 public interface PDUComposer {
 
     /**
-     * Compose the header
+     * Compose the header.
      *
      * @param commandId the command identifier
      * @param commandStatus the command status
@@ -74,22 +74,6 @@ public interface PDUComposer {
      */
     byte[] bindResp(int commandId, int sequenceNumber, String systemId,
             OptionalParameter... optionalParameters) throws PDUStringException;
-
-    /**
-     * Compose bind response (bind_transmitter_resp, bind_receiver_resp, bind_transceiver_resp).
-     *
-     * @param commandId the bind_transmitter_resp, bind_receiver_resp of bind_transceiver_resp command id
-     * @param sequenceNumber The sequence number of original bind request.
-     * @param systemId MC identifier, which identifies the MC to the ESME.
-     * @param scInterfaceVersion The SMPP version supported by MC.
-     * @return the composed bind_response PDU byte values.
-     * @throws PDUStringException if there is an invalid string constraint found
-     *
-     * @deprecated Use {@link PDUComposer#bindResp(int, int, String, OptionalParameter...)} bindResp()}
-     */
-    @Deprecated
-    byte[] bindResp(int commandId, int sequenceNumber, String systemId,
-            byte scInterfaceVersion) throws PDUStringException;
 
     /**
      * Compose unbind (unbind).
@@ -506,6 +490,7 @@ public interface PDUComposer {
      * @param sourceAddr Address of SME which originated this message.
      * @param optionalParameters Optional TLVs, user_message_reference.
      * @return the composed byte values.
+     * @throws PDUStringException if there is an invalid string constraint found
      */
     byte[] queryBroadcastSm(int sequenceNumber,
             String messageId,
@@ -519,6 +504,7 @@ public interface PDUComposer {
      * @param optionalParameters Optional TLVs, message_state, broadcast_area_identifier, broadcast_area_success,
      *                           broadcast_end_time, user_message_reference.
      * @return the composed byte values.
+     * @throws PDUStringException if there is an invalid string constraint found
      */
     byte[] queryBroadcastSmResp(int sequenceNumber,
             String messageId,
