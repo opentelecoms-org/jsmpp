@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -22,7 +22,6 @@ import org.jsmpp.bean.DestinationAddress;
 import org.jsmpp.bean.DistributionList;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.UnsuccessDelivery;
-import org.jsmpp.bean.OptionalParameter.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,29 +99,6 @@ public class DefaultComposer implements PDUComposer {
         if (optionalParameters != null) {
             buf.appendAll(optionalParameters);
         }
-        return buf.toBytes();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jsmpp.util.PDUComposer#bindResp(int, int, java.lang.String,
-     *      byte)
-     *
-     * @deprecated Use {@link PDUComposer#bindResp(int, int, String, OptionalParameter...)} bindResp()}
-     */
-    @Deprecated
-    @Override
-    public byte[] bindResp(int commandId, int sequenceNumber, String systemId,
-            byte scInterfaceVersion) throws PDUStringException {
-        StringValidator.validateString(systemId, StringParameter.SYSTEM_ID);
-        PDUByteBuffer buf = new PDUByteBuffer(commandId,
-            SMPPConstant.STAT_ESME_ROK, sequenceNumber);
-        buf.append(systemId);
-
-        OptionalParameter optParam = new OptionalParameter.Byte(
-                Tag.SC_INTERFACE_VERSION, scInterfaceVersion);
-        buf.append(optParam.serialize());
         return buf.toBytes();
     }
 

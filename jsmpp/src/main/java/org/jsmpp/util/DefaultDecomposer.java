@@ -79,7 +79,7 @@ public class DefaultDecomposer implements PDUDecomposer {
 
     private static final PDUDecomposer instance = new DefaultDecomposer();
 
-    public static final PDUDecomposer getInstance() {
+    public static PDUDecomposer getInstance() {
         return instance;
     }
 
@@ -217,7 +217,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         return resp;
     }
 
-    // GENERICK_NACK OPERATION
+    // GENERIC_NACK OPERATION
     /*
      * (non-Javadoc)
      * 
@@ -405,7 +405,9 @@ public class DefaultDecomposer implements PDUDecomposer {
         DeliverSmResp resp = new DeliverSmResp();
         SequentialBytesReader reader = new SequentialBytesReader(b);
         assignHeader(resp, reader);
-        // ignore the message_id, because it unused.
+        // ignore the message_id, because it is unused.
+        resp.setMessageId(reader.readCString());
+        resp.setOptionalParameters(readOptionalParameters(reader));
         return resp;
     }
 
@@ -752,14 +754,14 @@ public class DefaultDecomposer implements PDUDecomposer {
         if (!reader.hasMoreBytes()) {
             return EMPTY_OPTIONAL_PARAMETERS;
         }
-        List<OptionalParameter> params = new ArrayList<OptionalParameter>();
+        List<OptionalParameter> params = new ArrayList<>();
         while (reader.hasMoreBytes()) {
             short tag = reader.readShort();
             short length = reader.readShort();
             byte[] content = reader.readBytes(length);
             params.add(OptionalParameters.deserialize(tag, content));
         }
-        return params.toArray(new OptionalParameter[params.size()]);
+        return params.toArray(new OptionalParameter[]{});
     }
 
     private static void assignHeader(Command pdu,
