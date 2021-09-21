@@ -73,12 +73,7 @@ public class BindRequest {
                 NumberingPlanIndicator.valueOf(bind.getAddrNpi()), 
                 bind.getAddressRange(), InterfaceVersion.valueOf(bind.getInterfaceVersion()), responseHandler);
     }
-    
-    @Deprecated
-    public BindParameter getBindParameter() {
-        return new BindParameter(bindType, systemId, password, systemType, addrTon, addrNpi, addressRange);
-    }
-    
+
     public BindType getBindType() {
         return bindType;
     }

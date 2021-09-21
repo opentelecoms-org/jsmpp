@@ -50,9 +50,6 @@ public class TestSmppOutboundServer implements Runnable, OutboundServerMessageRe
 
   private static final Logger log = LoggerFactory.getLogger(TestSmppOutboundServer.class);
 
-//  private static final String NOT_IMPLEMENTED = "the command is not implemented";
-//  private final MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
-//  private final AbsoluteTimeFormatter timeFormatter = new AbsoluteTimeFormatter();
   private ExecutorService waitOutbindExecService = Executors.newFixedThreadPool(5);
   private ScheduledExecutorService scheduledExecService = Executors.newScheduledThreadPool(5);
   private OutboundSMPPServerSessionListener sessionListener;
@@ -145,7 +142,6 @@ public class TestSmppOutboundServer implements Runnable, OutboundServerMessageRe
   public void onAcceptDeliverSm(final DeliverSm deliverSm, final SMPPOutboundServerSession source) throws ProcessRequestException {
     log.info("Received deliver_sm from {} to {}", deliverSm.getSourceAddr(), deliverSm.getDestAddress());
     increment("deliver_sm");
-    return;
   }
 
   public void closeBoundSessions() {
@@ -181,6 +177,7 @@ public class TestSmppOutboundServer implements Runnable, OutboundServerMessageRe
   }
 
   private class SessionStateListenerImpl implements SessionStateListener {
+    @Override
     public void onStateChange(SessionState newState, SessionState oldState, Session source) {
       log.debug("New state of session {} is {}", source.getSessionId(), newState);
     }
@@ -193,6 +190,7 @@ public class TestSmppOutboundServer implements Runnable, OutboundServerMessageRe
       this.serverSession = serverSession;
     }
 
+    @Override
     public void run() {
       serverSession.close();
     }
@@ -211,6 +209,7 @@ public class TestSmppOutboundServer implements Runnable, OutboundServerMessageRe
       this.bindTimeout = bindTimeout;
     }
 
+    @Override
     public void run() {
       try {
         OutbindRequest outbindRequest = serverSession.waitForOutbind(outbindTimeout);
@@ -246,6 +245,7 @@ public class TestSmppOutboundServer implements Runnable, OutboundServerMessageRe
       this.messageId = messageId;
     }
 
+    @Override
     public void run() {
       String stringValue = Integer.valueOf(messageId.getValue(), 16).toString();
       try {

@@ -21,8 +21,8 @@ import org.jsmpp.session.ResponseHandler;
 import org.jsmpp.session.SMPPSessionContext;
 
 /**
- * This class is provide interface to response to every incoming SMPP Commands.
- * How the the response behavior is depends to it's states, or the
+ * This class provides the interface to response to every incoming SMPP Command.
+ * How the response behavior is, depends on its state, or the
  * implementation of this class.
  *
  * @author uudashr
@@ -93,13 +93,36 @@ public interface SMPPSessionState extends GenericSMPPSessionState {
      */
     void processDeliverSm(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException;
-    
+
+    /**
+     * Process the cancel short message request command.
+     *
+     * @param pduHeader is the PDU header.
+     * @param pdu is the complete PDU.
+     * @param responseHandler is the session handler.
+     * @throws IOException throw if there is an IO error occur.
+     */
     void processCancelSmResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException;
-    
+
+    /**
+     * Process the replace short message request command.
+     *
+     * @param pduHeader is the PDU header.
+     * @param pdu is the complete PDU.
+     * @param responseHandler is the session handler.
+     * @throws IOException throw if there is an IO error occur.
+     */
     void processReplaceSmResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException;
-    
+
+    /**
+     * Process the alert notification request command.
+     *
+     * @param pduHeader is the PDU header.
+     * @param pdu is the complete PDU.
+     * @param responseHandler is the session handler.
+     */
     void processAlertNotification(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler);
 

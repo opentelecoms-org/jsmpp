@@ -39,7 +39,7 @@ class SMPPSessionBoundTRX extends SMPPSessionBoundTX implements SMPPSessionState
     @Override
     public void processDeliverSm(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
-        SMPPSessionBoundRX.processDeliverSm0(pduHeader, pdu, responseHandler);
+        processDeliverSm0(pduHeader, pdu, responseHandler);
     }
 
     @Override

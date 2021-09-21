@@ -314,7 +314,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
 
     public void sendBindResp(String systemId, InterfaceVersion interfaceVersion, BindType bindType, int sequenceNumber)
         throws IOException {
-      sessionContext.bound(bindType);
+      sessionContext.bound(bindType, interfaceVersion);
       try {
         pduSender().sendBindResp(out, bindType.responseCommandId(), sequenceNumber, systemId, interfaceVersion);
       }

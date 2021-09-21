@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -30,27 +30,27 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class AcceptingConnectionAndBindExample {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AcceptingConnectionAndBindExample.class);
+    private static final Logger log = LoggerFactory.getLogger(AcceptingConnectionAndBindExample.class);
     
     public static void main(String[] args) {
         int port = 8056;
         try {
-            LOGGER.info("Listening on port {} ...", port);
+            log.info("Listening on port {} ...", port);
             SMPPServerSessionListener sessionListener = new SMPPServerSessionListener(port);
             
             // accepting connection, session still in OPEN state
             SMPPServerSession session = sessionListener.accept();
-            LOGGER.info("Accept connection");
+            log.info("Accept connection");
             
             try {
                 BindRequest request = session.waitForBind(5000);
-                LOGGER.info("Received bind request");
+                log.info("Received bind request");
                 
                 if ("test".equals(request.getSystemId()) &&
                         "test".equals(request.getPassword())) {
 
                     // accepting request and send bind response immediately
-                    LOGGER.info("Accepting bind request, interface version is {}", request.getInterfaceVersion());
+                    log.info("Accepting bind request, interface version is {}", request.getInterfaceVersion());
                     request.accept("sys");
                     
                     try {
@@ -61,23 +61,23 @@ public class AcceptingConnectionAndBindExample {
                         Thread.currentThread().interrupt();
                     }
                 } else {
-                    LOGGER.info("Rejecting bind request");
+                    log.info("Rejecting bind request");
                     request.reject(SMPPConstant.STAT_ESME_RINVPASWD);
                 }
             } catch (TimeoutException e) {
-                LOGGER.error("No binding request received after 5000 millisecond", e);
+                log.error("No binding request received after 5000 millisecond", e);
             }
             
             if (session.getSessionState().isBound()) {
-                LOGGER.info("Closing session");
+                log.info("Closing session");
                 session.unbindAndClose();
             }
-            LOGGER.info("Closing session listener");
+            log.info("Closing session listener");
             sessionListener.close();
         } catch (PDUStringException e) {
-            LOGGER.error("PDUStringException", e);
+            log.error("PDUStringException", e);
         } catch (IOException e) {
-            LOGGER.error("IOException", e);
+            log.error("IOException", e);
         }
     }
 }

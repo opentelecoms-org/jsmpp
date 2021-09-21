@@ -17,6 +17,7 @@ package org.jsmpp.examples.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class Concatenation {
   private static final int IE_CONCATENATED_SM_16_BIT_REFERENCE_SIZE = 7;
 
   private static final Charset GSM = new SCGSMCharset();
-  private static final Charset USC_2 = Charset.forName("UTF-16BE");
+  private static final Charset USC_2 = StandardCharsets.UTF_16BE;
 
   public static byte[][] splitGsm7bit(String message, Charset charset, int reference, boolean use16BitReference)
       throws IOException {
@@ -83,7 +84,7 @@ public class Concatenation {
     int headerOctetsSize = use16bitReference ? IE_CONCATENATED_SM_16_BIT_REFERENCE_SIZE : IE_CONCATENATED_SM_8_BIT_REFERENCE_SIZE;
     int availableOctets = MAX_SMS_OCTETS - headerOctetsSize;
     int availableChars = encode7Bit ? (availableOctets * 8) / 7 : availableOctets;
-    List<byte[]> byteMessagesArray = new ArrayList<byte[]>();
+    List<byte[]> byteMessagesArray = new ArrayList<>();
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
 

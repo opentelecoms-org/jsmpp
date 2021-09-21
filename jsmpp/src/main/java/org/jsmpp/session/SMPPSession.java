@@ -96,7 +96,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class SMPPSession extends AbstractSession implements ClientSession {
-	private static final Logger logger = LoggerFactory.getLogger(SMPPSession.class);
+	private static final Logger log = LoggerFactory.getLogger(SMPPSession.class);
 	private static final String MESSAGE_RECEIVER_LISTENER_IS_NULL = "Received {} but message receiver listener is null";
 
 	/* Utility */
@@ -227,13 +227,13 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	 */
 	public void connect(String host, int port)
 			throws IOException {
-		logger.debug("Connect to {} port {}", host, port);
+		log.debug("Connect to {} port {}", host, port);
 		if (getSessionState().isNotClosed()) {
 			throw new IOException("Session state is not closed");
 		}
 
 		conn = connFactory.createConnection(host, port);
-		logger.info("Connected to {}", conn.getInetAddress());
+		log.info("Connected to {}", conn.getInetAddress());
 
 		conn.setSoTimeout(getEnquireLinkTimer());
 
@@ -262,13 +262,13 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	public String connectAndBind(String host, int port,
             BindParameter bindParam, long timeout)
 	        throws IOException {
-		logger.debug("Connect and bind to {} port {}", host, port);
+		log.debug("Connect and bind to {} port {}", host, port);
 		if (getSessionState() != SessionState.CLOSED) {
 			throw new IOException("Session state is not closed");
 		}
 
 		conn = connFactory.createConnection(host, port);
-		logger.info("Connected from port {} to {}:{}", conn.getLocalPort(), conn.getInetAddress(), conn.getPort());
+		log.info("Connected from port {} to {}:{}", conn.getLocalPort(), conn.getInetAddress(), conn.getPort());
 		
 		conn.setSoTimeout(getEnquireLinkTimer());
 
@@ -281,31 +281,31 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			pduReaderWorker.start();
 			String smscSystemId = sendBind(bindParam.getBindType(), bindParam.getSystemId(), bindParam.getPassword(), bindParam.getSystemType(),
                     bindParam.getInterfaceVersion(), bindParam.getAddrTon(), bindParam.getAddrNpi(), bindParam.getAddressRange(), timeout);
-			sessionContext.bound(bindParam.getBindType());
+			sessionContext.bound(bindParam.getBindType(), bindParam.getInterfaceVersion());
 
 			enquireLinkSender = new EnquireLinkSender();
 			enquireLinkSender.start();
 			return smscSystemId;
 		} catch (PDUException e) {
-		    logger.error("Failed sending bind command", e);
+		    log.error("Failed sending bind command", e);
 		    throw new IOException("Failed sending bind since some string parameter area invalid: " + e.getMessage(), e);
 		} catch (NegativeResponseException e) {
 			String message = "Receive negative bind response";
-			logger.error(message, e);
+			log.error(message, e);
 			close();
 			throw new IOException(message + ": " + e.getMessage(), e);
 		} catch (InvalidResponseException e) {
 			String message = "Receive invalid bind response";
-			logger.error(message, e);
+			log.error(message, e);
 			close();
 			throw new IOException(message + ": " + e.getMessage(), e);
 		} catch (ResponseTimeoutException e) {
 			String message = "Time out waiting for bind response";
-			logger.error(message, e);
+			log.error(message, e);
 			close();
 			throw new IOException(message + ": " + e.getMessage(), e);
 		} catch (IOException e) {
-			logger.error("I/O error occurred", e);
+			log.error("I/O error occurred", e);
 			close();
 			throw e;
 		}
@@ -343,15 +343,14 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 
 	    BindResp resp = (BindResp)executeSendCommand(task, timeout);
 	    OptionalParameter.Sc_interface_version scVersion = resp.getOptionalParameter(Sc_interface_version.class);
-	    if (scVersion != null) {
-		    logger.info("Other side reports SMPP interface version {}", scVersion);
-				setInterfaceVersion(InterfaceVersion.IF_50.min(InterfaceVersion.valueOf(scVersion.getValue())));
-	    } else {
-	    	// Fallback to version when 3.4 when server doesn't use optional parameter
-				setInterfaceVersion(InterfaceVersion.IF_34);
+			if (scVersion != null) {
+				log.info("Other side reports SMPP interface version {}", scVersion);
 			}
+			InterfaceVersion commonInterfaceVersion = scVersion != null ?
+					InterfaceVersion.IF_50.min(InterfaceVersion.valueOf(scVersion.getValue())) :
+					interfaceVersion.IF_34;
 
-			sessionContext.bound(bindType);
+			sessionContext.bound(bindType, commonInterfaceVersion);
 
 			return resp.getSystemId();
 	}
@@ -438,7 +437,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
             return new QuerySmResult(resp.getFinalDate(), resp
                     .getMessageState(), resp.getErrorCode());
         } else {
-            // message id requested not same as the returned
+            // message id requested not the same as the returned
             throw new InvalidResponseException(
                     "Requested message_id doesn't match with the result");
         }
@@ -522,7 +521,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		if (messageReceiverListener != null) {
 			messageReceiverListener.onAcceptDeliverSm(deliverSm);
 		} else {
-			logger.warn("Received deliver_sm but message receiver listener is null. Short message = {}",
+			log.warn("Received deliver_sm but message receiver listener is null. Short message = {}",
 					new String(deliverSm.getShortMessage(), StandardCharsets.ISO_8859_1));
 			throw new ProcessRequestException("No message receiver listener registered", SMPPConstant.STAT_ESME_RX_T_APPN);
 		}
@@ -532,7 +531,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	    if (messageReceiverListener != null) {
 	        messageReceiverListener.onAcceptAlertNotification(alertNotification);
 	    } else {
-	        logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "alert_notification");
+	        log.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "alert_notification");
 	    }
 	}
 
@@ -546,7 +545,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 				throw e;
 			} catch(Exception e) {
 				String msg = "Invalid runtime exception thrown when processing deliver_sm";
-				logger.error(msg, e);
+				log.error(msg, e);
 				throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_T_APPN);
 			}
 		}
@@ -560,7 +559,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 				throw e;
 			} catch(Exception e) {
 				String msg = "Invalid runtime exception thrown when processing data_sm";
-				logger.error(msg, e);
+				log.error(msg, e);
 				throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_T_APPN);
 			}
 		}
@@ -570,7 +569,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			try {
 				fireAcceptAlertNotification(alertNotification);
 			} catch(Exception e) {
-				logger.error("Invalid runtime exception thrown when processing alert_notification", e);
+				log.error("Invalid runtime exception thrown when processing alert_notification", e);
 			}
 		}
 
@@ -584,9 +583,9 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 				} catch (PDUStringException e) {
             /*
             * There should be no PDUStringException thrown since creation
-            * of MessageId should be save.
+            * of MessageId should be safe.
             */
-						logger.error("Failed sending data_sm_resp", e);
+						log.error("Failed sending data_sm_resp", e);
 				}
 		}
 
@@ -602,7 +601,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 
 		@Override
 		public void sendDeliverSmResp(int commandStatus, int sequenceNumber, String messageId) throws IOException {
-			logger.debug("Sending deliver_sm_resp with sequence_number {}", sequenceNumber);
+			log.debug("Sending deliver_sm_resp with sequence_number {}", sequenceNumber);
 			pduSender().sendDeliverSmResp(out, commandStatus, sequenceNumber, messageId);
 		}
 
@@ -634,7 +633,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	 *
 	 */
 	private class PDUReaderWorker extends Thread {
-			// start with serial execution of pdu processing, when the session is bound the pool will be enlarge up to the PduProcessorDegree
+			// start with serial execution of pdu processing, when the session is bound the pool will be enlarged up to the PduProcessorDegree
 		  private ThreadPoolExecutor pduExecutor;
 	    private Runnable onIOExceptionTask = new Runnable() {
 		    @Override
@@ -650,13 +649,13 @@ public class SMPPSession extends AbstractSession implements ClientSession {
             new LinkedBlockingQueue<Runnable>(queueCapacity), new RejectedExecutionHandler() {
         @Override
         public void rejectedExecution(final Runnable runnable, final ThreadPoolExecutor executor) {
-					logger.info("Receiving queue is full, please increasing queue capacity, and/or let other side obey the window size");
+					log.info("Receiving queue is full, please increasing queue capacity, and/or let other side obey the window size");
 					Command pduHeader = ((PDUProcessTask)runnable).getPduHeader();
 					if ((pduHeader.getCommandId() & SMPPConstant.MASK_CID_RESP) == SMPPConstant.MASK_CID_RESP) {
 						try {
 							boolean success = executor.getQueue().offer(runnable, 60000, TimeUnit.MILLISECONDS);
 							if (!success){
-								logger.warn("Offer to queue failed for {}", pduHeader);
+								log.warn("Offer to queue failed for {}", pduHeader);
 							}
 						}
 						catch (InterruptedException e){
@@ -672,7 +671,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 		
 		@Override
 		public void run() {
-	        logger.info("Starting PDUReaderWorker");
+	        log.info("Starting PDUReaderWorker");
 			while (isReadPdu()) {
 				readPDU();
 			}
@@ -681,10 +680,10 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 			try {
         pduExecutor.awaitTermination(getTransactionTimer(), TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) {
-				logger.warn("Interrupted while waiting for PDU executor pool to finish");
+				log.warn("Interrupted while waiting for PDU executor pool to finish");
 				Thread.currentThread().interrupt();
 			}
-			logger.debug("{} stopped", this.getName());
+			log.debug("{} stopped", this.getName());
 		}
 
 		private void readPDU() {
@@ -692,7 +691,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 	        try {
                 pduHeader = pduReader.readPDUHeader(in);
                 byte[] pdu = pduReader.readPDU(in, pduHeader);
-								logger.info("Received PDU in session {} in state {}: {}", getSessionId(), getSessionState(), HexUtil.convertBytesToHexString(pdu));
+								log.info("Received PDU in session {} in state {}: {}", getSessionId(), getSessionState(), HexUtil.convertBytesToHexString(pdu));
 
                 /*
                  * When the processing PDU is need user interaction via event,
@@ -704,28 +703,28 @@ public class SMPPSession extends AbstractSession implements ClientSession {
                         sessionContext, onIOExceptionTask);
                 pduExecutor.execute(task);
 					} catch (QueueMaxException e) {
-						logger.info("Notify other side to throttle: {} ({} threads active)", e.getMessage(), pduExecutor.getActiveCount());
+						log.info("Notify other side to throttle: {} ({} threads active)", e.getMessage(), pduExecutor.getActiveCount());
 						try {
 							responseHandler.sendNegativeResponse(pduHeader.getCommandId(), SMPPConstant.STAT_ESME_RTHROTTLED, pduHeader.getSequenceNumber());
 						} catch (IOException ioe) {
-							logger.warn("Failed sending negative resp: {}", ioe.getMessage());
+							log.warn("Failed sending negative resp: {}", ioe.getMessage());
 							close();
 						}
 	        } catch (InvalidCommandLengthException e) {
-						logger.warn("Received invalid command length: {}", e.getMessage());
+						log.warn("Received invalid command length: {}", e.getMessage());
 	            try {
 	                pduSender().sendGenericNack(out, SMPPConstant.STAT_ESME_RINVCMDLEN, 0);
 	            } catch (IOException ee) {
-	                logger.warn("Failed sending generic_nack", ee);
+	                log.warn("Failed sending generic_nack", ee);
 	            }
 	            unbindAndClose();
 	        } catch (SocketTimeoutException e) {
 	            notifyNoActivity();
 					} catch (IOException e) {
-	        	  logger.info("Reading PDU session {} in state {}: {}", getSessionId(), getSessionState(), e.getMessage());
+	        	  log.info("Reading PDU session {} in state {}: {}", getSessionId(), getSessionState(), e.getMessage());
 	            close();
 	        } catch (RuntimeException e) {
-			        logger.warn("Runtime error while reading PDU", e);
+			        log.warn("Runtime error while reading PDU", e);
 						  close();
 		      }
 	    }
@@ -737,7 +736,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 				SessionState sessionState = sessionContext().getSessionState();
 	    	if ((getInterfaceVersion().compareTo(InterfaceVersion.IF_34) > 0 && sessionState.isNotClosed()) ||
 						sessionState.isBound()) {
-					logger.trace("No activity notified, sending enquire_link");
+					log.trace("No activity notified, sending enquire_link");
 	    		enquireLinkSender.enquireLink();
 	    	}
 	    }
@@ -762,11 +761,11 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 						try {
 							conn.setSoTimeout(getEnquireLinkTimer());
 						} catch (IOException e) {
-							logger.error("Failed setting so_timeout for session timer", e);
+							log.error("Failed setting so_timeout for session timer", e);
 						}
 					}
 	        if (newState.isBound()) {
-	        	logger.debug("Changing processor degree to {}", getPduProcessorDegree());
+	        	log.debug("Changing processor degree to {}", getPduProcessorDegree());
 						pduReaderWorker.pduExecutor.setMaximumPoolSize(getPduProcessorDegree());
 						pduReaderWorker.pduExecutor.setCorePoolSize(getPduProcessorDegree());
 	        }

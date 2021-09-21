@@ -19,8 +19,12 @@ import java.io.IOException;
 import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.BroadcastSmResp;
+import org.jsmpp.bean.CancelBroadcastSmResp;
 import org.jsmpp.bean.CancelSmResp;
 import org.jsmpp.bean.Command;
+import org.jsmpp.bean.InterfaceVersion;
+import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.QueryBroadcastSmResp;
 import org.jsmpp.bean.QuerySmResp;
 import org.jsmpp.bean.ReplaceSmResp;
 import org.jsmpp.bean.SubmitMultiResp;
@@ -33,8 +37,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This class is Bound_TX state implementation of {@link SMPPSessionState}. This
- * class give specific response to a transmit related transaction, otherwise
- * it always give negative response.
+ * class gives specific response to a transmit related transaction, otherwise
+ * it always gives an negative response.
  *
  * @author uudashr
  * @version 2.0
@@ -42,8 +46,8 @@ import org.slf4j.LoggerFactory;
  *
  */
 class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
-    private static final String NO_REQUEST_FIND_FOR_SEQUENCE_NUMBER = "No request found for sequence_number ";
-    private static final Logger logger = LoggerFactory.getLogger(SMPPSessionBoundTX.class);
+    private static final Logger log = LoggerFactory.getLogger(SMPPSessionBoundTX.class);
+    private static final String NO_REQUEST_FOR_SEQUENCE_NUMBER_FOUND = "No request for sequence_number {} found";
 
     @Override
     public SessionState getSessionState() {
@@ -59,14 +63,16 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
         if (pendingResp != null) {
             try {
                 SubmitSmResp resp = pduDecomposer.submitSmResp(pdu);
+                OptionalParameter.Congestion_state c = resp.getOptionalParameter(OptionalParameter.Congestion_state.class);
+                int cs = c.getValue() & 0xff;
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
-                logger.error("Failed decomposing submit_sm_resp", e);
+                log.error("Failed decomposing submit_sm_resp", e);
                 responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
                         .getSequenceNumber());
             }
         } else {
-            logger.warn("No request with sequence_number {} found", pduHeader.getSequenceNumber());
+            log.warn(NO_REQUEST_FOR_SEQUENCE_NUMBER_FOUND, pduHeader.getSequenceNumber());
         }
     }
 
@@ -80,15 +86,16 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
                 SubmitMultiResp resp = pduDecomposer.submitMultiResp(pdu);
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
-                logger.error("Failed decomposing submit_multi_resp", e);
+                log.error("Failed decomposing submit_multi_resp", e);
                 responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
                         .getSequenceNumber());
             }
         } else {
-            logger.warn("No request with sequence_number {} found", pduHeader.getSequenceNumber());
+            log.warn(NO_REQUEST_FOR_SEQUENCE_NUMBER_FOUND, pduHeader.getSequenceNumber());
         }
     }
 
+    @Override
     public void processQuerySmResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
 
@@ -99,13 +106,12 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
                 QuerySmResp resp = pduDecomposer.querySmResp(pdu);
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
-                logger.error("Failed decomposing query_sm_resp", e);
+                log.error("Failed decomposing query_sm_resp", e);
                 responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
                         .getSequenceNumber());
             }
         } else {
-            logger.error(NO_REQUEST_FIND_FOR_SEQUENCE_NUMBER
-                    + pduHeader.getSequenceNumber());
+            log.warn(NO_REQUEST_FOR_SEQUENCE_NUMBER_FOUND, pduHeader.getSequenceNumber());
             responseHandler.sendGenerickNack(
                     SMPPConstant.STAT_ESME_RINVDFTMSGID, pduHeader
                             .getSequenceNumber());
@@ -121,8 +127,7 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
             CancelSmResp resp = pduDecomposer.cancelSmResp(pdu);
             pendingResp.done(resp);
         } else {
-            logger.error(NO_REQUEST_FIND_FOR_SEQUENCE_NUMBER
-                    + pduHeader.getSequenceNumber());
+            log.warn(NO_REQUEST_FOR_SEQUENCE_NUMBER_FOUND, pduHeader.getSequenceNumber());
         }
     }
 
@@ -135,22 +140,29 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
             ReplaceSmResp resp = pduDecomposer.replaceSmResp(pdu);
             pendingResp.done(resp);
         } else {
-            logger.error(NO_REQUEST_FIND_FOR_SEQUENCE_NUMBER
-                    + pduHeader.getSequenceNumber());
+            log.warn(NO_REQUEST_FOR_SEQUENCE_NUMBER_FOUND, pduHeader.getSequenceNumber());
         }
     }
 
     @Override
     public void processDeliverSm(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
+        /*
+         * For SMPP 3.3, deliver_sm can be sent in BOUND_RX as well as in BOUND_TX mode,
+         */
+        if (interfaceVersion == InterfaceVersion.IF_33){
+            processDeliverSm0(pduHeader, pdu, responseHandler);
+            return;
+        }
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
                 SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
                         .getSequenceNumber());
     }
-    
+
+    @Override
     public void processAlertNotification(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) {
-        logger.error("Receiving alert_notification while on invalid bound state (transmitter)");
+        log.error("Receiving alert_notification while on invalid bound state (transmitter)");
     }
 
     @Override
@@ -163,12 +175,12 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
                 BroadcastSmResp resp = pduDecomposer.broadcastSmResp(pdu);
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
-                logger.error("Failed decomposing broadcast_sm_resp", e);
+                log.error("Failed decomposing broadcast_sm_resp", e);
                 responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
                     .getSequenceNumber());
             }
         } else {
-            logger.warn("No request with sequence_number {} found", pduHeader.getSequenceNumber());
+            log.warn(NO_REQUEST_FOR_SEQUENCE_NUMBER_FOUND, pduHeader.getSequenceNumber());
         }
     }
 
@@ -179,15 +191,15 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
             .removeSentItem(pduHeader.getSequenceNumber());
         if (pendingResp != null) {
             try {
-                BroadcastSmResp resp = pduDecomposer.broadcastSmResp(pdu);
+                CancelBroadcastSmResp resp = pduDecomposer.cancelBroadcastSmResp(pdu);
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
-                logger.error("Failed decomposing cancel_broadcast_sm_resp", e);
+                log.error("Failed decomposing cancel_broadcast_sm_resp", e);
                 responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
                     .getSequenceNumber());
             }
         } else {
-            logger.warn("No request with sequence_number {} found", pduHeader.getSequenceNumber());
+            log.warn(NO_REQUEST_FOR_SEQUENCE_NUMBER_FOUND, pduHeader.getSequenceNumber());
         }
     }
 
@@ -198,15 +210,15 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
             .removeSentItem(pduHeader.getSequenceNumber());
         if (pendingResp != null) {
             try {
-                BroadcastSmResp resp = pduDecomposer.broadcastSmResp(pdu);
+                QueryBroadcastSmResp resp = pduDecomposer.queryBroadcastSmResp(pdu);
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
-                logger.error("Failed decomposing query_broadcast_sm_resp", e);
+                log.error("Failed decomposing query_broadcast_sm_resp", e);
                 responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
                     .getSequenceNumber());
             }
         } else {
-            logger.warn("No request with sequence_number {} found", pduHeader.getSequenceNumber());
+            log.warn(NO_REQUEST_FOR_SEQUENCE_NUMBER_FOUND, pduHeader.getSequenceNumber());
         }
     }
 

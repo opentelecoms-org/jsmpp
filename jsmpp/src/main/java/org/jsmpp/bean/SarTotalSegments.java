@@ -14,6 +14,8 @@
  */
 package org.jsmpp.bean;
 
+import java.util.Objects;
+
 import org.jsmpp.SMPPConstant;
 
 /**
@@ -44,23 +46,19 @@ public class SarTotalSegments {
     }
 
     @Override
-    public int hashCode() {
-        return 1;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SarTotalSegments)) {
+            return false;
+        }
+        final SarTotalSegments that = (SarTotalSegments) o;
+        return value == that.value;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final SarTotalSegments other = (SarTotalSegments)obj;
-        if (value != other.value)
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hash(value);
     }
-    
-    
 }

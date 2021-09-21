@@ -30,7 +30,7 @@ public class PendingResponseTest {
     
     @BeforeMethod
     public void setUp() throws Exception {
-        pendingResponse = new PendingResponse<Command>(1000);
+        pendingResponse = new PendingResponse<>(1000);
     }
     
     /**
@@ -53,9 +53,7 @@ public class PendingResponseTest {
         try {
             notifyDone(90, pendingResponse);
             pendingResponse.waitDone();
-        } catch (ResponseTimeoutException e) {
-            fail("Should be done with valid response");
-        } catch (InvalidResponseException e) {
+        } catch (ResponseTimeoutException | InvalidResponseException e) {
             fail("Should be done with valid response");
         }
     }

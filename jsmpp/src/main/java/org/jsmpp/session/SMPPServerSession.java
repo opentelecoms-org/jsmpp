@@ -368,7 +368,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
 
         @Override
         public void sendBindResp(String systemId, InterfaceVersion interfaceVersion, BindType bindType, int sequenceNumber) throws IOException {
-            sessionContext.bound(bindType);
+            sessionContext.bound(bindType, interfaceVersion);
             try {
                 pduSender().sendBindResp(out, bindType.responseCommandId(), sequenceNumber, systemId, interfaceVersion);
             } catch (PDUStringException e) {
@@ -417,10 +417,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                  */
                 logger.error("Failed sending submit_sm_resp", e);
                 fireSubmitSmRespFailed(submitSmResult, e);
-            } catch (IOException e) {
-                fireSubmitSmRespFailed(submitSmResult, e);
-                throw e;
-            } catch (RuntimeException e) {
+            } catch (IOException | RuntimeException e) {
                 fireSubmitSmRespFailed(submitSmResult, e);
                 throw e;
             }
@@ -454,10 +451,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                  */
                 logger.error("Failed sending submit_multi_resp", e);
                 fireSubmitMultiRespSentError(submitMultiResult, e);
-            } catch (IOException e) {
-                fireSubmitMultiRespSentError(submitMultiResult, e);
-                throw e;
-            } catch (RuntimeException e) {
+            } catch (IOException | RuntimeException e) {
                 fireSubmitMultiRespSentError(submitMultiResult, e);
                 throw e;
             }

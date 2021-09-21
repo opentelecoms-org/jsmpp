@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.bean;
 
@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LongSMS {
-    private static final Logger logger = LoggerFactory.getLogger(LongSMS.class);
+    private static final Logger log = LoggerFactory.getLogger(LongSMS.class);
     
     private final static int MAX_MESSAGE_SEGMENT_8BIT = 133; // 140-7
     private final static byte UDHIE_IDENTIFIER_SAR = 0x08;
@@ -61,15 +61,15 @@ public class LongSMS {
         int lengthOfData;
         byte[] referenceNumber = copyShort2Bytes(getReferenceNumber());
         for (int i = 0; i < segmentNum; i++) {
-            logger.debug("i = {}", i);
+            log.debug("i = {}", i);
             if (segmentNum - i == 1)
                 lengthOfData = messageLength - i * MAX_MESSAGE_SEGMENT_8BIT;
             else
                 lengthOfData = MAX_MESSAGE_SEGMENT_8BIT;
-            logger.debug("Length of data = {}", lengthOfData);
+            log.debug("Length of data = {}", lengthOfData);
 
             segments[i] = new byte[7 + lengthOfData];
-            logger.debug("segments[{}].length = {}", i, segments[i].length);
+            log.debug("segments[{}].length = {}", i, segments[i].length);
 
             segments[i][0] = 6; // doesn't include itself, is header length
             // SAR identifier

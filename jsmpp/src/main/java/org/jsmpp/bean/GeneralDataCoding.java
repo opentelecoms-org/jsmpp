@@ -38,7 +38,10 @@ public class GeneralDataCoding implements DataCoding {
     }
 
     /**
-     *  Used when using the SMPP 3.4/5.0 DCS for character set only.
+     * Used when using the SMPP 3.4/5.0 DCS for character set only.
+     *
+     * @param alphabet is the alphabet
+     *
      */
     public GeneralDataCoding(Alphabet alphabet) {
         this(alphabet, null);
@@ -96,7 +99,7 @@ public class GeneralDataCoding implements DataCoding {
 
     @Override
     public String toString() {
-        return "DataCoding:" + (0xff & toByte());
+        return "DataCoding:" + (toByte() & 0xff);
     }
 
     @Override

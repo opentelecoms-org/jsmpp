@@ -14,6 +14,8 @@
  */
 package org.jsmpp.bean;
 
+import java.util.Objects;
+
 /**
  * This is simple DataCoding implementing DataCoding.
  * Only contains Alphabet (DEFAULT and 8-bit) and Message Class.
@@ -81,40 +83,24 @@ public class SimpleDataCoding implements DataCoding {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((alphabet == null) ? 0 : alphabet.hashCode());
-        result = prime * result
-                + ((messageClass == null) ? 0 : messageClass.hashCode());
-        return result;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SimpleDataCoding)) {
+            return false;
+        }
+        final SimpleDataCoding that = (SimpleDataCoding) o;
+        return alphabet == that.alphabet && messageClass == that.messageClass;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        SimpleDataCoding other = (SimpleDataCoding)obj;
-        if (alphabet == null) {
-            if (other.alphabet != null)
-                return false;
-        } else if (!alphabet.equals(other.alphabet))
-            return false;
-        if (messageClass == null) {
-            if (other.messageClass != null)
-                return false;
-        } else if (!messageClass.equals(other.messageClass))
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hash(alphabet, messageClass);
     }
 
     @Override
     public String toString() {
-        return "DataCoding:" + (0xff & toByte());
+        return "DataCoding:" + (toByte() & 0xff);
     }
 }

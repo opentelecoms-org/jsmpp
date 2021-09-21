@@ -23,12 +23,14 @@ import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.EnquireLinkResp;
+import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BaseResponseHandler;
 import org.jsmpp.session.ResponseHandler;
 import org.jsmpp.session.SMPPSessionContext;
 import org.jsmpp.util.DefaultDecomposer;
+import org.jsmpp.util.InterfaceVersionUtil;
 import org.jsmpp.util.PDUDecomposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +45,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 class SMPPSessionOpen implements SMPPSessionState {
-    private static final Logger logger = LoggerFactory.getLogger(SMPPSessionOpen.class);
+    private static final Logger log = LoggerFactory.getLogger(SMPPSessionOpen.class);
     private static final PDUDecomposer pduDecomposer = new DefaultDecomposer();
 
     @Override
@@ -59,22 +61,23 @@ class SMPPSessionOpen implements SMPPSessionState {
         if (pendingResp != null) {
             try {
                 BindResp resp = pduDecomposer.bindResp(pdu);
+                InterfaceVersion interfaceVersion = InterfaceVersionUtil.getInterfaceVersion(resp.getOptionalParameters());
                 if (pduHeader.getCommandId() == SMPPConstant.CID_BIND_RECEIVER_RESP)
                 {
-                    sessionContext.bound(BindType.BIND_RX);
+                    sessionContext.bound(BindType.BIND_RX, interfaceVersion);
                 }
                 else if (pduHeader.getCommandId() == SMPPConstant.CID_BIND_TRANSMITTER_RESP)
                 {
-                    sessionContext.bound(BindType.BIND_TX);
+                    sessionContext.bound(BindType.BIND_TX, interfaceVersion);
                 }
                 else if (pduHeader.getCommandId() == SMPPConstant.CID_BIND_TRANSCEIVER_RESP)
                 {
-                    sessionContext.bound(BindType.BIND_TRX);
+                    sessionContext.bound(BindType.BIND_TRX, interfaceVersion);
                 }
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
                 String message = "Failed decomposing bind_resp";
-                logger.error(message, e);
+                log.error(message, e);
                 responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
                         .getSequenceNumber());
                 pendingResp
@@ -82,7 +85,7 @@ class SMPPSessionOpen implements SMPPSessionState {
                                 message, e));
             }
         } else {
-            logger.error("No request with sequence_number {} found", pduHeader.getSequenceNumber() );
+            log.error("No request with sequence_number {} found", pduHeader.getSequenceNumber() );
             responseHandler.sendGenerickNack(
                 SMPPConstant.STAT_ESME_RINVDFTMSGID, pduHeader
                     .getSequenceNumber());
@@ -91,7 +94,7 @@ class SMPPSessionOpen implements SMPPSessionState {
 
     public void processDeliverSm(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
-        logger.info("Received deliver_sm in OPEN state, send negative response");
+        log.info("Received deliver_sm in OPEN state, send negative response");
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
             SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
                 .getSequenceNumber());
@@ -100,9 +103,6 @@ class SMPPSessionOpen implements SMPPSessionState {
     @Override
     public void processEnquireLink(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-//        responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
-//            SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
-//                .getSequenceNumber());
         responseHandler.sendEnquireLinkResp(pduHeader.getSequenceNumber());
     }
 
@@ -115,7 +115,7 @@ class SMPPSessionOpen implements SMPPSessionState {
             EnquireLinkResp resp = pduDecomposer.enquireLinkResp(pdu);
             pendingResp.done(resp);
         } else {
-            logger.error("No request found for {}", pduHeader);
+            log.error("No request found for {}", pduHeader);
         }
     }
 
@@ -254,16 +254,7 @@ class SMPPSessionOpen implements SMPPSessionState {
         }
     }
 
-//    public void processBroadcastSm(Command pduHeader, byte[] pdu,
-//                              BaseResponseHandler responseHandler) throws IOException {
-//        PendingResponse<Command> pendingResp = responseHandler
-//            .removeSentItem(1);
-//        if (pendingResp != null) {
-//            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
-//                "Receive unexpected broadcast_sm"));
-//        }
-//    }
-
+    @Override
     public void processBroadcastSmResp(Command pduHeader, byte[] pdu,
                                   ResponseHandler responseHandler) throws IOException {
         PendingResponse<Command> pendingResp = responseHandler
@@ -274,16 +265,7 @@ class SMPPSessionOpen implements SMPPSessionState {
         }
     }
 
-//    public void processCancelBroadcastSm(Command pduHeader, byte[] pdu,
-//                                   ResponseHandler responseHandler) throws IOException {
-//        PendingResponse<Command> pendingResp = responseHandler
-//            .removeSentItem(1);
-//        if (pendingResp != null) {
-//            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
-//                "Receive unexpected cancel_broadcast_sm"));
-//        }
-//    }
-
+    @Override
     public void processCancelBroadcastSmResp(Command pduHeader, byte[] pdu,
                                        ResponseHandler responseHandler) throws IOException {
         PendingResponse<Command> pendingResp = responseHandler
@@ -294,16 +276,7 @@ class SMPPSessionOpen implements SMPPSessionState {
         }
     }
 
-//    public void processQueryBroadcastSm(Command pduHeader, byte[] pdu,
-//                                         ResponseHandler responseHandler) throws IOException {
-//        PendingResponse<Command> pendingResp = responseHandler
-//            .removeSentItem(1);
-//        if (pendingResp != null) {
-//            pendingResp.doneWithInvalidResponse(new InvalidResponseException(
-//                "Receive unexpected query_broadcast_sm"));
-//        }
-//    }
-
+    @Override
     public void processQueryBroadcastSmResp(Command pduHeader, byte[] pdu,
                                              ResponseHandler responseHandler) throws IOException {
         PendingResponse<Command> pendingResp = responseHandler

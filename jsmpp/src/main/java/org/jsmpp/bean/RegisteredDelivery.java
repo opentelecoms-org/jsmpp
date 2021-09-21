@@ -1,6 +1,6 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -13,6 +13,8 @@
  *
  */
 package org.jsmpp.bean;
+
+import java.util.Objects;
 
 /**
  * @author uudashr
@@ -64,23 +66,19 @@ public class RegisteredDelivery {
     }
 
     @Override
-    public int hashCode() {
-        return 1;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof RegisteredDelivery)) {
+            return false;
+        }
+        final RegisteredDelivery that = (RegisteredDelivery) o;
+        return value == that.value;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final RegisteredDelivery other = (RegisteredDelivery)obj;
-        if (value != other.value)
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hash(value);
     }
-    
-    
 }

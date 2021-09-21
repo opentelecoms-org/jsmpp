@@ -145,8 +145,7 @@ public class TestSmppServer implements Runnable, ServerMessageReceiverListener {
                                        SMPPServerSession source) throws ProcessRequestException {
     String finalDate = timeFormatter.format(new Date());
     log.info("Receiving query_sm, and return {}", finalDate);
-    QuerySmResult querySmResult = new QuerySmResult(finalDate, MessageState.DELIVERED, (byte) 0x00);
-    return querySmResult;
+    return new QuerySmResult(finalDate, MessageState.DELIVERED, (byte) 0x00);
   }
 
   @Override
@@ -175,8 +174,7 @@ public class TestSmppServer implements Runnable, ServerMessageReceiverListener {
       scheduledExecService.schedule(new CloseTask(source), 25, TimeUnit.MILLISECONDS);
     }
     // TODO: Depend on interface version
-    SubmitSmResult submitSmResult = new SubmitSmResult(messageId, new OptionalParameter[]{});
-    return submitSmResult;
+    return new SubmitSmResult(messageId, new OptionalParameter[]{});
   }
 
   @Override
@@ -185,8 +183,7 @@ public class TestSmppServer implements Runnable, ServerMessageReceiverListener {
     MessageId messageId = messageIDGenerator.newMessageId();
     log.info("Receiving submit_multi {}, and return message id {}", new String(submitMulti.getShortMessage()), messageId.getValue());
     increment("submit_multi");
-    SubmitMultiResult submitMultiResult = new SubmitMultiResult(messageId.getValue());
-    return submitMultiResult;
+    return new SubmitMultiResult(messageId.getValue());
   }
 
   @Override
@@ -196,8 +193,7 @@ public class TestSmppServer implements Runnable, ServerMessageReceiverListener {
     OptionalParameter.Message_payload messagePayload = (OptionalParameter.Message_payload) dataSm.getOptionalParameter(OptionalParameter.Tag.MESSAGE_PAYLOAD);
     log.info("Receiving data_sm {}, and return message id {}", messagePayload.getValueAsString(), messageId.getValue());
     increment("data_sm");
-    DataSmResult dataSmResult = new DataSmResult(messageId, new OptionalParameter[]{});
-    return dataSmResult;
+    return new DataSmResult(messageId, new OptionalParameter[]{});
   }
 
   @Override

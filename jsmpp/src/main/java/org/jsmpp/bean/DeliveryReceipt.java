@@ -248,7 +248,7 @@ public class DeliveryReceipt implements DeliveryReceiptInterface<DeliveryReceipt
      */
     private static String intToString(int value, int digit) {
         StringBuilder stringBuilder = new StringBuilder(digit);
-        stringBuilder.append(Integer.toString(value));
+        stringBuilder.append(value);
         while (stringBuilder.length() < digit) {
             stringBuilder.insert(0, "0");
         }

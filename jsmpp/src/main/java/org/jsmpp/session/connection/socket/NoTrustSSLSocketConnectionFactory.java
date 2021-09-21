@@ -54,9 +54,7 @@ public class NoTrustSSLSocketConnectionFactory implements ConnectionFactory {
       };
       sslContext.init(null, new TrustManager[]{ tm }, null);
       socketFactory = sslContext.getSocketFactory();
-    } catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException(e);
-    } catch (KeyManagementException e) {
+    } catch (NoSuchAlgorithmException | KeyManagementException e) {
       throw new RuntimeException(e);
     }
   }

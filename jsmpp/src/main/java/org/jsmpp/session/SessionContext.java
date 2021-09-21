@@ -15,6 +15,7 @@
 package org.jsmpp.session;
 
 import org.jsmpp.bean.BindType;
+import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.extra.SessionState;
 
 /**
@@ -35,8 +36,9 @@ public interface SessionContext extends ActivityNotifier {
     /**
      * Change state to bound state.
      * @param bindType the bindType enum
+     * @param interfaceVersion the interfaceVersion enum
      */
-    void bound(BindType bindType);
+    void bound(BindType bindType, InterfaceVersion interfaceVersion);
     
     /**
      * Change state to unbound.

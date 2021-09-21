@@ -63,15 +63,5 @@ public class DataCodingFactory00xx extends AbstractDataCodingFactory {
     public static boolean isCompressed(byte dataCoding) {
         return (dataCoding & MASK_COMPRESSED) == MASK_COMPRESSED;
     }
-    
-    /**
-     * @param dataCoding the data coding scheme
-     * @return {@code true} if the data coding contains a message class
-     *
-     * @deprecated use {@link DataCodings#containsMessageClass(byte dataCoding)}
-     */
-    @Deprecated
-    public boolean isContainMessageClass(byte dataCoding) {
-        return DataCodings.containsMessageClass(dataCoding);
-    }
+
 }

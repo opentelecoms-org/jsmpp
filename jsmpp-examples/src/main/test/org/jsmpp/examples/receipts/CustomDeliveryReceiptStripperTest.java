@@ -4,7 +4,7 @@ import static org.jsmpp.examples.receipts.CustomDeliveryReceiptState.DND_REJECTE
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -33,7 +33,7 @@ public class CustomDeliveryReceiptStripperTest {
       deliverSm.setEsmClass(new ESMClass(MessageMode.DEFAULT, MessageType.SMSC_DEL_RECEIPT, GSMSpecificFeature.DEFAULT).value());
       deliverSm.setShortMessage(
           ("id:0123456789 sub:002 dlvrd:003 submit date:0809011130 done date:0809021131 err:123 stat:DND_REJECTED text:Hello World")
-              .getBytes(Charset.forName("US-ASCII")));
+              .getBytes(StandardCharsets.US_ASCII));
       CustomDeliveryReceipt delReceipt = customDeliveryReceiptStripper.strip(deliverSm);
       assertEquals("0123456789", delReceipt.getId());
       assertEquals(2, delReceipt.getSubmitted());

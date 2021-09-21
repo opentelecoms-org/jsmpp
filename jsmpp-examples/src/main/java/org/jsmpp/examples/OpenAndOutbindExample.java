@@ -207,7 +207,7 @@ public class OpenAndOutbindExample implements Runnable {
     session.unbindAndClose();
   }
 
-  private class SessionStateListenerImpl implements SessionStateListener {
+  private static class SessionStateListenerImpl implements SessionStateListener {
     @Override
     public void onStateChange(SessionState newState, SessionState oldState, Session source) {
       log.info("Session {} state changed from {} to {}", source.getSessionId(), oldState, newState);

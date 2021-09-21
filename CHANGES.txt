@@ -1,6 +1,14 @@
 Changes:
 
-Please note that the 2.3.x release is the latest using Java 1.6. The next release (3.x.x) will require at minimum Java 1.7.
+3.0.0
+- Require Java 7 as minimum.
+- Implement all SMPP 5.0 requests, optional parameters, etc.
+- Support for SMPP 3.3
+- Fix first message immediately after outbind.
+- Use SubmitSmResult instead of MessageId for submit_sm response handling.
+- Remove obsolete classes.
+- Remove log4j dependency and use slf4j-simple in examples.
+- Set the log level of enquire_link messages to trace.
 
 2.3.11
 - Also set the socket timeout for server sessions for enquiry link timer.

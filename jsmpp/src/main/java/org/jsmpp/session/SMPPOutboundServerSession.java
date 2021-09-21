@@ -54,6 +54,7 @@ import org.jsmpp.extra.QueueMaxException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.connection.Connection;
+import org.jsmpp.util.InterfaceVersionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +63,7 @@ import org.slf4j.LoggerFactory;
  * @author pmoerenhout
  */
 public class SMPPOutboundServerSession extends AbstractSession implements OutboundServerSession {
-  private static final Logger logger = LoggerFactory.getLogger(SMPPOutboundServerSession.class);
+  private static final Logger log = LoggerFactory.getLogger(SMPPOutboundServerSession.class);
 
   private final Connection conn;
   private final DataInputStream in;
@@ -145,15 +146,17 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
         addrNpi, addressRange);
 
     BindResp resp = (BindResp) executeSendCommand(task, timeout);
+    InterfaceVersion negotiatedInterfaceVersion = InterfaceVersionUtil.getNegotiatedInterfaceVersion(interfaceVersion, resp.getOptionalParameters());
     OptionalParameter.Sc_interface_version scVersion = resp.getOptionalParameter(Sc_interface_version.class);
     if (scVersion != null) {
-      logger.debug("Other side reports SMPP interface version {}", scVersion);
+      log.debug("Other side reports SMPP interface version {}", scVersion);
       setInterfaceVersion(InterfaceVersion.IF_50.min(InterfaceVersion.valueOf(scVersion.getValue())));
     } else {
       setInterfaceVersion(InterfaceVersion.IF_34);
     }
+    setInterfaceVersion(negotiatedInterfaceVersion);
 
-    logger.info("Bind response systemId '{}'", resp.getSystemId());
+    log.info("Bind response systemId '{}'", resp.getSystemId());
     return resp.getSystemId();
   }
 
@@ -229,7 +232,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
     if (outboundServerMessageReceiverListener != null) {
       outboundServerMessageReceiverListener.onAcceptDeliverSm(deliverSm, this);
     } else {
-      logger.warn("Receive deliver_sm but OutboundServerMessageReceiverListener is null. Short message = {}",
+      log.warn("Receive deliver_sm but OutboundServerMessageReceiverListener is null. Short message = {}",
           new String(deliverSm.getShortMessage()));
       throw new ProcessRequestException("No message receiver listener registered", SMPPConstant.STAT_ESME_RX_T_APPN);
     }
@@ -248,32 +251,32 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
     try {
       String smscSystemId = sendBind(bindParam.getBindType(), bindParam.getSystemId(), bindParam.getPassword(), bindParam.getSystemType(),
           bindParam.getInterfaceVersion(), bindParam.getAddrTon(), bindParam.getAddrNpi(), bindParam.getAddressRange(), timeout);
-      sessionContext.bound(bindParam.getBindType());
+      sessionContext.bound(bindParam.getBindType(), bindParam.getInterfaceVersion());
 
       enquireLinkSender = new EnquireLinkSender();
       enquireLinkSender.start();
 
       return smscSystemId;
     } catch (PDUException e) {
-      logger.error("Failed sending bind command", e);
+      log.error("Failed sending bind command", e);
       throw new IOException("Failed sending bind since some string parameter area invalid: " + e.getMessage(), e);
     } catch (NegativeResponseException e) {
       String message = "Receive negative bind response";
-      logger.error(message, e);
+      log.error(message, e);
       close();
       throw new IOException(message + ": " + e.getMessage(), e);
     } catch (InvalidResponseException e) {
       String message = "Receive invalid response of bind";
-      logger.error(message, e);
+      log.error(message, e);
       close();
       throw new IOException(message + ": " + e.getMessage(), e);
     } catch (ResponseTimeoutException e) {
       String message = "Wait for bind response timed out";
-      logger.error(message, e);
+      log.error(message, e);
       close();
       throw new IOException(message + ": " + e.getMessage(), e);
     } catch (IOException e) {
-      logger.error("I/O error occurred", e);
+      log.error("I/O error occurred", e);
       close();
       throw e;
     }
@@ -295,7 +298,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
         throw e;
       } catch (Exception e) {
         String msg = "Invalid runtime exception thrown when processing deliver_sm";
-        logger.error(msg, e);
+        log.error(msg, e);
         throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_T_APPN);
       }
     }
@@ -308,7 +311,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
         return fireAcceptDataSm(dataSm);
       } catch (Exception e) {
         String msg = "Invalid runtime exception thrown when processing DataSm";
-        logger.error(msg, e);
+        log.error(msg, e);
         throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
       }
     }
@@ -326,7 +329,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
          * There should be no PDUStringException thrown since creation
          * of MessageId should be save.
          */
-        logger.error("Failed sending data_sm_resp", e);
+        log.error("Failed sending data_sm_resp", e);
       }
     }
 
@@ -343,7 +346,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
     @Override
     public void sendDeliverSmResp(int commandStatus, int sequenceNumber, String messageId) throws IOException {
       pduSender().sendDeliverSmResp(out, commandStatus, sequenceNumber, messageId);
-      logger.debug("deliver_sm_resp with sequence_number {} has been sent", sequenceNumber);
+      log.debug("deliver_sm_resp with sequence_number {} has been sent", sequenceNumber);
     }
 
     @Override
@@ -389,13 +392,13 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
           new LinkedBlockingQueue<Runnable>(queueCapacity), new RejectedExecutionHandler() {
         @Override
         public void rejectedExecution(final Runnable runnable, final ThreadPoolExecutor executor) {
-          logger.info("Receiving queue is full, please increasing queue capacity, and/or let other side obey the window size");
+          log.info("Receiving queue is full, please increasing queue capacity, and/or let other side obey the window size");
           Command pduHeader = ((PDUProcessServerTask) runnable).getPduHeader();
           if ((pduHeader.getCommandId() & SMPPConstant.MASK_CID_RESP) == SMPPConstant.MASK_CID_RESP) {
             try {
               boolean success = executor.getQueue().offer(runnable, 60000, TimeUnit.MILLISECONDS);
               if (!success) {
-                logger.warn("Offer to queue failed for {}", pduHeader);
+                log.warn("Offer to queue failed for {}", pduHeader);
               }
             } catch (InterruptedException e) {
               Thread.currentThread().interrupt();
@@ -417,11 +420,11 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
       try {
         pduExecutor.awaitTermination(getTransactionTimer(), TimeUnit.MILLISECONDS);
       } catch (InterruptedException e) {
-        logger.warn("Interrupted while waiting for PDU executor pool to finish");
+        log.warn("Interrupted while waiting for PDU executor pool to finish");
         Thread.currentThread().interrupt();
         throw new RuntimeException(e);
       }
-      logger.debug("{} stopped", getName());
+      log.debug("{} stopped", getName());
     }
 
     private void readPDU() {
@@ -438,35 +441,35 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
             sessionContext, responseHandler, sessionContext, onIOExceptionTask);
         pduExecutor.execute(task);
       } catch (QueueMaxException e) {
-        logger.info("Notify other side to throttle: {} ({} threads active)", e.getMessage(), pduExecutor.getActiveCount());
+        log.info("Notify other side to throttle: {} ({} threads active)", e.getMessage(), pduExecutor.getActiveCount());
         try {
           responseHandler.sendNegativeResponse(pduHeader.getCommandId(), SMPPConstant.STAT_ESME_RTHROTTLED, pduHeader.getSequenceNumber());
         } catch (IOException ioe) {
-          logger.warn("Failed sending negative response: {}", ioe.getMessage());
+          log.warn("Failed sending negative response: {}", ioe.getMessage());
           close();
         }
       } catch (InvalidCommandLengthException e) {
-        logger.warn("Received invalid command length: {}", e.getMessage());
+        log.warn("Received invalid command length: {}", e.getMessage());
         try {
           pduSender().sendGenericNack(out, SMPPConstant.STAT_ESME_RINVCMDLEN, 0);
         } catch (IOException ee) {
-          logger.warn("Failed sending generic_nack", ee);
+          log.warn("Failed sending generic_nack", ee);
         }
         unbindAndClose();
       } catch (SocketTimeoutException e) {
         notifyNoActivity();
       } catch (EOFException e) {
         if (sessionContext.getSessionState() == SessionState.UNBOUND) {
-          logger.debug("Unbound session {} socket closed", getSessionId());
+          log.debug("Unbound session {} socket closed", getSessionId());
         } else {
-          logger.warn("Session {} socket closed unexpected", getSessionId());
+          log.warn("Session {} socket closed unexpected", getSessionId());
         }
         close();
       } catch (IOException e) {
-        logger.info("Reading PDU session {} in state {}: {}", getSessionId(), getSessionState(), e.getMessage());
+        log.info("Reading PDU session {} in state {}: {}", getSessionId(), getSessionState(), e.getMessage());
         close();
       } catch (RuntimeException e) {
-        logger.warn("Runtime error while reading", e);
+        log.warn("Runtime error while reading", e);
         close();
       }
     }
@@ -477,7 +480,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
     private void notifyNoActivity() {
       SessionState sessionState = sessionContext().getSessionState();
       if ((getInterfaceVersion().compareTo(InterfaceVersion.IF_34) > 0 && sessionState.isNotClosed()) || sessionState.isBound()) {
-        logger.trace("No activity notified, sending enquire_link");
+        log.trace("No activity notified, sending enquire_link");
         enquireLinkSender.enquireLink();
       }
     }
@@ -495,10 +498,10 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
         try {
           conn.setSoTimeout(getEnquireLinkTimer());
         } catch (IOException e) {
-          logger.error("Failed setting so_timeout for session timer", e);
+          log.error("Failed setting so_timeout for session timer", e);
         }
 
-        logger.debug("Changing processor degree to {}", getPduProcessorDegree());
+        log.debug("Changing processor degree to {}", getPduProcessorDegree());
         pduReaderWorker.pduExecutor.setMaximumPoolSize(getPduProcessorDegree());
         pduReaderWorker.pduExecutor.setCorePoolSize(getPduProcessorDegree());
       }

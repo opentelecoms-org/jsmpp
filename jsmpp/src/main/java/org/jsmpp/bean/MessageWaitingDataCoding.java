@@ -1,18 +1,20 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.bean;
+
+import java.util.Objects;
 
 /**
  * Message Waiting DataCoding is a DataCoding implementation for message waiting.
@@ -122,47 +124,24 @@ public class MessageWaitingDataCoding implements DataCoding {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((alphabet == null) ? 0 : alphabet.hashCode());
-        result = prime * result
-                + ((indicationSense == null) ? 0 : indicationSense.hashCode());
-        result = prime * result
-                + ((indicationType == null) ? 0 : indicationType.hashCode());
-        return result;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MessageWaitingDataCoding)) {
+            return false;
+        }
+        final MessageWaitingDataCoding that = (MessageWaitingDataCoding) o;
+        return indicationSense == that.indicationSense && indicationType == that.indicationType && alphabet == that.alphabet;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        MessageWaitingDataCoding other = (MessageWaitingDataCoding)obj;
-        if (alphabet == null) {
-            if (other.alphabet != null)
-                return false;
-        } else if (!alphabet.equals(other.alphabet))
-            return false;
-        if (indicationSense == null) {
-            if (other.indicationSense != null)
-                return false;
-        } else if (!indicationSense.equals(other.indicationSense))
-            return false;
-        if (indicationType == null) {
-            if (other.indicationType != null)
-                return false;
-        } else if (!indicationType.equals(other.indicationType))
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hash(indicationSense, indicationType, alphabet);
     }
-    
+
     @Override
     public String toString() {
-        return "DataCoding:" + (0xff & toByte());
+        return "DataCoding:" + (toByte() & 0xff);
     }
 }

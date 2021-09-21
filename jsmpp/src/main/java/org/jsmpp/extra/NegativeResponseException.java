@@ -16,7 +16,7 @@ import org.jsmpp.util.IntUtil;
  */
 public class NegativeResponseException extends Exception {
     static {
-        HashMap<Integer, String> mapping = new HashMap<Integer, String>();
+        HashMap<Integer, String> mapping = new HashMap<>();
         mapping.put(1, "Message Length is invalid");
         mapping.put(2, "Command Length is invalid");
         mapping.put(3, "Invalid Command ID");

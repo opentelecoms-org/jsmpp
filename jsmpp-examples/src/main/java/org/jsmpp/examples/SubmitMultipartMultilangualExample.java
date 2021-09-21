@@ -16,6 +16,7 @@ package org.jsmpp.examples;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 import org.jsmpp.InvalidResponseException;
@@ -55,13 +56,12 @@ import org.slf4j.LoggerFactory;
  * @author Pim Moerenhout &lt;pim.moerenhout[at]gmail.com&gt;
  */
 public class SubmitMultipartMultilangualExample {
-  private static final Logger LOGGER = LoggerFactory.getLogger(SubmitMultipartMultilangualExample.class);
+  private static final Logger log = LoggerFactory.getLogger(SubmitMultipartMultilangualExample.class);
 
   private static final Random RANDOM = new Random();
 
-  // TODO: Replace with StandardCharsets for Java 1.7
-  private static final Charset UCS2_CHARSET = Charset.forName("UTF-16BE");
-  private static final Charset ISO_LATIN_CHARSET = Charset.forName("ISO-8859-1");
+  private static final Charset UCS2_CHARSET = StandardCharsets.UTF_16BE;
+  private static final Charset ISO_LATIN_CHARSET = StandardCharsets.ISO_8859_1;
 
   private static final int MAX_SINGLE_MSG_CHAR_SIZE_7BIT = 160;
   private static final int MAX_SINGLE_MSG_CHAR_SIZE_UCS2 = 70;
@@ -122,27 +122,27 @@ public class SubmitMultipartMultilangualExample {
         esmClass = new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.DEFAULT);
       }
     } else {
-      LOGGER.error("The message '{}' contains non-encodeable characters", messageBody);
+      log.error("The message '{}' contains non-encodeable characters", messageBody);
       return;
     }
 
-    LOGGER.info("Sending message '{}'", messageBody);
-    LOGGER.info("Message is {} characters long and will be sent as {} messages with data coding {}",
+    log.info("Sending message '{}'", messageBody);
+    log.info("Message is {} characters long and will be sent as {} messages with data coding {}",
         messageBody.length(), messages.length, HexUtil.convertByteToHexString(dataCoding.toByte()));
 
     // submit all messages
     for (byte[] message : messages) {
       String messageId = submitMessage(session, message, sourceMsisdn, destinationMsisdn,
           dataCoding, esmClass);
-      LOGGER.info("Message submitted, message_id is {}", messageId);
+      log.info("Message submitted, message_id is {}", messageId);
     }
 
-    LOGGER.info("Entering listening mode. Press Enter to finish...");
+    log.info("Entering listening mode. Press Enter to finish...");
 
     try {
       System.in.read();
     } catch (IOException e) {
-      LOGGER.error("I/O error occurred", e);
+      log.error("I/O error occurred", e);
     }
 
     session.unbindAndClose();
@@ -159,25 +159,25 @@ public class SubmitMultipartMultilangualExample {
       messageId = submitSmResult.getMessageId();
     } catch (PDUException e) {
       // Invalid PDU parameter
-      LOGGER.error("Invalid PDU parameter", e);
+      log.error("Invalid PDU parameter", e);
     } catch (ResponseTimeoutException e) {
       // Response timeout
-      LOGGER.error("Response timeout", e);
+      log.error("Response timeout", e);
     } catch (InvalidResponseException e) {
       // Invalid response
-      LOGGER.error("Receive invalid response", e);
+      log.error("Receive invalid response", e);
     } catch (NegativeResponseException e) {
       // Receiving negative response (non-zero command_status)
-      LOGGER.error("Receive negative response", e);
+      log.error("Receive negative response", e);
     } catch (IOException e) {
-      LOGGER.error("I/O error occurred", e);
+      log.error("I/O error occurred", e);
     }
     return messageId;
   }
 
-  private class SessionStateListenerImpl implements SessionStateListener {
+  private static class SessionStateListenerImpl implements SessionStateListener {
     public void onStateChange(SessionState newState, SessionState oldState, Session source) {
-      LOGGER.info("Session {} state changed from {} to {}", source.getSessionId(), oldState, newState);
+      log.info("Session {} state changed from {} to {}", source.getSessionId(), oldState, newState);
     }
   }
 }

@@ -1,6 +1,6 @@
 /*
  * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -23,6 +23,8 @@ import org.jsmpp.bean.BindResp;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.EnquireLinkResp;
+import org.jsmpp.bean.InterfaceVersion;
+import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BaseResponseHandler;
@@ -44,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 class SMPPOutboundServerSessionOutbound implements SMPPOutboundServerSessionState {
-    private static final Logger logger = LoggerFactory.getLogger(SMPPOutboundServerSessionOutbound.class);
+    private static final Logger log = LoggerFactory.getLogger(SMPPOutboundServerSessionOutbound.class);
     private static final PDUDecomposer pduDecomposer = new DefaultDecomposer();
 
     @Override
@@ -55,7 +57,7 @@ class SMPPOutboundServerSessionOutbound implements SMPPOutboundServerSessionStat
     @Override
     public void processOutbind(Command pduHeader, byte[] pdu,
                             OutboundServerResponseHandler responseHandler) throws IOException {
-        logger.info("Received outbind in OUTBOUND state, send negative response");
+        log.info("Received outbind in OUTBOUND state, send negative response");
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
             SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader.getSequenceNumber());
     }
@@ -68,22 +70,27 @@ class SMPPOutboundServerSessionOutbound implements SMPPOutboundServerSessionStat
         if (pendingResp != null) {
             try {
                 BindResp resp = pduDecomposer.bindResp(pdu);
+                OptionalParameter.Sc_interface_version scVersion = resp.getOptionalParameter(OptionalParameter.Sc_interface_version.class);
+                log.debug("Other side reports SMPP interface version {}", scVersion);
+                InterfaceVersion interfaceVersion = scVersion != null ?
+                    InterfaceVersion.IF_50.min(InterfaceVersion.valueOf(scVersion.getValue())) :
+                    InterfaceVersion.IF_34;
                 if (pduHeader.getCommandId() == SMPPConstant.CID_BIND_RECEIVER_RESP)
                 {
-                    sessionContext.bound(BindType.BIND_RX);
+                    sessionContext.bound(BindType.BIND_RX, interfaceVersion);
                 }
                 else if (pduHeader.getCommandId() == SMPPConstant.CID_BIND_TRANSMITTER_RESP)
                 {
-                    sessionContext.bound(BindType.BIND_TX);
+                    sessionContext.bound(BindType.BIND_TX, interfaceVersion);
                 }
                 else if (pduHeader.getCommandId() == SMPPConstant.CID_BIND_TRANSCEIVER_RESP)
                 {
-                    sessionContext.bound(BindType.BIND_TRX);
+                    sessionContext.bound(BindType.BIND_TRX, interfaceVersion);
                 }
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
                 String message = "Failed decomposing bind_resp";
-                logger.error(message, e);
+                log.error(message, e);
                 responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
                     .getSequenceNumber());
                 pendingResp
@@ -91,7 +98,7 @@ class SMPPOutboundServerSessionOutbound implements SMPPOutboundServerSessionStat
                         message, e));
             }
         } else {
-            logger.error("No request with sequence_number {} found", pduHeader.getSequenceNumber() );
+            log.error("No request with sequence_number {} found", pduHeader.getSequenceNumber() );
             responseHandler.sendGenerickNack(
                 SMPPConstant.STAT_ESME_RINVDFTMSGID, pduHeader.getSequenceNumber());
         }
@@ -100,7 +107,7 @@ class SMPPOutboundServerSessionOutbound implements SMPPOutboundServerSessionStat
     @Override
     public void processDeliverSm(Command pduHeader, byte[] pdu,
                                  OutboundServerResponseHandler responseHandler) throws IOException {
-        logger.info("Received deliver_sm in OUTBOUND state, send negative response");
+        log.info("Received deliver_sm in OUTBOUND state, send negative response");
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
             SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader.getSequenceNumber());
     }
@@ -120,7 +127,7 @@ class SMPPOutboundServerSessionOutbound implements SMPPOutboundServerSessionStat
             EnquireLinkResp resp = pduDecomposer.enquireLinkResp(pdu);
             pendingResp.done(resp);
         } else {
-            logger.error("No request found for {}", pduHeader);
+            log.error("No request found for {}", pduHeader);
         }
     }
 
@@ -138,7 +145,7 @@ class SMPPOutboundServerSessionOutbound implements SMPPOutboundServerSessionStat
     @Override
     public void processUnbind(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-        logger.info("Received unbind in OUTBOUND state, send negative response");
+        log.info("Received unbind in OUTBOUND state, send negative response");
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
             SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
                 .getSequenceNumber());
@@ -169,7 +176,7 @@ class SMPPOutboundServerSessionOutbound implements SMPPOutboundServerSessionStat
     @Override
     public void processDataSm(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-        logger.info("Received data_sm in OUTBOUND state, send negative response");
+        log.info("Received data_sm in OUTBOUND state, send negative response");
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
             SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader.getSequenceNumber());
     }

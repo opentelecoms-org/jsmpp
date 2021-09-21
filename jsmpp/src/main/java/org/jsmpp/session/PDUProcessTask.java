@@ -14,8 +14,6 @@
  */
 package org.jsmpp.session;
 
-import static org.jsmpp.SMPPConstant.PDU_HEADER_LENGTH;
-
 import java.io.IOException;
 
 import org.jsmpp.SMPPConstant;
@@ -29,7 +27,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class PDUProcessTask implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(PDUProcessTask.class);
+    private static final Logger log = LoggerFactory.getLogger(PDUProcessTask.class);
     
     private final Command pduHeader;
     private final byte[] pdu;
@@ -54,11 +52,11 @@ public class PDUProcessTask implements Runnable {
         try {
             if (pduHeader.getCommandId() == SMPPConstant.CID_ENQUIRE_LINK
                 || pduHeader.getCommandId() == SMPPConstant.CID_ENQUIRE_LINK_RESP) {
-                if (logger.isTraceEnabled()) {
-                    logger.trace("Received PDU {}", HexUtil.convertBytesToHexString(pdu, 0, pdu.length));
+                if (log.isTraceEnabled()) {
+                    log.trace("Received PDU {}", HexUtil.convertBytesToHexString(pdu, 0, pdu.length));
                 }
-            } else if (logger.isDebugEnabled()) {
-                logger.debug("Received PDU {}", HexUtil.convertBytesToHexString(pdu, 0, pdu.length));
+            } else if (log.isDebugEnabled()) {
+                log.debug("Received PDU {}", HexUtil.convertBytesToHexString(pdu, 0, pdu.length));
             }
 
             switch (pduHeader.getCommandId()) {

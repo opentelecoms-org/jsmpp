@@ -20,8 +20,6 @@ import org.jsmpp.PDUStringException;
 import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.Command;
-import org.jsmpp.bean.DeliverSm;
-import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.ResponseHandler;
 import org.jsmpp.util.DefaultDecomposer;
@@ -39,53 +37,61 @@ import org.slf4j.LoggerFactory;
  *
  */
 class SMPPSessionBoundRX extends SMPPSessionBound implements SMPPSessionState {
-    private static final Logger logger = LoggerFactory.getLogger(SMPPSessionBoundRX.class);
+    private static final Logger log = LoggerFactory.getLogger(SMPPSessionBoundRX.class);
     private static final PDUDecomposer pduDecomposer = new DefaultDecomposer();
-    
+
+    @Override
     public SessionState getSessionState() {
         return SessionState.BOUND_RX;
     }
-    
+
+    @Override
     public void processDeliverSm(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         processDeliverSm0(pduHeader, pdu, responseHandler);
     }
 
+    @Override
     public void processSubmitSmResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
                 SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
                         .getSequenceNumber());
     }
-    
+
+    @Override
     public void processSubmitMultiResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
                 SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
                         .getSequenceNumber());
     }
-    
+
+    @Override
     public void processQuerySmResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
                 SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
                         .getSequenceNumber());
     }
-    
+
+    @Override
     public void processCancelSmResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
                 SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
                         .getSequenceNumber());
     }
-    
+
+    @Override
     public void processReplaceSmResp(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) throws IOException {
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
                 SMPPConstant.STAT_ESME_RINVBNDSTS, pduHeader
                         .getSequenceNumber());
     }
-    
+
+    @Override
     public void processAlertNotification(Command pduHeader, byte[] pdu,
             ResponseHandler responseHandler) {
         processAlertNotification0(pduHeader, pdu, responseHandler);
@@ -97,27 +103,12 @@ class SMPPSessionBoundRX extends SMPPSessionBound implements SMPPSessionState {
             AlertNotification alertNotification = pduDecomposer.alertNotification(pdu);
             responseHandler.processAlertNotification(alertNotification);
         } catch (PDUStringException e) {
-            logger.error("Failed decomposing alert_notification", e);
+            log.error("Failed decomposing alert_notification", e);
             // there is no response for alert notification 
         }
     }
-    
-    static void processDeliverSm0(Command pduHeader, byte[] pdu,
-            ResponseHandler responseHandler) throws IOException {
-        try {
-            DeliverSm deliverSm = pduDecomposer.deliverSm(pdu);
-            responseHandler.processDeliverSm(deliverSm);
-            responseHandler.sendDeliverSmResp(0, pduHeader.getSequenceNumber(), deliverSm.getId());
-        } catch (PDUStringException e) {
-            logger.error("Failed decomposing deliver_sm", e);
-            responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
-                .getSequenceNumber());
-        } catch (ProcessRequestException e) {
-            logger.error("Failed processing deliver_sm", e);
-            responseHandler.sendDeliverSmResp(e.getErrorCode(), pduHeader.getSequenceNumber(), null);
-        }
-    }
 
+    @Override
     public void processBroadcastSmResp(Command pduHeader, byte[] pdu,
                                     ResponseHandler responseHandler) throws IOException {
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
@@ -125,6 +116,7 @@ class SMPPSessionBoundRX extends SMPPSessionBound implements SMPPSessionState {
                 .getSequenceNumber());
     }
 
+    @Override
     public void processCancelBroadcastSmResp(Command pduHeader, byte[] pdu,
                                        ResponseHandler responseHandler) throws IOException {
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),
@@ -132,6 +124,7 @@ class SMPPSessionBoundRX extends SMPPSessionBound implements SMPPSessionState {
                 .getSequenceNumber());
     }
 
+    @Override
     public void processQueryBroadcastSmResp(Command pduHeader, byte[] pdu,
                                             ResponseHandler responseHandler) throws IOException {
         responseHandler.sendNegativeResponse(pduHeader.getCommandId(),

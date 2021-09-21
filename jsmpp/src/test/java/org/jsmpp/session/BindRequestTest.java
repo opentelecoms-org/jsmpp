@@ -30,51 +30,43 @@ import org.testng.annotations.Test;
 public class BindRequestTest {
     private DummyResponseHandler responseHandler;
     private BindRequest bindRequest;
-    
+
     @BeforeMethod
     public void setUp() {
         responseHandler = new DummyResponseHandler();
         bindRequest = new BindRequest(1, BindType.BIND_TRX, null, null, null, null, null, null, null, responseHandler);
     }
-    
+
     @Test(groups="checkintest")
     public void testSucceedAccept() {
         try {
             bindRequest.accept("sys");
-        } catch (PDUStringException e) {
-            fail("Should success accepting bind request");
-        } catch (IllegalStateException e1) {
-            fail("Should success accepting bind request");
-        } catch (IOException e1) {
+        } catch (PDUStringException | IllegalStateException | IOException e1) {
             fail("Should success accepting bind request");
         }
     }
-    
+
     @Test(groups="checkintest")
     public void testFailedAccept() {
         responseHandler.closeConnection();
         try {
             bindRequest.accept("sys");
             fail("Should throw IOException");
-        } catch (PDUStringException e) {
-            fail("Should throw IOException");
-        } catch (IllegalStateException e) {
+        } catch (PDUStringException | IllegalStateException e) {
             fail("Should throw IOException");
         } catch (IOException e) {
         }
     }
-    
+
     @Test(groups="checkintest")
     public void testSucceedReject() {
         try {
             bindRequest.reject(-1);
-        } catch (IllegalStateException e1) {
-            fail("Should succes rejecting bind request");
-        } catch (IOException e1) {
+        } catch (IllegalStateException | IOException e) {
             fail("Should succes rejecting bind request");
         }
     }
-    
+
     @Test(groups="checkintest")
     public void testFailedReject() {
         responseHandler.closeConnection();
@@ -86,36 +78,28 @@ public class BindRequestTest {
         } catch (IOException e) {
         }
     }
-    
+
     @Test(groups="checkintest")
     public void testNonSingleAccept() {
         try {
             bindRequest.accept("sys");
-        } catch (PDUStringException e) {
-            fail("Should success accepting bind request");
-        } catch (IllegalStateException e1) {
-            fail("Should success accepting bind request");
-        } catch (IOException e1) {
+        } catch (PDUStringException | IllegalStateException | IOException e) {
             fail("Should success accepting bind request");
         }
         try {
             bindRequest.accept("sys");
             fail("Should fail on 2nd accept");
-        } catch (PDUStringException e) {
+        } catch (PDUStringException | IOException e) {
             fail("Should throw IllegalStateException");
         } catch (IllegalStateException e) {
-        } catch (IOException e) {
-            fail("Should throw IllegalStateException");
         }
     }
-    
+
     @Test(groups="checkintest")
     public void testNonSingleReject() {
         try {
             bindRequest.reject(-1);
-        } catch (IllegalStateException e1) {
-            fail("Should success rejecting bind request");
-        } catch (IOException e1) {
+        } catch (IllegalStateException|IOException e1) {
             fail("Should success rejecting bind request");
         }
         try {
@@ -126,5 +110,5 @@ public class BindRequestTest {
             fail("Should throw IllegalStateException");
         }
     }
-    
+
 }

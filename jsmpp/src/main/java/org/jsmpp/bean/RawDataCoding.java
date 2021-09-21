@@ -14,6 +14,8 @@
  */
 package org.jsmpp.bean;
 
+import java.util.Objects;
+
 /**
  * Raw data coding is intended for reserved coding groups.
  * 
@@ -37,27 +39,22 @@ public class RawDataCoding implements DataCoding {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + value;
-        return result;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof RawDataCoding)) {
+            return false;
+        }
+        final RawDataCoding that = (RawDataCoding) o;
+        return value == that.value;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        RawDataCoding other = (RawDataCoding)obj;
-        if (value != other.value)
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hash(value);
     }
-    
+
     @Override
     public String toString() {
         return "DataCoding:" + (0xff & toByte());

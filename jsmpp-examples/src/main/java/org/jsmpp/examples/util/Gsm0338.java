@@ -55,10 +55,7 @@ public class Gsm0338 {
    * Verify is the java char is an GSM 03.38 character of the Basic Character Set including the extension
    */
   public static boolean isBasicEncodeable(char javaChar) {
-    if (inBasicCharacterSet(javaChar) || inBasicCharacterSetExtension(javaChar)) {
-      return true;
-    }
-    return false;
+    return (inBasicCharacterSet(javaChar) || inBasicCharacterSetExtension(javaChar));
   }
 
   public static boolean inBasicCharacterSet(char javaChar) {

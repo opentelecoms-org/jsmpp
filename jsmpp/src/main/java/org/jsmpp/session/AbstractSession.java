@@ -60,7 +60,6 @@ public abstract class AbstractSession implements Session, Closeable {
     private int queueCapacity = 100;
 
     private final String sessionId = generateSessionId();
-    private InterfaceVersion interfaceVersion = InterfaceVersion.IF_34;
     private int enquireLinkTimer = 60000;
     private long transactionTimer = 2000;
 
@@ -93,12 +92,12 @@ public abstract class AbstractSession implements Session, Closeable {
 
     @Override
     public void setInterfaceVersion(InterfaceVersion interfaceVersion) {
-        this.interfaceVersion = interfaceVersion;
+        sessionContext().setInterfaceVersion(interfaceVersion);
     }
 
     @Override
     public InterfaceVersion getInterfaceVersion() {
-        return interfaceVersion;
+        return sessionContext().getInterfaceVersion();
     }
 
     @Override
