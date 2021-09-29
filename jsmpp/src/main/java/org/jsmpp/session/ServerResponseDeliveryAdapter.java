@@ -14,8 +14,6 @@
  */
 package org.jsmpp.session;
 
-import org.jsmpp.bean.SubmitMultiResult;
-
 /**
  * It's abstract adapter class that receive event of response delivery, an
  * implementation of {@link ServerResponseDeliveryListener}.
@@ -33,7 +31,7 @@ public abstract class ServerResponseDeliveryAdapter implements
      * @see org.jsmpp.session.ServerResponseDeliveryListener#onSubmitSmResponseSent(org.jsmpp.util.MessageId, org.jsmpp.session.SMPPServerSession)
      */
     public void onSubmitSmRespSent(SubmitSmResult submitSmResult,
-            SMPPServerSession source) {}
+                                   SMPPServerSession source) {}
     
     /* (non-Javadoc)
      * @see org.jsmpp.session.ServerResponseDeliveryListener#onSubmitSmResponseError(org.jsmpp.util.MessageId, java.lang.Exception, org.jsmpp.session.SMPPServerSession)
@@ -42,13 +40,13 @@ public abstract class ServerResponseDeliveryAdapter implements
             SMPPServerSession source) {}
     
     /* (non-Javadoc)
-     * @see org.jsmpp.session.ServerResponseDeliveryListener#onSubmitMultiResponseSent(org.jsmpp.bean.SubmitMultiResult, org.jsmpp.session.SMPPServerSession)
+     * @see org.jsmpp.session.ServerResponseDeliveryListener#onSubmitMultiResponseSent(org.jsmpp.session.SubmitMultiResult, org.jsmpp.session.SMPPServerSession)
      */
     public void onSubmitMultiRespSent(SubmitMultiResult submitMultiResult,
             SMPPServerSession source) {}
     
     /* (non-Javadoc)
-     * @see org.jsmpp.session.ServerResponseDeliveryListener#onSubmitMultiResposnseError(org.jsmpp.bean.SubmitMultiResult, java.lang.Exception, org.jsmpp.session.SMPPServerSession)
+     * @see org.jsmpp.session.ServerResponseDeliveryListener#onSubmitMultiResposnseError(org.jsmpp.session.SubmitMultiResult, java.lang.Exception, org.jsmpp.session.SMPPServerSession)
      */
     public void onSubmitMultiRespError(
             SubmitMultiResult submitMultiResult, Exception e,

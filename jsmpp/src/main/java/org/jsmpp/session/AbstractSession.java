@@ -53,7 +53,7 @@ public abstract class AbstractSession implements Session, Closeable {
     private static final Logger log = LoggerFactory.getLogger(AbstractSession.class);
     private static final Random random = new Random();
 
-    private final Map<Integer, PendingResponse<Command>> pendingResponse = new ConcurrentHashMap<>();
+    private final Map<Integer, PendingResponse<Command>> pendingResponses = new ConcurrentHashMap<>();
     private final Sequence sequence = new Sequence(1);
     private final PDUSender pduSender;
     private int pduProcessorDegree = 3;
@@ -82,7 +82,7 @@ public abstract class AbstractSession implements Session, Closeable {
     }
 
     protected PendingResponse<Command> removePendingResponse(int sequenceNumber) {
-        return pendingResponse.remove(sequenceNumber);
+        return pendingResponses.remove(sequenceNumber);
     }
 
     @Override
@@ -129,7 +129,7 @@ public abstract class AbstractSession implements Session, Closeable {
 
     @Override
     public int getUnacknowledgedRequests() {
-        return this.pendingResponse.size();
+        return this.pendingResponses.size();
     }
 
     @Override
@@ -185,18 +185,19 @@ public abstract class AbstractSession implements Session, Closeable {
     }
 
     /**
-     * Get the capacity of the working queue for PDU processing. The default is 100.
+     * Get the capacity of the receiving working queue for PDU processing. The default is 100.
+     * If the all threads (pduProcessorDegree) are busy, they are waiting in the work queue.
      *
-     * @return the ThreadPoolExecutor queue capacity.
+     * @return the ThreadPoolExecutor work queue capacity.
      */
     public int getQueueCapacity() {
         return queueCapacity;
     }
 
     /**
-     * Set the capacity of the working queue for PDU processing.
+     * Set the capacity of the receiving work queue for PDU processing.
      *
-     * @param queueCapacity the capacity of the working queue for receive and transmit
+     * @param queueCapacity the capacity of the work queue for receive working threads
      */
     public void setQueueCapacity(final int queueCapacity) {
         this.queueCapacity = queueCapacity;
@@ -316,7 +317,7 @@ public abstract class AbstractSession implements Session, Closeable {
 
         int seqNum = sequence.nextValue();
         PendingResponse<Command> pendingResp = new PendingResponse<>(timeout);
-        pendingResponse.put(seqNum, pendingResp);
+        pendingResponses.put(seqNum, pendingResp);
         try {
             task.executeTask(connection().getOutputStream(), seqNum);
         } catch (IOException e) {
@@ -325,7 +326,7 @@ public abstract class AbstractSession implements Session, Closeable {
             if("enquire_link".equals(task.getCommandName())) {
                 log.info("Ignore failure of sending enquire_link, wait to see if connection is restored");
             } else {
-                pendingResponse.remove(seqNum);
+                pendingResponses.remove(seqNum);
                 close();
                 throw e;
             }
@@ -341,13 +342,13 @@ public abstract class AbstractSession implements Session, Closeable {
                 log.debug("{} response with sequence_number {} received for session {}", task.getCommandName(), seqNum, sessionId);
             }
         } catch (ResponseTimeoutException e) {
-            pendingResponse.remove(seqNum);
+            pendingResponses.remove(seqNum);
             throw new ResponseTimeoutException("No response after waiting for "
                     + timeout + " millis when executing "
                     + task.getCommandName() + " with session " + sessionId
                     + " and sequence_number " + seqNum, e);
         } catch (InvalidResponseException e) {
-            pendingResponse.remove(seqNum);
+            pendingResponses.remove(seqNum);
             throw e;
         }
 

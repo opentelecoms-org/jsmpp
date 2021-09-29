@@ -25,61 +25,59 @@ import org.jsmpp.bean.QueryBroadcastSm;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SubmitMulti;
-import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.extra.ProcessRequestException;
 
 /**
  * @author uudashr
- *
  */
 public interface ServerResponseHandler extends GenericServerResponseHandler {
 
-    void sendSubmitSmResponse(SubmitSmResult submitSmResult, int sequenceNumber)
-            throws IOException;
+  void sendSubmitSmResponse(SubmitSmResult submitSmResult, int sequenceNumber)
+      throws IOException;
 
-    void processBind(Bind bind);
+  void processBind(Bind bind);
 
-    SubmitSmResult processSubmitSm(SubmitSm submitSm)
-        throws ProcessRequestException;
-    
-    SubmitMultiResult processSubmitMulti(SubmitMulti submitMulti)
-        throws ProcessRequestException;
-    
-    void sendSubmitMultiResponse(SubmitMultiResult submitMultiResult,
-            int sequenceNumber) throws IOException;
-    
-    QuerySmResult processQuerySm(QuerySm querySm)
-            throws ProcessRequestException;
+  SubmitSmResult processSubmitSm(SubmitSm submitSm)
+      throws ProcessRequestException;
 
-    void sendQuerySmResp(String messageId, String finalDate,
-            MessageState messageState, byte errorCode, int sequenceNumber)
-            throws IOException;
+  SubmitMultiResult processSubmitMulti(SubmitMulti submitMulti)
+      throws ProcessRequestException;
 
-    void processCancelSm(CancelSm cancelSm) throws ProcessRequestException;
-    
-    void sendCancelSmResp(int sequenceNumber) throws IOException;
-    
-    void processReplaceSm(ReplaceSm replaceSm) throws ProcessRequestException;
-    
-    void sendReplaceSmResp(int sequenceNumber) throws IOException;
+  void sendSubmitMultiResponse(SubmitMultiResult submitMultiResult,
+                               int sequenceNumber) throws IOException;
 
-    BroadcastSmResult processBroadcastSm(BroadcastSm broadcastSm)
-        throws ProcessRequestException;
+  QuerySmResult processQuerySm(QuerySm querySm)
+      throws ProcessRequestException;
 
-    void sendBroadcastSmResp(BroadcastSmResult broadcastSmResult, int sequenceNumber)
-        throws IOException;
+  void sendQuerySmResp(String messageId, String finalDate,
+                       MessageState messageState, byte errorCode, int sequenceNumber)
+      throws IOException;
 
-    void processCancelBroadcastSm(CancelBroadcastSm cancelBroadcastSm)
-        throws ProcessRequestException;
+  void processCancelSm(CancelSm cancelSm) throws ProcessRequestException;
 
-    void sendCancelBroadcastSmResp(int sequenceNumber)
-        throws IOException;
+  void sendCancelSmResp(int sequenceNumber) throws IOException;
 
-    QueryBroadcastSmResult processQueryBroadcastSm(QueryBroadcastSm queryBroadcastSm)
-        throws ProcessRequestException;
+  void processReplaceSm(ReplaceSm replaceSm) throws ProcessRequestException;
 
-    void sendQueryBroadcastSmResp(QueryBroadcastSmResult queryBroadcastSmResult, int sequenceNumber)
-        throws IOException;
+  void sendReplaceSmResp(int sequenceNumber) throws IOException;
+
+  BroadcastSmResult processBroadcastSm(BroadcastSm broadcastSm)
+      throws ProcessRequestException;
+
+  void sendBroadcastSmResp(BroadcastSmResult broadcastSmResult, int sequenceNumber)
+      throws IOException;
+
+  void processCancelBroadcastSm(CancelBroadcastSm cancelBroadcastSm)
+      throws ProcessRequestException;
+
+  void sendCancelBroadcastSmResp(int sequenceNumber)
+      throws IOException;
+
+  QueryBroadcastSmResult processQueryBroadcastSm(QueryBroadcastSm queryBroadcastSm)
+      throws ProcessRequestException;
+
+  void sendQueryBroadcastSmResp(QueryBroadcastSmResult queryBroadcastSmResult, int sequenceNumber)
+      throws IOException;
 
 }

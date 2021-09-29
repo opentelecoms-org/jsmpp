@@ -24,8 +24,8 @@ import org.jsmpp.util.MessageId;
  * Result of query broadcast short message.
  *
  * @author pmoerenhout
- * @version 2.4.0
- * @since 2.4.0
+ * @version 3.0.0
+ * @since 3.0.0
  */
 public class QueryBroadcastSmResult {
 

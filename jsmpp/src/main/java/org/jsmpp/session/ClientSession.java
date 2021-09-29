@@ -26,7 +26,6 @@ import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceIfPresentFlag;
-import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.ResponseTimeoutException;
@@ -75,14 +74,14 @@ public interface ClientSession extends Session, AutoCloseable {
      * @throws IOException if there is an I/O error found.
      */
     SubmitSmResult submitShortMessage(String serviceType, TypeOfNumber sourceAddrTon,
-            NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
-            TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
-            String destinationAddr, ESMClass esmClass, byte protocolId,
-            byte priorityFlag, String scheduleDeliveryTime,
-            String validityPeriod, RegisteredDelivery registeredDelivery,
-            byte replaceIfPresentFlag, DataCoding dataCoding,
-            byte smDefaultMsgId, byte[] shortMessage,
-            OptionalParameter... optionalParameters) throws PDUException,
+                                      NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
+                                      TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
+                                      String destinationAddr, ESMClass esmClass, byte protocolId,
+                                      byte priorityFlag, String scheduleDeliveryTime,
+                                      String validityPeriod, RegisteredDelivery registeredDelivery,
+                                      byte replaceIfPresentFlag, DataCoding dataCoding,
+                                      byte smDefaultMsgId, byte[] shortMessage,
+                                      OptionalParameter... optionalParameters) throws PDUException,
             ResponseTimeoutException, InvalidResponseException,
             NegativeResponseException, IOException;
 

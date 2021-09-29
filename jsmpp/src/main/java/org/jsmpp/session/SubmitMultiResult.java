@@ -12,10 +12,13 @@
  * limitations under the License.
  *
  */
-package org.jsmpp.bean;
+package org.jsmpp.session;
 
 import java.util.Arrays;
 import java.util.Objects;
+
+import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.UnsuccessDelivery;
 
 /**
  * @author uudashr
@@ -23,13 +26,17 @@ import java.util.Objects;
  */
 public class SubmitMultiResult {
 
-    private String messageId;
-    private UnsuccessDelivery[] unsuccessDeliveries;
+    private final String messageId;
+    private final UnsuccessDelivery[] unsuccessDeliveries;
+    /* OptionalParameters were added in SMPP 5.0 */
+    private final OptionalParameter[] optionalParameters;
     
     public SubmitMultiResult(String messageId,
-            UnsuccessDelivery... unsuccessDeliveries) {
+                             UnsuccessDelivery[] unsuccessDeliveries,
+                             OptionalParameter[] optionalParameters ) {
         this.messageId = messageId;
         this.unsuccessDeliveries = unsuccessDeliveries;
+        this.optionalParameters = optionalParameters;
     }
 
     public String getMessageId() {
@@ -40,24 +47,28 @@ public class SubmitMultiResult {
         return unsuccessDeliveries;
     }
 
+    public OptionalParameter[] getOptionalParameters() {
+        return optionalParameters;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof SubmitMultiResult)) {
             return false;
         }
         final SubmitMultiResult that = (SubmitMultiResult) o;
-        return Objects.equals(messageId, that.messageId) &&
-            Arrays.equals(unsuccessDeliveries, that.unsuccessDeliveries);
+        return Objects.equals(messageId, that.messageId) && Arrays.equals(unsuccessDeliveries,
+            that.unsuccessDeliveries) && Arrays.equals(optionalParameters, that.optionalParameters);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(messageId);
         result = 31 * result + Arrays.hashCode(unsuccessDeliveries);
+        result = 31 * result + Arrays.hashCode(optionalParameters);
         return result;
     }
-
 }

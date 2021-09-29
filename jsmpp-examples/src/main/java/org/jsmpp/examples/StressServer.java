@@ -45,9 +45,9 @@ import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.SubmitMulti;
-import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BindRequest;
@@ -60,6 +60,7 @@ import org.jsmpp.session.SMPPServerSessionListener;
 import org.jsmpp.session.ServerMessageReceiverListener;
 import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
+import org.jsmpp.session.SubmitMultiResult;
 import org.jsmpp.session.SubmitSmResult;
 import org.jsmpp.util.AbsoluteTimeFormatter;
 import org.jsmpp.util.DeliveryReceiptState;
@@ -79,7 +80,7 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
     private static final int DEFAULT_MAX_WAIT_BIND = 5;
     private static final int DEFAULT_MAX_DELIVERIES = 5;
     private static final int DEFAULT_PORT = 8056;
-    private static final int DEFAULT_PROCESSOR_DEGREE = 3;
+    private static final int DEFAULT_PROCESSOR_DEGREE = 10;
     private static final String CANCELSM_NOT_IMPLEMENTED = "cancel_sm not implemented";
     private static final String REPLACESM_NOT_IMPLEMENTED = "replace_sm not implemented";
     private final ExecutorService waitBindExecService = Executors.newFixedThreadPool(DEFAULT_MAX_WAIT_BIND);
@@ -153,7 +154,7 @@ public class StressServer implements Runnable, ServerMessageReceiverListener {
         MessageId messageId = messageIDGenerator.newMessageId();
         log.info("Receiving submit_multi {}, and return message id {}", new String(submitMulti.getShortMessage()), messageId.getValue());
         requestCounter.incrementAndGet();
-        return new SubmitMultiResult(messageId.getValue());
+        return new SubmitMultiResult(messageId.getValue(), new UnsuccessDelivery[0], new OptionalParameter[0]);
     }
 
     @Override

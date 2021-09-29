@@ -10,7 +10,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package org.jsmpp.session;
 
@@ -54,7 +53,6 @@ import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SubmitMulti;
-import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.NegativeResponseException;
@@ -74,17 +72,18 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
     private static final String MESSAGE_RECEIVER_LISTENER_IS_NULL = "Received {} but message receiver listener is null";
     private static final String NO_MESSAGE_RECEIVER_LISTENER_REGISTERED = "No message receiver listener registered";
 
-    private static final Logger logger = LoggerFactory.getLogger(SMPPServerSession.class);
+    private static final Logger log = LoggerFactory.getLogger(SMPPServerSession.class);
 
     private final Connection conn;
     private final DataInputStream in;
     private final OutputStream out;
     
     private final PDUReader pduReader;
-    
+
     private SMPPServerSessionContext sessionContext = new SMPPServerSessionContext(this);
     private final ServerResponseHandler responseHandler = new ResponseHandlerImpl();
-    
+
+    private PDUReaderWorker pduReaderWorker;
     private ServerMessageReceiverListener messageReceiverListener;
     private ServerResponseDeliveryListener responseDeliveryListener;
     private BindRequestReceiver bindRequestReceiver = new BindRequestReceiver(responseHandler);
@@ -142,7 +141,8 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             TimeoutException {
         SessionState currentSessionState = getSessionState();
         if (currentSessionState.equals(SessionState.OPEN)) {
-            new PDUReaderWorker(getPduProcessorDegree(), getQueueCapacity()).start();
+            pduReaderWorker = new PDUReaderWorker(getPduProcessorDegree(), getQueueCapacity());
+            pduReaderWorker.start();
             try {
                 return bindRequestReceiver.waitForRequest(timeout);
             } catch (IllegalStateException e) {
@@ -204,7 +204,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptSubmitSm(submitSm, this);
         }
-        logger.warn("Received submit_sm but MessageReceiverListener is null, returning SMPP error");
+        log.warn("Received submit_sm but MessageReceiverListener is null, returning SMPP error");
         throw new ProcessRequestException(NO_MESSAGE_RECEIVER_LISTENER_REGISTERED,
                 SMPPConstant.STAT_ESME_RX_R_APPN);
     }
@@ -213,7 +213,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptSubmitMulti(submitMulti, this);
         }
-        logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "submit_multi");
+        log.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "submit_multi");
         throw new ProcessRequestException(NO_MESSAGE_RECEIVER_LISTENER_REGISTERED,
                 SMPPConstant.STAT_ESME_RX_R_APPN);
     }
@@ -222,7 +222,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptQuerySm(querySm, this);
         }
-        logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "query_sm");
+        log.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "query_sm");
         throw new ProcessRequestException(NO_MESSAGE_RECEIVER_LISTENER_REGISTERED, 
                 SMPPConstant.STAT_ESME_RX_R_APPN);
     }
@@ -231,7 +231,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             messageReceiverListener.onAcceptReplaceSm(replaceSm, this);
         } else {
-            logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "replace_sm");
+            log.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "replace_sm");
             throw new ProcessRequestException(NO_MESSAGE_RECEIVER_LISTENER_REGISTERED,
                     SMPPConstant.STAT_ESME_RX_R_APPN);
         }
@@ -241,7 +241,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             messageReceiverListener.onAcceptCancelSm(cancelSm, this);
         } else {
-            logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "cancel_sm");
+            log.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "cancel_sm");
             throw new ProcessRequestException(NO_MESSAGE_RECEIVER_LISTENER_REGISTERED,
                     SMPPConstant.STAT_ESME_RX_R_APPN);
         }
@@ -251,7 +251,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptBroadcastSm(broadcastSm, this);
         }
-        logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "broadcast_sm");
+        log.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "broadcast_sm");
         throw new ProcessRequestException(NO_MESSAGE_RECEIVER_LISTENER_REGISTERED,
             SMPPConstant.STAT_ESME_RX_R_APPN);
     }
@@ -260,7 +260,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             messageReceiverListener.onAcceptCancelBroadcastSm(cancelBroadcastSm, this);
         } else {
-            logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "cancel_broadcast_sm");
+            log.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "cancel_broadcast_sm");
             throw new ProcessRequestException(NO_MESSAGE_RECEIVER_LISTENER_REGISTERED,
                 SMPPConstant.STAT_ESME_RX_R_APPN);
         }
@@ -270,7 +270,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         if (messageReceiverListener != null) {
             return messageReceiverListener.onAcceptQueryBroadcastSm(queryBroadcastSm, this);
         }
-        logger.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "query_broadcast_sm");
+        log.warn(MESSAGE_RECEIVER_LISTENER_IS_NULL, "query_broadcast_sm");
         throw new ProcessRequestException(NO_MESSAGE_RECEIVER_LISTENER_REGISTERED,
             SMPPConstant.STAT_ESME_RX_R_APPN);
     }
@@ -331,6 +331,14 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             ServerResponseDeliveryListener responseDeliveryListener) {
         this.responseDeliveryListener = responseDeliveryListener;
     }
+
+    /*
+     * Return an integer between 0 and 100.
+     * Only used for SMPP 5.0
+     */
+    public int getCongestionRatio() {
+        return pduReaderWorker.getCongestionRatio();
+    }
     
     private class ResponseHandlerImpl implements ServerResponseHandler {
 
@@ -372,7 +380,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             try {
                 pduSender().sendBindResp(out, bindType.responseCommandId(), sequenceNumber, systemId, interfaceVersion);
             } catch (PDUStringException e) {
-                logger.error("Failed sending bind response", e);
+                log.error("Failed sending bind response", e);
             }
         }
 
@@ -388,7 +396,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 SubmitSmResult submitSmResult = fireAcceptSubmitSm(submitSm);
                 if (submitSmResult == null) {
                     String msg = "Invalid submitSmResult, shouldn't null value. " + ServerMessageReceiverListener.class + "#onAcceptSubmitSm(SubmitSm) return null value";
-                    logger.error(msg);
+                    log.error(msg);
                     throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
                 }
                 return submitSmResult;
@@ -398,7 +406,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             }
             catch(Exception e) {
                 String msg = "Invalid runtime exception thrown when processing submit_sm";
-                logger.error(msg, e);
+                log.error(msg, e);
                 throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
             }
         }
@@ -415,7 +423,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                  * There should be no PDUStringException thrown since creation
                  * of MessageId should be save.
                  */
-                logger.error("Failed sending submit_sm_resp", e);
+                log.error("Failed sending submit_sm_resp", e);
                 fireSubmitSmRespFailed(submitSmResult, e);
             } catch (IOException | RuntimeException e) {
                 fireSubmitSmRespFailed(submitSmResult, e);
@@ -430,7 +438,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 return fireAcceptSubmitMulti(submitMulti);
             } catch(Exception e) {
                 String msg = "Invalid runtime exception thrown when processing SubmitMultiSm";
-                logger.error(msg, e);
+                log.error(msg, e);
                 throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
             }
         }
@@ -449,7 +457,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                  * There should be no PDUStringException thrown since creation
                  * of the response parameter has been validated.
                  */
-                logger.error("Failed sending submit_multi_resp", e);
+                log.error("Failed sending submit_multi_resp", e);
                 fireSubmitMultiRespSentError(submitMultiResult, e);
             } catch (IOException | RuntimeException e) {
                 fireSubmitMultiRespSentError(submitMultiResult, e);
@@ -464,7 +472,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 return fireAcceptQuerySm(querySm);
             } catch(Exception e) {
                 String msg = "Invalid runtime exception thrown when processing query_sm";
-                logger.error(msg, e);
+                log.error(msg, e);
                 throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
             }
         }
@@ -480,7 +488,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                  * There should be no PDUStringException thrown since creation
                  * of parsed messageId has been validated.
                  */
-                logger.error("Failed sending query_sm_resp", e);
+                log.error("Failed sending query_sm_resp", e);
             }
         }
 
@@ -491,7 +499,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 return fireAcceptDataSm(dataSm);
             } catch(Exception e) {
                 String msg = "Invalid runtime exception thrown when processing data_sm";
-                logger.error(msg, e);
+                log.error(msg, e);
                 throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
             }
         }
@@ -508,7 +516,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                  * There should be no PDUStringException thrown since creation
                  * of MessageId should be save.
                  */
-                logger.error("Failed sending data_sm_resp", e);
+                log.error("Failed sending data_sm_resp", e);
             }
         }
 
@@ -519,7 +527,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 fireAcceptCancelSm(cancelSm);
             } catch(Exception e) {
                 String msg = "Invalid runtime exception thrown when processing cancel_sm";
-                logger.error(msg, e);
+                log.error(msg, e);
                 throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
             }
         }
@@ -536,7 +544,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 fireAcceptReplaceSm(replaceSm);
             } catch(Exception e) {
                 String msg = "Invalid runtime exception thrown when processing replace_sm";
-                logger.error(msg, e);
+                log.error(msg, e);
                 throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
             }
         }
@@ -552,7 +560,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 BroadcastSmResult broadcastSmResult = fireAcceptBroadcastSm(broadcastSm);
                 if (broadcastSmResult == null) {
                     String msg = "Invalid broadcastSmResult, shouldn't null value. " + ServerMessageReceiverListener.class + "#onAcceptBroadcastSm(broadcastSm) return null value";
-                    logger.error(msg);
+                    log.error(msg);
                     throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
                 }
                 return broadcastSmResult;
@@ -562,7 +570,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             }
             catch (Exception e) {
                 String msg = "Invalid runtime exception thrown when processing broadcast_sm";
-                logger.error(msg, e);
+                log.error(msg, e);
                 throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
             }
         }
@@ -578,7 +586,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                  * There should be no PDUStringException thrown since creation
                  * of MessageId should be save.
                  */
-                logger.error("Failed sending broadcast_sm_resp", e);
+                log.error("Failed sending broadcast_sm_resp", e);
             }
         }
 
@@ -589,7 +597,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 fireAcceptCancelBroadcastSm(cancelBroadcastSm);
             } catch(Exception e) {
                 String msg = "Invalid runtime exception thrown when processing cancel_broadcast_sm";
-                logger.error(msg, e);
+                log.error(msg, e);
                 throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
             }
         }
@@ -606,13 +614,13 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 QueryBroadcastSmResult queryBroadcastSmResult = fireAcceptQueryBroadcastSm(queryBroadcastSm);
                 if (queryBroadcastSmResult == null) {
                     String msg = "Invalid queryBroadcastSmResult, shouldn't null value. " + ServerMessageReceiverListener.class + "#onAcceptQueryBroadcastSm(broadcastSm) return null value";
-                    logger.error(msg);
+                    log.error(msg);
                     throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
                 }
                 return queryBroadcastSmResult;
             } catch(Exception e) {
                 String msg = "Invalid runtime exception thrown when processing query_broadcast_sm";
-                logger.error(msg, e);
+                log.error(msg, e);
                 throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RSYSERR);
             }
         }
@@ -628,13 +636,15 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                  * There should be no PDUStringException thrown since creation
                  * of MessageId should be save.
                  */
-                logger.error("Sending failed query_broadcast_sm_resp", e);
+                log.error("Sending failed query_broadcast_sm_resp", e);
             }
         }
     }
     
     private class PDUReaderWorker extends Thread {
         private ThreadPoolExecutor pduExecutor;
+        private LinkedBlockingQueue<Runnable> workQueue;
+        private int queueCapacity;
         private Runnable onIOExceptionTask = new Runnable() {
             @Override
             public void run() {
@@ -644,18 +654,20 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
 
         private PDUReaderWorker(final int pduProcessorDegree, final int queueCapacity) {
             super("PDUReaderWorker-" + getSessionId());
+            this.queueCapacity = queueCapacity;
+            workQueue = new LinkedBlockingQueue<>(queueCapacity);
             pduExecutor = new ThreadPoolExecutor(pduProcessorDegree, pduProcessorDegree,
                 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(queueCapacity), new RejectedExecutionHandler() {
+                workQueue, new RejectedExecutionHandler() {
                 @Override
                 public void rejectedExecution(final Runnable runnable, final ThreadPoolExecutor executor) {
-                    logger.info("Receiving queue is full, please increasing queue capacity, and/or let other side obey the window size");
+                    log.info("Receiving queue is full, please increasing queue capacity, and/or let other side obey the window size");
                     Command pduHeader = ((PDUProcessServerTask)runnable).getPduHeader();
                     if ((pduHeader.getCommandId() & SMPPConstant.MASK_CID_RESP) == SMPPConstant.MASK_CID_RESP) {
                         try {
                             boolean success = executor.getQueue().offer(runnable, 60000, TimeUnit.MILLISECONDS);
                             if (!success){
-                                logger.warn("Offer to queue failed for {}", pduHeader);
+                                log.warn("Offer to queue failed for {}", pduHeader);
                             }
                         }
                         catch (InterruptedException e){
@@ -679,10 +691,10 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 pduExecutor.awaitTermination(getTransactionTimer(), TimeUnit.MILLISECONDS);
             }
             catch (InterruptedException e) {
-                logger.warn("Interrupted while waiting for PDU executor pool to finish");
+                log.warn("Interrupted while waiting for PDU executor pool to finish");
                 Thread.currentThread().interrupt();
             }
-            logger.debug("{} stopped", getName());
+            log.debug("{} stopped", getName());
         }
         
         private void readPDU() {
@@ -690,41 +702,41 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             try {
                 pduHeader = pduReader.readPDUHeader(in);
                 byte[] pdu = pduReader.readPDU(in, pduHeader);
-                
+
                 PDUProcessServerTask task = new PDUProcessServerTask(pduHeader,
                         pdu, sessionContext.getStateProcessor(),
                         sessionContext, responseHandler, onIOExceptionTask);
                 pduExecutor.execute(task);
             } catch (QueueMaxException e) {
-                logger.info("Notify other side to throttle: {} ({} threads active)", e.getMessage(), pduExecutor.getActiveCount());
+                log.info("Notify other side to throttle: {} ({} threads active)", e.getMessage(), pduExecutor.getActiveCount());
                 try {
                     responseHandler.sendNegativeResponse(pduHeader.getCommandId(), SMPPConstant.STAT_ESME_RTHROTTLED, pduHeader.getSequenceNumber());
                 } catch (IOException ioe) {
-                    logger.warn("Failed sending negative response: {}", ioe.getMessage());
+                    log.warn("Failed sending negative response: {}", ioe.getMessage());
                     close();
                 }
             } catch (InvalidCommandLengthException e) {
-                logger.warn("Received invalid command length: {}", e.getMessage());
+                log.warn("Received invalid command length: {}", e.getMessage());
                 try {
                     pduSender().sendGenericNack(out, SMPPConstant.STAT_ESME_RINVCMDLEN, 0);
                 } catch (IOException ee) {
-                    logger.warn("Failed sending generic_nack", ee);
+                    log.warn("Failed sending generic_nack", ee);
                 }
                 unbindAndClose();
             } catch (SocketTimeoutException e) {
                 notifyNoActivity();
             } catch (EOFException e) {
                 if (sessionContext.getSessionState() == SessionState.UNBOUND){
-                    logger.info("Unbound session {} socket closed", getSessionId());
+                    log.info("Unbound session {} socket closed", getSessionId());
                 } else {
-                    logger.warn("Session {} socket closed unexpected", getSessionId());
+                    log.warn("Session {} socket closed unexpected", getSessionId());
                 }
                 close();
             } catch (IOException e) {
-                logger.info("Reading PDU session {} in state {}: {}", getSessionId(), getSessionState(), e.getMessage());
+                log.info("Reading PDU session {} in state {}: {}", getSessionId(), getSessionState(), e.getMessage());
                 close();
             } catch (RuntimeException e) {
-                logger.warn("Runtime error while reading", e);
+                log.warn("Runtime error while reading", e);
                 close();
             }
         }
@@ -733,8 +745,16 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
          * Notify for no activity.
          */
         private void notifyNoActivity() {
-            logger.debug("No activity notified, sending enquire_link");
+            log.debug("No activity notified, sending enquire_link");
             enquireLinkSender.enquireLink();
+        }
+
+        /*
+         * Return an integer between 0 (Idle) and 100 (Congested/Maximum Load). Only used for SMPP 5.0.
+         */
+        public int getCongestionRatio() {
+            return ((80 * pduExecutor.getActiveCount()) / pduExecutor.getMaximumPoolSize()) +
+                ((20 * workQueue.size()) / queueCapacity);
         }
     }
     
@@ -750,7 +770,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 try {
                     connection().setSoTimeout(source.getEnquireLinkTimer());
                 } catch (IOException e) {
-                    logger.error("Failed setting so_timeout for session timer", e);
+                    log.error("Failed setting so_timeout for session timer", e);
                 }
                 enquireLinkSender.start();
             }

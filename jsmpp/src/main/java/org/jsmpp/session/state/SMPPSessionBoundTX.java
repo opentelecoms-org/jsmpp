@@ -23,7 +23,6 @@ import org.jsmpp.bean.CancelBroadcastSmResp;
 import org.jsmpp.bean.CancelSmResp;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.InterfaceVersion;
-import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.QueryBroadcastSmResp;
 import org.jsmpp.bean.QuerySmResp;
 import org.jsmpp.bean.ReplaceSmResp;
@@ -63,8 +62,6 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
         if (pendingResp != null) {
             try {
                 SubmitSmResp resp = pduDecomposer.submitSmResp(pdu);
-                OptionalParameter.Congestion_state c = resp.getOptionalParameter(OptionalParameter.Congestion_state.class);
-                int cs = c.getValue() & 0xff;
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
                 log.error("Failed decomposing submit_sm_resp", e);

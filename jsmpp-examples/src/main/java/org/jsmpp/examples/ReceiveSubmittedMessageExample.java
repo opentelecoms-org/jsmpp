@@ -28,7 +28,7 @@ import org.jsmpp.bean.QueryBroadcastSm;
 import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SubmitMulti;
-import org.jsmpp.bean.SubmitMultiResult;
+import org.jsmpp.session.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.extra.ProcessRequestException;
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ReceiveSubmittedMessageExample {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReceiveSubmittedMessageExample.class);
+    private static final Logger log = LoggerFactory.getLogger(ReceiveSubmittedMessageExample.class);
     
     public static void main(String[] args) {
         try {
@@ -67,7 +67,7 @@ public class ReceiveSubmittedMessageExample {
                 @Override
                 public SubmitSmResult onAcceptSubmitSm(SubmitSm submitSm, SMPPServerSession source)
                         throws ProcessRequestException {
-                    LOGGER.info("Receiving message : {}", new String(submitSm.getShortMessage()));
+                    log.info("Receiving message : {}", new String(submitSm.getShortMessage()));
                     // need message_id to response submit_sm, optional parameters add in SMPP 5.0
                     return new SubmitSmResult(messageIdGenerator.newMessageId(), new OptionalParameter[0]);
                 }
@@ -83,7 +83,7 @@ public class ReceiveSubmittedMessageExample {
                 public SubmitMultiResult onAcceptSubmitMulti(
                         SubmitMulti submitMulti, SMPPServerSession source)
                         throws ProcessRequestException {
-                    return new SubmitMultiResult(messageIdGenerator.newMessageId().getValue(), new UnsuccessDelivery[]{});
+                    return new SubmitMultiResult(messageIdGenerator.newMessageId().getValue(), new UnsuccessDelivery[]{}, new OptionalParameter[]{});
                 }
 
                 @Override
@@ -124,7 +124,7 @@ public class ReceiveSubmittedMessageExample {
                 }
             };
             
-            LOGGER.info("Listening ...");
+            log.info("Listening ...");
             SMPPServerSessionListener sessionListener = new SMPPServerSessionListener(8056);
             // set all default ServerMessageReceiverListener for all accepted SMPPServerSessionListener
             sessionListener.setMessageReceiverListener(messageReceiverListener);
@@ -132,17 +132,17 @@ public class ReceiveSubmittedMessageExample {
             // accepting connection, session still in OPEN state
             SMPPServerSession session = sessionListener.accept();
             // or we can set for each accepted session session.setMessageReceiverListener(messageReceiverListener)
-            LOGGER.info("Accept connection");
+            log.info("Accept connection");
             
             try {
                 BindRequest request = session.waitForBind(5000);
-                LOGGER.info("Receive bind request for system id {} and password {}", request.getSystemId(), request.getPassword());
+                log.info("Receive bind request for system id {} and password {}", request.getSystemId(), request.getPassword());
                 
                 if ("test".equals(request.getSystemId()) &&
                         "test".equals(request.getPassword())) {
                     
                     // accepting request and send bind response immediately
-                    LOGGER.info("Accepting bind request");
+                    log.info("Accepting bind request");
                     request.accept("sys");
 
                     try {
@@ -152,21 +152,21 @@ public class ReceiveSubmittedMessageExample {
                         Thread.currentThread().interrupt();
                     }
                 } else {
-                    LOGGER.info("Rejecting bind request");
+                    log.info("Rejecting bind request");
                     request.reject(SMPPConstant.STAT_ESME_RINVPASWD);
                 }
             } catch (TimeoutException e) {
-                LOGGER.error("No binding request made after 5000 millisecond", e);
+                log.error("No binding request made after 5000 millisecond", e);
             }
 
-            LOGGER.info("Closing session");
+            log.info("Closing session");
             session.unbindAndClose();
-            LOGGER.info("Closing session listener");
+            log.info("Closing session listener");
             sessionListener.close();
         } catch (PDUStringException e) {
-            LOGGER.error("PDUString exception", e);
+            log.error("PDUString exception", e);
         } catch (IOException e) {
-            LOGGER.error("I/O exception", e);
+            log.error("I/O exception", e);
         }
     }
 }

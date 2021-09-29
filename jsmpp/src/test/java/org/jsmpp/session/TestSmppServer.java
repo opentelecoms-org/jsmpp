@@ -49,9 +49,9 @@ import org.jsmpp.bean.QuerySm;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SubmitMulti;
-import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.util.AbsoluteTimeFormatter;
@@ -183,7 +183,7 @@ public class TestSmppServer implements Runnable, ServerMessageReceiverListener {
     MessageId messageId = messageIDGenerator.newMessageId();
     log.info("Receiving submit_multi {}, and return message id {}", new String(submitMulti.getShortMessage()), messageId.getValue());
     increment("submit_multi");
-    return new SubmitMultiResult(messageId.getValue());
+    return new SubmitMultiResult(messageId.getValue(), new UnsuccessDelivery[0], new OptionalParameter[0]);
   }
 
   @Override

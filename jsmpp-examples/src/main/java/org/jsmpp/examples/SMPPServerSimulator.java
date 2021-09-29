@@ -47,7 +47,7 @@ import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.SubmitMulti;
-import org.jsmpp.bean.SubmitMultiResult;
+import org.jsmpp.session.SubmitMultiResult;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.bean.UnsuccessDelivery;
@@ -95,10 +95,10 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
     private final ExecutorService execService = Executors.newFixedThreadPool(5);
     private final ExecutorService execServiceDelReceipt = Executors.newFixedThreadPool(100);
     private final MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
-    private boolean useSsl;
-    private int port;
-    private String systemId;
-    private String password;
+    private final boolean useSsl;
+    private final int port;
+    private final String systemId;
+    private final String password;
 
     public SMPPServerSimulator(boolean useSsl, int port, String systemId, String password) {
         this.useSsl = useSsl;
@@ -109,6 +109,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
 
     @Override
     public void run() {
+        boolean running = true;
         /*
          * for SSL use the SSLServerSocketConnectionFactory() or DefaultSSLServerSocketConnectionFactory()
          */
@@ -119,7 +120,7 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
              * for SSL use the SSLServerSocketConnectionFactory() or DefaultSSLServerSocketConnectionFactory()
              */
             log.info("Listening on port {}{}", port, useSsl ? " (SSL)" : "");
-            while (true) {
+            while (running) {
                 SMPPServerSession serverSession = sessionListener.accept();
                 log.info("Accepted connection with session {}", serverSession.getSessionId());
                 serverSession.setMessageReceiverListener(this);
@@ -140,9 +141,10 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
                 } catch (InterruptedException e){
                     log.info("Interrupted WaitBind task: {}", e.getMessage());
                     Thread.currentThread().interrupt();
-                    throw new RuntimeException(e);
+                    running = false;
                 } catch (ExecutionException e){
                     log.info("Exception on execute WaitBind task: {}", e.getMessage());
+                    running = false;
                 } catch (NegativeResponseException | ResponseTimeoutException | PDUException | InvalidResponseException e){
                     log.info("Could not send deliver_sm: {}", e.getMessage());
                 }
@@ -169,7 +171,13 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
         /*
          * SMPP 5.0 allows the following optional parameters (SMPP 5.0 paragraph 4.2.5):
          * additional_status_info_text, delivery_failure_reason, dpf_result, network_error_code
+         * Add the congestionState for SMPP 5.0 connections.
          */
+        if (source.getInterfaceVersion().value() >= InterfaceVersion.IF_50.value()) {
+            final int congestionRatio = source.getCongestionRatio();
+            OptionalParameter.Congestion_state congestionState = new OptionalParameter.Congestion_state((byte) congestionRatio);
+            return new SubmitSmResult(messageId, new OptionalParameter[]{ congestionState });
+        }
         return new SubmitSmResult(messageId, new OptionalParameter[0]);
     }
 
@@ -189,7 +197,17 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
                 || SMSCDeliveryReceipt.SUCCESS_FAILURE.containedIn(submitMulti.getRegisteredDelivery())) {
             execServiceDelReceipt.execute(new DeliveryReceiptTask(source, submitMulti, messageId));
         }
-        return new SubmitMultiResult(messageId.getValue(), new UnsuccessDelivery[0]);
+        /*
+         * SMPP 5.0 allows the following optional parameters (SMPP 5.0 paragraph 4.2.5):
+         * additional_status_info_text, delivery_failure_reason, dpf_result, network_error_code
+         * Add the congestionState for SMPP 5.0 connections.
+         */
+        if (source.getInterfaceVersion().value() >= InterfaceVersion.IF_50.value()) {
+            final int congestionRatio = source.getCongestionRatio();
+            OptionalParameter.Congestion_state congestionState = new OptionalParameter.Congestion_state((byte) congestionRatio);
+            return new SubmitMultiResult(messageId.getValue(), new UnsuccessDelivery[0], new OptionalParameter[]{ congestionState });
+        }
+        return new SubmitMultiResult(messageId.getValue(), new UnsuccessDelivery[0], new OptionalParameter[0]);
     }
 
     @Override
@@ -239,8 +257,8 @@ public class SMPPServerSimulator extends ServerResponseDeliveryAdapter implement
     private static class WaitBindTask implements Callable<Boolean> {
         private final SMPPServerSession serverSession;
         private final long timeout;
-        private String systemId;
-        private String password;
+        private final String systemId;
+        private final String password;
 
         public WaitBindTask(SMPPServerSession serverSession, long timeout, String systemId, String password) {
             this.serverSession = serverSession;

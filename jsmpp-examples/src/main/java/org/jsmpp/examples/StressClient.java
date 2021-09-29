@@ -26,12 +26,17 @@ import org.jsmpp.PDUException;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.DataCodings;
 import org.jsmpp.bean.ESMClass;
+import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.OptionalParameters;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.ResponseTimeoutException;
+import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.SMPPSession;
+import org.jsmpp.session.SubmitSmResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,8 +70,8 @@ public class StressClient implements Runnable {
   private static final Integer DEFAULT_PORT = 8056;
   private static final Long DEFAULT_TRANSACTIONTIMER = 2000L;
   private static final Integer DEFAULT_BULK_SIZE = 100000;
-  private static final Integer DEFAULT_PROCESSOR_DEGREE = 3;
-  private static final Integer DEFAULT_MAX_OUTSTANDING = 10;
+  private static final Integer DEFAULT_PROCESSOR_DEGREE = 10;
+  private static final Integer DEFAULT_MAX_OUTSTANDING = 100;
 
   private AtomicInteger requestCounter = new AtomicInteger();
   private AtomicInteger totalRequestCounter = new AtomicInteger();
@@ -172,9 +177,13 @@ public class StressClient implements Runnable {
     new TrafficWatcherThread().start();
 
     try {
-      smppSession.connectAndBind(host, port, BindType.BIND_TRX, systemId,
-          password, "cln", TypeOfNumber.UNKNOWN,
-          NumberingPlanIndicator.UNKNOWN, null);
+      final BindParameter bindParameter = new BindParameter(BindType.BIND_TRX, systemId,
+          password, "CLN", TypeOfNumber.UNKNOWN,
+          NumberingPlanIndicator.UNKNOWN, null, InterfaceVersion.IF_50);
+      smppSession.connectAndBind(host, port, bindParameter);
+//      smppSession.connectAndBind(host, port, BindType.BIND_TRX, systemId,
+//          password, "cln", TypeOfNumber.UNKNOWN,
+//          NumberingPlanIndicator.UNKNOWN, null);
       log.info("Bound to {}:{}", host, port);
 
       log.info("Starting to send {} bulk messages", bulkSize);
@@ -202,7 +211,7 @@ public class StressClient implements Runnable {
         try {
           requestCounter.incrementAndGet();
           long startTime = System.currentTimeMillis();
-          smppSession.submitShortMessage(null, TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, sourceAddr,
+          SubmitSmResult submitSmResult = smppSession.submitShortMessage(null, TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, sourceAddr,
               TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, destinationAddr,
               new ESMClass(), (byte) 0, (byte) 0,
               null, null, new RegisteredDelivery(0),
@@ -210,6 +219,11 @@ public class StressClient implements Runnable {
               DataCodings.ZERO,
               (byte) 0, message.getBytes());
           log.info("There are {} unacknowledged requests", smppSession.getUnacknowledgedRequests());
+
+          OptionalParameter.Congestion_state congestionState = OptionalParameters.get(OptionalParameter.Congestion_state.class, submitSmResult.getOptionalParameters());
+          if (congestionState != null) {
+            log.info("Remote congestion state: {}", (congestionState.getValue() & 0xff));
+          }
 
           long delay = System.currentTimeMillis() - startTime;
           responseCounter.incrementAndGet();

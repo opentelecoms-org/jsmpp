@@ -14,8 +14,6 @@
  */
 package org.jsmpp.session;
 
-import org.jsmpp.bean.SubmitMultiResult;
-
 /**
  * This is listener will be used by {@link SMPPServerSession} to notify a user
  * when a response has been sent.

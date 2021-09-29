@@ -163,7 +163,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
   /**
    * Wait for outbind request.
    *
-   * @param timeout is the timeout.
+   * @param timeout is the timeout in milliseconds.
    * @return the {@link OutbindRequest}.
    * @throws IllegalStateException if this invocation of this method has been made or invoke when state is not OPEN.
    * @throws TimeoutException      if the timeout has been reach and {@link SMPPOutboundServerSession} are no more valid because the connection will be close
@@ -376,8 +376,10 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
    * @author uudashr
    */
   private class PDUReaderWorker extends Thread {
-    // start with serial execution of pdu processing, when the session is bound the pool will be enlarge up to the PduProcessorDegree
+    // start with serial execution of pdu processing, when the session is bound the pool will be enlarged up to the PduProcessorDegree
     private ThreadPoolExecutor pduExecutor;
+    private LinkedBlockingQueue<Runnable> workQueue;
+    private int queueCapacity;
     private Runnable onIOExceptionTask = new Runnable() {
       @Override
       public void run() {
@@ -387,9 +389,11 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
 
     PDUReaderWorker(final int queueCapacity) {
       super("PDUReaderWorker-" + getSessionId());
+      this.queueCapacity = queueCapacity;
+      workQueue = new LinkedBlockingQueue<>(queueCapacity);
       pduExecutor = new ThreadPoolExecutor(1, 1,
           0L, TimeUnit.MILLISECONDS,
-          new LinkedBlockingQueue<Runnable>(queueCapacity), new RejectedExecutionHandler() {
+          workQueue, new RejectedExecutionHandler() {
         @Override
         public void rejectedExecution(final Runnable runnable, final ThreadPoolExecutor executor) {
           log.info("Receiving queue is full, please increasing queue capacity, and/or let other side obey the window size");
@@ -484,6 +488,14 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
         enquireLinkSender.enquireLink();
       }
     }
+
+    /*
+     * Return an integer between 0 (Idle) and 100 (Congested/Maximum Load). Only used for SMPP 5.0.
+     */
+    public int getCongestionRatio() {
+      return ((80 * pduExecutor.getActiveCount()) / pduExecutor.getMaximumPoolSize()) +
+          ((20 * workQueue.size()) / queueCapacity);
+    }
   }
 
   private class BoundSessionStateListener implements SessionStateListener {
@@ -500,10 +512,10 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
         } catch (IOException e) {
           log.error("Failed setting so_timeout for session timer", e);
         }
-
-        log.debug("Changing processor degree to {}", getPduProcessorDegree());
-        pduReaderWorker.pduExecutor.setMaximumPoolSize(getPduProcessorDegree());
-        pduReaderWorker.pduExecutor.setCorePoolSize(getPduProcessorDegree());
+        int pduProcessorDegree = getPduProcessorDegree();
+        log.debug("Changing processor degree to {}", pduProcessorDegree);
+        pduReaderWorker.pduExecutor.setMaximumPoolSize(pduProcessorDegree);
+        pduReaderWorker.pduExecutor.setCorePoolSize(pduProcessorDegree);
       }
     }
   }
