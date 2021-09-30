@@ -92,9 +92,9 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             SessionStateListener sessionStateListener,
             ServerMessageReceiverListener messageReceiverListener,
             ServerResponseDeliveryListener responseDeliveryListener,
-            int pduProcessorDegree) {
+            int pduProcessorDegree, int queueCapacity) {
         this(conn, sessionStateListener, messageReceiverListener,
-                responseDeliveryListener, pduProcessorDegree,
+                responseDeliveryListener, pduProcessorDegree, queueCapacity,
                 new SynchronizedPDUSender(new DefaultPDUSender()),
                 new DefaultPDUReader());
     }
@@ -103,7 +103,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             SessionStateListener sessionStateListener,
             ServerMessageReceiverListener messageReceiverListener,
             ServerResponseDeliveryListener responseDeliveryListener,
-            int pduProcessorDegree, PDUSender pduSender, PDUReader pduReader) {
+            int pduProcessorDegree, int queueCapacity, PDUSender pduSender, PDUReader pduReader) {
         super(pduSender);
         this.conn = conn;
         this.messageReceiverListener = messageReceiverListener;
@@ -115,6 +115,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         addSessionStateListener(new BoundSessionStateListener());
         addSessionStateListener(sessionStateListener);
         setPduProcessorDegree(pduProcessorDegree);
+        setQueueCapacity(queueCapacity);
         sessionContext.open();
     }
     
@@ -674,7 +675,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                             Thread.currentThread().interrupt();
                         }
                     } else {
-                        throw new QueueMaxException("Queue capacity " + queueCapacity + " exceeded");
+                        throw new QueueMaxException("Receiving queue capacity " + queueCapacity + " exceeded");
                     }
                 }
             });

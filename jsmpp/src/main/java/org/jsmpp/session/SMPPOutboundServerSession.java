@@ -408,7 +408,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
               Thread.currentThread().interrupt();
             }
           } else {
-            throw new QueueMaxException("Queue capacity " + queueCapacity + " exceeded");
+            throw new QueueMaxException("Receiving queue capacity " + queueCapacity + " exceeded");
           }
         }
       });
