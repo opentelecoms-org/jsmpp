@@ -498,6 +498,8 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 throws ProcessRequestException {
             try {
                 return fireAcceptDataSm(dataSm);
+            } catch(ProcessRequestException e) {
+		throw e;
             } catch(Exception e) {
                 String msg = "Invalid runtime exception thrown when processing data_sm";
                 log.error(msg, e);
