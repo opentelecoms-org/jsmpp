@@ -466,7 +466,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         DataSmResp resp = new DataSmResp();
         SequentialBytesReader reader = new SequentialBytesReader(data);
         assignHeader(resp, reader);
-        if (resp.getCommandLength() > PDU_HEADER_LENGTH && resp.getCommandStatus() == STAT_ESME_ROK) {
+        if (resp.getCommandLength() > PDU_HEADER_LENGTH) {
             resp.setMessageId(reader.readCString());
             StringValidator.validateString(resp.getMessageId(),
                     StringParameter.MESSAGE_ID);
