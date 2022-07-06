@@ -41,6 +41,7 @@ import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.ESMClass;
+import org.jsmpp.bean.EnquireLink;
 import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
@@ -382,6 +383,11 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
     @Override
     public void processBind(Bind bind) {
       SMPPOutboundSession.this.bindRequestReceiver.notifyAcceptBind(bind);
+    }
+
+    @Override
+    public void processEnquireLink(final EnquireLink enquireLink) {
+
     }
   }
 

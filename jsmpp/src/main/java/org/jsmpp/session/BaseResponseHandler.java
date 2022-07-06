@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
+import org.jsmpp.bean.EnquireLink;
 import org.jsmpp.extra.PendingResponse;
 import org.jsmpp.extra.ProcessRequestException;
 
@@ -74,6 +75,8 @@ public interface BaseResponseHandler {
      * @throws IOException if an IO error occur.
      */
     void sendUnbindResp(int sequenceNumber) throws IOException;
+
+    void processEnquireLink(EnquireLink enquireLink);
     
     /**
      * Process the data short message.

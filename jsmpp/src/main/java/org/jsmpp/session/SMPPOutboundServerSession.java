@@ -41,6 +41,7 @@ import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
+import org.jsmpp.bean.EnquireLink;
 import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
@@ -283,6 +284,15 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
   }
 
   private class OutboundServerResponseHandlerImpl implements OutboundServerResponseHandler {
+
+    @Override
+    public void processEnquireLink(final EnquireLink enquireLink) {
+      try {
+        fireAcceptEnquirelink(enquireLink);
+      } catch (Exception e) {
+        log.error("Invalid runtime exception thrown when processing enquire_link", e);
+      }
+    }
 
     @Override
     public void processOutbind(Outbind outbind) throws ProcessRequestException {

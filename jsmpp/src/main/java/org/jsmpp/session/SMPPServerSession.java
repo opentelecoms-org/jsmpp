@@ -44,6 +44,7 @@ import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.ESMClass;
+import org.jsmpp.bean.EnquireLink;
 import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.NumberingPlanIndicator;
@@ -639,6 +640,11 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                  */
                 log.error("Sending failed query_broadcast_sm_resp", e);
             }
+        }
+
+        @Override
+        public void processEnquireLink(final EnquireLink enquireLink) {
+
         }
     }
     

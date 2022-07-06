@@ -23,6 +23,7 @@ import org.jsmpp.bean.CancelBroadcastSm;
 import org.jsmpp.bean.CancelSm;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
+import org.jsmpp.bean.EnquireLink;
 import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.MessageState;
 import org.jsmpp.bean.QueryBroadcastSm;
@@ -175,6 +176,11 @@ class DummyResponseHandler implements ServerResponseHandler {
     @Override
     public void sendQueryBroadcastSmResp(final QueryBroadcastSmResult queryBroadcastSmResult, final int sequenceNumber)
         throws IOException {
+    }
+
+    @Override
+    public void processEnquireLink(final EnquireLink enquireLink) {
+
     }
 
     void closeConnection() {

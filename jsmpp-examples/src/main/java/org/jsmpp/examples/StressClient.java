@@ -10,11 +10,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 package org.jsmpp.examples;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -35,6 +35,7 @@ import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.NegativeResponseException;
 import org.jsmpp.extra.ResponseTimeoutException;
 import org.jsmpp.session.BindParameter;
+import org.jsmpp.session.DataSmResult;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.session.SubmitSmResult;
 import org.slf4j.Logger;
@@ -72,15 +73,6 @@ public class StressClient implements Runnable {
   private static final Integer DEFAULT_BULK_SIZE = 100000;
   private static final Integer DEFAULT_PROCESSOR_DEGREE = 10;
   private static final Integer DEFAULT_MAX_OUTSTANDING = 100;
-
-  private AtomicInteger requestCounter = new AtomicInteger();
-  private AtomicInteger totalRequestCounter = new AtomicInteger();
-  private AtomicInteger responseCounter = new AtomicInteger();
-  private AtomicInteger totalResponseCounter = new AtomicInteger();
-  private AtomicLong maxDelay = new AtomicLong();
-  private ExecutorService execService;
-  private SMPPSession smppSession = new SMPPSession();
-  private AtomicBoolean exit = new AtomicBoolean();
   private final int id;
   private final String host;
   private final int port;
@@ -89,6 +81,14 @@ public class StressClient implements Runnable {
   private final String password;
   private final String sourceAddr;
   private final String destinationAddr;
+  private AtomicInteger requestCounter = new AtomicInteger();
+  private AtomicInteger totalRequestCounter = new AtomicInteger();
+  private AtomicInteger responseCounter = new AtomicInteger();
+  private AtomicInteger totalResponseCounter = new AtomicInteger();
+  private AtomicLong maxDelay = new AtomicLong();
+  private ExecutorService execService;
+  private SMPPSession smppSession = new SMPPSession();
+  private AtomicBoolean exit = new AtomicBoolean();
 
   public StressClient(int id, String host, int port, int bulkSize,
                       String systemId, String password, String sourceAddr,
@@ -188,7 +188,7 @@ public class StressClient implements Runnable {
 
       log.info("Starting to send {} bulk messages", bulkSize);
       for (int i = 0; i < bulkSize && !exit.get(); i++) {
-        execService.execute(newSendTask("Hello " + id + " idx=" + i));
+        execService.execute(newSendTaskData("Hello " + id + " idx=" + i));
       }
       while (!exit.get()) {
         try {
@@ -220,7 +220,8 @@ public class StressClient implements Runnable {
               (byte) 0, message.getBytes());
           log.info("There are {} unacknowledged requests", smppSession.getUnacknowledgedRequests());
 
-          OptionalParameter.Congestion_state congestionState = OptionalParameters.get(OptionalParameter.Congestion_state.class, submitSmResult.getOptionalParameters());
+          OptionalParameter.Congestion_state congestionState = OptionalParameters.get(OptionalParameter.Congestion_state.class,
+              submitSmResult.getOptionalParameters());
           if (congestionState != null) {
             log.info("Remote congestion state: {}", (congestionState.getValue() & 0xff));
           }
@@ -230,7 +231,42 @@ public class StressClient implements Runnable {
           if (maxDelay.get() < delay) {
             maxDelay.set(delay);
           }
-        } catch (PDUException|ResponseTimeoutException|InvalidResponseException|NegativeResponseException|IOException e) {
+        } catch (PDUException | ResponseTimeoutException | InvalidResponseException | NegativeResponseException | IOException e) {
+          log.error("Failed submit short message '" + message + "'", e);
+          shutdown();
+        }
+      }
+    };
+  }
+
+  private Runnable newSendTaskData(final String message) {
+    return new Runnable() {
+      public void run() {
+        try {
+          requestCounter.incrementAndGet();
+          long startTime = System.currentTimeMillis();
+          OptionalParameter.Message_payload messagePayload = new OptionalParameter.Message_payload(message.getBytes(StandardCharsets.US_ASCII));
+          DataSmResult dataSmResult = smppSession.dataShortMessage(null, TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, sourceAddr,
+              TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, destinationAddr,
+              new ESMClass(), new RegisteredDelivery(0),
+              DataCodings.ZERO, new OptionalParameter[]{ messagePayload });
+          log.info("There are {} unacknowledged requests", smppSession.getUnacknowledgedRequests());
+
+          log.info("dataSmresult {}", dataSmResult.getMessageId());
+          log.info("dataSmresult {}", dataSmResult.getOptionalParameters());
+
+          OptionalParameter.Congestion_state congestionState = OptionalParameters.get(OptionalParameter.Congestion_state.class,
+              dataSmResult.getOptionalParameters());
+          if (congestionState != null) {
+            log.info("Remote congestion state: {}", (congestionState.getValue() & 0xff));
+          }
+
+          long delay = System.currentTimeMillis() - startTime;
+          responseCounter.incrementAndGet();
+          if (maxDelay.get() < delay) {
+            maxDelay.set(delay);
+          }
+        } catch (PDUException | ResponseTimeoutException | InvalidResponseException | NegativeResponseException | IOException e) {
           log.error("Failed submit short message '" + message + "'", e);
           shutdown();
         }

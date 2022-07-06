@@ -30,6 +30,7 @@ import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DataSmResp;
 import org.jsmpp.bean.ESMClass;
+import org.jsmpp.bean.EnquireLink;
 import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
@@ -296,6 +297,13 @@ public abstract class AbstractSession implements Session, Closeable {
             return messageReceiverListener.onAcceptDataSm(dataSm, this);
         } else {
             throw new ProcessRequestException("MessageReceiverListener hasn't been set yet", SMPPConstant.STAT_ESME_RX_R_APPN);
+        }
+    }
+
+    protected void fireAcceptEnquirelink(final EnquireLink enquireLink) {
+        GenericMessageReceiverListener messageReceiverListener = messageReceiverListener();
+        if (messageReceiverListener != null) {
+            messageReceiverListener.onAcceptEnquireLink(enquireLink, this);
         }
     }
 

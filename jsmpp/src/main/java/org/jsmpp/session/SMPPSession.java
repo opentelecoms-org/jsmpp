@@ -44,6 +44,7 @@ import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.ESMClass;
+import org.jsmpp.bean.EnquireLink;
 import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
@@ -530,6 +531,15 @@ public class SMPPSession extends AbstractSession implements ClientSession {
   }
 
   private class ResponseHandlerImpl implements ResponseHandler {
+
+    @Override
+    public void processEnquireLink(EnquireLink enquireLink) {
+      try {
+        fireAcceptEnquirelink(enquireLink);
+      } catch (Exception e) {
+        log.error("Invalid runtime exception thrown when processing enquire_link", e);
+      }
+    }
 
     @Override
     public void processDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {

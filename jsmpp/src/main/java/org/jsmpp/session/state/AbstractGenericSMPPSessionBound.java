@@ -22,6 +22,7 @@ import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.DataSmResp;
+import org.jsmpp.bean.EnquireLink;
 import org.jsmpp.bean.EnquireLinkResp;
 import org.jsmpp.bean.InterfaceVersion;
 import org.jsmpp.bean.UnbindResp;
@@ -56,6 +57,8 @@ abstract class AbstractGenericSMPPSessionBound implements GenericSMPPSessionStat
     @Override
     public void processEnquireLink(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
+        EnquireLink enquireLink = pduDecomposer.enquireLink(pdu);
+        responseHandler.processEnquireLink(enquireLink);
         responseHandler.sendEnquireLinkResp(pduHeader.getSequenceNumber());
     }
 

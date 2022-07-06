@@ -1,7 +1,7 @@
 Changes:
 
 3.0.0
-- Require Java 7 as minimum.
+- Require Java 8 as minimum.
 - Implement all SMPP 5.0 requests, optional parameters, etc.
 - Support for SMPP 3.3
 - Fix first message immediately after outbind.
@@ -9,6 +9,8 @@ Changes:
 - Remove obsolete classes.
 - Remove log4j dependency and use slf4j-simple in examples.
 - Set the log level of enquire_link messages to trace.
+- Add protocol identifier factories.
+- Update dependency Slf4j to 1.7.36.
 
 2.3.11
 - Also set the socket timeout for server sessions for enquiry link timer.

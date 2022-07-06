@@ -15,6 +15,7 @@
 package org.jsmpp.session;
 
 import org.jsmpp.bean.DataSm;
+import org.jsmpp.bean.EnquireLink;
 import org.jsmpp.extra.ProcessRequestException;
 
 /**
@@ -42,4 +43,7 @@ public interface GenericMessageReceiverListener {
      *         command_status for the response.
      */
     DataSmResult onAcceptDataSm(DataSm dataSm, Session source) throws ProcessRequestException;
+
+    default void onAcceptEnquireLink(EnquireLink enquireLink, Session source) {
+    }
 }
