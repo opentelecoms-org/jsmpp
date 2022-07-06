@@ -152,7 +152,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>${maven-source-plugin}</version>
+                    <version>${maven-source-plugin.version}</version>
                     <executions>
                         <execution>
                             <phase>verify</phase>
