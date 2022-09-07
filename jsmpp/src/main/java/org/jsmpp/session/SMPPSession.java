@@ -429,7 +429,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
     QuerySmResp resp = (QuerySmResp) executeSendCommand(task,
         getTransactionTimer());
 
-    if (resp.getMessageId().equals(messageId)) {
+    if (resp.getMessageId() != null && resp.getMessageId().equals(messageId)) {
       return new QuerySmResult(resp.getFinalDate(), resp
           .getMessageState(), resp.getErrorCode());
     } else {
