@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * This is an object that used to communicate with an ESME. It hide all un-needed SMPP operation that might harm if the user code use it such as:
+ * This is an object that used to communicate with an ESME. It hides all un-needed SMPP operation that might harm if the user code use it such as:
  *
  * <ul>
  * <li>DELIVER_SM_RESP, should be called only as response to DELIVER_SM</li>
@@ -101,7 +101,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
   private BindRequestReceiver bindRequestReceiver = new BindRequestReceiver(responseHandler);
 
   /**
-   * Default constructor of {@link SMPPOutboundSession}. The next action might be connect and bind to a destination message center.
+   * Default constructor of {@link SMPPOutboundSession}. The next action might be, connect and bind to a destination message center.
    *
    * @see #connectAndOutbind(String, int, String, String)
    */
@@ -525,7 +525,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
         } catch (IOException e) {
           log.error("Failed setting so_timeout for enquire link timer", e);
         }
-      } else if (newState.isBound()) {
+
         int pduProcessorDegree = getPduProcessorDegree();
         log.debug("Changing processor degree to {}", pduProcessorDegree);
         pduReaderWorker.pduExecutor.setMaximumPoolSize(pduProcessorDegree);

@@ -766,7 +766,7 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         @Override
         public void onStateChange(SessionState newState, SessionState oldState, Session source) {
             if (newState.equals(SessionState.OPEN)) {
-                /**
+                /*
                  * We need to set SO_TIMEOUT to session timer so when timeout occurs,
                  * a SocketTimeoutException will be raised. When Exception raised we
                  * can send an enquireLinkCommand.

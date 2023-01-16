@@ -21,7 +21,6 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -390,12 +389,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
     private ThreadPoolExecutor pduExecutor;
     private LinkedBlockingQueue<Runnable> workQueue;
     private int queueCapacity;
-    private Runnable onIOExceptionTask = new Runnable() {
-      @Override
-      public void run() {
-        close();
-      }
-    };
+    private Runnable onIOExceptionTask = () -> close();
 
     PDUReaderWorker(final int queueCapacity) {
       super("PDUReaderWorker-" + getSessionId());
@@ -403,25 +397,22 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
       workQueue = new LinkedBlockingQueue<>(queueCapacity);
       pduExecutor = new ThreadPoolExecutor(1, 1,
           0L, TimeUnit.MILLISECONDS,
-          workQueue, new RejectedExecutionHandler() {
-        @Override
-        public void rejectedExecution(final Runnable runnable, final ThreadPoolExecutor executor) {
-          log.info("Receiving queue is full, please increasing queue capacity, and/or let other side obey the window size");
-          Command pduHeader = ((PDUProcessServerTask) runnable).getPduHeader();
-          if ((pduHeader.getCommandId() & SMPPConstant.MASK_CID_RESP) == SMPPConstant.MASK_CID_RESP) {
-            try {
-              boolean success = executor.getQueue().offer(runnable, 60000, TimeUnit.MILLISECONDS);
-              if (!success) {
-                log.warn("Offer to queue failed for {}", pduHeader);
+          workQueue, (runnable, executor) -> {
+            log.info("Receiving queue is full, please increasing queue capacity, and/or let other side obey the window size");
+            Command pduHeader = ((PDUProcessServerTask) runnable).getPduHeader();
+            if ((pduHeader.getCommandId() & SMPPConstant.MASK_CID_RESP) == SMPPConstant.MASK_CID_RESP) {
+              try {
+                boolean success = executor.getQueue().offer(runnable, 60000, TimeUnit.MILLISECONDS);
+                if (!success) {
+                  log.warn("Offer to queue failed for {}", pduHeader);
+                }
+              } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
               }
-            } catch (InterruptedException e) {
-              Thread.currentThread().interrupt();
+            } else {
+              throw new QueueMaxException("Receiving queue capacity " + queueCapacity + " exceeded");
             }
-          } else {
-            throw new QueueMaxException("Receiving queue capacity " + queueCapacity + " exceeded");
-          }
-        }
-      });
+          });
     }
 
     @Override
@@ -512,10 +503,10 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
     @Override
     public void onStateChange(SessionState newState, SessionState oldState, Session source) {
       if (newState.isBound()) {
-        /**
-         * We need to set SO_TIMEOUT to session timer so when timeout occur,
-         * a SocketTimeoutException will be raised. When Exception raised we
-         * can send an enquireLinkCommand.
+        /*
+          We need to set SO_TIMEOUT to session timer so when timeout occur,
+          a SocketTimeoutException will be raised. When Exception raised we
+          can send an enquireLinkCommand.
          */
         try {
           conn.setSoTimeout(getEnquireLinkTimer());

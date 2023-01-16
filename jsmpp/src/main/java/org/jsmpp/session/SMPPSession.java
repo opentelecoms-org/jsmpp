@@ -21,7 +21,6 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -71,7 +70,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * This is an object that used to communicate with SMPP Server or SMSC. It hide all un-needed SMPP operation that might harm if the user code use it such as :
+ * This is an object that used to communicate with SMPP Server or SMSC. It hides all un-needed SMPP operation that might harm if the user code use it such as :
  * <ul>
  * <li>DELIVER_SM_RESP, should be called only as response to DELIVER_SM</li>
  * <li>UNBIND_RESP, should be called only as response to UNBIND_RESP</li>
@@ -112,7 +111,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
   private SMPPSessionContext sessionContext = new SMPPSessionContext(this, sessionStateListener);
 
   /**
-   * Default constructor of {@link SMPPSession}. The next action might be connect and bind to a destination message center.
+   * Default constructor of {@link SMPPSession}. The next action might be, connect and bind to a destination message center.
    *
    * @see #connectAndBind(String, int, BindType, String, String, String, TypeOfNumber, NumberingPlanIndicator, String)
    */
@@ -641,38 +640,30 @@ public class SMPPSession extends AbstractSession implements ClientSession {
     private ThreadPoolExecutor pduExecutor;
     private LinkedBlockingQueue<Runnable> workQueue;
 		private int queueCapacity;
-    private Runnable onIOExceptionTask = new Runnable() {
-      @Override
-      public void run() {
-        close();
-      }
-    };
+    private Runnable onIOExceptionTask = () -> close();
 
     private PDUReaderWorker(final int queueCapacity) {
       super("PDUReaderWorker-" + getSessionId());
       this.queueCapacity = queueCapacity;
       workQueue = new LinkedBlockingQueue<>(queueCapacity);
       pduExecutor = new ThreadPoolExecutor(1, 1,
-          0L, TimeUnit.MILLISECONDS, workQueue, new RejectedExecutionHandler() {
-        @Override
-        public void rejectedExecution(final Runnable runnable, final ThreadPoolExecutor executor) {
-          log.info("Receiving queue is full, please increasing receive queue capacity, and/or let other side obey the window size");
-          Command pduHeader = ((PDUProcessTask) runnable).getPduHeader();
-          if ((pduHeader.getCommandId() & SMPPConstant.MASK_CID_RESP) == SMPPConstant.MASK_CID_RESP) {
-            try {
-              boolean success = executor.getQueue().offer(runnable, 60000, TimeUnit.MILLISECONDS);
-              if (!success) {
-                log.warn("Offer to receive queue failed for {}", pduHeader);
+          0L, TimeUnit.MILLISECONDS, workQueue, (runnable, executor) -> {
+            log.info("Receiving queue is full, please increasing receive queue capacity, and/or let other side obey the window size");
+            Command pduHeader = ((PDUProcessTask) runnable).getPduHeader();
+            if ((pduHeader.getCommandId() & SMPPConstant.MASK_CID_RESP) == SMPPConstant.MASK_CID_RESP) {
+              try {
+                boolean success = executor.getQueue().offer(runnable, 60000, TimeUnit.MILLISECONDS);
+                if (!success) {
+                  log.warn("Offer to receive queue failed for {}", pduHeader);
+                }
+              } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e);
               }
-            } catch (InterruptedException e) {
-              Thread.currentThread().interrupt();
-              throw new RuntimeException(e);
+            } else {
+              throw new QueueMaxException("Receiving queue capacity " + queueCapacity + " exceeded");
             }
-          } else {
-            throw new QueueMaxException("Receiving queue capacity " + queueCapacity + " exceeded");
-          }
-        }
-      });
+          });
     }
 
     @Override
