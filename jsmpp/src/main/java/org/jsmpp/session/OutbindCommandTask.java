@@ -24,7 +24,7 @@ import org.jsmpp.PDUStringException;
  * @author pmoerenhout
  */
 public class OutbindCommandTask extends AbstractSendCommandTask {
-
+  public static final String COMMAND_NAME_OUTBIND = "outbind";
   private final String systemId;
   private final String password;
 
@@ -44,6 +44,6 @@ public class OutbindCommandTask extends AbstractSendCommandTask {
 
   @Override
   public String getCommandName() {
-    return "outbind";
+    return COMMAND_NAME_OUTBIND;
   }
 }

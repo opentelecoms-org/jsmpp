@@ -27,6 +27,7 @@ import org.jsmpp.bean.TypeOfNumber;
  *
  */
 public class QuerySmCommandTask extends AbstractSendCommandTask {
+    public static final String COMMAND_NAME_QUERY_SM = "query_sm";
     private final String messageId;
     private final TypeOfNumber sourceAddrTon;
     private final NumberingPlanIndicator sourceAddrNpi;
@@ -49,6 +50,6 @@ public class QuerySmCommandTask extends AbstractSendCommandTask {
     }
     
     public String getCommandName() {
-        return "query_sm";
+        return COMMAND_NAME_QUERY_SM;
     }
 }

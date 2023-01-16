@@ -24,6 +24,8 @@ import org.jsmpp.PDUSender;
  *
  */
 public class UnbindCommandTask extends AbstractSendCommandTask {
+
+    public static final String COMMAND_NAME_UNBIND = "unbind";
     
     public UnbindCommandTask(PDUSender pduSender) {
         super(pduSender);
@@ -35,6 +37,6 @@ public class UnbindCommandTask extends AbstractSendCommandTask {
     }
     
     public String getCommandName() {
-        return "unbind";
+        return COMMAND_NAME_UNBIND;
     }
 }

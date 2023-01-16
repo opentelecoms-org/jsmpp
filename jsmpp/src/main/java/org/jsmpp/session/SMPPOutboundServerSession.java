@@ -337,7 +337,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
       } catch (PDUStringException e) {
         /*
          * There should be no PDUStringException thrown since creation
-         * of MessageId should be save.
+         * of MessageId should be safe.
          */
         log.error("Failed sending data_sm_resp", e);
       }
@@ -365,7 +365,7 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
     }
 
     @Override
-    public void sendGenerickNack(int commandStatus, int sequenceNumber) throws IOException {
+    public void sendGenericNack(int commandStatus, int sequenceNumber) throws IOException {
       pduSender().sendGenericNack(out, commandStatus, sequenceNumber);
     }
 

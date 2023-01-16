@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
  */
 public class OptionalParameters {
 
+    public static final OptionalParameter[] EMPTY_OPTIONAL_PARAMETERS = new OptionalParameter[]{};
+
     private static final Logger log = LoggerFactory.getLogger(OptionalParameters.class);
 
     private OptionalParameters() {

@@ -88,6 +88,7 @@ class SMPPServerSessionOpen implements SMPPServerSessionState {
     @Override
     public void processEnquireLink(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
+        logger.info("Send EnquireLink {}", pduHeader.getSequenceNumber());
         responseHandler.sendEnquireLinkResp(pduHeader.getSequenceNumber());
     }
 

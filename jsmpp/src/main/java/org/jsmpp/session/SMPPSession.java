@@ -344,7 +344,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
     }
     InterfaceVersion commonInterfaceVersion = scVersion != null ?
         InterfaceVersion.IF_50.min(InterfaceVersion.valueOf(scVersion.getValue())) :
-        interfaceVersion.IF_34;
+        InterfaceVersion.IF_34;
 
     sessionContext.bound(bindType, commonInterfaceVersion);
 
@@ -367,7 +367,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
       ResponseTimeoutException, InvalidResponseException,
       NegativeResponseException, IOException {
 
-    ensureTransmittable("submitShortMessage");
+    ensureTransmittable(SubmitSmCommandTask.COMMAND_NAME_SUBMIT_SM);
 
     SubmitSmCommandTask submitSmTask = new SubmitSmCommandTask(
         pduSender(), serviceType, sourceAddrTon, sourceAddrNpi,
@@ -397,7 +397,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
       ResponseTimeoutException, InvalidResponseException,
       NegativeResponseException, IOException {
 
-    ensureTransmittable("submitMultiple");
+    ensureTransmittable(SubmitMultiCommandTask.COMMAND_NAME_SUBMIT_MULTI);
 
     SubmitMultiCommandTask task = new SubmitMultiCommandTask(pduSender(),
         serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr,
@@ -421,7 +421,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
                                          String sourceAddr) throws PDUException, ResponseTimeoutException,
       InvalidResponseException, NegativeResponseException, IOException {
 
-    ensureTransmittable("queryShortMessage");
+    ensureTransmittable(QuerySmCommandTask.COMMAND_NAME_QUERY_SM);
 
     QuerySmCommandTask task = new QuerySmCommandTask(pduSender(),
         messageId, sourceAddrTon, sourceAddrNpi, sourceAddr);
@@ -450,7 +450,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
                                   byte smDefaultMsgId, byte[] shortMessage) throws PDUException,
       ResponseTimeoutException, InvalidResponseException, NegativeResponseException, IOException {
 
-    ensureTransmittable("replaceShortMessage");
+    ensureTransmittable(ReplaceSmCommandTask.COMMAND_NAME_REPLACE_SM);
 
     ReplaceSmCommandTask replaceSmTask = new ReplaceSmCommandTask(
         pduSender(), messageId, sourceAddrTon, sourceAddrNpi,
@@ -471,7 +471,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
       throws PDUException, ResponseTimeoutException,
       InvalidResponseException, NegativeResponseException, IOException {
 
-    ensureTransmittable("cancelShortMessage");
+    ensureTransmittable(CancelSmCommandTask.COMMAND_NAME_CANCEL_SM);
 
     CancelSmCommandTask task = new CancelSmCommandTask(pduSender(),
         serviceType, messageId, sourceAddrTon, sourceAddrNpi,
@@ -615,7 +615,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
     }
 
     @Override
-    public void sendGenerickNack(int commandStatus, int sequenceNumber) throws IOException {
+    public void sendGenericNack(int commandStatus, int sequenceNumber) throws IOException {
       pduSender().sendGenericNack(out, commandStatus, sequenceNumber);
     }
 
@@ -626,6 +626,7 @@ public class SMPPSession extends AbstractSession implements ClientSession {
 
     @Override
     public void sendUnbindResp(int sequenceNumber) throws IOException {
+      log.info("Send unbind {}", sequenceNumber);
       pduSender().sendUnbindResp(out, SMPPConstant.STAT_ESME_ROK, sequenceNumber);
     }
   }

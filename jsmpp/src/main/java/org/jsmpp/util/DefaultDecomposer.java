@@ -15,7 +15,7 @@
 package org.jsmpp.util;
 
 import static org.jsmpp.SMPPConstant.PDU_HEADER_LENGTH;
-import static org.jsmpp.SMPPConstant.STAT_ESME_ROK;
+import static org.jsmpp.bean.OptionalParameters.EMPTY_OPTIONAL_PARAMETERS;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +75,6 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultDecomposer implements PDUDecomposer {
     private static final Logger log = LoggerFactory.getLogger(DefaultDecomposer.class);
-    private static final OptionalParameter[] EMPTY_OPTIONAL_PARAMETERS = new OptionalParameter[]{};
 
     private static final PDUDecomposer instance = new DefaultDecomposer();
 
@@ -139,7 +138,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         BindResp resp = new BindResp();
         SequentialBytesReader reader = new SequentialBytesReader(b);
         assignHeader(resp, reader);
-        if (resp.getCommandLength() > PDU_HEADER_LENGTH && resp.getCommandStatus() == STAT_ESME_ROK) {
+        if (resp.getCommandLength() > PDU_HEADER_LENGTH) {
             resp.setSystemId(reader.readCString());
             StringValidator.validateString(resp.getSystemId(),
                     StringParameter.SYSTEM_ID);
@@ -288,7 +287,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         SubmitSmResp resp = new SubmitSmResp();
         SequentialBytesReader reader = new SequentialBytesReader(b);
         assignHeader(resp, reader);
-        if (resp.getCommandLength() > PDU_HEADER_LENGTH && resp.getCommandStatus() == STAT_ESME_ROK) {
+        if (resp.getCommandLength() > PDU_HEADER_LENGTH) {
             resp.setMessageId(reader.readCString());
             StringValidator.validateString(resp.getMessageId(),
                     StringParameter.MESSAGE_ID);
@@ -330,7 +329,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         QuerySmResp resp = new QuerySmResp();
         SequentialBytesReader reader = new SequentialBytesReader(b);
         assignHeader(resp, reader);
-        if (resp.getCommandLength() > PDU_HEADER_LENGTH && resp.getCommandStatus() == STAT_ESME_ROK) {
+        if (resp.getCommandLength() > PDU_HEADER_LENGTH) {
             resp.setMessageId(reader.readCString());
             StringValidator.validateString(resp.getMessageId(),
                     StringParameter.MESSAGE_ID);
@@ -574,7 +573,7 @@ public class DefaultDecomposer implements PDUDecomposer {
         SubmitMultiResp resp = new SubmitMultiResp();
         SequentialBytesReader reader = new SequentialBytesReader(data);
         assignHeader(resp, reader);
-        if (resp.getCommandLength() > PDU_HEADER_LENGTH && resp.getCommandStatus() == STAT_ESME_ROK) {
+        if (resp.getCommandLength() > PDU_HEADER_LENGTH) {
             resp.setMessageId(reader.readCString());
             StringValidator.validateString(resp.getMessageId(),
                 StringParameter.MESSAGE_ID);

@@ -14,6 +14,8 @@
  */
 package org.jsmpp;
 
+import static org.jsmpp.bean.OptionalParameters.EMPTY_OPTIONAL_PARAMETERS;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -49,7 +51,6 @@ public class DefaultPDUSender implements PDUSender {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultPDUSender.class);
     private static final byte[] EMPTY_SHORT_MESSAGE = new byte[]{};
-    private static final OptionalParameter[] EMPTY_OPTIONAL_PARAMETERS = new OptionalParameter[]{};
     private final PDUComposer pduComposer;
 
     /**
@@ -192,7 +193,6 @@ public class DefaultPDUSender implements PDUSender {
     @Override
     public byte[] sendEnquireLink(OutputStream os, int sequenceNumber)
             throws IOException {
-
         byte[] b = pduComposer.enquireLink(sequenceNumber);
         writeAndFlush(os, b);
         return b;
@@ -228,7 +228,7 @@ public class DefaultPDUSender implements PDUSender {
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
-            String destinationAddr, ESMClass esmClass, byte protocoId,
+            String destinationAddr, ESMClass esmClass, byte protocolId,
             byte priorityFlag, String scheduleDeliveryTime,
             String validityPeriod, RegisteredDelivery registeredDelivery,
             byte replaceIfPresent, DataCoding dataCoding, byte smDefaultMsgId,
@@ -237,7 +237,7 @@ public class DefaultPDUSender implements PDUSender {
         byte[] b = pduComposer.submitSm(sequenceNumber, serviceType,
                 sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr,
                 destAddrTon.value(), destAddrNpi.value(), destinationAddr,
-                esmClass.value(), protocoId, priorityFlag,
+                esmClass.value(), protocolId, priorityFlag,
                 scheduleDeliveryTime, validityPeriod,
                 registeredDelivery.value(), replaceIfPresent, dataCoding.toByte(),
                 smDefaultMsgId, checkShortMessage(shortMessage), optionalParameters);
@@ -310,7 +310,7 @@ public class DefaultPDUSender implements PDUSender {
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
-            String destinationAddr, ESMClass esmClass, byte protocoId,
+            String destinationAddr, ESMClass esmClass, byte protocolId,
             byte priorityFlag, RegisteredDelivery registeredDelivery,
             DataCoding dataCoding, byte[] shortMessage,
             OptionalParameter... optionalParameters)
@@ -319,7 +319,7 @@ public class DefaultPDUSender implements PDUSender {
         byte[] b = pduComposer.deliverSm(sequenceNumber, serviceType,
                 sourceAddrTon.value(), sourceAddrNpi.value(), sourceAddr,
                 destAddrTon.value(), destAddrNpi.value(), destinationAddr,
-                esmClass.value(), protocoId, priorityFlag, registeredDelivery.value(),
+                esmClass.value(), protocolId, priorityFlag, registeredDelivery.value(),
                 dataCoding.toByte(), checkShortMessage(shortMessage), optionalParameters);
         writeAndFlush(os, b);
         return b;

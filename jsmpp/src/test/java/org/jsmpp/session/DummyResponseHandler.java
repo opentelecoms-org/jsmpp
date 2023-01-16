@@ -57,7 +57,7 @@ class DummyResponseHandler implements ServerResponseHandler {
     }
 
     @Override
-    public void sendGenerickNack(int commandStatus, int sequenceNumber)
+    public void sendGenericNack(int commandStatus, int sequenceNumber)
             throws IOException {
     }
 

@@ -6,6 +6,7 @@ import static org.testng.Assert.assertNull;
 
 import java.io.ByteArrayOutputStream;
 
+import org.jsmpp.bean.DataSmResp;
 import org.jsmpp.bean.ReplaceSm;
 import org.jsmpp.bean.SubmitSm;
 import org.junit.Test;
@@ -88,6 +89,29 @@ public class DefaultDecomposerTest {
     assertEquals(submitSm.getDataCoding(), (byte) 0x09);
     assertEquals(submitSm.getSmDefaultMsgId(), (byte) 0x0a);
     assertEquals(new String(submitSm.getShortMessage(), US_ASCII), "Hello World!");
+  }
+
+  @Test
+  public void decompose_data_sm_resp_with_error() throws Exception {
+    ByteArrayOutputStream data = new ByteArrayOutputStream();
+    // command_length
+    data.write(new byte[]{ 0x00, 0x00, 0x00, 0x19 });
+    // command_id
+    data.write(new byte[]{ (byte)0x80, 0x00, 0x01, 0x03 });
+    // command_status
+    data.write(new byte[]{ 0x00, 0x00, 0x00, 0x14 });
+    // sequence_number
+    data.write(new byte[]{ 0x00, 0x00, 0x12, 0x34 });
+    // message_id
+    data.write("01234567\000".getBytes(US_ASCII));
+
+    DataSmResp dataSmResp = decomposer.dataSmResp(data.toByteArray());
+    assertEquals(dataSmResp.getCommandLength(), data.size());
+    assertEquals(dataSmResp.getCommandLength(), 25);
+    assertEquals(dataSmResp.getCommandId(), 0x80000103);
+    assertEquals(dataSmResp.getCommandStatus(), 20);
+    assertEquals(dataSmResp.getSequenceNumber(), 0x1234);
+    assertEquals(dataSmResp.getMessageId(), "01234567");
   }
 
   @Test

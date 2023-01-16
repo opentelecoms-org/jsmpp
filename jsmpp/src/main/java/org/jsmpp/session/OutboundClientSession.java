@@ -113,7 +113,7 @@ public interface OutboundClientSession extends Session {
                            TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
                            String sourceAddr, TypeOfNumber destAddrTon,
                            NumberingPlanIndicator destAddrNpi, String destinationAddr,
-                           ESMClass esmClass, byte protocoId, byte priorityFlag,
+                           ESMClass esmClass, byte protocolId, byte priorityFlag,
                            RegisteredDelivery registeredDelivery, DataCoding dataCoding,
                            byte[] shortMessage, OptionalParameter... optionalParameters)
       throws PDUException, ResponseTimeoutException,

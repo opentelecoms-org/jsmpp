@@ -31,6 +31,7 @@ import org.jsmpp.bean.TypeOfNumber;
  *
  */
 public class DeliverSmCommandTask extends AbstractSendCommandTask {
+    public static final String COMMAND_NAME_DELIVER_SM = "deliver_sm";
     private final String serviceType;
     private final TypeOfNumber sourceAddrTon;
     private final NumberingPlanIndicator sourceAddrNpi;
@@ -39,7 +40,7 @@ public class DeliverSmCommandTask extends AbstractSendCommandTask {
     private final NumberingPlanIndicator destAddrNpi;
     private final String destinationAddr;
     private final ESMClass esmClass;
-    private final byte protocoId;
+    private final byte protocolId;
     private final byte priorityFlag;
     private final RegisteredDelivery registeredDelivery;
     private final DataCoding dataCoding;
@@ -50,7 +51,7 @@ public class DeliverSmCommandTask extends AbstractSendCommandTask {
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
-            String destinationAddr, ESMClass esmClass, byte protocoId,
+            String destinationAddr, ESMClass esmClass, byte protocolId,
             byte priorityFlag, RegisteredDelivery registeredDelivery,
             DataCoding dataCoding, byte[] shortMessage,
             OptionalParameter[] optionalParameters) {
@@ -64,7 +65,7 @@ public class DeliverSmCommandTask extends AbstractSendCommandTask {
         this.destAddrNpi = destAddrNpi;
         this.destinationAddr = destinationAddr;
         this.esmClass = esmClass;
-        this.protocoId = protocoId;
+        this.protocolId = protocolId;
         this.priorityFlag = priorityFlag;
         this.registeredDelivery = registeredDelivery;
         this.dataCoding = dataCoding;
@@ -77,12 +78,12 @@ public class DeliverSmCommandTask extends AbstractSendCommandTask {
         
         pduSender.sendDeliverSm(out, sequenceNumber, serviceType,
                 sourceAddrTon, sourceAddrNpi, sourceAddr, destAddrTon,
-                destAddrNpi, destinationAddr, esmClass, protocoId,
+                destAddrNpi, destinationAddr, esmClass, protocolId,
                 priorityFlag, registeredDelivery, dataCoding, shortMessage,
                 optionalParameters);
     }
     
     public String getCommandName() {
-        return "deliver_sm";
+        return COMMAND_NAME_DELIVER_SM;
     }
 }

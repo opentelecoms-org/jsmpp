@@ -24,6 +24,7 @@ import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.TypeOfNumber;
 
 public class ReplaceSmCommandTask extends AbstractSendCommandTask {
+    public static final String COMMAND_NAME_REPLACE_SM = "replace_sm";
     private String messageId;
     private TypeOfNumber sourceAddrTon;
     private NumberingPlanIndicator sourceAddrNpi;
@@ -60,6 +61,6 @@ public class ReplaceSmCommandTask extends AbstractSendCommandTask {
     }
     
     public String getCommandName() {
-        return "replace_sm";
+        return COMMAND_NAME_REPLACE_SM;
     }
 }

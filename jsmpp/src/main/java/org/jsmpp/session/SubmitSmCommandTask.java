@@ -31,6 +31,7 @@ import org.jsmpp.bean.TypeOfNumber;
  *
  */
 public class SubmitSmCommandTask extends AbstractSendCommandTask {
+    public static final String COMMAND_NAME_SUBMIT_SM = "submit_sm";
     private final String serviceType;
     private final TypeOfNumber sourceAddrTon;
     private final NumberingPlanIndicator sourceAddrNpi;
@@ -54,7 +55,7 @@ public class SubmitSmCommandTask extends AbstractSendCommandTask {
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, TypeOfNumber destAddrTon,
             NumberingPlanIndicator destAddrNpi, String destinationAddr,
-            ESMClass esmClass, byte protocoId, byte priorityFlag,
+            ESMClass esmClass, byte protocolId, byte priorityFlag,
             String scheduleDeliveryTime, String validityPeriod,
             RegisteredDelivery registeredDelivery, byte replaceIfPresentFlag,
             DataCoding dataCoding, byte smDefaultMsgId, byte[] shortMessage,
@@ -69,7 +70,7 @@ public class SubmitSmCommandTask extends AbstractSendCommandTask {
         this.destAddrNpi = destAddrNpi;
         this.destinationAddr = destinationAddr;
         this.esmClass = esmClass;
-        this.protocolId = protocoId;
+        this.protocolId = protocolId;
         this.priorityFlag = priorityFlag;
         this.scheduleDeliveryTime = scheduleDeliveryTime;
         this.validityPeriod = validityPeriod;
@@ -92,6 +93,6 @@ public class SubmitSmCommandTask extends AbstractSendCommandTask {
     }
     
     public String getCommandName() {
-        return "submit_sm";
+        return COMMAND_NAME_SUBMIT_SM;
     }
 }

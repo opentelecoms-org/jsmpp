@@ -27,9 +27,16 @@ import org.jsmpp.bean.UnsuccessDelivery;
 public class SubmitMultiResult {
 
     private final String messageId;
+    /* UnsuccessDeliveries were added in SMPP 5.0 */
     private final UnsuccessDelivery[] unsuccessDeliveries;
     /* OptionalParameters were added in SMPP 5.0 */
     private final OptionalParameter[] optionalParameters;
+
+    public SubmitMultiResult(String messageId) {
+        this.messageId = messageId;
+        this.unsuccessDeliveries = null;
+        this.optionalParameters = null;
+    }
     
     public SubmitMultiResult(String messageId,
                              UnsuccessDelivery[] unsuccessDeliveries,

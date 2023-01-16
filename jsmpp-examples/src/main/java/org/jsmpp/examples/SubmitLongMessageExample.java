@@ -45,11 +45,11 @@ import org.slf4j.LoggerFactory;
 public class SubmitLongMessageExample {
     private static final Logger log = LoggerFactory.getLogger(SubmitLongMessageExample.class);
     private static final TimeFormatter TIME_FORMATTER = new AbsoluteTimeFormatter();
-    private static Random RANDOM = new Random();
+    private static final Random RANDOM = new Random();
     
     public static void main(String[] args) {
         try (SMPPSession session = new SMPPSession()) {
-            session.connectAndBind("wyless.ns1.name", 8056, new BindParameter(BindType.BIND_TX, "test", "test", "cp", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
+            session.connectAndBind("localhost", 8056, new BindParameter(BindType.BIND_TX, "test", "test", "cp", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, null));
 
             final int totalSegments = 3;
             OptionalParameter sarMsgRefNum = OptionalParameters.newSarMsgRefNum((short)RANDOM.nextInt());

@@ -46,7 +46,7 @@ public interface BaseResponseHandler {
      * @param sequenceNumber is the sequence number original PDU if can be decoded.
      * @throws IOException if an IO error occur.
      */
-    void sendGenerickNack(int commandStatus, int sequenceNumber)
+    void sendGenericNack(int commandStatus, int sequenceNumber)
             throws IOException;
     /**
      * Response by sending negative response.

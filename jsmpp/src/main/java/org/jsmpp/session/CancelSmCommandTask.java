@@ -27,6 +27,7 @@ import org.jsmpp.bean.TypeOfNumber;
  *
  */
 public class CancelSmCommandTask extends AbstractSendCommandTask {
+    public static final String COMMAND_NAME_CANCEL_SM = "cancel_sm";
     private String serviceType;
     private String messageId;
     private TypeOfNumber sourceAddrTon;
@@ -58,6 +59,6 @@ public class CancelSmCommandTask extends AbstractSendCommandTask {
     }
     
     public String getCommandName() {
-        return "cancel_sm";
+        return COMMAND_NAME_CANCEL_SM;
     }
 }

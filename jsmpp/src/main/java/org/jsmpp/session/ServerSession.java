@@ -53,7 +53,7 @@ public interface ServerSession {
      * @param destAddrNpi is the dest_addr_npi.
      * @param destinationAddr is the destination_addr.
      * @param esmClass is the esm_class.
-     * @param protocoId is the protocol_id.
+     * @param protocolId is the protocol_id.
      * @param priorityFlag is the priority_flag.
      * @param registeredDelivery is the registered_delivery.
      * @param dataCoding is the data_coding.
@@ -68,7 +68,7 @@ public interface ServerSession {
     void deliverShortMessage(String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
-            String destinationAddr, ESMClass esmClass, byte protocoId,
+            String destinationAddr, ESMClass esmClass, byte protocolId,
             byte priorityFlag, RegisteredDelivery registeredDelivery,
             DataCoding dataCoding, byte[] shortMessage,
             OptionalParameter... optionalParameters) throws PDUException,

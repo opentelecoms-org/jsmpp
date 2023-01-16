@@ -91,7 +91,7 @@ class SMPPOutboundServerSessionOutbound implements SMPPOutboundServerSessionStat
             } catch (PDUStringException e) {
                 String message = "Failed decomposing bind_resp";
                 log.error(message, e);
-                responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
+                responseHandler.sendGenericNack(e.getErrorCode(), pduHeader
                     .getSequenceNumber());
                 pendingResp
                     .doneWithInvalidResponse(new InvalidResponseException(
@@ -99,7 +99,7 @@ class SMPPOutboundServerSessionOutbound implements SMPPOutboundServerSessionStat
             }
         } else {
             log.error("No request with sequence_number {} found", pduHeader.getSequenceNumber() );
-            responseHandler.sendGenerickNack(
+            responseHandler.sendGenericNack(
                 SMPPConstant.STAT_ESME_RINVDFTMSGID, pduHeader.getSequenceNumber());
         }
     }

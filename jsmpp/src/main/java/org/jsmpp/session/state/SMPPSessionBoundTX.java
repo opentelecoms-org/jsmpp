@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This class is Bound_TX state implementation of {@link SMPPSessionState}. This
  * class gives specific response to a transmit related transaction, otherwise
- * it always gives an negative response.
+ * it always gives a negative response.
  *
  * @author uudashr
  * @version 2.0
@@ -65,7 +65,7 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
                 log.error("Failed decomposing submit_sm_resp", e);
-                responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
+                responseHandler.sendGenericNack(e.getErrorCode(), pduHeader
                         .getSequenceNumber());
             }
         } else {
@@ -84,7 +84,7 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
                 log.error("Failed decomposing submit_multi_resp", e);
-                responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
+                responseHandler.sendGenericNack(e.getErrorCode(), pduHeader
                         .getSequenceNumber());
             }
         } else {
@@ -104,12 +104,12 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
                 log.error("Failed decomposing query_sm_resp", e);
-                responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
+                responseHandler.sendGenericNack(e.getErrorCode(), pduHeader
                         .getSequenceNumber());
             }
         } else {
             log.warn(NO_REQUEST_FOR_SEQUENCE_NUMBER_FOUND, pduHeader.getSequenceNumber());
-            responseHandler.sendGenerickNack(
+            responseHandler.sendGenericNack(
                     SMPPConstant.STAT_ESME_RINVDFTMSGID, pduHeader
                             .getSequenceNumber());
         }
@@ -173,7 +173,7 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
                 log.error("Failed decomposing broadcast_sm_resp", e);
-                responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
+                responseHandler.sendGenericNack(e.getErrorCode(), pduHeader
                     .getSequenceNumber());
             }
         } else {
@@ -192,7 +192,7 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
                 log.error("Failed decomposing cancel_broadcast_sm_resp", e);
-                responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
+                responseHandler.sendGenericNack(e.getErrorCode(), pduHeader
                     .getSequenceNumber());
             }
         } else {
@@ -211,7 +211,7 @@ class SMPPSessionBoundTX extends SMPPSessionBound implements SMPPSessionState {
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
                 log.error("Failed decomposing query_broadcast_sm_resp", e);
-                responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
+                responseHandler.sendGenericNack(e.getErrorCode(), pduHeader
                     .getSequenceNumber());
             }
         } else {

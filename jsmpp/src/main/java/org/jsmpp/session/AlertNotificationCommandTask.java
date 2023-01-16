@@ -28,7 +28,7 @@ import org.jsmpp.bean.TypeOfNumber;
  *
  */
 public class AlertNotificationCommandTask extends AbstractSendCommandTask {
-
+    public static final String COMMAND_NAME_ALERT_NOTIFICATION= "alert_notification";
     private final TypeOfNumber sourceAddrTon;
     private final NumberingPlanIndicator sourceAddrNpi;
     private final String sourceAddr;
@@ -60,6 +60,6 @@ public class AlertNotificationCommandTask extends AbstractSendCommandTask {
     }
 
     public String getCommandName() {
-        return "alert_notification";
+        return COMMAND_NAME_ALERT_NOTIFICATION;
     }
 }

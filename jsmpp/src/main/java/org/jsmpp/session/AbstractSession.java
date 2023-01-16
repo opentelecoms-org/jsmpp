@@ -14,6 +14,8 @@
  */
 package org.jsmpp.session;
 
+import static org.jsmpp.session.EnquireLinkCommandTask.COMMAND_NAME_ENQUIRE_LINK;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
@@ -66,7 +68,7 @@ public abstract class AbstractSession implements Session, Closeable {
 
     protected EnquireLinkSender enquireLinkSender;
 
-    public AbstractSession(PDUSender pduSender) {
+    protected AbstractSession(PDUSender pduSender) {
         this.pduSender = pduSender;
     }
 
@@ -331,7 +333,7 @@ public abstract class AbstractSession implements Session, Closeable {
         } catch (IOException e) {
             log.error("Sending {} command failed", task.getCommandName(), e);
 
-            if("enquire_link".equals(task.getCommandName())) {
+            if(COMMAND_NAME_ENQUIRE_LINK.equals(task.getCommandName())) {
                 log.info("Ignore failure of sending enquire_link, wait to see if connection is restored");
             } else {
                 pendingResponses.remove(seqNum);
@@ -342,7 +344,7 @@ public abstract class AbstractSession implements Session, Closeable {
 
         try {
             pendingResp.waitDone();
-            if("enquire_link".equals(task.getCommandName())) {
+            if(COMMAND_NAME_ENQUIRE_LINK.equals(task.getCommandName())) {
                 if (log.isTraceEnabled()) {
                     log.trace("{} response with sequence_number {} received for session {}", task.getCommandName(), seqNum, sessionId);
                 }
@@ -379,13 +381,13 @@ public abstract class AbstractSession implements Session, Closeable {
         try {
             task.executeTask(connection().getOutputStream(), seqNum);
         } catch (IOException e) {
-            log.error("Sending {} command failed", task.getCommandName(), e);
+            log.error("Sending {} command failed: {}", task.getCommandName(), e.getMessage());
             close();
             throw e;
         }
     }
 
-    private synchronized static final String generateSessionId() {
+    private static synchronized String generateSessionId() {
         return IntUtil.toHexString(random.nextInt());
     }
 
@@ -500,7 +502,7 @@ public abstract class AbstractSession implements Session, Closeable {
     protected void ensureTransmittable(String activityName, boolean only) throws IOException {
         // TODO uudashr: do we have to use another exception for this checking?
         SessionState currentState = getSessionState();
-        if (currentState.isNotClosed() && "enquire_link".equals(activityName)) {
+        if (currentState.isNotClosed() && COMMAND_NAME_ENQUIRE_LINK.equals(activityName)) {
             return;
         }
         if (!currentState.isTransmittable() || (only && currentState.isReceivable())) {
@@ -544,7 +546,7 @@ public abstract class AbstractSession implements Session, Closeable {
                     close();
                 } catch (InvalidResponseException e) {
                     log.error("Invalid response on enquire_link", e);
-                    // lets unbind gracefully
+                    // let's unbind gracefully
                     unbindAndClose();
                 } catch (IOException e) {
                     log.error("I/O exception on enquire_link", e);

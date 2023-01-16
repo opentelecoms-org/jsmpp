@@ -102,7 +102,7 @@ abstract class AbstractGenericSMPPSessionBound implements GenericSMPPSessionStat
     @Override
     public void processUnknownCid(Command pduHeader, byte[] pdu,
             BaseResponseHandler responseHandler) throws IOException {
-        responseHandler.sendGenerickNack(SMPPConstant.STAT_ESME_RINVCMDID,
+        responseHandler.sendGenericNack(SMPPConstant.STAT_ESME_RINVCMDID,
                 pduHeader.getSequenceNumber());
     }
 
@@ -147,7 +147,7 @@ abstract class AbstractGenericSMPPSessionBound implements GenericSMPPSessionStat
                 pendingResp.done(resp);
             } catch (PDUStringException e) {
                 log.error("Failed decomposing data_sm_resp", e);
-                responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
+                responseHandler.sendGenericNack(e.getErrorCode(), pduHeader
                         .getSequenceNumber());
             }
         } else {

@@ -1,16 +1,16 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package org.jsmpp.session;
 
@@ -33,6 +33,7 @@ import org.jsmpp.bean.TypeOfNumber;
  *
  */
 public class SubmitMultiCommandTask extends AbstractSendCommandTask {
+    public static final String COMMAND_NAME_SUBMIT_MULTI = "submit_multi";
     private String serviceType;
     private TypeOfNumber sourceAddrTon;
     private NumberingPlanIndicator sourceAddrNpi;
@@ -49,7 +50,7 @@ public class SubmitMultiCommandTask extends AbstractSendCommandTask {
     private byte smDefaultMsgId;
     private byte[] shortMessage;
     private OptionalParameter[] optionalParameters;
-    
+
     public SubmitMultiCommandTask(PDUSender pduSender, String serviceType,
             TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
             String sourceAddr, DestinationAddress[] destinationAddresses,
@@ -77,7 +78,7 @@ public class SubmitMultiCommandTask extends AbstractSendCommandTask {
         this.shortMessage = shortMessage;
         this.optionalParameters = optionalParameters;
     }
-    
+
     public void executeTask(OutputStream out, int sequenceNumber)
             throws PDUException, IOException {
         pduSender.sendSubmitMulti(out, sequenceNumber, serviceType,
@@ -86,9 +87,9 @@ public class SubmitMultiCommandTask extends AbstractSendCommandTask {
                 validityPeriod, registeredDelivery, replaceIfPresentFlag,
                 dataCoding, smDefaultMsgId, shortMessage, optionalParameters);
     }
-    
+
     public String getCommandName() {
-        return "submit_multi";
+        return COMMAND_NAME_SUBMIT_MULTI;
     }
-    
+
 }

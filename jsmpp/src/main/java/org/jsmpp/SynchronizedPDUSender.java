@@ -267,7 +267,7 @@ public class SynchronizedPDUSender implements PDUSender {
             String serviceType, TypeOfNumber sourceAddrTon,
             NumberingPlanIndicator sourceAddrNpi, String sourceAddr,
             TypeOfNumber destAddrTon, NumberingPlanIndicator destAddrNpi,
-            String destinationAddr, ESMClass esmClass, byte protocoId,
+            String destinationAddr, ESMClass esmClass, byte protocolId,
             byte priorityFlag, RegisteredDelivery registeredDelivery,
             DataCoding dataCoding, byte[] shortMessage,
             OptionalParameter... optionalParameters) throws PDUStringException,
@@ -275,7 +275,7 @@ public class SynchronizedPDUSender implements PDUSender {
         synchronized (os) {
             return pduSender.sendDeliverSm(os, sequenceNumber, serviceType,
                     sourceAddrTon, sourceAddrNpi, sourceAddr, destAddrTon,
-                    destAddrNpi, destinationAddr, esmClass, protocoId,
+                    destAddrNpi, destinationAddr, esmClass, protocolId,
                     priorityFlag, registeredDelivery, dataCoding, shortMessage,
                     optionalParameters);
         }

@@ -1,5 +1,3 @@
-package org.jsmpp.session;
-
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,6 +9,7 @@ package org.jsmpp.session;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jsmpp.session;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;

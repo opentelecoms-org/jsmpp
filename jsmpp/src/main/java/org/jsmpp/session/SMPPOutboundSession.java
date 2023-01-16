@@ -20,7 +20,6 @@ import java.io.OutputStream;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -254,18 +253,18 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
                                   TypeOfNumber sourceAddrTon, NumberingPlanIndicator sourceAddrNpi,
                                   String sourceAddr, TypeOfNumber destAddrTon,
                                   NumberingPlanIndicator destAddrNpi, String destinationAddr,
-                                  ESMClass esmClass, byte protocoId, byte priorityFlag,
+                                  ESMClass esmClass, byte protocolId, byte priorityFlag,
                                   RegisteredDelivery registeredDelivery, DataCoding dataCoding,
                                   byte[] shortMessage, OptionalParameter... optionalParameters)
       throws PDUException, ResponseTimeoutException,
       InvalidResponseException, NegativeResponseException, IOException {
 
-    ensureReceivable("deliverShortMessage");
+    ensureReceivable(DeliverSmCommandTask.COMMAND_NAME_DELIVER_SM);
 
     DeliverSmCommandTask task = new DeliverSmCommandTask(pduSender(),
         serviceType, sourceAddrTon, sourceAddrNpi, sourceAddr,
-        destAddrTon, destAddrNpi, destinationAddr, esmClass, protocoId,
-        protocoId, registeredDelivery, dataCoding, shortMessage,
+        destAddrTon, destAddrNpi, destinationAddr, esmClass, protocolId,
+        priorityFlag, registeredDelivery, dataCoding, shortMessage,
         optionalParameters);
 
     executeSendCommand(task, getTransactionTimer());
@@ -339,7 +338,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
       } catch (PDUStringException e) {
         /*
          * There should be no PDUStringException thrown since creation
-         * of MessageId should be save.
+         * of MessageId should be safe.
          */
         log.error("Failed sending data_sm_resp", e);
       }
@@ -366,7 +365,7 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
     }
 
     @Override
-    public void sendGenerickNack(int commandStatus, int sequenceNumber) throws IOException {
+    public void sendGenericNack(int commandStatus, int sequenceNumber) throws IOException {
       pduSender().sendGenericNack(out, commandStatus, sequenceNumber);
     }
 
@@ -398,41 +397,33 @@ public class SMPPOutboundSession extends AbstractSession implements OutboundClie
    */
   private class PDUReaderWorker extends Thread {
     // start with serial execution of pdu processing, when the session is bound the pool will be enlarged up to the PduProcessorDegree
-    private ThreadPoolExecutor pduExecutor = null;
+    private ThreadPoolExecutor pduExecutor;
     private LinkedBlockingQueue<Runnable> workQueue;
     private int queueCapacity;
-    private Runnable onIOExceptionTask = new Runnable() {
-      @Override
-      public void run() {
-        close();
-      }
-    };
+    private Runnable onIOExceptionTask = () -> close();
 
     private PDUReaderWorker(final int pduProcessorDegree, final int queueCapacity) {
       super("PDUReaderWorker-" + getSessionId());
       this.queueCapacity = queueCapacity;
       workQueue = new LinkedBlockingQueue<>(queueCapacity);
       pduExecutor = new ThreadPoolExecutor(pduProcessorDegree, pduProcessorDegree,
-          0L, TimeUnit.MILLISECONDS, workQueue,  new RejectedExecutionHandler() {
-        @Override
-        public void rejectedExecution(final Runnable runnable, final ThreadPoolExecutor executor) {
-          log.info("Receiving queue is full, please increasing receive queue capacity, and/or let other side obey the window size");
-          Command pduHeader = ((PDUProcessTask) runnable).getPduHeader();
-          if ((pduHeader.getCommandId() & SMPPConstant.MASK_CID_RESP) == SMPPConstant.MASK_CID_RESP) {
-            try {
-              boolean success = executor.getQueue().offer(runnable, 60000, TimeUnit.MILLISECONDS);
-              if (!success) {
-                log.warn("Offer to receive queue failed for {}", pduHeader);
+          0L, TimeUnit.MILLISECONDS, workQueue, (runnable, executor) -> {
+            log.info("Receiving queue is full, please increasing receive queue capacity, and/or let other side obey the window size");
+            Command pduHeader = ((PDUProcessTask) runnable).getPduHeader();
+            if ((pduHeader.getCommandId() & SMPPConstant.MASK_CID_RESP) == SMPPConstant.MASK_CID_RESP) {
+              try {
+                boolean success = executor.getQueue().offer(runnable, 60000, TimeUnit.MILLISECONDS);
+                if (!success) {
+                  log.warn("Offer to receive queue failed for {}", pduHeader);
+                }
+              } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e);
               }
-            } catch (InterruptedException e) {
-              Thread.currentThread().interrupt();
-              throw new RuntimeException(e);
+            } else {
+              throw new QueueMaxException("Receiving queue capacity " + queueCapacity + " exceeded");
             }
-          } else {
-            throw new QueueMaxException("Receiving queue capacity " + queueCapacity + " exceeded");
-          }
-        }
-      });
+          });
     }
 
     @Override

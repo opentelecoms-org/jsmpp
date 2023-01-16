@@ -29,6 +29,7 @@ import org.jsmpp.bean.TypeOfNumber;
  *
  */
 public class BindCommandTask extends AbstractSendCommandTask {
+    public static final String COMMAND_NAME_BIND = "bind";
     private final BindType bindType;
     private final String systemId;
     private final String password;
@@ -61,6 +62,6 @@ public class BindCommandTask extends AbstractSendCommandTask {
     }
     
     public String getCommandName() {
-        return "bind";
+        return COMMAND_NAME_BIND;
     }
 }

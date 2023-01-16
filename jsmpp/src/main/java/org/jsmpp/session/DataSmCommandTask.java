@@ -31,6 +31,7 @@ import org.jsmpp.bean.TypeOfNumber;
  *
  */
 public class DataSmCommandTask extends AbstractSendCommandTask {
+    public static final String COMMAND_NAME_DATA_SM = "data_sm";
     private final String serviceType; 
     private final TypeOfNumber sourceAddrTon;
     private final NumberingPlanIndicator sourceAddrNpi; 
@@ -73,6 +74,6 @@ public class DataSmCommandTask extends AbstractSendCommandTask {
     }
     
     public String getCommandName() {
-        return "data_sm";
+        return COMMAND_NAME_DATA_SM;
     }
 }

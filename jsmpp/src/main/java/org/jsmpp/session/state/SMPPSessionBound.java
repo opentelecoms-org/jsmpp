@@ -52,7 +52,7 @@ abstract class SMPPSessionBound extends AbstractGenericSMPPSessionBound implemen
             responseHandler.sendDeliverSmResp(SMPPConstant.STAT_ESME_ROK, pduHeader.getSequenceNumber(), deliverSm.getId());
         } catch (PDUStringException e) {
             log.error("Failed decomposing deliver_sm", e);
-            responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader.getSequenceNumber());
+            responseHandler.sendGenericNack(e.getErrorCode(), pduHeader.getSequenceNumber());
         } catch (ProcessRequestException e) {
             log.error("Failed processing deliver_sm", e);
             responseHandler.sendDeliverSmResp(e.getErrorCode(), pduHeader.getSequenceNumber(), null);

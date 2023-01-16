@@ -58,7 +58,7 @@ class SMPPOutboundServerSessionBoundRX extends SMPPOutboundServerSessionBound
             responseHandler.sendDeliverSmResp(0, pduHeader.getSequenceNumber(), deliverSm.getId());
         } catch (PDUStringException e) {
             logger.error("Failed decomposing deliver_sm", e);
-            responseHandler.sendGenerickNack(e.getErrorCode(), pduHeader
+            responseHandler.sendGenericNack(e.getErrorCode(), pduHeader
                 .getSequenceNumber());
         } catch (ProcessRequestException e) {
             logger.error("Failed processing deliver_sm", e);

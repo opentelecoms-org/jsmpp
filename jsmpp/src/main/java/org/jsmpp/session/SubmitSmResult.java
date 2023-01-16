@@ -14,17 +14,23 @@
  */
 package org.jsmpp.session;
 
+import static org.jsmpp.bean.OptionalParameters.EMPTY_OPTIONAL_PARAMETERS;
+
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.util.MessageId;
 
 /**
  * @author pmoerenhout
- *
  */
 public class SubmitSmResult {
 
     private final String messageId;
     private final OptionalParameter[] optionalParameters;
+
+    SubmitSmResult(String messageId) {
+        this.messageId = messageId;
+        this.optionalParameters = EMPTY_OPTIONAL_PARAMETERS;
+    }
 
     SubmitSmResult(String messageId, OptionalParameter[] optionalParameters) {
         this.messageId = messageId;

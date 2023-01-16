@@ -25,6 +25,8 @@ import org.jsmpp.PDUSender;
  */
 public class EnquireLinkCommandTask extends AbstractSendCommandTask {
 
+    public static final String COMMAND_NAME_ENQUIRE_LINK = "enquire_link";
+
     public EnquireLinkCommandTask(PDUSender pduSender) {
         super(pduSender);
     }
@@ -35,6 +37,6 @@ public class EnquireLinkCommandTask extends AbstractSendCommandTask {
     }
     
     public String getCommandName() {
-        return "enquire_link";
+        return COMMAND_NAME_ENQUIRE_LINK;
     }
 }
