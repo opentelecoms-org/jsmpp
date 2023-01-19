@@ -49,9 +49,9 @@
         <buildNumber>${maven.build.timestamp}</buildNumber>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.36</slf4j.version>
-        <jcharset.version>2.1</jcharset.version>
         <junit.version>4.13.2</junit.version>
         <testng.version>6.14.3</testng.version>
+        <telecom-charsets.version>1.0.1</telecom-charsets.version>
         <commons-codec.version>1.15</commons-codec.version>
         <git.properties>git.properties</git.properties>
 
@@ -100,9 +100,9 @@
                 <version>${commons-codec.version}</version>
             </dependency>
             <dependency>
-                <groupId>net.freeutils</groupId>
-                <artifactId>jcharset</artifactId>
-                <version>${jcharset.version}</version>
+                <groupId>com.github.brake.threegpp</groupId>
+                <artifactId>telecom-charsets</artifactId>
+                <version>${telecom-charsets.version}</version>
             </dependency>
 
         </dependencies>

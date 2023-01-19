@@ -23,18 +23,18 @@ import java.nio.charset.StandardCharsets;
 import org.jsmpp.util.HexUtil;
 import org.junit.Test;
 
-import net.freeutils.charset.gsm.CRSCPackedGSMCharset;
-import net.freeutils.charset.gsm.SCGSMCharset;
+import threegpp.charset.gsm.GSM7BitPackedCharset;
+import threegpp.charset.gsm.GSMCharset;
 
 /**
  * Some examples to encode GSM 7-bit, GSM 7-bit packed, Latin-1 and UCS-2 strings.
  * <p>
- * See https://www.freeutils.net/source/jcharset/
+ * See https://github.com/brake/telecom-charsets
  */
 public class CharsetsTest {
 
-  private final Charset GSM_CHARSET = new SCGSMCharset();
-  private final Charset GSM_PACKED_CHARSET = new CRSCPackedGSMCharset();
+  private final Charset GSM_CHARSET = new GSMCharset();
+  private final Charset GSM_PACKED_CHARSET = new GSM7BitPackedCharset();
   private final Charset ISO_LATIN_1_CHARSET = StandardCharsets.ISO_8859_1;
   private final Charset UCS_2_CHARSET = StandardCharsets.UTF_16BE;
 
@@ -53,9 +53,10 @@ public class CharsetsTest {
   }
 
   @Test
-  public void test_gsm_packed_encoding_with_cr_padding() throws Exception {
-    assertArrayEquals(HexUtil.convertHexStringToBytes("61f1180000001a"), "abc@@@@".getBytes(GSM_PACKED_CHARSET));
-    assertArrayEquals(HexUtil.convertHexStringToBytes("61f11800000000"), "abc@@@@@".getBytes(GSM_PACKED_CHARSET));
+  public void test_gsm_packed_encoding_without_cr_padding() throws Exception {
+    System.out.println(HexUtil.convertBytesToHexString("abcdefg".getBytes(GSM_PACKED_CHARSET)));
+    assertArrayEquals(HexUtil.convertHexStringToBytes("61f1985c369f01"), "abcdefg".getBytes(GSM_PACKED_CHARSET));
+    assertArrayEquals(HexUtil.convertHexStringToBytes("61f1985c369f01"), "abcdefg@".getBytes(GSM_PACKED_CHARSET));
   }
 
   @Test
@@ -75,17 +76,24 @@ public class CharsetsTest {
   @Test
   public void test_gsm_encode_decode() throws Exception {
     assertEncodeDecode("", GSM_CHARSET);
-    assertEncodeDecode("abc@@@@", GSM_CHARSET);
-    assertEncodeDecode("abc@@@@@", GSM_CHARSET);
-    assertEncodeDecode("€€€€€€€€", GSM_CHARSET);
+    assertEncodeDecode("@", GSM_CHARSET);
+    assertEncodeDecode("@£$", GSM_CHARSET);
+    assertEncodeDecode("abcdef@", GSM_CHARSET);
+    assertEncodeDecode("abcdefg@", GSM_CHARSET);
+    assertEncodeDecode("@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞÆæßÉ !\"#¤%&'()*+,-."
+        + "/0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà", GSM_CHARSET);
+    assertEncodeDecode("^{}[~]|€", GSM_CHARSET);
   }
 
   @Test
   public void test_gsm_packed_encode_decode() throws Exception {
     assertEncodeDecode("", GSM_PACKED_CHARSET);
-    assertEncodeDecode("abc@@@@", GSM_PACKED_CHARSET);
-    assertEncodeDecode("abc@@@@@", GSM_PACKED_CHARSET);
+    assertEncodeDecode("@", GSM_PACKED_CHARSET);
+    assertEncodeDecode("abcdefg", GSM_PACKED_CHARSET);
     assertEncodeDecode("€€€€€€€€", GSM_PACKED_CHARSET);
+    assertEncodeDecode("@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞÆæßÉ !\"#¤%&'()*+,-."
+        + "/0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà", GSM_PACKED_CHARSET);
+    assertEncodeDecode("^{}[~]|€", GSM_PACKED_CHARSET);
   }
 
   private void assertEncodeDecode(String s, Charset charset) {

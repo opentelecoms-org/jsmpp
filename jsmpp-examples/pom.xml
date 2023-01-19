@@ -18,8 +18,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.freeutils</groupId>
-            <artifactId>jcharset</artifactId>
+            <groupId>com.github.brake.threegpp</groupId>
+            <artifactId>telecom-charsets</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

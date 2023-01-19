@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.freeutils.charset.gsm.SCGSMCharset;
+import threegpp.charset.gsm.GSMCharset;
 
 /**
  * Concatenation use 8-bit or 16-bit reference number.
@@ -35,7 +35,7 @@ public class Concatenation {
   private static final int IE_CONCATENATED_SM_8_BIT_REFERENCE_SIZE = 6;
   private static final int IE_CONCATENATED_SM_16_BIT_REFERENCE_SIZE = 7;
 
-  private static final Charset GSM = new SCGSMCharset();
+  private static final Charset GSM = new GSMCharset();
   private static final Charset USC_2 = StandardCharsets.UTF_16BE;
 
   public static byte[][] splitGsm7bit(String message, Charset charset, int reference, boolean use16BitReference)

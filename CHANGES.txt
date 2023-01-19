@@ -1,5 +1,11 @@
 Changes:
 
+3.0.1
+- Decode not only the header if the status is not OK.
+- Fixed typo in sendGenerickNack.
+- Replace jCharset due to incompatible GNU GPL license.
+- Update several Maven dependencies.
+
 3.0.0
 - Require Java 8 as minimum.
 - Implement all SMPP 5.0 requests, optional parameters, etc.
@@ -24,7 +30,7 @@ Changes:
 - Update Apache Commons Codec dependency to 1.15.
 - Renamed sendSubmiMulti to sendSubmitMulti.
 - Fix all JavaDoc warnings and errors and generate JavaDoc jars.
-- Log the send and received PDU's at debug log level. Remove the space to condense the output.
+- Log send and received PDU's at debug log level. Remove the space to condense the output.
 
 2.3.10
 - Implement queue capacity with default 100 include throttle response, handle bound state inside the handler of the bind request.
