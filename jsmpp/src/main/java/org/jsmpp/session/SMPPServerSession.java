@@ -437,6 +437,8 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 throws ProcessRequestException {
             try {
                 return fireAcceptSubmitMulti(submitMulti);
+            } catch(ProcessRequestException e) {
+		throw e;
             } catch(Exception e) {
                 String msg = "Invalid runtime exception thrown when processing SubmitMultiSm";
                 log.error(msg, e);
@@ -471,6 +473,8 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 throws ProcessRequestException {
             try {
                 return fireAcceptQuerySm(querySm);
+            } catch(ProcessRequestException e) {
+		throw e;
             } catch(Exception e) {
                 String msg = "Invalid runtime exception thrown when processing query_sm";
                 log.error(msg, e);
@@ -528,6 +532,8 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 throws ProcessRequestException {
             try {
                 fireAcceptCancelSm(cancelSm);
+            } catch(ProcessRequestException e) {
+		throw e;
             } catch(Exception e) {
                 String msg = "Invalid runtime exception thrown when processing cancel_sm";
                 log.error(msg, e);
@@ -545,6 +551,8 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                 throws ProcessRequestException {
             try {
                 fireAcceptReplaceSm(replaceSm);
+            } catch(ProcessRequestException e) {
+		throw e;
             } catch(Exception e) {
                 String msg = "Invalid runtime exception thrown when processing replace_sm";
                 log.error(msg, e);
@@ -598,6 +606,8 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
             throws ProcessRequestException {
             try {
                 fireAcceptCancelBroadcastSm(cancelBroadcastSm);
+            } catch(ProcessRequestException e) {
+		throw e;
             } catch(Exception e) {
                 String msg = "Invalid runtime exception thrown when processing cancel_broadcast_sm";
                 log.error(msg, e);
@@ -621,6 +631,8 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
                     throw new ProcessRequestException(msg, SMPPConstant.STAT_ESME_RX_R_APPN);
                 }
                 return queryBroadcastSmResult;
+            } catch(ProcessRequestException e) {
+		throw e;
             } catch(Exception e) {
                 String msg = "Invalid runtime exception thrown when processing query_broadcast_sm";
                 log.error(msg, e);
@@ -647,6 +659,8 @@ public class SMPPServerSession extends AbstractSession implements ServerSession 
         public void processEnquireLink(final EnquireLink enquireLink) {
             try {
                 fireAcceptEnquirelink(enquireLink);
+            } catch(ProcessRequestException e) {
+		throw e;
             } catch (Exception e) {
                 log.error("Invalid runtime exception thrown when processing enquire_link", e);
             }
