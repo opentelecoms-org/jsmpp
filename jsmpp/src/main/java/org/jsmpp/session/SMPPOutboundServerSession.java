@@ -330,9 +330,9 @@ public class SMPPOutboundServerSession extends AbstractSession implements Outbou
     public void sendDataSmResp(DataSmResult dataSmResult, int sequenceNumber)
         throws IOException {
       try {
-        pduSender().sendDataSmResp(out, sequenceNumber,
-            dataSmResult.getMessageId(),
-            dataSmResult.getOptionalParameters());
+        pduSender().sendDataSmResp(out, dataSmResult.getCommandStatus(),
+            sequenceNumber,
+            dataSmResult.getMessageId(), dataSmResult.getOptionalParameters());
       } catch (PDUStringException e) {
         /*
          * There should be no PDUStringException thrown since creation

@@ -339,6 +339,22 @@ public interface PDUSender {
      */
     byte[] sendDataSmResp(OutputStream os, int sequenceNumber,
             String messageId, OptionalParameter... optionalParameters)
+                    throws PDUStringException, IOException;
+
+    /**
+     * Send data short message response command.
+     *
+     * @param os is the {@link OutputStream}
+     * @param commandStatus command_status
+     * @param sequenceNumber is the sequence_number
+     * @param messageId the message_id
+     * @param optionalParameters the optional parameters
+     * @return the composed bytes
+     * @throws PDUStringException if there is an invalid string constraint found
+     * @throws IOException if an input or output error occurred
+     */
+    byte[] sendDataSmResp(OutputStream os, int commandStatus,
+            int sequenceNumber, String messageId, OptionalParameter... optionalParameters)
             throws PDUStringException, IOException;
 
     /**

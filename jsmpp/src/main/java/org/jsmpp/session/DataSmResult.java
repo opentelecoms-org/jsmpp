@@ -14,6 +14,7 @@
  */
 package org.jsmpp.session;
 
+import org.jsmpp.SMPPConstant;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.util.MessageId;
 
@@ -23,6 +24,7 @@ import org.jsmpp.util.MessageId;
  */
 public class DataSmResult {
 
+    private int commandStatus = SMPPConstant.STAT_ESME_ROK;
     private final String messageId;
     private final OptionalParameter[] optionalParameters;
 
@@ -41,5 +43,19 @@ public class DataSmResult {
 
     public OptionalParameter[] getOptionalParameters() {
         return optionalParameters;
+    }
+
+    public int getCommandStatus() {
+        return commandStatus;
+    }
+
+    /**
+     * data_sm_resp allows a non zero command_status to be sent with message_id
+     * and other optional parameters. This method allows such a non zero command_status
+     * to be set.
+     * @param commandStatus
+     */
+    public void setCommandStatus(int commandStatus) {
+        this.commandStatus = commandStatus;
     }
 }

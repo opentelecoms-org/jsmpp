@@ -326,10 +326,23 @@ public class SynchronizedPDUSender implements PDUSender {
     @Override
     public byte[] sendDataSmResp(OutputStream os, int sequenceNumber,
             String messageId, OptionalParameter... optionalParameters)
+                    throws PDUStringException, IOException {
+        return sendDataSmResp(os, SMPPConstant.STAT_ESME_ROK, sequenceNumber, messageId, optionalParameters);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.jsmpp.PDUSender#sendDataSmResp(java.io.OutputStream, int, int,
+     *      java.lang.String, org.jsmpp.bean.OptionalParameter[])
+     */
+    @Override
+    public byte[] sendDataSmResp(OutputStream os, int commandStatus,
+            int sequenceNumber, String messageId, OptionalParameter... optionalParameters)
             throws PDUStringException, IOException {
         synchronized (os) {
-            return pduSender.sendDataSmResp(os, sequenceNumber, messageId,
-                    optionalParameters);
+            return pduSender.sendDataSmResp(os, commandStatus, sequenceNumber,
+                    messageId, optionalParameters);
         }
     }
 
