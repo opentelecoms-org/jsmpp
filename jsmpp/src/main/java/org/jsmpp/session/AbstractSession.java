@@ -272,11 +272,10 @@ public abstract class AbstractSession implements Session, Closeable {
                     log.warn("Interrupted while waiting for enquireLinkSender thread to exit");
                 }
             }
-        }
-
-        if (!sessionState.equals(SessionState.CLOSED)) {
-            log.debug("Close session context {} in state {}", sessionId, sessionState);
-            ctx.close();
+            if (!sessionState.equals(SessionState.CLOSED)) {
+                log.debug("Close session context {} in state {}", sessionId, sessionState);
+                ctx.close();
+            }
         }
     }
 
