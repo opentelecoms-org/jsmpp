@@ -17,6 +17,9 @@ package org.jsmpp.session;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.state.SMPPServerSessionState;
 
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 /**
  * @author uudashr
  *
@@ -24,6 +27,7 @@ import org.jsmpp.session.state.SMPPServerSessionState;
 public class SMPPServerSessionContext extends AbstractSessionContext {
     private SMPPServerSessionState stateProcessor = SMPPServerSessionState.CLOSED;
     private final SMPPServerSession smppServerSession;
+    private final ReadWriteLock stateProcessorLock = new ReentrantReadWriteLock();
     
     public SMPPServerSessionContext(SMPPServerSession smppServerSession) {
         this.smppServerSession = smppServerSession;
@@ -32,31 +36,49 @@ public class SMPPServerSessionContext extends AbstractSessionContext {
     @Override
     protected void changeState(SessionState newState) {
         if (!stateProcessor.getSessionState().equals(newState)) {
-            final SessionState oldState = stateProcessor.getSessionState();
-            
-            // change the session state processor
-            if (newState == SessionState.OPEN) {
-                stateProcessor = SMPPServerSessionState.OPEN;
-            } else if (newState == SessionState.BOUND_RX) {
-                stateProcessor = SMPPServerSessionState.BOUND_RX;
-            } else if (newState == SessionState.BOUND_TX) {
-                stateProcessor = SMPPServerSessionState.BOUND_TX;
-            } else if (newState == SessionState.BOUND_TRX) {
-                stateProcessor = SMPPServerSessionState.BOUND_TRX;
-            } else if (newState == SessionState.UNBOUND) {
-                stateProcessor = SMPPServerSessionState.UNBOUND;
-            } else if (newState == SessionState.CLOSED) {
-                stateProcessor = SMPPServerSessionState.CLOSED;
+            SessionState oldState;
+            try {
+                stateProcessorLock.writeLock().lock();
+                oldState = stateProcessor.getSessionState();
+
+                // change the session state processor
+                if (newState == SessionState.OPEN) {
+                    stateProcessor = SMPPServerSessionState.OPEN;
+                } else if (newState == SessionState.BOUND_RX) {
+                    stateProcessor = SMPPServerSessionState.BOUND_RX;
+                } else if (newState == SessionState.BOUND_TX) {
+                    stateProcessor = SMPPServerSessionState.BOUND_TX;
+                } else if (newState == SessionState.BOUND_TRX) {
+                    stateProcessor = SMPPServerSessionState.BOUND_TRX;
+                } else if (newState == SessionState.UNBOUND) {
+                    stateProcessor = SMPPServerSessionState.UNBOUND;
+                } else if (newState == SessionState.CLOSED) {
+                    stateProcessor = SMPPServerSessionState.CLOSED;
+                }
+            } finally {
+                stateProcessorLock.writeLock().unlock();
             }
-            fireStateChanged(newState, oldState, smppServerSession);
+            if (oldState != null) {
+                fireStateChanged(newState, oldState, smppServerSession);
+            }
+        }
+    }
+
+    public SMPPServerSessionState getStateProcessor() {
+        try {
+            stateProcessorLock.readLock().lock();
+            return stateProcessor;
+        } finally {
+            stateProcessorLock.readLock().unlock();
         }
     }
     
-    public synchronized SMPPServerSessionState getStateProcessor() {
-        return stateProcessor;
-    }
-    
-    public synchronized SessionState getSessionState() {
-        return stateProcessor.getSessionState();
+    public SessionState getSessionState() {
+        try {
+            stateProcessorLock.readLock().lock();
+            return stateProcessor.getSessionState();
+        } finally {
+            stateProcessorLock.readLock().unlock();
+        }
     }
 }
