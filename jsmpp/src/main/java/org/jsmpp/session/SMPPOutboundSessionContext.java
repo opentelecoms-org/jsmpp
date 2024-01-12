@@ -17,6 +17,9 @@ package org.jsmpp.session;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.state.SMPPOutboundSessionState;
 
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 /**
  * @author uudashr
  *
@@ -24,6 +27,7 @@ import org.jsmpp.session.state.SMPPOutboundSessionState;
 public class SMPPOutboundSessionContext extends AbstractSessionContext {
     private final SMPPOutboundSession smppSession;
     private SMPPOutboundSessionState stateProcessor = SMPPOutboundSessionState.CLOSED;
+    private final ReadWriteLock stateProcessorLock = new ReentrantReadWriteLock();
 
     public SMPPOutboundSessionContext(SMPPOutboundSession smppSession,
                                       SessionStateListener sessionStateListener) {
@@ -31,34 +35,52 @@ public class SMPPOutboundSessionContext extends AbstractSessionContext {
         this.smppSession = smppSession;
     }
     
-    public synchronized SMPPOutboundSessionState getStateProcessor() {
-        return stateProcessor;
+    public SMPPOutboundSessionState getStateProcessor() {
+        try {
+            stateProcessorLock.readLock().lock();
+            return stateProcessor;
+        } finally {
+            stateProcessorLock.readLock().unlock();
+        }
     }
     
-    public synchronized SessionState getSessionState() {
-        return stateProcessor.getSessionState();
+    public SessionState getSessionState() {
+        try {
+            stateProcessorLock.readLock().lock();
+            return stateProcessor.getSessionState();
+        } finally {
+            stateProcessorLock.readLock().unlock();
+        }
     }
     
     @Override
     protected void changeState(SessionState newState) {
         if (!stateProcessor.getSessionState().equals(newState)) {
-            final SessionState oldState = stateProcessor.getSessionState();
-            
-            // change the session state processor
-            if (newState == SessionState.OPEN) {
-                stateProcessor = SMPPOutboundSessionState.OPEN;
-            } else if (newState == SessionState.BOUND_RX) {
-                stateProcessor = SMPPOutboundSessionState.BOUND_RX;
-            } else if (newState == SessionState.BOUND_TX) {
-                stateProcessor = SMPPOutboundSessionState.BOUND_TX;
-            } else if (newState == SessionState.BOUND_TRX) {
-                stateProcessor = SMPPOutboundSessionState.BOUND_TRX;
-            } else if (newState == SessionState.UNBOUND) {
-                stateProcessor = SMPPOutboundSessionState.UNBOUND;
-            } else if (newState == SessionState.CLOSED) {
-                stateProcessor = SMPPOutboundSessionState.CLOSED;
+            SessionState oldState;
+            try {
+                stateProcessorLock.writeLock().lock();
+                oldState = stateProcessor.getSessionState();
+
+                // change the session state processor
+                if (newState == SessionState.OPEN) {
+                    stateProcessor = SMPPOutboundSessionState.OPEN;
+                } else if (newState == SessionState.BOUND_RX) {
+                    stateProcessor = SMPPOutboundSessionState.BOUND_RX;
+                } else if (newState == SessionState.BOUND_TX) {
+                    stateProcessor = SMPPOutboundSessionState.BOUND_TX;
+                } else if (newState == SessionState.BOUND_TRX) {
+                    stateProcessor = SMPPOutboundSessionState.BOUND_TRX;
+                } else if (newState == SessionState.UNBOUND) {
+                    stateProcessor = SMPPOutboundSessionState.UNBOUND;
+                } else if (newState == SessionState.CLOSED) {
+                    stateProcessor = SMPPOutboundSessionState.CLOSED;
+                }
+            } finally {
+                stateProcessorLock.writeLock().unlock();
             }
-            fireStateChanged(newState, oldState, smppSession);
+            if (oldState != null) {
+                fireStateChanged(newState, oldState, smppSession);
+            }
         }
     }
 }
