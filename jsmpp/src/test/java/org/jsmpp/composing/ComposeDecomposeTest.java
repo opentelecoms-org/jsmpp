@@ -230,7 +230,7 @@ public class ComposeDecomposeTest {
 
         OptionalParameter additionalStatusInfoText = new OptionalParameter.Additional_status_info_text(new byte[]{ 0x00, 0x12, 0x34, 0x45, 0x67, 0x78});
 
-        pduSender.sendDataSmResp(out, 1234, "41fbf22d-fb3b-49ac-9c5e-71b762158808", additionalStatusInfoText);
+        pduSender.sendDataSmResp(out, SMPPConstant.STAT_ESME_ROK, 1234, "41fbf22d-fb3b-49ac-9c5e-71b762158808", additionalStatusInfoText);
 
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(out.toByteArray()));
         Command header = pduReader.readPDUHeader(in);

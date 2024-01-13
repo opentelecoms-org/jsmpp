@@ -1029,11 +1029,11 @@ public abstract class OptionalParameter {
 		 * @param value the user_response_code optional parameter
 		 */
 		public User_response_code(byte value) {
-			super(Tag.USER_MESSAGE_REFERENCE, value);
+			super(Tag.USER_RESPONSE_CODE, value);
 		}
 
 		public User_response_code(byte[] content) {
-			super(Tag.USER_MESSAGE_REFERENCE.code, content);
+			super(Tag.USER_RESPONSE_CODE.code, content);
 		}
 	}
 

@@ -370,9 +370,16 @@ public class DefaultPDUSender implements PDUSender {
     @Override
     public byte[] sendDataSmResp(OutputStream os, int sequenceNumber,
             String messageId, OptionalParameter... optionalParameters)
+                    throws PDUStringException, IOException {
+        return sendDataSmResp(os, SMPPConstant.STAT_ESME_ROK, messageId, optionalParameters);
+    }
+
+    @Override
+    public byte[] sendDataSmResp(OutputStream os, int commandStatus,
+            int sequenceNumber, String messageId, OptionalParameter... optionalParameters)
             throws PDUStringException, IOException {
-        byte[] b = pduComposer.dataSmResp(sequenceNumber, messageId,
-                optionalParameters);
+        byte[] b = pduComposer.dataSmResp(commandStatus, sequenceNumber,
+                messageId, optionalParameters);
         writeAndFlush(os, b);
         return b;
     }

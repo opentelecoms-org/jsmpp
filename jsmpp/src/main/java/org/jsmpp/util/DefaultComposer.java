@@ -399,10 +399,22 @@ public class DefaultComposer implements PDUComposer {
     @Override
     public byte[] dataSmResp(int sequenceNumber, String messageId,
             OptionalParameter... optionalParameters) throws PDUStringException {
+        return dataSmResp(SMPPConstant.STAT_ESME_ROK, sequenceNumber, messageId, optionalParameters);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.jsmpp.util.PDUComposer#dataSmResp(int, int, java.lang.String,
+     *      org.jsmpp.bean.OptionalParameter[])
+     */
+    @Override
+    public byte[] dataSmResp(int commandStatus, int sequenceNumber,
+            String messageId, OptionalParameter... optionalParameters) throws PDUStringException {
         StringValidator.validateString(messageId, StringParameter.MESSAGE_ID);
 
         PDUByteBuffer buf = new PDUByteBuffer(SMPPConstant.CID_DATA_SM_RESP,
-            SMPPConstant.STAT_ESME_ROK, sequenceNumber);
+            commandStatus, sequenceNumber);
         buf.append(messageId);
         if (optionalParameters != null && optionalParameters.length > 0) {
             buf.appendAll(optionalParameters);

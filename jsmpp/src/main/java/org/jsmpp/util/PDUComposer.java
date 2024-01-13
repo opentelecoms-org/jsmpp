@@ -306,6 +306,19 @@ public interface PDUComposer {
             OptionalParameter... optionalParameters) throws PDUStringException;
 
     /**
+     * Compose data short message response (data_sm_resp) PDU.
+     * @param commandStatus is the command_status.
+     * @param sequenceNumber is the sequence number.
+     * @param messageId is the the message identifier.
+     * @param optionalParameters is the optional parameter(s).
+     *
+     * @return the composed data_sm_resp PDU byte values.
+     * @throws PDUStringException if there is an invalid string constraint found
+     */
+    byte[] dataSmResp(int commandStatus, int sequenceNumber,
+            String messageId, OptionalParameter... optionalParameters) throws PDUStringException;
+
+    /**
      * Compose cancel short message (cancel_sm) PDU.
      * 
      * @param sequenceNumber Unique sequence number. The associated cancel_sm_resp PDU should echo the same sequence number.
