@@ -44,6 +44,6 @@ License
 Copyright (C) 2007-2013, Nuruddin Ashr <uudashr@gmail.com>
 Copyright (C) 2012-2013, Denis Kostousov <denis.kostousov@gmail.com>
 Copyright (C) 2014, Daniel Pocock http://danielpocock.com
-Copyright (C) 2016-2021, Pim Moerenhout <pim.moerenhout@gmail.com>
+Copyright (C) 2016-2024, Pim Moerenhout <pim.moerenhout@gmail.com>
 
 This project is licensed under the Apache Software License 2.0.

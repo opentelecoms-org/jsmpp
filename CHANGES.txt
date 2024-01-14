@@ -1,7 +1,11 @@
 Changes:
 
 3.0.1
+- use ReadWriteLock instead of synchronized on class level.
+- Don't try to close the session from enquireLinkSender too.
+- Fixed typo in User_response_code optional parameter.
 - Decode not only the header if the status is not OK.
+- Allow data_sm_resp to be sent with message_id and optional_parameters when command_status != 0.
 - Fixed typo in sendGenerickNack.
 - Replace jCharset due to incompatible GNU GPL license.
 - Update several Maven dependencies.
