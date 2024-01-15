@@ -48,7 +48,7 @@
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
         <buildNumber>${maven.build.timestamp}</buildNumber>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j.version>1.7.36</slf4j.version>
+        <slf4j.version>2.0.11</slf4j.version>
         <junit.version>4.13.2</junit.version>
         <testng.version>6.14.3</testng.version>
         <telecom-charsets.version>1.0.1</telecom-charsets.version>
