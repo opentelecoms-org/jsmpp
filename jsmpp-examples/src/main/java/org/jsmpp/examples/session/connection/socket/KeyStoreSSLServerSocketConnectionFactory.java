@@ -16,6 +16,7 @@ package org.jsmpp.examples.session.connection.socket;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
@@ -69,6 +70,13 @@ public class KeyStoreSSLServerSocketConnectionFactory implements ServerConnectio
   public ServerConnection listen(int port, int timeout, int backlog) throws IOException {
     ServerSocket serverSocket = sslServerSocketFactory.createServerSocket(port, backlog);
     serverSocket.setSoTimeout(timeout);
+    return new ServerSocketConnection(serverSocket);
+  }
+
+  @Override
+  public ServerConnection listen(InetAddress inetAddress, int port) throws IOException {
+    // Using backlog 50 since that is the default value
+    ServerSocket serverSocket = sslServerSocketFactory.createServerSocket(port, 50, inetAddress);
     return new ServerSocketConnection(serverSocket);
   }
 

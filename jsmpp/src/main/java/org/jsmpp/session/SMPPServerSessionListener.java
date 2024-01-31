@@ -15,6 +15,7 @@
 package org.jsmpp.session;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 
 import org.jsmpp.session.connection.Connection;
@@ -75,6 +76,11 @@ public class SMPPServerSessionListener implements AutoCloseable {
             ServerConnectionFactory serverConnFactory) throws IOException {
         this.port = port;
         serverConn = serverConnFactory.listen(port, timeout, backlog);
+    }
+
+    public SMPPServerSessionListener(InetAddress inetAddress, int port, ServerConnectionFactory serverConnFactory) throws IOException {
+        this.port = port;
+        serverConn = serverConnFactory.listen(inetAddress, port);
     }
     
     public int getTimeout() throws IOException {

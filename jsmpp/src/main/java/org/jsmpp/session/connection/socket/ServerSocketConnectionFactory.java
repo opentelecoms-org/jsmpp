@@ -15,6 +15,7 @@
 package org.jsmpp.session.connection.socket;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 
 import org.jsmpp.session.connection.ServerConnection;
@@ -40,5 +41,10 @@ public class ServerSocketConnectionFactory implements ServerConnectionFactory {
         ServerSocket ss = new ServerSocket(port, backlog);
         ss.setSoTimeout(timeout);
         return new ServerSocketConnection(ss);
+    }
+
+    public ServerConnection listen(InetAddress inetAddress, int port) throws IOException {
+        // Using backlog 50 since that is the default value
+        return new ServerSocketConnection(new ServerSocket(port, 50, inetAddress));
     }
 }

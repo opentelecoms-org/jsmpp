@@ -15,6 +15,7 @@
 package org.jsmpp.session.connection;
 
 import java.io.IOException;
+import java.net.InetAddress;
 
 /**
  * @author uudashr
@@ -24,4 +25,5 @@ public interface ServerConnectionFactory {
     ServerConnection listen(int port) throws IOException;
     ServerConnection listen(int port, int timeout) throws IOException;
     ServerConnection listen(int port, int timeout, int backlog) throws IOException;
+    ServerConnection listen(InetAddress inetAddress, int port) throws IOException;
 }
