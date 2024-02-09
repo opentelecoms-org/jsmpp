@@ -52,7 +52,7 @@
         <junit.version>4.13.2</junit.version>
         <testng.version>6.14.3</testng.version>
         <telecom-charsets.version>1.0.1</telecom-charsets.version>
-        <commons-codec.version>1.16.0</commons-codec.version>
+        <commons-codec.version>1.16.1</commons-codec.version>
         <git.properties>git.properties</git.properties>
 
         <maven-bundle-plugin.version>5.1.9</maven-bundle-plugin.version>
