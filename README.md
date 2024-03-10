@@ -12,11 +12,6 @@ jSMPP is not a high-level library. People looking for a quick way to
 get started with SMPP may be better of using an abstraction layer such
 as the Apache Camel SMPP component [Apache Camel SMPP component](https://camel.apache.org/smpp.html)
 
-Travis-CI status:
------------------
-
-[![Build Status](https://travis-ci.com/opentelecoms-org/jsmpp.svg?branch=master)](https://travis-ci.com/opentelecoms-org/jsmpp)
-
 History
 -------
 
