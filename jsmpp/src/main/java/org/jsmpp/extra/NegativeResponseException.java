@@ -46,6 +46,7 @@ public class NegativeResponseException extends Exception {
         // 65 is reserved
         mapping.put(66, "Invalid 'submit with replace' request");
         mapping.put(67, "Invalid esm_class field data");
+        mapping.put(68, "Cannot submit to a distribution list");
         mapping.put(69, "submit_sm or submit_multi failed");
         // 70 - 71 are reserved
         mapping.put(72, "Invalid Source address TON");
